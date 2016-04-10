@@ -14,9 +14,13 @@ var tasks = require('./gulptasks');
 gn.exec('compile-test', gn.series(
     '_compile',
     gn.parallel(
+        'src:compile-test',
+        'src/game:compile-test'
     )));
 
 gn.exec('lint', gn.parallel(
+    'src:lint',
+    'src/game:lint'
 ));
 
 var mockAngular = {
@@ -30,16 +34,8 @@ gn.exec('compile', gn.series('_compile'));
 gn.exec('compile-ui', gn.series(
     gn.parallel(
         '_compile',
-        sassTasks.compile(gn, 'src/**'),
-        fileTasks.copy(gn, [
-          'node_modules/angular2/**/*.js',
-          'src/**/*.ng'
-        ]),
-    packTasks.app(
-        gn,
-        ['src/main.js'],
-        'js.js'))
-));
+        sassTasks.compile(gn, 'src/**')),
+    packTasks.app(gn, ['src/main.js'], 'js.js')));
 
 
 gn.exec('watch', gn.series(

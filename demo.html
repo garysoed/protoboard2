@@ -2,15 +2,13 @@
 <html>
   <base href="out/">
   <head>
-    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
   </head>
   <body>
-    <div pb-root>
-    </div>
-    <pb-test></pb-test>
+    <pb-token></pb-token>
     <script src="js.js"></script>
     <script>
-      pb.run();
+      var game = pb.game.bootstrap();
+      game.start();
     </script>
   </body>
 </html>
