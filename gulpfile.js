@@ -10,16 +10,21 @@ var packTasks = require('./node_modules/gs-tools/gulp-tasks/pack')(
     require('gulp-sourcemaps'),
     require('gulp-webpack'));
 var tasks = require('./gulptasks');
+var typedocTasks = require('./node_modules/gs-tools/gulp-tasks/typedoc')(
+    require('gulp-concat'),
+    require('gulp-sass'),
+    require('gulp-typedoc'));
 
 gn.exec('compile-test', gn.series(
     '_compile',
     gn.parallel(
-        'src:compile-test',
+        'src/component:compile-test',
         'src/game:compile-test'
     )));
 
 gn.exec('lint', gn.parallel(
     'src:lint',
+    'src/component:lint',
     'src/game:lint'
 ));
 
@@ -34,9 +39,25 @@ gn.exec('compile', gn.series('_compile'));
 gn.exec('compile-ui', gn.series(
     gn.parallel(
         '_compile',
-        sassTasks.compile(gn, 'src/**')),
+        sassTasks.compile(gn, 'src/**'),
+        fileTasks.copy(gn, [
+          'node_modules/x-tag/dist/x-tag-core-with-shadowdom.js',
+          'src/**/*.html'
+        ])),
     packTasks.app(gn, ['src/main.js'], 'js.js')));
 
+gn.exec(
+    'doc',
+    typedocTasks.compile(
+        gn,
+        [
+          '!src/test-base.ts',
+          'node_modules/typescript/lib/lib.es6.d.ts',
+          'node_modules/gs-tools/declarations/*.d.ts'
+        ],
+        'Protoboard 2',
+        'strawberry',
+        'node_modules/gs-tools/src/**/*.ts'));
 
 gn.exec('watch', gn.series(
     '.:compile-ui',

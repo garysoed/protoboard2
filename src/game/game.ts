@@ -3,9 +3,14 @@ import Log from '../../node_modules/gs-tools/src/log';
 
 const LOG = new Log('pb.game.Game');
 
+/**
+ * Instance of the game.
+ *
+ * Use this object to control the game state.
+ */
 class Game {
   start(): void {
-    LOG.info(`Game started`);
+    Log.info(LOG, `Game started`);
   }
 }
 

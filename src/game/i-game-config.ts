@@ -1,8 +1,11 @@
-import ComponentConfig from '../component/component-config';
-
-
+/**
+ * Configuration object for a game.
+ */
 interface IGameConfig {
-  componentConfigList: ComponentConfig[]
+  /**
+   * Component tag names to be registered for the game.
+   */
+  componentList: string[];
 }
 
 export default IGameConfig;
