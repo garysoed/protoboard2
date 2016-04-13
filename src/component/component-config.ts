@@ -35,8 +35,7 @@ class ComponentConfig {
     this.xtag_ = xtag;
   }
 
-  @Cache()
-  get lifecycleConfig_(): xtag.ILifecycleConfig {
+  getLifecycleConfig_(content: string): xtag.ILifecycleConfig {
     let ctor = this.ctor_;
     return {
       attributeChanged: function(attrName: string, oldValue: string, newValue: string): void {
@@ -47,6 +46,9 @@ class ComponentConfig {
       created: function(): void {
         let instance = new ctor();
         this[ComponentConfig.__instance] = instance;
+        let shadow = this.createShadowRoot();
+        shadow.innerHTML = content;
+
         instance.onCreated();
       },
       inserted: function(): void {
@@ -77,8 +79,7 @@ class ComponentConfig {
               this.xtag_.register(
                   this.tag_,
                   {
-                    content: content,
-                    lifecycle: this.lifecycleConfig_,
+                    lifecycle: this.getLifecycleConfig_(content),
                   });
               Log.info(LOG, `Registered ${this.tag_}`);
             },

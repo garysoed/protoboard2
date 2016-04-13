@@ -23,7 +23,7 @@ describe('component.ComponentConfig', () => {
     config = new ComponentConfig(TestComponent, TAG, TEMPLATE_URL, mockXtag);
   });
 
-  describe('lifecycleConfig_', () => {
+  describe('getLifecycleConfig_', () => {
     it('should return the config with the correct attribute changed handler', () => {
       let attrName = 'attrName';
       let oldValue = 'oldValue';
@@ -33,7 +33,8 @@ describe('component.ComponentConfig', () => {
 
       let runOnInstanceSpy = spyOn(ComponentConfig, 'runOnInstance_');
 
-      config['lifecycleConfig_'].attributeChanged.call(mockElement, attrName, oldValue, newValue);
+      config['getLifecycleConfig_']('content')
+          .attributeChanged.call(mockElement, attrName, oldValue, newValue);
 
       expect(ComponentConfig['runOnInstance_'])
           .toHaveBeenCalledWith(mockElement, jasmine.any(Function));
@@ -43,14 +44,18 @@ describe('component.ComponentConfig', () => {
     });
 
     it('should return the config with the correct created handler', () => {
-      let mockElement = Mocks.object('Element');
+      let content = 'content';
+      let mockShadowRoot = Mocks.object('ShadowRoot');
+      let mockElement = jasmine.createSpyObj('Element', ['createShadowRoot']);
+      mockElement.createShadowRoot.and.returnValue(mockShadowRoot);
 
       spyOn(TestComponent.prototype, 'onCreated');
 
-      config['lifecycleConfig_'].created.call(mockElement);
+      config['getLifecycleConfig_'](content).created.call(mockElement);
 
       expect(mockElement[ComponentConfig['__instance']]).toEqual(jasmine.any(TestComponent));
       expect(mockElement[ComponentConfig['__instance']].onCreated).toHaveBeenCalledWith();
+      expect(mockShadowRoot.innerHTML).toEqual(content);
     });
 
     it('should return the config with the correct inserted handler', () => {
@@ -59,7 +64,7 @@ describe('component.ComponentConfig', () => {
 
       let runOnInstanceSpy = spyOn(ComponentConfig, 'runOnInstance_');
 
-      config['lifecycleConfig_'].inserted.call(mockElement);
+      config['getLifecycleConfig_']('content').inserted.call(mockElement);
 
       expect(ComponentConfig['runOnInstance_'])
           .toHaveBeenCalledWith(mockElement, jasmine.any(Function));
@@ -74,7 +79,7 @@ describe('component.ComponentConfig', () => {
 
       let runOnInstanceSpy = spyOn(ComponentConfig, 'runOnInstance_');
 
-      config['lifecycleConfig_'].removed.call(mockElement);
+      config['getLifecycleConfig_']('content').removed.call(mockElement);
 
       expect(ComponentConfig['runOnInstance_'])
           .toHaveBeenCalledWith(mockElement, jasmine.any(Function));
@@ -97,16 +102,16 @@ describe('component.ComponentConfig', () => {
       mockHttpRequest.send.and.returnValue(Promise.resolve(templateContent));
 
       let mockLifecycleConfig = Mocks.object('LifecycleConfig');
-      Reflect.overrideGetter(config, 'lifecycleConfig_', mockLifecycleConfig);
+      spyOn(config, 'getLifecycleConfig_').and.returnValue(mockLifecycleConfig);
 
       config.register()
           .then(() => {
             expect(mockXtag.register).toHaveBeenCalledWith(
                 TAG,
                 {
-                  content: templateContent,
                   lifecycle: mockLifecycleConfig,
                 });
+            expect(config['getLifecycleConfig_']).toHaveBeenCalledWith(templateContent);
             done();
           }, done.fail);
     });
