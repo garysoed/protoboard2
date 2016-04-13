@@ -2,6 +2,7 @@ dependencies:
   pre:
     - sudo apt-get update
     - sudo apt-get install google-chrome-stable
+    - cd node_modules/gulp-typescript/node_modules; ln -s ../../typescript typescript
 
 test:
   override:
