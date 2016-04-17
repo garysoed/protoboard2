@@ -1,0 +1,8 @@
+.root {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.root:hover {
+  outline: 1px solid red;
+}

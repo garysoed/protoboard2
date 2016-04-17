@@ -1,7 +1,12 @@
 declare module xtag {
   interface IConfig {
     content?: string,
-    lifecycle?: ILifecycleConfig
+    events?: IEventConfig,
+    lifecycle?: ILifecycleConfig,
+  }
+
+  interface IEventConfig {
+    [eventName: string]: () => void
   }
 
   interface ILifecycleConfig {

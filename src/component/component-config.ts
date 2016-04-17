@@ -2,6 +2,8 @@ import BaseComponent from './base-component';
 import Cache from '../../node_modules/gs-tools/src/data/a-cache';
 import Checks from '../../node_modules/gs-tools/src/checks';
 import Http from '../../node_modules/gs-tools/src/net/http';
+import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
+import Injector from '../../node_modules/gs-tools/src/inject/injector';
 import Log from '../../node_modules/gs-tools/src/log';
 
 
@@ -13,7 +15,10 @@ const LOG = new Log('pb.component.ComponentConfig');
 class ComponentConfig {
   private static __instance: symbol = Symbol('instance');
 
+  private cssUrl_: string;
   private ctor_: new () => BaseComponent;
+  private dependencies_: string[];
+  private injector_: Injector;
   private tag_: string;
   private templateUrl_: string;
   private xtag_: xtag.IInstance;
@@ -25,17 +30,23 @@ class ComponentConfig {
    * @param templateUrl The component's template URL.
    */
   constructor(
+      @Inject('$gsInjector') injector: Injector,
       ctor: new () => BaseComponent,
       tag: string,
       templateUrl: string,
-      xtag: xtag.IInstance) {
+      xtag: xtag.IInstance,
+      dependencies: string[] = [],
+      cssUrl?: string) {
+    this.cssUrl_ = cssUrl;
     this.ctor_ = ctor;
+    this.dependencies_ = dependencies;
+    this.injector_ = injector;
     this.tag_ = tag;
     this.templateUrl_ = templateUrl;
     this.xtag_ = xtag;
   }
 
-  getLifecycleConfig_(content: string): xtag.ILifecycleConfig {
+  private getLifecycleConfig_(content: string): xtag.ILifecycleConfig {
     let ctor = this.ctor_;
     return {
       attributeChanged: function(attrName: string, oldValue: string, newValue: string): void {
@@ -49,7 +60,7 @@ class ComponentConfig {
         let shadow = this.createShadowRoot();
         shadow.innerHTML = content;
 
-        instance.onCreated();
+        instance.onCreated(this);
       },
       inserted: function(): void {
         ComponentConfig.runOnInstance_(this, (component: BaseComponent) => {
@@ -72,10 +83,25 @@ class ComponentConfig {
   @Cache()
   register(): Promise<void> {
     // TODO: Assert xtag is defined.
-    return Http.get(this.templateUrl_)
-        .send()
+    return Promise
+        .all(this.dependencies_.map((dependency: string) => {
+          return this.injector_.getBoundValue(dependency).register();
+        }))
+        .then(() => {
+          let promises = [Http.get(this.templateUrl_).send()];
+          if (this.cssUrl_) {
+            promises.push(Http.get(this.cssUrl_).send());
+          }
+          return Promise.all(promises);
+        })
         .then(
-            (content: string) => {
+            (results: any[]) => {
+              let [content, css] = results;
+
+              if (css !== undefined) {
+                content = `<style>${css}</style>\n${content}`;
+              }
+
               this.xtag_.register(
                   this.tag_,
                   {

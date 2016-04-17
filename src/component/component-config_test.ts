@@ -6,21 +6,33 @@ import ComponentConfig from './component-config';
 import Http from '../../node_modules/gs-tools/src/net/http';
 import Log from '../../node_modules/gs-tools/src/log';
 import Mocks from '../../node_modules/gs-tools/src/mock/mocks';
-import Reflect from '../../node_modules/gs-tools/src/reflect';
+import TestDispose from '../../node_modules/gs-tools/src/testing/test-dispose';
 
 
 describe('component.ComponentConfig', () => {
+  const CSS_URL = 'cssUrl';
   const TAG = 'tag';
   const TEMPLATE_URL = 'template url';
 
+  let mockDependencies;
+  let mockInjector;
   let mockXtag;
   let config;
 
   class TestComponent extends BaseComponent { }
 
   beforeEach(() => {
+    mockDependencies = [];
+    mockInjector = jasmine.createSpyObj('Injector', ['getBoundValue']);
     mockXtag = jasmine.createSpyObj('Xtag', ['register']);
-    config = new ComponentConfig(TestComponent, TAG, TEMPLATE_URL, mockXtag);
+    config = new ComponentConfig(
+        mockInjector,
+        TestComponent,
+        TAG,
+        TEMPLATE_URL,
+        mockXtag,
+        mockDependencies,
+        CSS_URL);
   });
 
   describe('getLifecycleConfig_', () => {
@@ -54,8 +66,10 @@ describe('component.ComponentConfig', () => {
       config['getLifecycleConfig_'](content).created.call(mockElement);
 
       expect(mockElement[ComponentConfig['__instance']]).toEqual(jasmine.any(TestComponent));
-      expect(mockElement[ComponentConfig['__instance']].onCreated).toHaveBeenCalledWith();
+      expect(mockElement[ComponentConfig['__instance']].onCreated)
+          .toHaveBeenCalledWith(mockElement);
       expect(mockShadowRoot.innerHTML).toEqual(content);
+      TestDispose.add(mockElement[ComponentConfig['__instance']]);
     });
 
     it('should return the config with the correct inserted handler', () => {
@@ -90,16 +104,32 @@ describe('component.ComponentConfig', () => {
   });
 
   describe('register', () => {
-    let mockHttpRequest;
-
-    beforeEach(() => {
-      mockHttpRequest = jasmine.createSpyObj('HttpRequest', ['send']);
-      spyOn(Http, 'get').and.returnValue(mockHttpRequest);
-    });
-
     it('should return promise that registers the element correctly', (done: any) => {
+      let dependencyString = 'dependencyString';
+      mockDependencies.push(dependencyString);
+
+      let mockDependency = jasmine.createSpyObj('Dependency', ['register']);
+      mockDependency.register.and.returnValue(Promise.resolve());
+      mockInjector.getBoundValue.and.returnValue(mockDependency);
+
       let templateContent = 'templateContent';
-      mockHttpRequest.send.and.returnValue(Promise.resolve(templateContent));
+      let mockTemplateRequest = jasmine.createSpyObj('TemplateRequest', ['send']);
+      mockTemplateRequest.send.and.returnValue(Promise.resolve(templateContent));
+
+      let cssContent = 'cssContent';
+      let mockCssRequest = jasmine.createSpyObj('CssRequest', ['send']);
+      mockCssRequest.send.and.returnValue(Promise.resolve(cssContent));
+
+      spyOn(Http, 'get').and.callFake((url: string) => {
+        switch (url) {
+          case TEMPLATE_URL:
+            return mockTemplateRequest;
+          case CSS_URL:
+            return mockCssRequest;
+          default:
+            return null;
+        }
+      });
 
       let mockLifecycleConfig = Mocks.object('LifecycleConfig');
       spyOn(config, 'getLifecycleConfig_').and.returnValue(mockLifecycleConfig);
@@ -111,14 +141,23 @@ describe('component.ComponentConfig', () => {
                 {
                   lifecycle: mockLifecycleConfig,
                 });
-            expect(config['getLifecycleConfig_']).toHaveBeenCalledWith(templateContent);
+            expect(config['getLifecycleConfig_'])
+                .toHaveBeenCalledWith(`<style>${cssContent}</style>\n${templateContent}`);
+
+            expect(mockInjector.getBoundValue).toHaveBeenCalledWith(dependencyString);
+            expect(mockDependency.register).toHaveBeenCalledWith();
             done();
           }, done.fail);
     });
 
     it('should log error if the template URL failed to load', (done: any) => {
       let error = 'error';
-      mockHttpRequest.send.and.returnValue(Promise.reject(error));
+
+      let mockTemplateRequest = jasmine.createSpyObj('TemplateRequest', ['send']);
+      mockTemplateRequest.send.and.returnValue(Promise.resolve('templateContent'));
+
+      spyOn(Http, 'get').and.returnValue(mockTemplateRequest);
+      mockTemplateRequest.send.and.returnValue(Promise.reject(error));
 
       spyOn(Log, 'error');
 
@@ -130,6 +169,31 @@ describe('component.ComponentConfig', () => {
             done();
           }, done.fail);
     });
+
+    it('should handle the case with no CSS URLs', (done: any) => {
+      config = new ComponentConfig(
+          mockInjector,
+          TestComponent,
+          TAG,
+          TEMPLATE_URL,
+          mockXtag,
+          []);
+
+      let templateContent = 'templateContent';
+      let mockTemplateRequest = jasmine.createSpyObj('TemplateRequest', ['send']);
+      mockTemplateRequest.send.and.returnValue(Promise.resolve(templateContent));
+
+      spyOn(Http, 'get').and.returnValue(mockTemplateRequest);
+
+      let mockLifecycleConfig = Mocks.object('LifecycleConfig');
+      spyOn(config, 'getLifecycleConfig_').and.returnValue(mockLifecycleConfig);
+
+      config.register()
+          .then(() => {
+            expect(config['getLifecycleConfig_']).toHaveBeenCalledWith(templateContent);
+            done();
+          }, done.fail);
+    });
   });
 
   describe('runOnInstance_', () => {
@@ -137,6 +201,7 @@ describe('component.ComponentConfig', () => {
       let mockCallback = jasmine.createSpy('Callback');
       let mockElement = Mocks.object('Element');
       let mockInstance = new TestComponent();
+      TestDispose.add(mockInstance);
 
       mockElement[ComponentConfig['__instance']] = mockInstance;
 

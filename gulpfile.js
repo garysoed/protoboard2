@@ -39,7 +39,7 @@ gn.exec('compile', gn.series('_compile'));
 gn.exec('compile-ui', gn.series(
     gn.parallel(
         '_compile',
-        sassTasks.compile(gn, 'src/**'),
+        sassTasks.compile(gn, 'src/**', 'out', true),
         fileTasks.copy(gn, [
           'node_modules/x-tag/dist/x-tag-core-with-shadowdom.js',
           'src/**/*.html'

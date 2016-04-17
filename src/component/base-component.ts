@@ -1,7 +1,14 @@
+import BaseDisposable from '../../node_modules/gs-tools/src/dispose/base-disposable';
+
+
 /**
  * Base class for all components.
  */
-class BaseComponent {
+class BaseComponent extends BaseDisposable {
+  constructor() {
+    super();
+  }
+
   /**
    * Called when the element's attribute has changed.
    *
@@ -14,7 +21,7 @@ class BaseComponent {
   /**
    * Called when the element is created.
    */
-  onCreated(): void { }
+  onCreated(element: HTMLElement): void { }
 
   /**
    * Called when the element is inserted into the DOM.

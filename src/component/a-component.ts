@@ -11,6 +11,18 @@ const __configName = Symbol('configName');
  */
 type IComponentConfig = {
   /**
+   * URL of the CSS file, if any.
+   *
+   * The content of the CSS file will be appended to the template in a `<style>` element.
+   */
+  cssUrl?: string,
+
+  /**
+   * Component constructor of the dependencies.
+   */
+  dependencies?: (typeof BaseComponent)[],
+
+  /**
    * Tag name of the component.
    */
   tag: string,
@@ -18,7 +30,7 @@ type IComponentConfig = {
   /**
    * URL to load the component template.
    */
-  templateUrl: string
+  templateUrl: string,
 };
 
 
@@ -89,21 +101,27 @@ interface IComponent {
 const Component: IComponent = <any> function(config: IComponentConfig): ClassDecorator {
   return function<C extends gs.ICtor<any>>(ctor: C): void {
     Asserts.ctor(ctor).to.extend(BaseComponent)
-        .orThrowsMessage(`${ctor.name} should extend BaseComponent`);
+        .orThrows(`${ctor.name} should extend BaseComponent`);
     Asserts.string(config.tag).toNot.beEmpty()
-        .orThrowsMessage(`Configuration for ${ctor.name} should have a non empty tag name`);
+        .orThrows(`Configuration for ${ctor.name} should have a non empty tag name`);
     Asserts.string(config.templateUrl).toNot.beEmpty()
-        .orThrowsMessage(`Configuration for ${ctor.name} should have a non empty template URL`);
-    Asserts.any(window['xtag']).to.beDefined().orThrowsMessage(`Required xtag library not found`);
+        .orThrows(`Configuration for ${ctor.name} should have a non empty template URL`);
+    Asserts.any(window['xtag']).to.beDefined().orThrows(`Required xtag library not found`);
     ctor[__configName] = config.tag;
 
-    let boundCtor = ComponentConfig.bind(
-        null,
-        ctor,
-        config.tag,
-        config.templateUrl,
-        window['xtag']);
-    Injector.bind(boundCtor, config.tag);
+    let dependencies = config.dependencies || [];
+    let dependencyTags = dependencies.map((dependency: typeof BaseComponent) => {
+      return Component.getConfigName(dependency);
+    });
+
+    Injector.bind(ComponentConfig, config.tag, {
+      1: ctor,
+      2: config.tag,
+      3: config.templateUrl,
+      4: window['xtag'],
+      5: dependencyTags,
+      6: config.cssUrl,
+    });
   };
 };
 

@@ -21,17 +21,31 @@ describe('component.Component', () => {
 
     let tag = 'tag';
     let templateUrl = 'templateUrl';
-    let config = Mocks.object('config');
+
+    let dependency = Mocks.object('dependency');
+    let dependencyTag = 'dependencyTag';
+    spyOn(Component, 'getConfigName').and.returnValue(dependencyTag);
+
+    let cssUrl = 'cssUrl';
 
     spyOn(Injector, 'bind');
-    spyOn(ComponentConfig, 'bind').and.returnValue(config);
 
-    Component({ tag: tag, templateUrl: templateUrl })(TestComponent);
+    Component({
+      cssUrl: cssUrl,
+      dependencies: [dependency],
+      tag: tag,
+      templateUrl: templateUrl,
+    })(TestComponent);
 
-    expect(Injector.bind).toHaveBeenCalledWith(config, tag);
-    expect(ComponentConfig.bind)
-        .toHaveBeenCalledWith(null, TestComponent, tag, templateUrl, mockXtag);
-    expect(Component.getConfigName(TestComponent)).toEqual(tag);
+    expect(Injector.bind).toHaveBeenCalledWith(ComponentConfig, tag, {
+      1: TestComponent,
+      2: tag,
+      3: templateUrl,
+      4: mockXtag,
+      5: [dependencyTag],
+      6: cssUrl,
+    });
+    expect(Component.getConfigName(TestComponent)).toEqual(dependencyTag);
   });
 
   it('should throw exception if the constructor does not extend BaseComponent', () => {
