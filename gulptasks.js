@@ -22,17 +22,14 @@ tasks.allTests = function(gt, dir) {
     pattern: 'node_modules/gs-tools/src/testing/mock-angular.js',
     included: true
   };
-  gt.exec('test', gt.series(
-      '_compile',
-      '.:_compile-test',
-      karmaTasks.once(gt, dir, [mockAngular])));
   gt.exec('karma', gt.series(
       '_compile',
       '.:_compile-test',
       karmaTasks.watch(gt, dir, [mockAngular])));
   gt.exec('watch-test', function() {
     gt.watch(['src/**/*.ts'], gt.series('_compile', '.:compile-test'));
-  })
+  });
+  gt.exec('test', gt.parallel('.:watch-test', '.:karma'));
 };
 
 gulp.task('_compile', typescriptTasks.compile(gulp));

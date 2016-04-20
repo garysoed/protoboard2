@@ -1,4 +1,5 @@
 import BaseComponent from './base-component';
+import BaseDispose from '../../node_modules/gs-tools/src/dispose/base-disposable';
 import Cache from '../../node_modules/gs-tools/src/data/a-cache';
 import Checks from '../../node_modules/gs-tools/src/checks';
 import Http from '../../node_modules/gs-tools/src/net/http';
@@ -12,7 +13,7 @@ const LOG = new Log('pb.component.ComponentConfig');
 /**
  * Configuration object of all components.
  */
-class ComponentConfig {
+class ComponentConfig extends BaseDispose {
   private static __instance: symbol = Symbol('instance');
 
   private cssUrl_: string;
@@ -37,6 +38,7 @@ class ComponentConfig {
       xtag: xtag.IInstance,
       dependencies: string[] = [],
       cssUrl?: string) {
+    super();
     this.cssUrl_ = cssUrl;
     this.ctor_ = ctor;
     this.dependencies_ = dependencies;
@@ -48,6 +50,8 @@ class ComponentConfig {
 
   private getLifecycleConfig_(content: string): xtag.ILifecycleConfig {
     let ctor = this.ctor_;
+    let injector = this.injector_;
+    let addDisposable = this.addDisposable.bind(this);
     return {
       attributeChanged: function(attrName: string, oldValue: string, newValue: string): void {
         ComponentConfig.runOnInstance_(this, (component: BaseComponent) => {
@@ -55,7 +59,9 @@ class ComponentConfig {
         });
       },
       created: function(): void {
-        let instance = new ctor();
+        let instance = injector.instantiate(ctor);
+        addDisposable(instance);
+
         this[ComponentConfig.__instance] = instance;
         let shadow = this.createShadowRoot();
         shadow.innerHTML = content;
@@ -82,7 +88,6 @@ class ComponentConfig {
    */
   @Cache()
   register(): Promise<void> {
-    // TODO: Assert xtag is defined.
     return Promise
         .all(this.dependencies_.map((dependency: string) => {
           return this.injector_.getBoundValue(dependency).register();

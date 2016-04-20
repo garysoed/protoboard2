@@ -20,7 +20,7 @@ type IComponentConfig = {
   /**
    * Component constructor of the dependencies.
    */
-  dependencies?: (typeof BaseComponent)[],
+  dependencies?: gs.ICtor<any>[],
 
   /**
    * Tag name of the component.

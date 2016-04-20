@@ -1,5 +1,7 @@
+import ActionService from './action-service';
 import BaseComponent from './base-component';
 import Component from './a-component';
+import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
 import ListenableElement, { EventType as DomEventType }
     from '../../node_modules/gs-tools/src/event/listenable-element';
 
@@ -10,22 +12,40 @@ import ListenableElement, { EventType as DomEventType }
   templateUrl: 'src/component/action-target',
 })
 class ActionTarget extends BaseComponent {
+  private actionService_: ActionService;
   private listenableElement_: ListenableElement<HTMLElement>;
 
+  /**
+   * @param actionService Injected instance.
+   */
+  constructor(@Inject('pb.component.ActionService') actionService: ActionService) {
+    super();
+    this.actionService_ = actionService;
+  }
+
   private onMouseEnter_(): void {
-    // TODO
+    this.actionService_.addHandler(this);
   }
 
   private onMouseLeave_(): void {
-    // TODO
+    this.actionService_.removeHandler(this);
   }
 
-  onCreated(element: HTMLElement): void {
-    this.listenableElement_ = new ListenableElement<HTMLElement>(element);
-    this.addDisposable(this.listenableElement_);
+  handleAction(key: string): void {
+    // TODO: Implement
+    console.log(`key ${key} pressed`);
+  }
 
-    this.listenableElement_.on(DomEventType.MOUSEENTER, this.onMouseEnter_.bind(this));
-    this.listenableElement_.on(DomEventType.MOUSELEAVE, this.onMouseLeave_.bind(this));
+  /**
+   * @override
+   */
+  onCreated(element: HTMLElement): void {
+    super.onCreated(element);
+    this.listenableElement_ = ListenableElement.of<HTMLElement>(element);
+    this.addDisposable(
+        this.listenableElement_,
+        this.listenableElement_.on(DomEventType.MOUSEENTER, this.onMouseEnter_.bind(this)),
+        this.listenableElement_.on(DomEventType.MOUSELEAVE, this.onMouseLeave_.bind(this)));
   }
 }
 

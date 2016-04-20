@@ -23,7 +23,7 @@ describe('component.ComponentConfig', () => {
 
   beforeEach(() => {
     mockDependencies = [];
-    mockInjector = jasmine.createSpyObj('Injector', ['getBoundValue']);
+    mockInjector = jasmine.createSpyObj('Injector', ['getBoundValue', 'instantiate']);
     mockXtag = jasmine.createSpyObj('Xtag', ['register']);
     config = new ComponentConfig(
         mockInjector,
@@ -33,6 +33,7 @@ describe('component.ComponentConfig', () => {
         mockXtag,
         mockDependencies,
         CSS_URL);
+    TestDispose.add(config);
   });
 
   describe('getLifecycleConfig_', () => {
@@ -59,17 +60,19 @@ describe('component.ComponentConfig', () => {
       let content = 'content';
       let mockShadowRoot = Mocks.object('ShadowRoot');
       let mockElement = jasmine.createSpyObj('Element', ['createShadowRoot']);
+      let mockComponent = Mocks.disposable('Component');
+      mockComponent.onCreated = jasmine.createSpy('onCreated');
+      mockInjector.instantiate.and.returnValue(mockComponent);
+
       mockElement.createShadowRoot.and.returnValue(mockShadowRoot);
 
       spyOn(TestComponent.prototype, 'onCreated');
 
       config['getLifecycleConfig_'](content).created.call(mockElement);
 
-      expect(mockElement[ComponentConfig['__instance']]).toEqual(jasmine.any(TestComponent));
-      expect(mockElement[ComponentConfig['__instance']].onCreated)
-          .toHaveBeenCalledWith(mockElement);
+      expect(mockElement[ComponentConfig['__instance']]).toEqual(mockComponent);
+      expect(mockComponent.onCreated).toHaveBeenCalledWith(mockElement);
       expect(mockShadowRoot.innerHTML).toEqual(content);
-      TestDispose.add(mockElement[ComponentConfig['__instance']]);
     });
 
     it('should return the config with the correct inserted handler', () => {
@@ -178,6 +181,7 @@ describe('component.ComponentConfig', () => {
           TEMPLATE_URL,
           mockXtag,
           []);
+      TestDispose.add(config);
 
       let templateContent = 'templateContent';
       let mockTemplateRequest = jasmine.createSpyObj('TemplateRequest', ['send']);
