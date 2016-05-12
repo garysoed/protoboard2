@@ -1,7 +1,7 @@
 import TestBase from '../test-base';
 TestBase.setup();
 
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import ComponentConfig from './component-config';
 import Http from '../../node_modules/gs-tools/src/net/http';
 import Log from '../../node_modules/gs-tools/src/log';
@@ -19,7 +19,7 @@ describe('component.ComponentConfig', () => {
   let mockXtag;
   let config;
 
-  class TestComponent extends BaseComponent { }
+  class TestComponent extends BaseElement { }
 
   beforeEach(() => {
     mockDependencies = [];
@@ -214,7 +214,7 @@ describe('component.ComponentConfig', () => {
       expect(mockCallback).toHaveBeenCalledWith(mockInstance);
     });
 
-    it('should throw error if the instance is not an instance of BaseComponent', () => {
+    it('should throw error if the instance is not an instance of BaseElement', () => {
       let mockCallback = jasmine.createSpy('Callback');
       let mockElement = Mocks.object('Element');
       let mockInstance = Mocks.object('Instance');

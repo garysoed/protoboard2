@@ -5,7 +5,12 @@
     <script src="node_modules/x-tag/dist/x-tag-core-with-shadowdom.js"></script>
   </head>
   <body>
-    <pb-token>
+    <pb-token key-a="#pickUp">
+      <pb-config>
+        <pb-config-entry key="pickup">
+          <pb-config-entry key="blah">Value</pb-config-entry>
+        </pb-config-entry>
+      </pb-config>
       Token content
     </pb-token>
     <script src="js.js"></script>

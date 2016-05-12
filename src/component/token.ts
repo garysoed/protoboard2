@@ -1,5 +1,5 @@
 import ActionTarget from './action-target';
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import Component from './a-component';
 
 
@@ -8,6 +8,6 @@ import Component from './a-component';
   tag: 'pb-token',
   templateUrl: 'src/component/token.html',
 })
-class Token extends BaseComponent { }
+class Token extends BaseElement { }
 
 export default Token;

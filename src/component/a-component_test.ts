@@ -1,7 +1,7 @@
 import TestBase from '../test-base';
 TestBase.setup();
 
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import Component from './a-component';
 import ComponentConfig from './component-config';
 import Injector from '../../node_modules/gs-tools/src/inject/injector';
@@ -17,7 +17,7 @@ describe('component.Component', () => {
   });
 
   it('should bind the constructor correctly', () => {
-    class TestComponent extends BaseComponent { }
+    class TestComponent extends BaseElement { }
 
     let tag = 'tag';
     let templateUrl = 'templateUrl';
@@ -48,16 +48,16 @@ describe('component.Component', () => {
     expect(Component.getConfigName(TestComponent)).toEqual(dependencyTag);
   });
 
-  it('should throw exception if the constructor does not extend BaseComponent', () => {
+  it('should throw exception if the constructor does not extend BaseElement', () => {
     class TestComponent { }
 
     expect(() => {
       Component({ tag: 'tag', templateUrl: 'templateUrl' })(TestComponent);
-    }).toThrowError(/extend BaseComponent/);
+    }).toThrowError(/extend BaseElement/);
   });
 
   it('should throw error if the tag name is empty', () => {
-    class TestComponent extends BaseComponent { }
+    class TestComponent extends BaseElement { }
 
     expect(() => {
       Component({ tag: '', templateUrl: 'templateUrl'})(TestComponent);
@@ -65,7 +65,7 @@ describe('component.Component', () => {
   });
 
   it('should throw error if the template URL is empty', () => {
-    class TestComponent extends BaseComponent { }
+    class TestComponent extends BaseElement { }
 
     expect(() => {
       Component({ tag: 'tag', templateUrl: ''})(TestComponent);
@@ -73,7 +73,7 @@ describe('component.Component', () => {
   });
 
   it('should throw error if xtag is not defined', () => {
-    class TestComponent extends BaseComponent { }
+    class TestComponent extends BaseElement { }
 
     window['xtag'] = undefined;
 

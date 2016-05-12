@@ -2,9 +2,9 @@ import BaseDisposable from '../../node_modules/gs-tools/src/dispose/base-disposa
 
 
 /**
- * Base class for all components.
+ * Base class for all custom elements.
  */
-class BaseComponent extends BaseDisposable {
+class BaseElement extends BaseDisposable {
   constructor() {
     super();
   }
@@ -34,4 +34,4 @@ class BaseComponent extends BaseDisposable {
   onRemoved(): void { }
 }
 
-export default BaseComponent;
+export default BaseElement;

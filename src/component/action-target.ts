@@ -1,5 +1,5 @@
 import ActionService from './action-service';
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import Component from './a-component';
 import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
 import ListenableElement, { EventType as DomEventType }
@@ -11,7 +11,7 @@ import ListenableElement, { EventType as DomEventType }
   tag: 'pb-action-target',
   templateUrl: 'src/component/action-target',
 })
-class ActionTarget extends BaseComponent {
+class ActionTarget extends BaseElement {
   private actionService_: ActionService;
   private listenableElement_: ListenableElement<HTMLElement>;
 

@@ -1,4 +1,4 @@
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import BaseDispose from '../../node_modules/gs-tools/src/dispose/base-disposable';
 import Cache from '../../node_modules/gs-tools/src/data/a-cache';
 import Checks from '../../node_modules/gs-tools/src/checks';
@@ -17,7 +17,7 @@ class ComponentConfig extends BaseDispose {
   private static __instance: symbol = Symbol('instance');
 
   private cssUrl_: string;
-  private ctor_: new () => BaseComponent;
+  private ctor_: new () => BaseElement;
   private dependencies_: string[];
   private injector_: Injector;
   private tag_: string;
@@ -32,7 +32,7 @@ class ComponentConfig extends BaseDispose {
    */
   constructor(
       @Inject('$gsInjector') injector: Injector,
-      ctor: new () => BaseComponent,
+      ctor: new () => BaseElement,
       tag: string,
       templateUrl: string,
       xtag: xtag.IInstance,
@@ -54,7 +54,7 @@ class ComponentConfig extends BaseDispose {
     let addDisposable = this.addDisposable.bind(this);
     return {
       attributeChanged: function(attrName: string, oldValue: string, newValue: string): void {
-        ComponentConfig.runOnInstance_(this, (component: BaseComponent) => {
+        ComponentConfig.runOnInstance_(this, (component: BaseElement) => {
           component.onAttributeChanged(attrName, oldValue, newValue);
         });
       },
@@ -69,12 +69,12 @@ class ComponentConfig extends BaseDispose {
         instance.onCreated(this);
       },
       inserted: function(): void {
-        ComponentConfig.runOnInstance_(this, (component: BaseComponent) => {
+        ComponentConfig.runOnInstance_(this, (component: BaseElement) => {
           component.onInserted();
         });
       },
       removed: function(): void {
-        ComponentConfig.runOnInstance_(this, (component: BaseComponent) => {
+        ComponentConfig.runOnInstance_(this, (component: BaseElement) => {
           component.onRemoved();
         });
       },
@@ -112,7 +112,7 @@ class ComponentConfig extends BaseDispose {
                   {
                     lifecycle: this.getLifecycleConfig_(content),
                   });
-              Log.info(LOG, `Registered ${this.tag_}`);
+              Log.info(LOG, `Registered: ${this.tag_}`);
             },
             (error: string) => {
               Log.error(LOG, `Failed to register ${this.tag_}. Error: ${error}`);
@@ -125,9 +125,9 @@ class ComponentConfig extends BaseDispose {
    * @param el The element containing the instance to run the function on.
    * @param callback The function to run on the instance.
    */
-  private static runOnInstance_(el: any, callback: (component: BaseComponent) => void): void {
+  private static runOnInstance_(el: any, callback: (component: BaseElement) => void): void {
     let instance = el[ComponentConfig.__instance];
-    if (Checks.isInstanceOf(instance, BaseComponent)) {
+    if (Checks.isInstanceOf(instance, BaseElement)) {
       callback(instance);
     } else {
       throw Error(`Cannot find valid instance on element ${el.nodeName}`);

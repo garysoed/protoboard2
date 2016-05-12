@@ -1,5 +1,5 @@
 import Asserts from '../../node_modules/gs-tools/src/assert/asserts';
-import BaseComponent from './base-component';
+import BaseElement from '../util/base-element';
 import ComponentConfig from './component-config';
 import Injector from '../../node_modules/gs-tools/src/inject/injector';
 
@@ -52,7 +52,7 @@ interface IComponent {
    *
    * @param ctor Constructor of the component class whose configuration name should be returned.
    */
-  getConfigName(ctor: gs.ICtor<BaseComponent>): string;
+  getConfigName(ctor: gs.ICtor<BaseElement>): string;
 }
 
 /**
@@ -60,7 +60,7 @@ interface IComponent {
  *
  * To create a new component class, you need to do the following:
  *
- * 1.  Create a new class extending [[BaseComponent]].
+ * 1.  Create a new class extending [[BaseElement]].
  * 1.  Create an html file containing the component's template. This will be used as the content
  *     of the component.
  * 1.  Annotate the class with this annotation. Set the tag name and template URL of the file
@@ -100,8 +100,8 @@ interface IComponent {
  */
 const Component: IComponent = <any> function(config: IComponentConfig): ClassDecorator {
   return function<C extends gs.ICtor<any>>(ctor: C): void {
-    Asserts.ctor(ctor).to.extend(BaseComponent)
-        .orThrows(`${ctor.name} should extend BaseComponent`);
+    Asserts.ctor(ctor).to.extend(BaseElement)
+        .orThrows(`${ctor.name} should extend BaseElement`);
     Asserts.string(config.tag).toNot.beEmpty()
         .orThrows(`Configuration for ${ctor.name} should have a non empty tag name`);
     Asserts.string(config.templateUrl).toNot.beEmpty()
@@ -110,7 +110,7 @@ const Component: IComponent = <any> function(config: IComponentConfig): ClassDec
     ctor[__configName] = config.tag;
 
     let dependencies = config.dependencies || [];
-    let dependencyTags = dependencies.map((dependency: typeof BaseComponent) => {
+    let dependencyTags = dependencies.map((dependency: typeof BaseElement) => {
       return Component.getConfigName(dependency);
     });
 
@@ -131,7 +131,7 @@ const Component: IComponent = <any> function(config: IComponentConfig): ClassDec
  * @param ctor The component constructor to return the configuration of.
  * @return The configuration name of the given component constructor.
  */
-Component.getConfigName = function(ctor: gs.ICtor<BaseComponent>): string {
+Component.getConfigName = function(ctor: gs.ICtor<BaseElement>): string {
   return ctor[__configName];
 };
 
