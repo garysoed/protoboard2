@@ -1,10 +1,8 @@
 import Asserts from '../../node_modules/gs-tools/src/assert/asserts';
-import BaseElement from '../util/base-element';
-import ComponentConfig from './component-config';
-import Injector from '../../node_modules/gs-tools/src/inject/injector';
+import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
 
 
-const __configName = Symbol('configName');
+const __CONFIG = Symbol('config');
 
 /**
  * Configures a component.
@@ -48,11 +46,11 @@ interface IComponent {
   (config: IComponentConfig): ClassDecorator;
 
   /**
-   * Getss the configuration name of the given component.
+   * Getss the configuration of the given component.
    *
-   * @param ctor Constructor of the component class whose configuration name should be returned.
+   * @param ctor Constructor of the component class whose configuration should be returned.
    */
-  getConfigName(ctor: gs.ICtor<BaseElement>): string;
+  getConfig(ctor: gs.ICtor<BaseElement>): IComponentConfig;
 }
 
 /**
@@ -106,33 +104,12 @@ const Component: IComponent = <any> function(config: IComponentConfig): ClassDec
         .orThrows(`Configuration for ${ctor.name} should have a non empty tag name`);
     Asserts.string(config.templateUrl).toNot.beEmpty()
         .orThrows(`Configuration for ${ctor.name} should have a non empty template URL`);
-    Asserts.any(window['xtag']).to.beDefined().orThrows(`Required xtag library not found`);
-    ctor[__configName] = config.tag;
-
-    let dependencies = config.dependencies || [];
-    let dependencyTags = dependencies.map((dependency: typeof BaseElement) => {
-      return Component.getConfigName(dependency);
-    });
-
-    Injector.bind(ComponentConfig, config.tag, {
-      1: ctor,
-      2: config.tag,
-      3: config.templateUrl,
-      4: window['xtag'],
-      5: dependencyTags,
-      6: config.cssUrl,
-    });
+    ctor[__CONFIG] = config;
   };
 };
 
-/**
- * Retrieves the configuration name of the given component constructor.
- *
- * @param ctor The component constructor to return the configuration of.
- * @return The configuration name of the given component constructor.
- */
-Component.getConfigName = function(ctor: gs.ICtor<BaseElement>): string {
-  return ctor[__configName];
+Component.getConfig = function(ctor: gs.ICtor<BaseElement>): IComponentConfig {
+  return ctor[__CONFIG];
 };
 
 export default Component;

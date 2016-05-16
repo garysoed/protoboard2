@@ -30,15 +30,11 @@
     "buildOnSave": false,
     "files": [
         "declarations/tsd.d.ts",
-        "declarations/x-tag.d.ts",
         "src/component/a-component_test.ts",
         "src/component/a-component.ts",
         "src/component/action-service.ts",
         "src/component/action-target_test.ts",
         "src/component/action-target.ts",
-        "src/util/base-element.ts",
-        "src/component/component-config_test.ts",
-        "src/component/component-config.ts",
         "src/component/i-action-handler.ts",
         "src/component/token.ts",
         "src/game/bootstrap_test.ts",
@@ -54,6 +50,7 @@
         "node_modules/gs-tools/declarations/jasmine-ajax.d.ts",
         "node_modules/gs-tools/declarations/jasmine.d.ts",
         "node_modules/gs-tools/declarations/tsd.d.ts",
+        "node_modules/gs-tools/declarations/x-tag.d.ts",
         "node_modules/gs-tools/src/assert/any-asserts.ts",
         "node_modules/gs-tools/src/assert/array-asserts.ts",
         "node_modules/gs-tools/src/assert/assert-resolution.ts",
@@ -63,6 +60,7 @@
         "node_modules/gs-tools/src/assert/ctor-asserts.ts",
         "node_modules/gs-tools/src/assert/gulpfile.js",
         "node_modules/gs-tools/src/assert/map-asserts.ts",
+        "node_modules/gs-tools/src/assert/set-asserts.ts",
         "node_modules/gs-tools/src/assert/string-asserts.ts",
         "node_modules/gs-tools/src/async/asyncs.ts",
         "node_modules/gs-tools/src/async/gulpfile.js",
@@ -130,7 +128,12 @@
         "node_modules/gs-tools/src/ui/keyboard-event-polyfill.ts",
         "node_modules/gs-tools/src/ui/overflow-watcher.ts",
         "node_modules/gs-tools/src/ui/post-message-channel.ts",
-        "node_modules/gs-tools/src/ui/README.md"
+        "node_modules/gs-tools/src/ui/README.md",
+        "node_modules/gs-tools/src/webc/base-element.ts",
+        "node_modules/gs-tools/src/webc/element-config.ts",
+        "node_modules/gs-tools/src/webc/element-registrar.ts",
+        "node_modules/gs-tools/src/webc/gulpfile.js",
+        "node_modules/gs-tools/src/webc/README.md"
     ],
     "atom": {
         "rewriteTsconfig": true

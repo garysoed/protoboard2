@@ -15,8 +15,10 @@
     </pb-token>
     <script src="js.js"></script>
     <script>
-      var game = pb.game.bootstrap();
-      game.start();
+      pb.game.bootstrap()
+          .then(function(game) {
+            game.start();
+          });
     </script>
   </body>
 </html>

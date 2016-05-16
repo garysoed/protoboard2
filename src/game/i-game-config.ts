@@ -5,7 +5,7 @@ interface IGameConfig {
   /**
    * Component tag names to be registered for the game.
    */
-  componentList: string[];
+  componentList: gs.ICtor<any>[];
 }
 
 export default IGameConfig;

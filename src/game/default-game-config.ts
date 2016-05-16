@@ -1,4 +1,3 @@
-import Component from '../component/a-component';
 import IGameConfig from './i-game-config';
 import Token from '../component/token';
 
@@ -9,9 +8,9 @@ import Token from '../component/token';
  * This should satisfy most of your use cases.
  */
 class DefaultGameConfig implements IGameConfig {
-  get componentList(): string[] {
+  get componentList(): gs.ICtor<any>[] {
     return [
-      Component.getConfigName(Token),
+      Token,
     ];
   }
 }

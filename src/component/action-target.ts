@@ -1,5 +1,5 @@
 import ActionService from './action-service';
-import BaseElement from '../util/base-element';
+import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
 import Component from './a-component';
 import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
 import ListenableElement, { EventType as DomEventType }

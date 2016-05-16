@@ -1,5 +1,5 @@
 import ActionTarget from './action-target';
-import BaseElement from '../util/base-element';
+import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
 import Component from './a-component';
 
 
