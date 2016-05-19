@@ -5,9 +5,9 @@ import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
 const __CONFIG = Symbol('config');
 
 /**
- * Configures a component.
+ * Configures a element.
  */
-type IComponentConfig = {
+type IElementConfig = {
   /**
    * URL of the CSS file, if any.
    *
@@ -16,17 +16,17 @@ type IComponentConfig = {
   cssUrl?: string,
 
   /**
-   * Component constructor of the dependencies.
+   * Element constructor of the dependencies.
    */
   dependencies?: gs.ICtor<any>[],
 
   /**
-   * Tag name of the component.
+   * Tag name of the element.
    */
   tag: string,
 
   /**
-   * URL to load the component template.
+   * URL to load the element template.
    */
   templateUrl: string,
 };
@@ -35,53 +35,53 @@ type IComponentConfig = {
 /**
  * Interface for the annotation.
  *
- * See [[Component]] for more documentation.
+ * See [[Element]] for more documentation.
  */
-interface IComponent {
+interface IElement {
   /**
-   * Annotates the class to indicate that it is a component class.
+   * Annotates the class to indicate that it is a element class.
    *
-   * @param config The component configuration object.
+   * @param config The element configuration object.
    */
-  (config: IComponentConfig): ClassDecorator;
+  (config: IElementConfig): ClassDecorator;
 
   /**
-   * Getss the configuration of the given component.
+   * Getss the configuration of the given element.
    *
-   * @param ctor Constructor of the component class whose configuration should be returned.
+   * @param ctor Constructor of the element class whose configuration should be returned.
    */
-  getConfig(ctor: gs.ICtor<BaseElement>): IComponentConfig;
+  getConfig(ctor: gs.ICtor<BaseElement>): IElementConfig;
 }
 
 /**
- * Annotates a class as a component.
+ * Annotates a class as a custom element.
  *
- * To create a new component class, you need to do the following:
+ * To create a new element class, you need to do the following:
  *
  * 1.  Create a new class extending [[BaseElement]].
- * 1.  Create an html file containing the component's template. This will be used as the content
- *     of the component.
+ * 1.  Create an html file containing the element's template. This will be used as the content
+ *     of the element.
  * 1.  Annotate the class with this annotation. Set the tag name and template URL of the file
  *     created in the previous step.
- * 1.  In the [[GameConfig]] object, return the configName as part of the componentConfigList.
+ * 1.  In the [[GameConfig]] object, return the configName as part of the elementConfigList.
  *
  * For example:
  *
  * ```typescript
  * import bootstrap from './game/bootstrap';
- * import Component from './component/a-component';
+ * import Element from './util/a-element';
  *
- * \@Component({
- *   tag: 'custom-component',
- *   templateUrl: 'custom-component.html'
+ * \@Element({
+ *   tag: 'custom-element',
+ *   templateUrl: 'custom-element.html'
  * })
- * class CustomComponent {
+ * class CustomElement {
  *   // ...
  * }
  *
  * bootstrap({
- *   componentConfigList: [
- *     Component.getConfigName(CustomComponent)
+ *   elementConfigList: [
+ *     Element.getConfigName(CustomElement)
  *   ]
  * });
  * ```
@@ -90,13 +90,13 @@ interface IComponent {
  *
  * ```html
  * <body>
- *   <custom-component></custom-component>
+ *   <custom-element></custom-element>
  * </body>
  * ```
  *
  * @param config The configuration object.
  */
-const Component: IComponent = <any> function(config: IComponentConfig): ClassDecorator {
+export const Element: IElement = <any> function(config: IElementConfig): ClassDecorator {
   return function<C extends gs.ICtor<any>>(ctor: C): void {
     Asserts.ctor(ctor).to.extend(BaseElement)
         .orThrows(`${ctor.name} should extend BaseElement`);
@@ -108,8 +108,6 @@ const Component: IComponent = <any> function(config: IComponentConfig): ClassDec
   };
 };
 
-Component.getConfig = function(ctor: gs.ICtor<BaseElement>): IComponentConfig {
+Element.getConfig = function(ctor: gs.ICtor<BaseElement>): IElementConfig {
   return ctor[__CONFIG];
 };
-
-export default Component;

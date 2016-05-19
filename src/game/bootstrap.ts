@@ -1,6 +1,6 @@
 import Arrays from '../../node_modules/gs-tools/src/collection/arrays';
-import Component from '../component/a-component';
 import DefaultGameConfig from './default-game-config';
+import {Element} from '../util/a-element';
 import {ElementConfig} from '../../node_modules/gs-tools/src/webc/element-config';
 import {ElementRegistrar} from '../../node_modules/gs-tools/src/webc/element-registrar';
 import Game from './game';
@@ -10,14 +10,14 @@ import KeyboardEventPolyfill from '../../node_modules/gs-tools/src/ui/keyboard-e
 
 
 export class Bootstrap {
-  private static __ELEMENT_CONFIG: Symbol = Symbol('elementConfig');
+  private static __ELEMENT_CONFIG: symbol = Symbol('elementConfig');
 
   private static getElementConfig_(ctor: gs.ICtor<any>, injector: Injector): ElementConfig {
     if (ctor[Bootstrap.__ELEMENT_CONFIG] !== undefined) {
       return ctor[Bootstrap.__ELEMENT_CONFIG];
     }
 
-    let componentConfig = Component.getConfig(ctor);
+    let componentConfig = Element.getConfig(ctor);
     let elementConfig = ElementConfig.newInstance(
         () => {
           return injector.instantiate(ctor);

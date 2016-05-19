@@ -2,7 +2,7 @@ import TestBase from '../test-base';
 TestBase.setup();
 
 import {Bootstrap} from './bootstrap';
-import Component from '../component/a-component';
+import {Element} from '../util/a-element';
 import {ElementConfig} from '../../node_modules/gs-tools/src/webc/element-config';
 import {ElementRegistrar} from '../../node_modules/gs-tools/src/webc/element-registrar';
 import Game from './game';
@@ -43,7 +43,7 @@ describe('game.Bootstrap', () => {
       let elementConfigNewInstanceSpy =
           spyOn(ElementConfig, 'newInstance').and.returnValue(mockElementConfig);
 
-      spyOn(Component, 'getConfig').and.returnValue({
+      spyOn(Element, 'getConfig').and.returnValue({
         cssUrl: cssUrl,
         dependencies: [mockDependency1, mockDependency2],
         tag: tag,
@@ -90,19 +90,19 @@ describe('game.Bootstrap', () => {
       mockRegistrar.register.and.callFake(() => Promise.resolve());
       spyOn(ElementRegistrar, 'newInstance').and.returnValue(mockRegistrar);
 
-      let mockComponentCtor1 = Mocks.object('ComponentCtor1');
-      let mockComponentCtor2 = Mocks.object('ComponentCtor2');
+      let mockElementCtor1 = Mocks.object('ElementCtor1');
+      let mockElementCtor2 = Mocks.object('ElementCtor2');
       let gameConfig = {
-        componentList: [mockComponentCtor1, mockComponentCtor2],
+        componentList: [mockElementCtor1, mockElementCtor2],
       };
 
       let mockElementConfig1 = Mocks.object('ElementConfig1');
       let mockElementConfig2 = Mocks.object('ElementConfig2');
       spyOn(Bootstrap, 'getElementConfig_').and.callFake((ctor: gs.ICtor<any>) => {
         switch (ctor) {
-          case mockComponentCtor1:
+          case mockElementCtor1:
             return mockElementConfig1;
-          case mockComponentCtor2:
+          case mockElementCtor2:
             return mockElementConfig2;
           default:
             return null;
@@ -117,9 +117,9 @@ describe('game.Bootstrap', () => {
             expect(mockRegistrar.register).toHaveBeenCalledWith(mockElementConfig1);
             expect(mockRegistrar.register).toHaveBeenCalledWith(mockElementConfig2);
             expect(Bootstrap['getElementConfig_'])
-                .toHaveBeenCalledWith(mockComponentCtor1, mockInjector);
+                .toHaveBeenCalledWith(mockElementCtor1, mockInjector);
             expect(Bootstrap['getElementConfig_'])
-                .toHaveBeenCalledWith(mockComponentCtor2, mockInjector);
+                .toHaveBeenCalledWith(mockElementCtor2, mockInjector);
 
             expect(Injector.bindProvider).toHaveBeenCalledWith(jasmine.any(Function), 'pb-root');
             expect(bindProviderSpy.calls.argsFor(0)[0]()).toEqual(mockRoot);

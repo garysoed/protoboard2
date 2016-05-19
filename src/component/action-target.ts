@@ -1,12 +1,12 @@
 import ActionService from './action-service';
 import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
-import Component from './a-component';
+import {Element} from '../util/a-element';
 import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
 import ListenableElement, { EventType as DomEventType }
     from '../../node_modules/gs-tools/src/event/listenable-element';
 
 
-@Component({
+@Element({
   cssUrl: 'src/component/action-target.css',
   tag: 'pb-action-target',
   templateUrl: 'src/component/action-target',

@@ -6,13 +6,23 @@
   </head>
   <body>
     <pb-token key-a="#pickUp">
-      <pb-config>
-        <pb-config-entry key="pickup">
-          <pb-config-entry key="blah">Value</pb-config-entry>
-        </pb-config-entry>
-      </pb-config>
+      <pb-action-config>
+        <pb-action name="pickup">
+          <pb-entry key="blah">Value</pb-entry>
+        </pb-action>
+      </pb-action-config>
       Token content
     </pb-token>
+    <pb-card key-f="#flip">
+      <pb-config>
+      </pb-config>
+      <pb-front>
+        Front
+      </pb-front>
+      <pb-back>
+        Back
+      </pb-back>
+    </pb-card>
     <script src="js.js"></script>
     <script>
       pb.game.bootstrap()

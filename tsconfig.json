@@ -30,8 +30,6 @@
     "buildOnSave": false,
     "files": [
         "declarations/tsd.d.ts",
-        "src/component/a-component_test.ts",
-        "src/component/a-component.ts",
         "src/component/action-service.ts",
         "src/component/action-target_test.ts",
         "src/component/action-target.ts",
@@ -44,6 +42,8 @@
         "src/game/i-game-config.ts",
         "src/main.ts",
         "src/test-base.ts",
+        "src/util/a-element_test.ts",
+        "src/util/a-element.ts",
         "node_modules/gulp-typescript/node_modules/typescript/lib/lib.es6.d.ts",
         "node_modules/gs-tools/declarations/dom.d.ts",
         "node_modules/gs-tools/declarations/gs-tools.d.ts",

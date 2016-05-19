@@ -2,11 +2,11 @@ import TestBase from '../test-base';
 TestBase.setup();
 
 import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
-import Component from './a-component';
+import {Element} from './a-element';
 import Mocks from '../../node_modules/gs-tools/src/mock/mocks';
 
 
-describe('component.Component', () => {
+describe('util.Element', () => {
   let mockXtag;
 
   beforeEach(() => {
@@ -15,35 +15,35 @@ describe('component.Component', () => {
   });
 
   it('should bind the constructor correctly', () => {
-    class TestComponent extends BaseElement { }
+    class TestElement extends BaseElement { }
 
     let config = {tag: 'tag', templateUrl: 'templateUrl'};
 
-    Component(config)(TestComponent);
-    expect(Component.getConfig(TestComponent)).toEqual(config);
+    Element(config)(TestElement);
+    expect(Element.getConfig(TestElement)).toEqual(config);
   });
 
   it('should throw exception if the constructor does not extend BaseElement', () => {
-    class TestComponent { }
+    class TestElement { }
 
     expect(() => {
-      Component({tag: 'tag', templateUrl: 'templateUrl'})(TestComponent);
+      Element({tag: 'tag', templateUrl: 'templateUrl'})(TestElement);
     }).toThrowError(/extend BaseElement/);
   });
 
   it('should throw error if the tag name is empty', () => {
-    class TestComponent extends BaseElement { }
+    class TestElement extends BaseElement { }
 
     expect(() => {
-      Component({tag: '', templateUrl: 'templateUrl'})(TestComponent);
+      Element({tag: '', templateUrl: 'templateUrl'})(TestElement);
     }).toThrowError(/non empty tag name/);
   });
 
   it('should throw error if the template URL is empty', () => {
-    class TestComponent extends BaseElement { }
+    class TestElement extends BaseElement { }
 
     expect(() => {
-      Component({tag: 'tag', templateUrl: ''})(TestComponent);
+      Element({tag: 'tag', templateUrl: ''})(TestElement);
     }).toThrowError(/non empty template URL/);
   });
 });
