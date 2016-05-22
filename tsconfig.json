@@ -21,7 +21,7 @@
         "**/*.tsx",
         "!node_modules/**",
         "!bower_components/**",
-        "node_modules/gulp-typescript/node_modules/typescript/lib/lib.es6.d.ts",
+        "node_modules/typescript/lib/lib.es6.d.ts",
         "node_modules/gs-tools/declarations/*.d.ts",
         "node_modules/gs-tools/src/**",
         "!node_modules/gs-tools/src/**/*_test.ts"
@@ -44,7 +44,7 @@
         "src/test-base.ts",
         "src/util/a-element_test.ts",
         "src/util/a-element.ts",
-        "node_modules/gulp-typescript/node_modules/typescript/lib/lib.es6.d.ts",
+        "node_modules/typescript/lib/lib.es6.d.ts",
         "node_modules/gs-tools/declarations/dom.d.ts",
         "node_modules/gs-tools/declarations/gs-tools.d.ts",
         "node_modules/gs-tools/declarations/jasmine-ajax.d.ts",
