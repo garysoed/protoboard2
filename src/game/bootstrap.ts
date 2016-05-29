@@ -1,4 +1,4 @@
-import Arrays from '../../node_modules/gs-tools/src/collection/arrays';
+import {Arrays} from '../../node_modules/gs-tools/src/collection/arrays';
 import DefaultGameConfig from './default-game-config';
 import {Element} from '../util/a-element';
 import {ElementConfig} from '../../node_modules/gs-tools/src/webc/element-config';
@@ -28,7 +28,7 @@ export class Bootstrap {
             .map((dependency: gs.ICtor<any>) => {
               return Bootstrap.getElementConfig_(dependency, injector);
             })
-            .data,
+            .asArray(),
         componentConfig.cssUrl);
     ctor[Bootstrap.__ELEMENT_CONFIG] = elementConfig;
     return elementConfig;
@@ -55,7 +55,7 @@ export class Bootstrap {
         .map((componentCtor: gs.ICtor<any>): Promise<void> => {
           return registrar.register(Bootstrap.getElementConfig_(componentCtor, injector));
         })
-        .data;
+        .asArray();
     return Promise.all(promises).then(() => new Game());
   }
 }
