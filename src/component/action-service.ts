@@ -1,7 +1,7 @@
 import BaseDisposable from '../../node_modules/gs-tools/src/dispose/base-disposable';
 import Bind from '../../node_modules/gs-tools/src/inject/a-bind';
 import Cache from '../../node_modules/gs-tools/src/data/a-cache';
-import IActionHandler from './i-action-handler';
+import {IActionHandler} from './iaction-handler';
 import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
 import ListenableElement, { EventType as DomEventType }
     from '../../node_modules/gs-tools/src/event/listenable-element';

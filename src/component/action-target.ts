@@ -1,7 +1,11 @@
 import ActionService from './action-service';
+import Asserts from '../../node_modules/gs-tools/src/assert/asserts';
 import {BaseElement} from '../../node_modules/gs-tools/src/webc/base-element';
+import Doms from '../../node_modules/gs-tools/src/ui/doms';
 import {Element} from '../util/a-element';
+import {IAction} from '../action/iaction';
 import Inject from '../../node_modules/gs-tools/src/inject/a-inject';
+import {Iterables} from '../../node_modules/gs-tools/src/collection/iterables';
 import ListenableElement, { EventType as DomEventType }
     from '../../node_modules/gs-tools/src/event/listenable-element';
 
@@ -12,14 +16,17 @@ import ListenableElement, { EventType as DomEventType }
   templateUrl: 'src/component/action-target',
 })
 class ActionTarget extends BaseElement {
+  private actionMap_: Map<string, IAction>;
   private actionService_: ActionService;
   private listenableElement_: ListenableElement<HTMLElement>;
+  private targetComponent_: HTMLElement;
 
   /**
    * @param actionService Injected instance.
    */
   constructor(@Inject('pb.component.ActionService') actionService: ActionService) {
     super();
+    this.actionMap_ = new Map<string, IAction>();
     this.actionService_ = actionService;
   }
 
@@ -31,9 +38,16 @@ class ActionTarget extends BaseElement {
     this.actionService_.removeHandler(this);
   }
 
+  addAction(action: IAction): void {
+    Asserts.map(this.actionMap_).toNot.containKey(action.key)
+        .orThrows(`${action.key} is already registered`);
+    this.actionMap_.set(action.key, action);
+  }
+
   handleAction(key: string): void {
-    // TODO: Implement
-    console.log(`key ${key} pressed`);
+    if (this.actionMap_.has(key)) {
+      this.actionMap_.get(key).trigger();
+    }
   }
 
   /**
