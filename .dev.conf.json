@@ -1,0 +1,12 @@
+{
+  "commands": [
+    {
+      "command": "link",
+      "actions": ["npm link gs-tools gs-testing gs-types grapevine dev persona mask"]
+    },
+    {
+      "command": "demo",
+      "actions": ["simpleserver demo/static.conf.json"]
+    }
+  ]
+}

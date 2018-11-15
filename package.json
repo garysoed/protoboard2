@@ -22,6 +22,7 @@
   "homepage": "https://github.com/garysoed/protoboard2#readme",
   "dependencies": {
     "gs-tools": "github:garysoed/gs-tools",
-    "gs-ui": "github:garysoed/gs-ui"
+    "gs-ui": "github:garysoed/gs-ui",
+    "typescript": "^2.3.2"
   }
 }
