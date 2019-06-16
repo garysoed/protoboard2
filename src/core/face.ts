@@ -31,7 +31,7 @@ export class Face extends ThemedCustomElementCtrl {
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      _p.render($.slot._.name).withVine(this.display$),
+      _p.render($.slot._.name).withObservable(this.display$),
     ];
   }
 }

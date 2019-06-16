@@ -15,6 +15,7 @@
     "outDir": "out",
     "paths": {
       "@grapevine": ["node_modules/grapevine/export/index.ts"],
+      "@grapevine/internal": ["node_modules/grapevine/export/internal.ts"],
       "@gs-testing": ["node_modules/gs-testing/export/index.ts"],
       "@gs-tools/*": ["node_modules/gs-tools/export/*"],
       "@gs-types": ["node_modules/gs-types/export/index.ts"],
@@ -22,6 +23,7 @@
       "@moirai": ["node_modules/moirai/export/index.ts"],
       "@nabu": ["node_modules/nabu/export/index.ts"],
       "@persona": ["node_modules/persona/export/index.ts"],
+      "@persona/internal": ["node_modules/persona/export/internal.ts"],
       "@persona/testing": ["node_modules/persona/export/testing.ts"],
       "@santa": ["node_modules/santa/export/index.ts"],
       "@rxjs": ["node_modules/rxjs"],
