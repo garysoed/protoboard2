@@ -30,7 +30,7 @@ export abstract class BaseAction {
     };
   }
 
-  abstract onTrigger(): void;
+  protected abstract onTrigger(): void;
 
   private setupTrigger(root: ShadowRoot): Observable<unknown> {
     return this.triggerSpec$

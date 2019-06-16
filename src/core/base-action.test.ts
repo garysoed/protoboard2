@@ -18,7 +18,7 @@ class TestAction extends BaseAction {
   }
 }
 
-test('@protoboard2/core/action/base-action', () => {
+test('@protoboard2/core/base-action', () => {
   let spec$: ReplaySubject<TriggerSpec>;
   let vine: Vine;
 
