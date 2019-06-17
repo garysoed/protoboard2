@@ -1,15 +1,19 @@
-import { ArrayDiff, ArraySubject } from '@gs-tools/rxjs';
+import { SetDiff, SetSubject } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { Observable, of as observableOf } from '@rxjs';
 
 export class PickService {
-  private readonly elements$ = new ArraySubject<Element>();
+  private readonly elements$ = new SetSubject<Element>();
 
   add(el: Element): void {
-    this.elements$.insert(el);
+    this.elements$.add(el);
   }
 
-  getElements(): Observable<ArrayDiff<Element>> {
+  delete(el: Element): void {
+    this.elements$.delete(el);
+  }
+
+  getElements(): Observable<SetDiff<Element>> {
     return this.elements$.getDiffs();
   }
 }

@@ -1,9 +1,9 @@
 import { Vine } from '@grapevine';
 import { assert, match, setup, should, test } from '@gs-testing';
-import { scanArray } from '@gs-tools/rxjs';
+import { scanSet } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { ReplaySubject } from '@rxjs';
-import { switchMap } from '@rxjs/operators';
+import { map, switchMap } from '@rxjs/operators';
 import { PickAction } from './pick-action';
 import { $pickService } from './pick-service';
 
@@ -16,7 +16,7 @@ test('@protoboard2/action/pick-action', () => {
     vine = _v.build('test');
   });
 
-  test('onTriger', () => {
+  test('onTrigger', () => {
     should(`trigger correctly`, () => {
       const el = document.createElement('div');
       action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
@@ -25,7 +25,8 @@ test('@protoboard2/action/pick-action', () => {
       $pickService.get(vine)
           .pipe(
               switchMap(service => service.getElements()),
-              scanArray(),
+              scanSet(),
+              map(set => [...set]),
           )
           .subscribe(elements$);
 
