@@ -1,7 +1,8 @@
+import { Vine } from '@grapevine';
 import { Errors } from '@gs-tools/error';
 import { element, InitFn, onDom } from '@persona';
 import { BehaviorSubject, EMPTY, fromEvent, merge, Observable } from '@rxjs';
-import { filter, map, mapTo, switchMap, tap } from '@rxjs/operators';
+import { filter, map, mapTo, switchMap } from '@rxjs/operators';
 import { TriggerSpec, TriggerType } from './trigger-spec';
 
 const $ = {
@@ -20,17 +21,17 @@ export abstract class BaseAction {
   }
 
   install(): InitFn {
-    return (_, root) => {
+    return (vine, root) => {
       const element = root.host;
       if (!(element instanceof HTMLElement)) {
         throw Errors.assert('element').shouldBeAnInstanceOf(HTMLElement).butWas(element);
       }
 
-      return this.setupTrigger(root).pipe(tap(() => this.onTrigger()));
+      return this.setupTrigger(root).pipe(switchMap(() => this.onTrigger(vine, root)));
     };
   }
 
-  protected abstract onTrigger(): void;
+  protected abstract onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown>;
 
   private setupTrigger(root: ShadowRoot): Observable<unknown> {
     return this.triggerSpec$

@@ -1,7 +1,7 @@
 import { Vine } from '@grapevine';
 import { assert, setup, should, test } from '@gs-testing';
 import { _v } from '@mask';
-import { ReplaySubject, Subject } from '@rxjs';
+import { EMPTY, Observable, ReplaySubject, Subject } from '@rxjs';
 import { BaseAction } from './base-action';
 import { TriggerSpec, TriggerType } from './trigger-spec';
 
@@ -13,8 +13,10 @@ class TestAction extends BaseAction {
     super(defaultTriggerSpec);
   }
 
-  onTrigger(): void {
-    this.onTrigger$.next({});
+  onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
+    this.onTrigger$.next({vine, root});
+
+    return EMPTY;
   }
 }
 
