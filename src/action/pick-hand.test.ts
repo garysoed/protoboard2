@@ -72,4 +72,58 @@ test('@protoboard2/action/pick-hand', () => {
       ]);
     });
   });
+
+  test('renderLeft', () => {
+    should(`render left correctly`, () => {
+      const left = 123;
+      const width = 456;
+      const content = document.createElement('div');
+      content.style.display = 'block';
+      content.style.width = `${width}px`;
+      $pickService.get(tester.vine).subscribe(service => service.add(content));
+
+      window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
+
+      assert(el.getStyle($.container._.left)).to.emitWith(`${left - width / 2}px`);
+    });
+
+    should(`render top correctly`, () => {
+      const top = 123;
+      const height = 456;
+      const content = document.createElement('div');
+      content.style.display = 'block';
+      content.style.height = `${height}px`;
+      $pickService.get(tester.vine).subscribe(service => service.add(content));
+
+      window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
+
+      assert(el.getStyle($.container._.top)).to.emitWith(`${top - height / 2}px`);
+    });
+  });
+
+  test('computeAllRects', () => {
+    should(`use the largest width and height`, () => {
+      const size = 123;
+
+      const content1 = document.createElement('div');
+      content1.style.display = 'block';
+      content1.style.width = `1px`;
+      content1.style.height = `${size}px`;
+
+      const content2 = document.createElement('div');
+      content2.style.display = 'block';
+      content2.style.height = `1px`;
+      content2.style.width = `${size}px`;
+
+      $pickService.get(tester.vine).subscribe(service => {
+        service.add(content1);
+        service.add(content2);
+      });
+
+      window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
+
+      assert(el.getStyle($.container._.left)).to.emitWith(`${-size / 2}px`);
+      assert(el.getStyle($.container._.top)).to.emitWith(`${-size / 2}px`);
+    });
+  });
 });
