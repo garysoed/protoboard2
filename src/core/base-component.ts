@@ -3,7 +3,7 @@ import { InitFn } from '@persona';
 import { BaseAction } from './base-action';
 
 @_p.baseCustomElement({})
-export class BasePiece extends ThemedCustomElementCtrl {
+export class BaseComponent extends ThemedCustomElementCtrl {
   constructor(
       private readonly actions: Iterable<BaseAction>,
       shadowRoot: ShadowRoot,
