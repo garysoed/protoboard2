@@ -6,7 +6,7 @@
     },
     {
       "command": "demo",
-      "actions": ["simpleserver demo/static.conf.json"]
+      "actions": ["simpleserver demo/demo.conf.json"]
     }
   ]
 }

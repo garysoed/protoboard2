@@ -36,6 +36,7 @@
     "target": "es6"
   },
   "include": [
+    "demo/**/*.ts",
     "src/**/*.ts",
     "node_modules/mask/typings/*.d.ts",
   ]
