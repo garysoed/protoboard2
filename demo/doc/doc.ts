@@ -6,6 +6,7 @@ import { Observable } from '@rxjs';
 import { map, switchMap } from '@rxjs/operators';
 import { $locationService } from '../location-service';
 import template from './doc.html';
+import { Instruction } from './instruction';
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -14,6 +15,9 @@ const $ = {
 };
 
 @_p.customElement({
+  dependencies: [
+    Instruction,
+  ],
   tag: 'pbd-doc',
   template,
 })
