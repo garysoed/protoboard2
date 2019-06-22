@@ -1,9 +1,27 @@
 <style id="theme"></style>
 <style>
+  #create {
+    height: 16rem;
+  }
+
   #drawer {
     bottom: 0;
     position: absolute;
     width: 100%;
+  }
+
+  .bigButton {
+    background-color: var(--mkThemeActionBG);
+    color: var(--mkThemeActionFG1);
+    cursor: pointer;
+    height: 8rem;
+    width: 8rem;
+  }
+
+  .bigButton:hover,
+  .bigButton:focus {
+    background-color: var(--mkThemeActionFocusBG);
+    color: var(--mkThemeActionFocusFG1);
   }
 
   #root {
@@ -13,20 +31,53 @@
 
 <section fill-parent id="root" layout="column">
   <section flex>
-    <pb-piece>
-      <mk-icon icon="meeple"></mk-icon>
-    </pb-piece>
-  </section>
-  <section flex>
-    <h3>Piece</h3>
+    <section flex-align="center" flex-justify="center" id="create" layout="row">
+      <pb-piece>
+        <mk-icon></mk-icon>
+      </pb-piece>
+    </section>
+    <hr>
+    <section flex-justify="center" id="customize" layout="row">
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="meeple"
+          layout="row"
+      >
+        <mk-icon icon="meeple"></mk-icon>
+      </div>
+
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="coin"
+          layout="row"
+      >
+        <mk-icon icon="coin"></mk-icon>
+      </div>
+
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="gem"
+          layout="row"
+      >
+        <mk-icon icon="gem"></mk-icon>
+      </div>
+    </section>
   </section>
   <mk-drawer id="drawer" min-size="4rem" mode="horizontal">
     <section>
-      <mk-text-icon-button id="drawerIcon" label="Details"></mk-text-icon-button>
+      <mk-text-icon-button id="drawerIcon" label="Piece"></mk-text-icon-button>
     </section>
     <section>
       <p mk-body-1>
-        A piece is a component
+        A piece is the most basic component. You can only pick it up and drop it on
+        <a href="./dropzone">Drop Zone</a>s. You can customize the content with any HTML elements
+        and it will be displayed.
       </p>
     </section>
   </mk-drawer>
