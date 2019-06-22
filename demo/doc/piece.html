@@ -1,7 +1,33 @@
 <style id="theme"></style>
+<style>
+  #drawer {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
 
-<section fill-parent>
-  <pb-piece>
-    <mk-icon icon="meeple"></mk-icon>
-  </pb-piece>
+  #root {
+    padding-right: 1rem;
+  }
+</style>
+
+<section fill-parent id="root" layout="column">
+  <section flex>
+    <pb-piece>
+      <mk-icon icon="meeple"></mk-icon>
+    </pb-piece>
+  </section>
+  <section flex>
+    <h3>Piece</h3>
+  </section>
+  <mk-drawer id="drawer" min-size="4rem" mode="horizontal">
+    <section>
+      <mk-text-icon-button id="drawerIcon" label="Details"></mk-text-icon-button>
+    </section>
+    <section>
+      <p mk-body-1>
+        A piece is a component
+      </p>
+    </section>
+  </mk-drawer>
 </section>
