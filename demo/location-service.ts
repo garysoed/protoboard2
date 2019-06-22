@@ -4,10 +4,12 @@ import { map } from '@rxjs/operators';
 
 export interface Routes extends LocationSpec {
   'INSTRUCTION': {};
+  'PIECE': {};
 }
 
 const ROUTE_SPEC: Array<RouteSpec<keyof Routes>> = [
   {path: '/', type: 'INSTRUCTION'},
+  {path: '/piece', type: 'PIECE'},
 ];
 
 const DEFAULT_ROUTE: Route<Routes, 'INSTRUCTION'> = {payload: {}, type: 'INSTRUCTION'};

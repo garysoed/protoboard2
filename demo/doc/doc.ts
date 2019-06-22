@@ -7,6 +7,7 @@ import { map, switchMap } from '@rxjs/operators';
 import { $locationService } from '../location-service';
 import template from './doc.html';
 import { Instruction } from './instruction';
+import { Piece } from './piece';
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -17,6 +18,7 @@ const $ = {
 @_p.customElement({
   dependencies: [
     Instruction,
+    Piece,
   ],
   tag: 'pbd-doc',
   template,
@@ -37,6 +39,8 @@ export class Doc extends ThemedCustomElementCtrl {
               switch (location.type) {
                 case 'INSTRUCTION':
                   return {tag: 'pbd-instruction'};
+                case 'PIECE':
+                  return {tag: 'pbd-piece'};
                 default:
                   return null;
               }
