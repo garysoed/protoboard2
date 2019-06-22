@@ -1,4 +1,9 @@
 <style id="theme"></style>
+<style>
+  pbd-doc, pbd-play {
+    position: relative;
+  }
+</style>
 
 <mk-root-layout
     icon="protoboard"
@@ -6,7 +11,7 @@
     label="Protoboard"
 >
   <div layout="root" slot="main">
-    <pbd-doc></pbd-doc>
-    <pbd-active></pbd-active>
+    <pbd-doc flex></pbd-doc>
+    <pbd-play flex></pbd-play>
   </div>
 </mk-root-layout>
