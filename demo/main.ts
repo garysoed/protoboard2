@@ -1,14 +1,22 @@
-import { Palette, start, SvgConfig, Theme } from '@mask';
+import { $svgConfig, Palette, start, Theme } from '@mask';
+import protoboardSvg from './asset/icon.svg';
+import { Root } from './root';
 
-const iconConfigs: Map<string, SvgConfig> = new Map([
+const iconConfigs: Map<string, string> = new Map([
+  ['protoboard', protoboardSvg],
 ]);
 
 window.addEventListener('load', () => {
-  const theme = new Theme(Palette.PURPLE, Palette.GREEN);
+  const theme = new Theme(Palette.GREY, Palette.YELLOW);
   const {vine} = start(
-      'thoth',
-      [],
+      'protoboard',
+      [Root],
       theme,
       document.getElementById('globalStyle') as HTMLStyleElement,
   );
+
+  const svgMap$ = $svgConfig.get(vine);
+  for (const [key, content] of iconConfigs) {
+    svgMap$.next({type: 'set', key, value: {type: 'embed', content}});
+  }
 });

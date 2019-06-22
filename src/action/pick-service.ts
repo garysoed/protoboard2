@@ -14,7 +14,7 @@ export class PickService {
   }
 
   getElements(): Observable<SetDiff<Element>> {
-    return this.elements$.getDiffs();
+    return this.elements$;
   }
 }
 
