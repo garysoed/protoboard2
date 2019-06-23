@@ -1,0 +1,19 @@
+<style id="theme"></style>
+<style>
+  :host {
+    --pbDropZoneBorderColor: var(--mkThemeActionFG2);
+  }
+
+  :host(:hover) {
+    --pbDropZoneBorderColor: var(--mkThemeActionFocusFG2);
+  }
+
+  #root {
+    border: 1px solid var(--pbDropZoneBorderColor);
+    box-sizing: border-box;
+  }
+</style>
+
+<div id="root" fill-parent>
+  <slot></slot>
+</div>
