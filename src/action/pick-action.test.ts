@@ -1,6 +1,6 @@
 import { Vine } from '@grapevine';
 import { assert, match, setup, should, test } from '@gs-testing';
-import { scanSet } from '@gs-tools/rxjs';
+import { scanArray } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { ReplaySubject } from '@rxjs';
 import { map, switchMap } from '@rxjs/operators';
@@ -24,8 +24,8 @@ test('@protoboard2/action/pick-action', () => {
       const elements$ = new ReplaySubject<Element[]>(2);
       $pickService.get(vine)
           .pipe(
-              switchMap(service => service.getElements()),
-              scanSet(),
+              switchMap(service => service.getComponents()),
+              scanArray(),
               map(set => [...set]),
           )
           .subscribe(elements$);

@@ -47,27 +47,37 @@ export class PickHand extends CustomElementCtrl {
     return vine => {
       return $pickService.get(vine)
           .pipe(
-              switchMap(service => service.getElements()),
+              switchMap(service => service.getComponents()),
               withLatestFrom(this.container$),
               tap(([diff, container]) => {
                 switch (diff.type) {
-                  case 'add':
-                    container.appendChild(diff.value);
-                    break;
                   case 'delete':
-                    container.removeChild(diff.value);
-                    break;
-                  case 'init':
-                    while (container.childElementCount > 0) {
-                      const toDelete = container.firstElementChild;
-                      if (!toDelete) {
-                        break;
-                      }
-                      container.removeChild(toDelete);
+                    const deleteEl = container.children.item(diff.index);
+                    if (deleteEl) {
+                      container.removeChild(deleteEl);
                     }
+                    break;
+                    case 'init':
+                      while (container.childElementCount > 0) {
+                        const toDelete = container.firstElementChild;
+                        if (!toDelete) {
+                          break;
+                        }
+                        container.removeChild(toDelete);
+                      }
 
-                    for (const el of diff.value) {
-                      container.appendChild(el);
+                      for (const el of diff.value) {
+                        container.appendChild(el);
+                      }
+                      break;
+                  case 'insert':
+                    const afterEl = container.children.item(diff.index);
+                    container.insertBefore(diff.value, afterEl);
+                    break;
+                  case 'set':
+                    const replacedEl = container.children.item(diff.index);
+                    if (replacedEl) {
+                      container.replaceChild(diff.value, replacedEl);
                     }
                     break;
                   default:

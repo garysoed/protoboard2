@@ -53,11 +53,11 @@ test('@protoboard2/action/pick-hand', () => {
         check$.next({});
         service.add(el3);
         check$.next({});
-        service.delete(el2);
+        service.deleteAt(1);
         check$.next({});
-        service.delete(el1);
+        service.deleteAt(0);
         check$.next({});
-        service.delete(el3);
+        service.deleteAt(0);
         check$.next({});
       });
 
