@@ -1,0 +1,37 @@
+<style id="theme"></style>
+<style>
+  #detailsSection {
+    background-color: var(--mkThemePassiveBG);
+    padding: 0 1rem;
+  }
+
+  #display {
+    height: 16rem;
+  }
+
+  #drawer {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  #root {
+    padding-right: 1rem;
+  }
+</style>
+
+<section fill-parent id="root" layout="column">
+  <section flex>
+    <slot id="display" name="display"></slot>
+    <hr>
+    <slot name="customize"></slot>
+  </section>
+  <mk-drawer id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
+    <section>
+      <mk-text-icon-button id="drawerIcon" mk-theme-highlight></mk-text-icon-button>
+    </section>
+    <section id="detailsSection">
+      <slot name="details"></slot>
+    </section>
+  </mk-drawer>
+</section>

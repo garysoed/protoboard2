@@ -1,15 +1,14 @@
 import { filterNonNull, mapNonNull } from '@gs-tools/rxjs';
 import { ElementWithTagType } from '@gs-types';
-import { $drawer, $icon, $svgConfig, $textIconButton, _p, _v, Drawer, Icon, TextIconButton, ThemedCustomElementCtrl } from '@mask';
+import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from '@mask';
 import { api, element, InitFn, mutationObservable, onDom } from '@persona';
-import { BehaviorSubject, Observable, of as observableOf } from '@rxjs';
-import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { BehaviorSubject, of as observableOf } from '@rxjs';
+import { filter, map, mapTo, startWith, switchMap, tap } from '@rxjs/operators';
 import { Piece as PieceComponent } from '../../src/component/piece';
-import chevronDownSvg from '../asset/chevron_down.svg';
-import chevronUpSvg from '../asset/chevron_up.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
+import { ComponentTemplate } from './component-template';
 import template from './piece.html';
 
 const $ = {
@@ -17,12 +16,6 @@ const $ = {
   customize: element('customize', ElementWithTagType('section'), {
     onClick: onDom('click'),
   }),
-  drawer: element('drawer', ElementWithTagType('mk-drawer'), api($drawer)),
-  drawerIcon: element(
-      'drawerIcon',
-      ElementWithTagType('mk-text-icon-button'),
-      api($textIconButton),
-  ),
 };
 
 @_p.customElement({
@@ -31,8 +24,6 @@ const $ = {
       ['meeple', meepleSvg],
       ['coin', coinSvg],
       ['gem', gemSvg],
-      ['chevron_down', chevronDownSvg],
-      ['chevron_up', chevronUpSvg],
     ]);
     const svgConfigMap$ = $svgConfig.get(vine);
     for (const [key, content] of icons) {
@@ -44,34 +35,24 @@ const $ = {
     }
   },
   dependencies: [
-    Drawer,
+    ComponentTemplate,
     Icon,
     PieceComponent,
-    TextIconButton,
   ],
   tag: 'pbd-piece',
   template,
 })
 export class Piece extends ThemedCustomElementCtrl {
   private readonly createEl$ = _p.input($.create, this);
-  private readonly drawerExpanded$ = new BehaviorSubject(false);
   private readonly onCustomizeClick$ = _p.input($.customize._.onClick, this);
-  private readonly onDrawerIconClick$ = _p.input($.drawerIcon._.actionEvent, this);
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      _p.render($.drawer._.expanded).withObservable(this.drawerExpanded$),
-      _p.render($.drawerIcon._.icon).withVine(_v.stream(this.renderDrawerIcon, this)),
       this.setupHandleCustomizeClick(),
-      this.setupHandleDrawerIconClick(),
       this.setupHandleSelectedIcon(),
     ];
-  }
-
-  private renderDrawerIcon(): Observable<string> {
-    return this.drawerExpanded$.pipe(map(expanded => expanded ? 'chevron_down' : 'chevron_up'));
   }
 
   private setupHandleCustomizeClick(): InitFn {
@@ -91,14 +72,6 @@ export class Piece extends ThemedCustomElementCtrl {
             }),
             filterNonNull(),
             tap(icon => this.selectedIcon$.next(icon)),
-        );
-  }
-
-  private setupHandleDrawerIconClick(): InitFn {
-    return () => this.onDrawerIconClick$
-        .pipe(
-            withLatestFrom(this.drawerExpanded$),
-            tap(([, expanded]) => this.drawerExpanded$.next(!expanded)),
         );
   }
 
