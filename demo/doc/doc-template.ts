@@ -7,7 +7,7 @@ import { map, tap, withLatestFrom } from '@rxjs/operators';
 import chevronDownSvg from '../asset/chevron_down.svg';
 import chevronUpSvg from '../asset/chevron_up.svg';
 
-import template from './component-template.html';
+import template from './doc-template.html';
 
 const $ = {
   drawer: element('drawer', ElementWithTagType('mk-drawer'), api($drawer)),
@@ -40,10 +40,10 @@ const $ = {
     Drawer,
     TextIconButton,
   ],
-  tag: 'pbd-component-template',
+  tag: 'pbd-doc-template',
   template,
 })
-export class ComponentTemplate extends ThemedCustomElementCtrl {
+export class DocTemplate extends ThemedCustomElementCtrl {
   private readonly drawerExpanded$ = new BehaviorSubject(false);
   private readonly label$ = _p.input($.host._.label, this);
   private readonly onDrawerIconClick$ = _p.input($.drawerIcon._.actionEvent, this);

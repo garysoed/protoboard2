@@ -4,11 +4,13 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface Routes extends LocationSpec {
   'INSTRUCTION': {};
+  'LAYOUT_FREE': {};
   'PIECE': {};
 }
 
 const ROUTE_SPEC: Array<RouteSpec<keyof Routes>> = [
   {path: '/', type: 'INSTRUCTION'},
+  {path: '/layoutfree', type: 'LAYOUT_FREE'},
   {path: '/piece', type: 'PIECE'},
 ];
 

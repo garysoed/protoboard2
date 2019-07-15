@@ -10,7 +10,7 @@ import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
-import { ComponentTemplate } from './component-template';
+import { DocTemplate } from './doc-template';
 import template from './piece.html';
 
 const $ = {
@@ -37,7 +37,7 @@ const $ = {
     }
   },
   dependencies: [
-    ComponentTemplate,
+    DocTemplate,
     Icon,
     PieceComponent,
   ],
