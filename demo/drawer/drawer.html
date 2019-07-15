@@ -1,5 +1,23 @@
 <style id="theme"></style>
+<style>
+  :host {
+    --pbComponentHeight: 0;
+  }
+
+  :host([drawer-expanded="T"]) {
+    --pbComponentHeight: 16rem;
+  }
+
+  #components {
+    height: var(--pbComponentHeight);
+    overflow: hidden;
+    transition: height var(--mkAnimationTime);
+  }
+</style>
 
 <div id="root">
-  <!-- #contents -->
+  <mk-icon-with-text label="Components" icon="chevron_down"></mk-icon-with-text>
+  <div id="components">
+    <!-- #contents -->
+  </div>
 </div>

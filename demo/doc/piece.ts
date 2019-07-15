@@ -4,10 +4,12 @@ import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from '@mask';
 import { api, element, InitFn, mutationObservable, onDom } from '@persona';
 import { BehaviorSubject, of as observableOf } from '@rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap } from '@rxjs/operators';
+
 import { Piece as PieceComponent } from '../../src/component/piece';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
+
 import { ComponentTemplate } from './component-template';
 import template from './piece.html';
 

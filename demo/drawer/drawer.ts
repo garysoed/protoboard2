@@ -1,14 +1,25 @@
 import { ArrayDiff, filterNonNull } from '@gs-tools/rxjs';
 import { InstanceofType } from '@gs-types';
-import { _p, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { element, InitFn, onDom, repeated, RepeatedSpec } from '@persona';
+import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from '@mask';
+import { attributeIn, element, InitFn, onDom, repeated, RepeatedSpec } from '@persona';
 import { map, switchMap, withLatestFrom } from '@rxjs/operators';
+
+import chevronDownSvg from '../asset/chevron_down.svg';
 import { $locationService } from '../location-service';
+
 import template from './drawer.html';
 
+export const $$ = {
+  drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
+};
+
+
 const $ = {
-  root: element('root', InstanceofType(HTMLDivElement), {
+  components: element('components', InstanceofType(HTMLDivElement), {
     contents: repeated('#contents', 'mk-text-icon-button'),
+  }),
+  host: element($$),
+  root: element('root', InstanceofType(HTMLDivElement), {
     onClick: onDom('click'),
   }),
 };
@@ -23,7 +34,21 @@ const linkConfig: LinkConfig[] = [
 ];
 
 @_p.customElement({
+  configure: vine => {
+    const icons = new Map([
+      ['chevron_down', chevronDownSvg],
+    ]);
+    const svgConfigMap$ = $svgConfig.get(vine);
+    for (const [key, content] of icons) {
+      svgConfigMap$.next({
+        key,
+        type: 'set',
+        value: {type: 'embed', content},
+      });
+    }
+  },
   dependencies: [
+    IconWithText,
     TextIconButton,
   ],
   tag: 'pbd-drawer',
@@ -35,7 +60,7 @@ export class Drawer extends ThemedCustomElementCtrl {
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      _p.render($.root._.contents).withValue(createRepeatedSpecs(linkConfig)),
+      _p.render($.components._.contents).withValue(createRepeatedSpecs(linkConfig)),
       this.setupRootOnClick(),
     ];
   }

@@ -3,8 +3,10 @@ import { $drawer, $svgConfig, $textIconButton, _p, _v, Drawer, stringParser, Tex
 import { api, attributeIn, element, InitFn } from '@persona';
 import { BehaviorSubject, Observable } from '@rxjs';
 import { map, tap, withLatestFrom } from '@rxjs/operators';
+
 import chevronDownSvg from '../asset/chevron_down.svg';
 import chevronUpSvg from '../asset/chevron_up.svg';
+
 import template from './component-template.html';
 
 const $ = {
