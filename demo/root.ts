@@ -8,6 +8,7 @@ import { PickHand } from '../src/action/pick-hand';
 import { Doc } from './doc/doc';
 import { $$ as $drawer, Drawer } from './drawer/drawer';
 import { $locationService } from './location-service';
+import { PlayArea } from './play-area';
 import template from './root.html';
 
 const $ = {
@@ -20,6 +21,7 @@ const $ = {
     Doc,
     Drawer,
     PickHand,
+    PlayArea,
     RootLayout,
   ],
   tag: 'pbd-root',

@@ -4,7 +4,9 @@ import { _p, _v, ThemedCustomElementCtrl } from '@mask';
 import { element, InitFn, single, SingleRenderSpec } from '@persona';
 import { Observable } from '@rxjs';
 import { map, switchMap } from '@rxjs/operators';
+
 import { $locationService } from '../location-service';
+
 import template from './doc.html';
 import { Instruction } from './instruction';
 import { Piece } from './piece';
