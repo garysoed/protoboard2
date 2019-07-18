@@ -1,7 +1,6 @@
 <style id="theme"></style>
 <style>
   #detailsSection {
-    background-color: var(--mkThemePassiveBG);
     padding: 0 1rem;
   }
 
@@ -10,6 +9,7 @@
   }
 
   #drawer {
+    background-color: var(--mkThemePassiveBG);
     bottom: 0;
     position: absolute;
     width: 100%;
@@ -22,9 +22,7 @@
 
 <section fill-parent id="root" layout="column">
   <section flex>
-    <slot id="display" name="display"></slot>
-    <hr>
-    <slot name="customize"></slot>
+    <slot name="content"></slot>
   </section>
   <mk-drawer id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
     <section>

@@ -10,8 +10,9 @@ import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
-import { DocTemplate } from './doc-template';
+import { ComponentTemplate } from './component-template';
 import template from './piece.html';
+
 
 const $ = {
   create: element('create', ElementWithTagType('section'), {}),
@@ -37,7 +38,7 @@ const $ = {
     }
   },
   dependencies: [
-    DocTemplate,
+    ComponentTemplate,
     Icon,
     PieceComponent,
   ],
