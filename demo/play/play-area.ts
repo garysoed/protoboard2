@@ -6,6 +6,7 @@ import { map, switchMap } from '@rxjs/operators';
 
 import { $ as playAreaService$ } from './play-area-service';
 import template from './play-area.html';
+import { PlayDefault } from './play-default';
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -14,6 +15,9 @@ const $ = {
 };
 
 @_p.customElement({
+  dependencies: [
+    PlayDefault,
+  ],
   tag: 'pbd-play-area',
   template,
 })
@@ -36,9 +40,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
           }
 
           return {
-            tag: 'div',
-            attr: new Map([['mk-body-1', '']]),
-            innerText: 'Select a "Layout" to add a root element',
+            tag: 'pbd-play-default',
           };
         }),
     );
