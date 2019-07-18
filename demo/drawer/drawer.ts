@@ -19,6 +19,9 @@ const $ = {
     contents: repeated('#contents', 'mk-text-icon-button'),
   }),
   host: element($$),
+  layouts: element('layouts', InstanceofType(HTMLDivElement), {
+    contents: repeated('#contents', 'mk-text-icon-button'),
+  }),
   root: element('root', InstanceofType(HTMLDivElement), {
     onClick: onDom('click'),
   }),
@@ -29,8 +32,12 @@ interface LinkConfig {
   path: string;
 }
 
-const linkConfig: LinkConfig[] = [
+const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
   {label: 'Piece', path: 'PIECE'},
+];
+
+const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
+  {label: 'Free', path: 'LAYOUT_FREE'},
 ];
 
 @_p.customElement({
@@ -60,7 +67,8 @@ export class Drawer extends ThemedCustomElementCtrl {
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      _p.render($.components._.contents).withValue(createRepeatedSpecs(linkConfig)),
+      _p.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS)),
+      _p.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS)),
       this.setupRootOnClick(),
     ];
   }

@@ -43,6 +43,8 @@ export class Doc extends ThemedCustomElementCtrl {
                   return {tag: 'pbd-instruction'};
                 case 'PIECE':
                   return {tag: 'pbd-piece'};
+                case 'LAYOUT_FREE':
+                  return {tag: 'pbd-layout-free'};
                 default:
                   return null;
               }

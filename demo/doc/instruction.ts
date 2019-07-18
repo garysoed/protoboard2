@@ -1,4 +1,5 @@
 import { _p, ThemedCustomElementCtrl } from '@mask';
+
 import template from './instruction.html';
 
 @_p.customElement({
