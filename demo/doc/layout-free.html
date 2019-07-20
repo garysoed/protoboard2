@@ -1,3 +1,47 @@
 <style id="theme"></style>
+<style>
+  #customize {
+    padding: 4rem 1rem;
+  }
 
-<pbd-layout-template></pbd-layout-template>
+  #leftColumn {
+    padding-right: .5rem;
+  }
+
+  #rightColumn {
+    padding-left: .5rem;
+  }
+</style>
+
+<pbd-layout-template>
+  <section id="customize" layout="row" slot="customize">
+    <div flex id="leftColumn" layout="column">
+      <mk-text-input
+          id="x"
+          label="x (px)"
+          type="number"
+      ></mk-text-input>
+      <mk-text-input
+          id="y"
+          label="y (px)"
+          type="number"
+      ></mk-text-input>
+    </div>
+    <div flex id="rightColumn" layout="column">
+      <mk-text-input
+          id="width"
+          label="Width (px)"
+          type="number"
+      ></mk-text-input>
+      <mk-text-input
+          id="height"
+          label="Height (px)"
+          type="number"
+      ></mk-text-input>
+    </div>
+  </section>
+
+  <section slot="details">
+    Free layout lets you place Drop Zones with any size at any (x, y) locations.
+  </section>
+</pbd-layout-template>
