@@ -1,7 +1,8 @@
 import { Vine } from '@grapevine';
+import { createImmutableMap } from '@gs-tools/collect';
 import { ElementWithTagType } from '@gs-types';
-import { $svgConfig, _p, _v, ACTION_EVENT, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, dispatcher, element, handler, InitFn, onDom } from '@persona';
+import { $svgConfig, _p, _v, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
+import { attributeIn, dispatcher, element, InitFn, onDom } from '@persona';
 import { Observable, Subject } from '@rxjs';
 import { map, tap, withLatestFrom } from '@rxjs/operators';
 
@@ -22,6 +23,11 @@ export class AddDropZoneEvent extends Event {
 }
 
 export const $$ = {
+  layoutAttr: attributeIn(
+      'layout-attr',
+      mapParser(stringParser(), stringParser()),
+      createImmutableMap(new Map()),
+  ),
   layoutTag: attributeIn('layout-tag', stringParser()),
   onAddDropZone: dispatcher<AddDropZoneEvent>(ADD_DROP_ZONE_EVENT),
 };
@@ -50,7 +56,8 @@ const $ = {
   },
 })
 export class LayoutTemplate extends ThemedCustomElementCtrl {
-  private readonly layout$ = _p.input($.host._.layoutTag, this);
+  private readonly layoutAttr$ = _p.input($.host._.layoutAttr, this);
+  private readonly layoutTag$ = _p.input($.host._.layoutTag, this);
   private readonly onAddClick$ = _p.input($.addButton._.onAddClick, this);
   private readonly onAddDropZone$ = new Subject<DropZoneSpec>();
   private readonly playAreaService$ = $playAreaService.asSubject();
@@ -70,8 +77,13 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
 
   private setupHandleAddDropZone(): Observable<unknown> {
     return this.onAddDropZone$.pipe(
-        withLatestFrom(this.playAreaService$, this.layout$),
-        tap(([, playAreaService, layout]) => playAreaService.setTag(layout)),
+        withLatestFrom(this.playAreaService$, this.layoutAttr$, this.layoutTag$),
+        tap(([, playAreaService, layoutAttr, layoutTag]) => {
+          playAreaService.setLayout({
+            attr: new Map(layoutAttr),
+            tag: layoutTag,
+          });
+        }),
         tap(([dropZone, playAreaService]) => playAreaService.addDropZone(dropZone)),
     );
   }

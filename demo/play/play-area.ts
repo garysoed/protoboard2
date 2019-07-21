@@ -38,11 +38,11 @@ export class PlayArea extends ThemedCustomElementCtrl {
 
   private renderContent(): Observable<SingleRenderSpec> {
     return this.playAreaService$.pipe(
-        switchMap(service => service.getTag()),
+        switchMap(service => service.getLayout()),
         distinctUntilChanged(),
-        map(tag => {
-          if (tag) {
-            return {tag};
+        map(layoutSpec => {
+          if (layoutSpec) {
+            return layoutSpec;
           }
 
           return {
