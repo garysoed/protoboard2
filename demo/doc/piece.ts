@@ -5,7 +5,7 @@ import { api, element, InitFn, mutationObservable, onDom } from '@persona';
 import { BehaviorSubject, of as observableOf } from '@rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap } from '@rxjs/operators';
 
-import { Piece as PieceComponent } from '../../src/component/piece';
+import { Piece as PieceImpl } from '../../src/component/piece';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
@@ -40,7 +40,7 @@ const $ = {
   dependencies: [
     ComponentTemplate,
     Icon,
-    PieceComponent,
+    PieceImpl,
   ],
   tag: 'pbd-piece',
   template,

@@ -6,7 +6,7 @@ import { switchMap, withLatestFrom } from '@rxjs/operators';
 import { PickHand } from '../src/action/pick-hand';
 
 import { Doc } from './doc/doc';
-import { LayoutFree } from './doc/layout-free';
+import { LayoutFree } from './doc/free-layout';
 import { $$ as $drawer, Drawer } from './drawer/drawer';
 import { $locationService } from './location-service';
 import { PlayArea } from './play/play-area';

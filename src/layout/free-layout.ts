@@ -2,6 +2,7 @@ import { _p } from '@mask';
 import { CustomElementCtrl, element, InitFn, mutationObservable } from '@persona';
 import { of as observableOf, Subscription } from '@rxjs';
 import { map, startWith, switchMap, tap } from '@rxjs/operators';
+
 import template from './free-layout.html';
 
 const __mutationSubscription = Symbol('mutationSubscription');

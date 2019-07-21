@@ -1,6 +1,7 @@
 import { assert, setup, should, test } from '@gs-testing';
 import { _p } from '@mask';
 import { ElementTester, PersonaTesterFactory } from '@persona/testing';
+
 import { FreeLayout } from './free-layout';
 
 const testerFactory = new PersonaTesterFactory(_p);
