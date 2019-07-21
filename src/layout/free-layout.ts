@@ -1,6 +1,6 @@
 import { _p } from '@mask';
 import { CustomElementCtrl, element, InitFn, mutationObservable } from '@persona';
-import { of as observableOf, Subscription } from '@rxjs';
+import { Observable, of as observableOf, Subscription } from '@rxjs';
 import { map, startWith, switchMap, tap } from '@rxjs/operators';
 
 import template from './free-layout.html';
@@ -34,12 +34,12 @@ export class FreeLayout extends CustomElementCtrl {
 
   getInitFunctions(): InitFn[] {
     return [
-      this.setupOnHostMutation(),
+      () => this.setupOnHostMutation(),
     ];
   }
 
-  private setupOnHostMutation(): InitFn {
-    return () => this.host$.pipe(
+  private setupOnHostMutation(): Observable<unknown> {
+    return this.host$.pipe(
         switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
         switchMap(records => observableOf(...records)),
         tap(record => {
@@ -48,7 +48,7 @@ export class FreeLayout extends CustomElementCtrl {
 
             const subscription = mutationObservable(
                     node,
-                    {attributes: true, attributeFilter: ['x', 'y']},
+                    {attributes: true, attributeFilter: ['x', 'y', 'height', 'width']},
                 )
                 .pipe(
                     map(records => records.map(({attributeName}) => attributeName)),
@@ -90,6 +90,8 @@ export class FreeLayout extends CustomElementCtrl {
             if (node instanceof HTMLElement && oldValue) {
               node.style.left = oldValue.left;
               node.style.top = oldValue.top;
+              node.style.height = oldValue.height;
+              node.style.width = oldValue.width;
             }
           });
         }),
