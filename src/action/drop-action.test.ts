@@ -103,4 +103,3 @@ test('@protoboard2/action/drop-action', () => {
     assert(parentEl.children.length).to.equal(1);
   });
 });
-})
