@@ -24,10 +24,10 @@ const $ = {
     LayoutTemplate,
     TextInput,
   ],
-  tag: 'pbd-layout-free',
+  tag: 'pbd-free-layout',
   template,
 })
-export class LayoutFree extends ThemedCustomElementCtrl {
+export class FreeLayout extends ThemedCustomElementCtrl {
   private readonly onAddDropZone$ = _p.input($.template._.onAddDropZone, this);
 
   getInitFunctions(): InitFn[] {

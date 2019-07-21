@@ -3,14 +3,16 @@ import { LocationService, LocationSpec, Route, RouteSpec } from '@persona';
 import { BehaviorSubject } from 'rxjs';
 
 export interface Routes extends LocationSpec {
+  'FREE_LAYOUT': {};
+  'GRID_LAYOUT': {};
   'INSTRUCTION': {};
-  'LAYOUT_FREE': {};
   'PIECE': {};
 }
 
 const ROUTE_SPEC: Array<RouteSpec<keyof Routes>> = [
   {path: '/', type: 'INSTRUCTION'},
-  {path: '/layoutfree', type: 'LAYOUT_FREE'},
+  {path: '/freelayout', type: 'FREE_LAYOUT'},
+  {path: '/gridlayout', type: 'GRID_LAYOUT'},
   {path: '/piece', type: 'PIECE'},
 ];
 

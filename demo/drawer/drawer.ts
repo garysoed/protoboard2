@@ -37,7 +37,8 @@ const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
 ];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Free', path: 'LAYOUT_FREE'},
+  {label: 'Free', path: 'FREE_LAYOUT'},
+  {label: 'Grid', path: 'GRID_LAYOUT'},
 ];
 
 @_p.customElement({

@@ -39,12 +39,14 @@ export class Doc extends ThemedCustomElementCtrl {
             switchMap(service => service.getLocation()),
             map(location => {
               switch (location.type) {
+                case 'FREE_LAYOUT':
+                  return {tag: 'pbd-free-layout'};
+                case 'GRID_LAYOUT':
+                  return {tag: 'pbd-grid-layout'};
                 case 'INSTRUCTION':
                   return {tag: 'pbd-instruction'};
                 case 'PIECE':
                   return {tag: 'pbd-piece'};
-                case 'LAYOUT_FREE':
-                  return {tag: 'pbd-layout-free'};
                 default:
                   return null;
               }

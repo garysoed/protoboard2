@@ -6,7 +6,8 @@ import { switchMap, withLatestFrom } from '@rxjs/operators';
 import { PickHand } from '../src/action/pick-hand';
 
 import { Doc } from './doc/doc';
-import { LayoutFree } from './doc/free-layout';
+import { FreeLayout } from './doc/free-layout';
+import { GridLayout } from './doc/grid-layout';
 import { $$ as $drawer, Drawer } from './drawer/drawer';
 import { $locationService } from './location-service';
 import { PlayArea } from './play/play-area';
@@ -21,7 +22,8 @@ const $ = {
   dependencies: [
     Doc,
     Drawer,
-    LayoutFree,
+    GridLayout,
+    FreeLayout,
     PickHand,
     PlayArea,
     RootLayout,
