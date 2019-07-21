@@ -1,4 +1,3 @@
-import { debug } from '@gs-tools/rxjs';
 import { ElementWithTagType } from '@gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from '@mask';
 import { api, element, InitFn } from '@persona';
@@ -40,14 +39,12 @@ export class LayoutFree extends ThemedCustomElementCtrl {
 
   private setupHandleAddDropZone(root: ShadowRoot): Observable<unknown> {
     return this.onAddDropZone$.pipe(
-        debug('onAddDropZone'),
         withLatestFrom(
             $.x._.value.getValue(root),
             $.y._.value.getValue(root),
             $.height._.value.getValue(root),
             $.width._.value.getValue(root),
         ),
-        debug('latestFrom'),
         tap(([event, x, y, height, width]) => {
           event.addDropZone(new Map([
             ['x', x],

@@ -1,4 +1,4 @@
-import { debug, filterNonNull } from '@gs-tools/rxjs';
+import { filterNonNull } from '@gs-tools/rxjs';
 import { InstanceofType } from '@gs-types';
 import { _p, _v, ThemedCustomElementCtrl } from '@mask';
 import { element, InitFn, mutationObservable, single, SingleRenderSpec } from '@persona';
@@ -50,23 +50,19 @@ export class PlayArea extends ThemedCustomElementCtrl {
           };
         }),
         map(spec => ({...spec, attr: new Map([['id', LAYOUT_ID]])})),
-        debug('rendering'),
     );
   }
 
   private setupHandleDropZones(): Observable<unknown> {
     return this.rootEl$.pipe(
-        debug('rootEl'),
         switchMap(rootEl => {
           return mutationObservable(rootEl, {childList: true}).pipe(
               startWith({}),
               map(() => rootEl.querySelector(`#${LAYOUT_ID}`)),
           );
         }),
-        debug('rootLayout'),
         distinctUntilChanged(),
         filterNonNull(),
-        debug('diff'),
         switchMap(layoutEl => {
           return this.playAreaService$.pipe(
               switchMap(service => service.getDropZones()),

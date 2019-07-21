@@ -1,9 +1,9 @@
-import { filterNonNull, mapNonNull } from '@gs-tools/rxjs';
+import { debug, filterNonNull, mapNonNull } from '@gs-tools/rxjs';
 import { ElementWithTagType } from '@gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from '@mask';
 import { api, element, InitFn, mutationObservable, onDom } from '@persona';
-import { BehaviorSubject, of as observableOf } from '@rxjs';
-import { filter, map, mapTo, startWith, switchMap, tap } from '@rxjs/operators';
+import { BehaviorSubject, Observable, of as observableOf } from '@rxjs';
+import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from '@rxjs/operators';
 
 import { Piece as PieceImpl } from '../../src/component/piece';
 import coinSvg from '../asset/coin.svg';
@@ -48,18 +48,32 @@ const $ = {
 export class Piece extends ThemedCustomElementCtrl {
   private readonly createEl$ = _p.input($.create, this);
   private readonly onCustomizeClick$ = _p.input($.customize._.onClick, this);
+  private readonly pieceEl$ = this.createPieceEl();
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      this.setupHandleCustomizeClick(),
-      this.setupHandleSelectedIcon(),
+      () => this.setupHandleCustomizeClick(),
+      (_vine, root) => this.setupHandleSelectedIcon(root),
+      () => this.setupHandlePieceRemoved(),
     ];
   }
 
-  private setupHandleCustomizeClick(): InitFn {
-    return () => this.onCustomizeClick$
+  private createPieceEl(): Observable<HTMLElement|null> {
+    return this.createEl$.pipe(
+        switchMap(createEl => mutationObservable(createEl, {childList: true})
+            .pipe(
+                mapTo(createEl),
+                startWith(createEl),
+            ),
+        ),
+        map(createEl => createEl.querySelector('pb-piece mk-icon')),
+    );
+  }
+
+  private setupHandleCustomizeClick(): Observable<unknown> {
+    return this.onCustomizeClick$
         .pipe(
             map(event => event.target),
             mapNonNull(target => {
@@ -78,17 +92,24 @@ export class Piece extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupHandleSelectedIcon(): InitFn {
-    return (_vine, root) => this.createEl$
+  private setupHandlePieceRemoved(): Observable<unknown> {
+    return this.pieceEl$
         .pipe(
-            switchMap(createEl => mutationObservable(createEl, {childList: true})
-                .pipe(
-                    mapTo(createEl),
-                    startWith(createEl),
-                ),
-            ),
-            map(createEl => createEl.querySelector('pb-piece mk-icon')),
-            filter((iconEl): iconEl is HTMLElement => !!iconEl),
+            filter(piece => piece === null),
+            withLatestFrom(this.createEl$),
+            tap(([, createEl]) => {
+              const pieceEl = document.createElement('pb-piece');
+              const iconEl = document.createElement('mk-icon');
+              pieceEl.appendChild(iconEl);
+              createEl.appendChild(pieceEl);
+            }),
+        );
+  }
+
+  private setupHandleSelectedIcon(root: ShadowRoot): Observable<unknown> {
+    return this.pieceEl$
+        .pipe(
+            filterNonNull(),
             switchMap(iconEl => api($icon).icon
                 .resolve(() => observableOf(iconEl))
                 .output(root, this.selectedIcon$),

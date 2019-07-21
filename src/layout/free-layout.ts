@@ -9,8 +9,11 @@ const __mutationSubscription = Symbol('mutationSubscription');
 const __oldValue = Symbol('oldValue');
 
 interface Payload {
+  height: string|null;
   left: string|null;
+  position: string|null;
   top: string|null;
+  width: string|null;
 }
 
 interface NodeWithPayload extends Node {
@@ -49,7 +52,7 @@ export class FreeLayout extends CustomElementCtrl {
                 )
                 .pipe(
                     map(records => records.map(({attributeName}) => attributeName)),
-                    startWith(['x', 'y']),
+                    startWith(['x', 'y', 'height', 'width']),
                     switchMap(attributeNames => observableOf(...attributeNames)),
                 )
                 .subscribe(attributeName => {
@@ -65,7 +68,14 @@ export class FreeLayout extends CustomElementCtrl {
                     case 'y':
                       node.style.top = `${attributeValue}px`;
                       break;
+                    case 'height':
+                      node.style.height = `${attributeValue}px`;
+                      break;
+                    case 'width':
+                      node.style.width = `${attributeValue}px`;
+                      break;
                   }
+                  node.style.position = 'absolute';
                 });
             node[__mutationSubscription] = subscription;
           });
@@ -89,9 +99,15 @@ export class FreeLayout extends CustomElementCtrl {
 
 function getOldPayload(node: Node): Payload {
   if (!(node instanceof HTMLElement)) {
-    return {left: null, top: null};
+    return {left: null, top: null, height: null, width: null, position: null};
   }
 
-  return {left: node.style.left, top: node.style.top};
+  return {
+    height: node.style.height,
+    left: node.style.left,
+    position: node.style.position,
+    top: node.style.top,
+    width: node.style.width,
+  };
 }
 
