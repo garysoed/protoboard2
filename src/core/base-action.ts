@@ -3,6 +3,7 @@ import { Errors } from '@gs-tools/error';
 import { element, InitFn, onDom } from '@persona';
 import { BehaviorSubject, EMPTY, fromEvent, merge, Observable } from '@rxjs';
 import { filter, map, mapTo, switchMap } from '@rxjs/operators';
+
 import { TriggerSpec, TriggerType } from './trigger-spec';
 
 const $ = {
