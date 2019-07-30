@@ -1,6 +1,7 @@
 import { InstanceofType } from '@gs-types';
 import { _p, stringParser, ThemedCustomElementCtrl } from '@mask';
 import { attributeIn, attributeOut, element, InitFn } from '@persona';
+
 import template from './face.html';
 
 const $$ = {

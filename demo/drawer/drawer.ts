@@ -33,7 +33,7 @@ interface LinkConfig {
 }
 
 const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Piece', path: 'PIECE'},
+  {label: 'D1', path: 'D1'},
 ];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [

@@ -7,9 +7,9 @@ import { map, switchMap } from '@rxjs/operators';
 
 import { $locationService } from '../location-service';
 
+import { D1 } from './d1';
 import template from './doc.html';
 import { Instruction } from './instruction';
-import { Piece } from './piece';
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -20,7 +20,7 @@ const $ = {
 @_p.customElement({
   dependencies: [
     Instruction,
-    Piece,
+    D1,
   ],
   tag: 'pbd-doc',
   template,
@@ -45,8 +45,8 @@ export class Doc extends ThemedCustomElementCtrl {
                   return {tag: 'pbd-grid-layout'};
                 case 'INSTRUCTION':
                   return {tag: 'pbd-instruction'};
-                case 'PIECE':
-                  return {tag: 'pbd-piece'};
+                case 'D1':
+                  return {tag: 'pbd-d1'};
                 default:
                   return null;
               }

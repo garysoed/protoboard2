@@ -5,13 +5,13 @@ import { api, element, InitFn, mutationObservable, onDom } from '@persona';
 import { BehaviorSubject, Observable, of as observableOf } from '@rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from '@rxjs/operators';
 
-import { Piece as PieceImpl } from '../../src/component/piece';
+import { D1 as D1Impl } from '../../src/component/d1';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
 import { ComponentTemplate } from './component-template';
-import template from './piece.html';
+import template from './d1.html';
 
 
 const $ = {
@@ -40,12 +40,12 @@ const $ = {
   dependencies: [
     ComponentTemplate,
     Icon,
-    PieceImpl,
+    D1Impl,
   ],
-  tag: 'pbd-piece',
+  tag: 'pbd-d1',
   template,
 })
-export class Piece extends ThemedCustomElementCtrl {
+export class D1 extends ThemedCustomElementCtrl {
   private readonly createEl$ = _p.input($.create, this);
   private readonly onCustomizeClick$ = _p.input($.customize._.onClick, this);
   private readonly pieceEl$ = this.createPieceEl();
@@ -68,7 +68,7 @@ export class Piece extends ThemedCustomElementCtrl {
                 startWith(createEl),
             ),
         ),
-        map(createEl => createEl.querySelector('pb-piece mk-icon')),
+        map(createEl => createEl.querySelector('pb-d1 mk-icon')),
     );
   }
 
@@ -98,7 +98,7 @@ export class Piece extends ThemedCustomElementCtrl {
             filter(piece => piece === null),
             withLatestFrom(this.createEl$),
             tap(([, createEl]) => {
-              const pieceEl = document.createElement('pb-piece');
+              const pieceEl = document.createElement('pb-d1');
               const iconEl = document.createElement('mk-icon');
               pieceEl.appendChild(iconEl);
               createEl.appendChild(pieceEl);
