@@ -1,6 +1,6 @@
-import { ElementWithTagType } from '@gs-types';
+import { ElementWithTagType, InstanceofType } from '@gs-types';
 import { $drawer, $svgConfig, $textIconButton, _p, _v, Drawer, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { api, attributeIn, element, InitFn } from '@persona';
+import { api, attributeIn, element, InitFn, innerHtml } from '@persona';
 import { BehaviorSubject, Observable } from '@rxjs';
 import { map, tap, withLatestFrom } from '@rxjs/operators';
 
@@ -9,6 +9,11 @@ import chevronUpSvg from '../asset/chevron_up.svg';
 
 import template from './doc-template.html';
 
+export const $$ = {
+  label: attributeIn('label', stringParser()),
+  title: attributeIn('title', stringParser()),
+};
+
 const $ = {
   drawer: element('drawer', ElementWithTagType('mk-drawer'), api($drawer)),
   drawerIcon: element(
@@ -16,8 +21,9 @@ const $ = {
       ElementWithTagType('mk-text-icon-button'),
       api($textIconButton),
   ),
-  host: element({
-    label: attributeIn('label', stringParser()),
+  host: element($$),
+  title: element('title', InstanceofType(HTMLHeadingElement), {
+    inner: innerHtml(),
   }),
 };
 
@@ -47,6 +53,7 @@ export class DocTemplate extends ThemedCustomElementCtrl {
   private readonly drawerExpanded$ = new BehaviorSubject(false);
   private readonly label$ = _p.input($.host._.label, this);
   private readonly onDrawerIconClick$ = _p.input($.drawerIcon._.actionEvent, this);
+  private readonly title$ = _p.input($.host._.title, this);
 
   getInitFunctions(): InitFn[] {
     return [
@@ -54,6 +61,7 @@ export class DocTemplate extends ThemedCustomElementCtrl {
       _p.render($.drawer._.expanded).withObservable(this.drawerExpanded$),
       _p.render($.drawerIcon._.icon).withVine(_v.stream(this.renderDrawerIcon, this)),
       _p.render($.drawerIcon._.label).withObservable(this.label$),
+      _p.render($.title._.inner).withObservable(this.title$),
       this.setupHandleDrawerIconClick(),
     ];
   }

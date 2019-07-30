@@ -2,7 +2,7 @@ import { Vine } from '@grapevine';
 import { createImmutableMap } from '@gs-tools/collect';
 import { ElementWithTagType } from '@gs-types';
 import { $svgConfig, _p, _v, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, dispatcher, element, InitFn, onDom } from '@persona';
+import { api, attributeIn, dispatcher, element, InitFn, onDom } from '@persona';
 import { Observable, Subject } from '@rxjs';
 import { map, tap, withLatestFrom } from '@rxjs/operators';
 
@@ -10,7 +10,7 @@ import { DropZone } from '../../src/component/drop-zone';
 import addSvg from '../asset/add.svg';
 import { $playAreaService, DropZoneSpec } from '../play/play-area-service';
 
-import { DocTemplate } from './doc-template';
+import { $$ as $docTemplate, DocTemplate } from './doc-template';
 import template from './layout-template.html';
 
 type AddDropZoneFn = (spec: DropZoneSpec) => void;
@@ -30,6 +30,7 @@ export const $$ = {
   ),
   layoutTag: attributeIn('layout-tag', stringParser()),
   onAddDropZone: dispatcher<AddDropZoneEvent>(ADD_DROP_ZONE_EVENT),
+  title: attributeIn('title', stringParser()),
 };
 
 const $ = {
@@ -37,6 +38,7 @@ const $ = {
     onAddClick: onDom(ACTION_EVENT),
   }),
   host: element($$),
+  template: element('template', ElementWithTagType('pbd-doc-template'), api($docTemplate)),
 };
 
 @_p.customElement({
@@ -61,11 +63,13 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
   private readonly onAddClick$ = _p.input($.addButton._.onAddClick, this);
   private readonly onAddDropZone$ = new Subject<DropZoneSpec>();
   private readonly playAreaService$ = $playAreaService.asSubject();
+  private readonly title$ = _p.input($.host._.title, this);
 
   getInitFunctions(): InitFn[] {
     return [
       () => this.setupHandleAddDropZone(),
       _p.render($.host._.onAddDropZone).withVine(_v.stream(this.renderOnAddClick, this)),
+      _p.render($.template._.title).withObservable(this.title$),
     ];
   }
 

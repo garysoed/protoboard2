@@ -15,6 +15,11 @@
     width: 100%;
   }
 
+  #title {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   #root {
     padding-right: 1rem;
   }
@@ -22,6 +27,7 @@
 
 <section fill-parent id="root" layout="column">
   <section flex>
+    <h3 id="title" mk-display></h3>
     <slot name="content"></slot>
   </section>
   <mk-drawer id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
