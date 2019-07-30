@@ -52,10 +52,14 @@ export class PlayArea extends ThemedCustomElementCtrl {
           }
 
           return {
+            attr: new Map(),
             tag: 'pbd-play-default',
           };
         }),
-        map(spec => ({...spec, attr: new Map([['id', LAYOUT_ID]])})),
+        map(spec => ({
+          attr: new Map([...spec.attr, ['id', LAYOUT_ID]]),
+          tag: spec.tag,
+        })),
     );
   }
 

@@ -19,7 +19,7 @@ interface NodeWithPayload extends Node {
 }
 
 export const $$ = {
-  colCount: attributeIn('col-count', integerParser(), 1),
+  colCount: attributeIn('column-count', integerParser(), 1),
   rowCount: attributeIn('row-count', integerParser(), 1),
 };
 
@@ -95,12 +95,14 @@ export class GridLayout extends ThemedCustomElementCtrl {
           for (let row = 0; row < rows; row++) {
             const rowEl = document.createElement('div');
             rowEl.setAttribute('layout', 'row');
+            rowEl.setAttribute('flex', '');
             for (let col = 0; col < cols; col++) {
               const slotEl = document.createElement('slot');
               slotEl.setAttribute('name', `${row}_${col}`);
 
               const colEl = document.createElement('div');
               colEl.classList.add('col');
+              colEl.setAttribute('flex', '');
               colEl.appendChild(slotEl);
 
               rowEl.appendChild(colEl);
