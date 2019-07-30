@@ -4,6 +4,7 @@ import { _p, _v } from '@mask';
 import { CustomElementCtrl, element, InitFn, style } from '@persona';
 import { fromEvent, Observable } from '@rxjs';
 import { map, share, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+
 import template from './pick-hand.html';
 import { $pickService } from './pick-service';
 
