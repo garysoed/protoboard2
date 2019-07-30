@@ -6,7 +6,7 @@ import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
 
 const $$ = {
-  title: attributeIn('title', stringParser()),
+  label: attributeIn('label', stringParser()),
 };
 
 const $ = {
@@ -22,12 +22,12 @@ const $ = {
   template,
 })
 export class ComponentTemplate extends ThemedCustomElementCtrl {
-  private readonly title$ = _p.input($.host._.title, this);
+  private readonly label$ = _p.input($.host._.label, this);
 
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
-      _p.render($.template._.title).withObservable(this.title$),
+      _p.render($.template._.label).withObservable(this.label$),
     ];
   }
 }

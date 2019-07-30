@@ -11,7 +11,6 @@ import template from './doc-template.html';
 
 export const $$ = {
   label: attributeIn('label', stringParser()),
-  title: attributeIn('title', stringParser()),
 };
 
 const $ = {
@@ -51,15 +50,15 @@ const $ = {
 })
 export class DocTemplate extends ThemedCustomElementCtrl {
   private readonly drawerExpanded$ = new BehaviorSubject(false);
+  private readonly label$ = _p.input($.host._.label, this);
   private readonly onDrawerIconClick$ = _p.input($.drawerIcon._.actionEvent, this);
-  private readonly title$ = _p.input($.host._.title, this);
 
   getInitFunctions(): InitFn[] {
     return [
       ...super.getInitFunctions(),
       _p.render($.drawer._.expanded).withObservable(this.drawerExpanded$),
       _p.render($.drawerIcon._.icon).withVine(_v.stream(this.renderDrawerIcon, this)),
-      _p.render($.title._.inner).withObservable(this.title$),
+      _p.render($.title._.inner).withObservable(this.label$),
       this.setupHandleDrawerIconClick(),
     ];
   }

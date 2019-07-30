@@ -30,7 +30,7 @@ export const $$ = {
   ),
   layoutTag: attributeIn('layout-tag', stringParser()),
   onAddDropZone: dispatcher<AddDropZoneEvent>(ADD_DROP_ZONE_EVENT),
-  title: attributeIn('title', stringParser()),
+  label: attributeIn('label', stringParser()),
 };
 
 const $ = {
@@ -58,18 +58,18 @@ const $ = {
   },
 })
 export class LayoutTemplate extends ThemedCustomElementCtrl {
+  private readonly label$ = _p.input($.host._.label, this);
   private readonly layoutAttr$ = _p.input($.host._.layoutAttr, this);
   private readonly layoutTag$ = _p.input($.host._.layoutTag, this);
   private readonly onAddClick$ = _p.input($.addButton._.onAddClick, this);
   private readonly onAddDropZone$ = new Subject<DropZoneSpec>();
   private readonly playAreaService$ = $playAreaService.asSubject();
-  private readonly title$ = _p.input($.host._.title, this);
 
   getInitFunctions(): InitFn[] {
     return [
       () => this.setupHandleAddDropZone(),
       _p.render($.host._.onAddDropZone).withVine(_v.stream(this.renderOnAddClick, this)),
-      _p.render($.template._.title).withObservable(this.title$),
+      _p.render($.template._.label).withObservable(this.label$),
     ];
   }
 
