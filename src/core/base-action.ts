@@ -36,7 +36,7 @@ export abstract class BaseAction {
 
   private setupTrigger(root: ShadowRoot): Observable<unknown> {
     return this.triggerSpec$
-        .pipe(
+      .pipe(
             switchMap(spec => {
               switch (spec.type) {
                 case TriggerType.CLICK:

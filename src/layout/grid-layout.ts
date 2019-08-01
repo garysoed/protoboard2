@@ -66,7 +66,7 @@ export class GridLayout extends ThemedCustomElementCtrl {
 
                   const x = getIntAttr(node, 'x');
                   const y = getIntAttr(node, 'y');
-                  node.setAttribute('slot', `${x}_${y}`);
+                  node.setAttribute('slot', `${y}_${x}`);
                 });
             node[__mutationSubscription] = subscription;
           });

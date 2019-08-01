@@ -23,7 +23,7 @@ test('@protoboard2/layout/grid-layout', () => {
 
       tester.element.appendChild(addedEl);
 
-      assert(addedEl.getAttribute('slot')).to.equal('123_345');
+      assert(addedEl.getAttribute('slot')).to.equal('345_123');
     });
 
     should(`update slot correctly when changed`, () => {
@@ -33,7 +33,7 @@ test('@protoboard2/layout/grid-layout', () => {
       addedEl.setAttribute('x', '123');
       addedEl.setAttribute('y', '345');
 
-      assert(addedEl.getAttribute('slot')).to.equal('123_345');
+      assert(addedEl.getAttribute('slot')).to.equal('345_123');
     });
 
     should(`reset the slot value when element is removed`, () => {
