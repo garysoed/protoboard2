@@ -31,7 +31,7 @@ test('@protoboard2/action/help-action', () => {
   });
 
   test('onTrigger', () => {
-    should.only(`show the help correctly`, () => {
+    should(`show the help correctly`, () => {
       const el = document.createElement('div');
       action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
 
