@@ -1,7 +1,7 @@
 import { ArrayDiff, filterNonNull } from '@gs-tools/rxjs';
 import { InstanceofType } from '@gs-types';
 import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, element, InitFn, onDom, repeated, RepeatedSpec } from '@persona';
+import { attributeIn, element, InitFn, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from '@persona';
 import { map, switchMap, withLatestFrom } from '@rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -16,11 +16,11 @@ export const $$ = {
 
 const $ = {
   components: element('components', InstanceofType(HTMLDivElement), {
-    contents: repeated('#contents', 'mk-text-icon-button'),
+    contents: repeated('#contents'),
   }),
   host: element($$),
   layouts: element('layouts', InstanceofType(HTMLDivElement), {
-    contents: repeated('#contents', 'mk-text-icon-button'),
+    contents: repeated('#contents'),
   }),
   root: element('root', InstanceofType(HTMLDivElement), {
     onClick: onDom('click'),
@@ -91,11 +91,12 @@ export class Drawer extends ThemedCustomElementCtrl {
   }
 }
 
-function createRepeatedSpecs(linkConfig: LinkConfig[]): ArrayDiff<RepeatedSpec> {
-  const specs: RepeatedSpec[] = linkConfig.map(({label, path}) => {
-    return {
-      attr: new Map([['label', label], ['path', path]]),
-    };
+function createRepeatedSpecs(linkConfig: LinkConfig[]): ArrayDiff<RenderSpec> {
+  const specs: RenderSpec[] = linkConfig.map(({label, path}) => {
+    return new SimpleElementRenderSpec(
+        'mk-text-icon-button',
+        new Map([['label', label], ['path', path]]),
+    );
   });
 
   return {
