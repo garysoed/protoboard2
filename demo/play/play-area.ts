@@ -1,9 +1,9 @@
 import { filterNonNull } from '@gs-tools/rxjs';
 import { InstanceofType } from '@gs-types';
 import { _p, _v, ThemedCustomElementCtrl } from '@mask';
-import { element, InitFn, mutationObservable, single, SingleRenderSpec } from '@persona';
+import { element, InitFn, mutationObservable, SimpleElementRenderSpec, single } from '@persona';
 import { Observable } from '@rxjs';
-import { distinctUntilChanged, map, startWith, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { distinctUntilChanged, map, startWith, switchMap, tap } from '@rxjs/operators';
 
 import { $playAreaService } from './play-area-service';
 import template from './play-area.html';
@@ -36,7 +36,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
     ];
   }
 
-  private renderContent(): Observable<SingleRenderSpec> {
+  private renderContent(): Observable<SimpleElementRenderSpec> {
     return this.playAreaService$.pipe(
         switchMap(service => service.getLayout()),
         distinctUntilChanged((prev, curr) => {
@@ -56,10 +56,10 @@ export class PlayArea extends ThemedCustomElementCtrl {
             tag: 'pbd-play-default',
           };
         }),
-        map(spec => ({
-          attr: new Map([...spec.attr, ['id', LAYOUT_ID]]),
-          tag: spec.tag,
-        })),
+        map(spec => new SimpleElementRenderSpec(
+          spec.tag,
+          new Map([...spec.attr, ['id', LAYOUT_ID]]),
+        )),
     );
   }
 

@@ -1,7 +1,8 @@
 import { Vine } from '@grapevine';
+import { mapNonNull } from '@gs-tools/rxjs';
 import { InstanceofType } from '@gs-types';
 import { _p, _v, ThemedCustomElementCtrl } from '@mask';
-import { element, InitFn, single, SingleRenderSpec } from '@persona';
+import { element, InitFn, SimpleElementRenderSpec, single } from '@persona';
 import { Observable } from '@rxjs';
 import { map, switchMap } from '@rxjs/operators';
 
@@ -33,24 +34,25 @@ export class Doc extends ThemedCustomElementCtrl {
     ];
   }
 
-  private renderContent(vine: Vine): Observable<SingleRenderSpec|null> {
+  private renderContent(vine: Vine): Observable<SimpleElementRenderSpec|null> {
     return $locationService.get(vine)
         .pipe(
             switchMap(service => service.getLocation()),
             map(location => {
               switch (location.type) {
                 case 'FREE_LAYOUT':
-                  return {tag: 'pbd-free-layout'};
+                  return 'pbd-free-layout';
                 case 'GRID_LAYOUT':
-                  return {tag: 'pbd-grid-layout'};
+                  return 'pbd-grid-layout';
                 case 'INSTRUCTION':
-                  return {tag: 'pbd-instruction'};
+                  return 'pbd-instruction';
                 case 'D1':
-                  return {tag: 'pbd-d1'};
+                  return 'pbd-d1';
                 default:
                   return null;
               }
             }),
+            mapNonNull(tag => new SimpleElementRenderSpec(tag)),
         );
   }
 }
