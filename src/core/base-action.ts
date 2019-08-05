@@ -15,9 +15,12 @@ const $ = {
 };
 
 export abstract class BaseAction {
-  private readonly triggerSpec$: BehaviorSubject<TriggerSpec>;
+  readonly triggerSpec$: BehaviorSubject<TriggerSpec>;
 
-  constructor(defaultTriggerSpec: TriggerSpec) {
+  constructor(
+      readonly actionName: string,
+      defaultTriggerSpec: TriggerSpec,
+  ) {
     this.triggerSpec$ = new BehaviorSubject(defaultTriggerSpec);
   }
 

@@ -1,7 +1,9 @@
 import { _p } from '@mask';
 import { element } from '@persona';
+
 import { DropAction } from '../action/drop-action';
 import { BaseComponent } from '../core/base-component';
+
 import template from './drop-zone.html';
 
 const $ = {

@@ -3,6 +3,7 @@ import { $rootLayout, _p, _v, RootLayout, ThemedCustomElementCtrl } from '@mask'
 import { api, element, InitFn } from '@persona';
 import { switchMap, withLatestFrom } from '@rxjs/operators';
 
+import { HelpOverlay } from '../src/action/help-overlay';
 import { PickHand } from '../src/action/pick-hand';
 
 import { Doc } from './doc/doc';
@@ -23,6 +24,7 @@ const $ = {
     Doc,
     Drawer,
     GridLayout,
+    HelpOverlay,
     FreeLayout,
     PickHand,
     PlayArea,

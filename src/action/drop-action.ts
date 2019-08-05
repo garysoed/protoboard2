@@ -10,7 +10,7 @@ import { $pickService } from './pick-service';
 
 export class DropAction extends BaseAction {
   constructor(private readonly parentNode$: Observable<Node>) {
-    super({type: TriggerType.CLICK});
+    super('Drop', {type: TriggerType.CLICK});
   }
 
   protected onTrigger(vine: Vine): Observable<unknown> {

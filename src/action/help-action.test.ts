@@ -1,5 +1,6 @@
 import { Vine } from '@grapevine';
 import { assert, match, setup, should, test } from '@gs-testing';
+import { ArrayDiff } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { EMPTY, Observable, ReplaySubject } from '@rxjs';
 import { switchMap } from '@rxjs/operators';
@@ -8,11 +9,11 @@ import { BaseAction } from '../core/base-action';
 import { TriggerType } from '../core/trigger-spec';
 
 import { HelpAction } from './help-action';
-import { $helpService, HelpSpec } from './help-service';
+import { $helpService } from './help-service';
 
 class TestAction extends BaseAction {
   constructor() {
-    super({type: TriggerType.CLICK});
+    super('test', {type: TriggerType.CLICK});
   }
 
   protected onTrigger(): Observable<unknown> {
@@ -35,19 +36,19 @@ test('@protoboard2/action/help-action', () => {
       const el = document.createElement('div');
       action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
 
-      const helpSpec$ = new ReplaySubject<HelpSpec|null>(2);
+      const actions$ = new ReplaySubject<ArrayDiff<BaseAction>>(1);
       $helpService.get(vine)
-          .pipe(switchMap(service => service.helpSpec$))
-          .subscribe(helpSpec$);
+          .pipe(switchMap(service => service.actions$))
+          .subscribe(actions$);
 
       el.dispatchEvent(new CustomEvent('mouseover'));
       window.dispatchEvent(new KeyboardEvent('keydown', {key: '?'}));
 
-      assert(helpSpec$).to.emitSequence([
-        null,
-        match.anyObjectThat<HelpSpec>().haveProperties({
-          actions: match.anyArrayThat().haveExactElements([TEST_ACTION]),
-          target: el,
+      assert(actions$).to.emitSequence([
+        match.anyObjectThat<ArrayDiff<BaseAction>>().haveProperties({
+          type: 'insert',
+          value: TEST_ACTION,
+          index: 0,
         }),
       ]);
     });

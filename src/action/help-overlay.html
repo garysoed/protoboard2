@@ -1,0 +1,36 @@
+<style id="theme"></style>
+<style>
+  #root {
+    background-color: var(--mkThemePassiveBG);
+    display: none;
+  }
+
+  #root.isVisible {
+    display: flex;
+  }
+
+  #root td:first-child {
+    font-family: var(--mkFontFamilyMono);
+  }
+</style>
+
+<template id="tableRow">
+  <tr>
+    <td id="trigger"></td>
+    <td id="action"></td>
+  </tr>
+</template>
+
+<div id="root" layout="column" fill-parent flex-justify="center" flex-align="center">
+  <table mk-body-1>
+    <thead>
+      <tr>
+        <th>Trigger</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="content">
+      <!-- #content -->
+    </tbody>
+  </table>
+</div>

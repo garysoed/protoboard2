@@ -15,7 +15,10 @@ export class BaseComponent extends ThemedCustomElementCtrl {
   ) {
     super(shadowRoot);
 
-    this.allActions = [...actions, new HelpAction(actions)];
+    const allActions = [...actions];
+    const helpAction = new HelpAction(allActions);
+    allActions.push(helpAction);
+    this.allActions = allActions;
   }
 
   getInitFunctions(): InitFn[] {

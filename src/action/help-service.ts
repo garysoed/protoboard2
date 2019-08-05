@@ -1,22 +1,18 @@
+import { ArraySubject } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { BehaviorSubject } from '@rxjs';
 
 import { BaseAction } from '../core/base-action';
 
-export interface HelpSpec {
-  actions: Iterable<BaseAction>;
-  target: Element;
-}
-
-class HelpService {
-  readonly helpSpec$ = new BehaviorSubject<HelpSpec|null>(null);
+export class HelpService {
+  readonly actions$ = new ArraySubject<BaseAction>();
 
   hide(): void {
-    this.helpSpec$.next(null);
+    this.actions$.setAll([]);
   }
 
-  show(actions: Iterable<BaseAction>, target: Element): void {
-    this.helpSpec$.next({actions, target});
+  show(actions: Iterable<BaseAction>): void {
+    this.actions$.setAll([...actions]);
   }
 }
 

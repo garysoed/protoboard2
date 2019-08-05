@@ -11,7 +11,7 @@ class TestAction extends BaseAction {
       defaultTriggerSpec: TriggerSpec,
       private readonly onTrigger$: Subject<{}>,
   ) {
-    super(defaultTriggerSpec);
+    super('Test', defaultTriggerSpec);
   }
 
   onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
