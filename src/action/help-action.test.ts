@@ -13,7 +13,11 @@ import { $helpService } from './help-service';
 
 class TestAction extends BaseAction {
   constructor() {
-    super('test', {type: TriggerType.CLICK});
+    super('test', 'test', {}, {type: TriggerType.CLICK});
+  }
+
+  protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
+    return config$;
   }
 
   protected onTrigger(): Observable<unknown> {

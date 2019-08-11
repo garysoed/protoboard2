@@ -5,6 +5,7 @@ import { map, startWith, switchMap, tap } from '@rxjs/operators';
 
 import template from './free-layout.html';
 
+
 const __mutationSubscription = Symbol('mutationSubscription');
 const __oldValue = Symbol('oldValue');
 
@@ -41,59 +42,60 @@ export class FreeLayout extends CustomElementCtrl {
   private setupOnHostMutation(): Observable<unknown> {
     return this.host$.pipe(
         switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
-        switchMap(records => observableOf(...records)),
-        tap(record => {
-          record.addedNodes.forEach((node: NodeWithPayload) => {
-            node[__oldValue] = getOldPayload(node);
+        tap(records => {
+          for (const record of records) {
+            record.addedNodes.forEach((node: NodeWithPayload) => {
+              node[__oldValue] = getOldPayload(node);
 
-            const subscription = mutationObservable(
-                    node,
-                    {attributes: true, attributeFilter: ['x', 'y', 'height', 'width']},
-                )
-                .pipe(
-                    map(records => records.map(({attributeName}) => attributeName)),
-                    startWith(['x', 'y', 'height', 'width']),
-                    switchMap(attributeNames => observableOf(...attributeNames)),
-                )
-                .subscribe(attributeName => {
-                  if (!(node instanceof HTMLElement) || !attributeName) {
-                    return;
-                  }
+              const subscription = mutationObservable(
+                      node,
+                      {attributes: true, attributeFilter: ['x', 'y', 'height', 'width']},
+                  )
+                  .pipe(
+                      map(records => records.map(({attributeName}) => attributeName)),
+                      startWith(['x', 'y', 'height', 'width']),
+                      switchMap(attributeNames => observableOf(...attributeNames)),
+                  )
+                  .subscribe(attributeName => {
+                    if (!(node instanceof HTMLElement) || !attributeName) {
+                      return;
+                    }
 
-                  const attributeValue = node.getAttribute(attributeName);
-                  switch (attributeName) {
-                    case 'x':
-                      node.style.left = `${attributeValue}px`;
-                      break;
-                    case 'y':
-                      node.style.top = `${attributeValue}px`;
-                      break;
-                    case 'height':
-                      node.style.height = `${attributeValue}px`;
-                      break;
-                    case 'width':
-                      node.style.width = `${attributeValue}px`;
-                      break;
-                  }
-                  node.style.position = 'absolute';
-                });
-            node[__mutationSubscription] = subscription;
-          });
+                    const attributeValue = node.getAttribute(attributeName);
+                    switch (attributeName) {
+                      case 'x':
+                        node.style.left = `${attributeValue}px`;
+                        break;
+                      case 'y':
+                        node.style.top = `${attributeValue}px`;
+                        break;
+                      case 'height':
+                        node.style.height = `${attributeValue}px`;
+                        break;
+                      case 'width':
+                        node.style.width = `${attributeValue}px`;
+                        break;
+                    }
+                    node.style.position = 'absolute';
+                  });
+              node[__mutationSubscription] = subscription;
+            });
 
-          record.removedNodes.forEach((node: NodeWithPayload) => {
-            const subscription = node[__mutationSubscription];
-            if (subscription) {
-              subscription.unsubscribe();
-            }
+            record.removedNodes.forEach((node: NodeWithPayload) => {
+              const subscription = node[__mutationSubscription];
+              if (subscription) {
+                subscription.unsubscribe();
+              }
 
-            const oldValue = node[__oldValue];
-            if (node instanceof HTMLElement && oldValue) {
-              node.style.left = oldValue.left;
-              node.style.top = oldValue.top;
-              node.style.height = oldValue.height;
-              node.style.width = oldValue.width;
-            }
-          });
+              const oldValue = node[__oldValue];
+              if (node instanceof HTMLElement && oldValue) {
+                node.style.left = oldValue.left;
+                node.style.top = oldValue.top;
+                node.style.height = oldValue.height;
+                node.style.width = oldValue.width;
+              }
+            });
+          }
         }),
     );
   }

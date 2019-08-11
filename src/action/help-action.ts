@@ -3,13 +3,22 @@ import { Observable, throwError } from '@rxjs';
 import { take, tap } from '@rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerType } from '../core/trigger-spec';
+import { TriggerKey, TriggerType } from '../core/trigger-spec';
 
 import { $helpService } from './help-service';
 
 export class HelpAction extends BaseAction {
   constructor(private readonly actions: Iterable<BaseAction>) {
-    super('Help', {type: TriggerType.KEY, key: '?'});
+    super(
+        'help',
+        'Help',
+        {},
+        {type: TriggerType.KEY, key: TriggerKey.QUESTION},
+    );
+  }
+
+  protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
+    return config$;
   }
 
   protected onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
