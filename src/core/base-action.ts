@@ -52,17 +52,20 @@ export abstract class BaseAction<I = {}> {
 
       return combineLatest([
         this.setupTrigger(vine, root),
-        this.setupConfig(vine, root),
+        this.setupConfig(root),
       ]);
     };
   }
 
-  protected abstract onConfig(config$: Observable<Partial<I>>):
-      Observable<unknown>;
+  protected abstract onConfig(config$: Observable<Partial<I>>): Observable<unknown>;
 
-  protected abstract onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown>;
+  protected abstract onTrigger(
+      trigger$: Observable<unknown>,
+      vine: Vine,
+      root: ShadowRoot,
+  ): Observable<unknown>;
 
-  private setupConfig(_: Vine, root: ShadowRoot): Observable<unknown> {
+  private setupConfig(root: ShadowRoot): Observable<unknown> {
     return mutationObservable(
         root.host,
         {
@@ -111,7 +114,7 @@ export abstract class BaseAction<I = {}> {
                   return this.setupTriggerKey(root, spec.key);
               }
             }),
-            switchMap(() => this.onTrigger(vine, root)),
+            trigger$ => this.onTrigger(trigger$, vine, root),
         );
   }
 

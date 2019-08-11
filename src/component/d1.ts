@@ -1,4 +1,5 @@
 import { _p } from '@mask';
+import { RotateAction } from 'src/action/rotate-action';
 
 import { PickAction } from '../action/pick-action';
 import { BaseComponent } from '../core/base-component';
@@ -14,6 +15,7 @@ export class D1 extends BaseComponent {
     super(
         [
           new PickAction(),
+          new RotateAction(0, [0, 90, 180, 270]),
         ],
         shadowRoot,
     );

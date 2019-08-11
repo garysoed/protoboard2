@@ -1,7 +1,7 @@
 import { Vine } from '@grapevine';
 import { assert, setup, should, test } from '@gs-testing';
 import { _v, integerParser } from '@mask';
-import { EMPTY, Observable, ReplaySubject, Subject } from '@rxjs';
+import { Observable, ReplaySubject, Subject } from '@rxjs';
 import { tap } from '@rxjs/operators';
 
 import { BaseAction } from './base-action';
@@ -18,10 +18,10 @@ class TestAction extends BaseAction<{value: number}> {
     super('test', 'Test', {value: integerParser()}, defaultTriggerSpec);
   }
 
-  onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
-    this.onTrigger$.next({vine, root});
-
-    return EMPTY;
+  onTrigger(trigger$: Observable<unknown>): Observable<unknown> {
+    return trigger$.pipe(
+        tap(() => this.onTrigger$.next({})),
+    );
   }
 
   protected onConfig(config$: Observable<Partial<{value: number}>>): Observable<unknown> {
@@ -112,7 +112,7 @@ test('@protoboard2/core/base-action', () => {
     });
   });
 
-  test('setupKey', () => {
+  test('setupTriggerKey', () => {
     const KEY = TriggerKey.P;
     let onTrigger$: ReplaySubject<{}>;
     let action: TestAction;

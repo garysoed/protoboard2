@@ -22,11 +22,14 @@ export class PickAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
-    return element({}).getValue(root)
-        .pipe(
-            withLatestFrom($pickService.get(vine)),
-            tap(([el, pickService]) => pickService.add(el)),
-        );
+  protected onTrigger(
+      trigger$: Observable<unknown>,
+      vine: Vine,
+      root: ShadowRoot,
+  ): Observable<unknown> {
+    return trigger$.pipe(
+        withLatestFrom(element({}).getValue(root), $pickService.get(vine)),
+        tap(([, el, pickService]) => pickService.add(el)),
+    );
   }
 }

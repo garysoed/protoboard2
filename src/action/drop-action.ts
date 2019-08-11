@@ -22,7 +22,7 @@ export class DropAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(vine: Vine): Observable<unknown> {
+  protected onTrigger(trigger$: Observable<unknown>, vine: Vine): Observable<unknown> {
     const components$ = $pickService.get(vine).pipe(
         switchMap(pickService => {
           return pickService.getComponents()
@@ -33,10 +33,10 @@ export class DropAction extends BaseAction {
         }),
     );
 
-    return this.parentNode$
+    return trigger$
         .pipe(
-            withLatestFrom(components$),
-            tap(([parentNode, {components, pickService}]) => {
+            withLatestFrom(this.parentNode$, components$),
+            tap(([, parentNode, {components, pickService}]) => {
               const nextComponent = components[components.length - 1] || null;
               if (!nextComponent) {
                 return null;

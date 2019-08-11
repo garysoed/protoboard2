@@ -1,6 +1,6 @@
 import { Vine } from '@grapevine';
-import { Observable, throwError } from '@rxjs';
-import { take, tap } from '@rxjs/operators';
+import { Observable } from '@rxjs';
+import { tap, withLatestFrom } from '@rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
@@ -21,16 +21,14 @@ export class HelpAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
-    const host = root.host;
-    if (!host) {
-      return throwError('Shadow root has no host');
-    }
-
-    return $helpService.get(vine)
+  protected onTrigger(
+      trigger$: Observable<unknown>,
+      vine: Vine,
+  ): Observable<unknown> {
+    return trigger$
         .pipe(
-            take(1),
-            tap(helpService => helpService.show(this.actions)),
+            withLatestFrom($helpService.get(vine)),
+            tap(([, helpService]) => helpService.show(this.actions)),
         );
   }
 }
