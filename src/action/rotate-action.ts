@@ -33,16 +33,12 @@ export class RotateAction extends BaseAction<Config> {
     );
   }
 
-  install(): InitFn {
-    const superInstall = super.install();
-
-    return (vine, root) => {
-      return combineLatest([
-        superInstall(vine, root),
-        this.setupHandleNewIndex(),
-        this.setupHandleRotation(root),
-      ]);
-    };
+  getInitFunctions(): InitFn[] {
+    return [
+      ...super.getInitFunctions(),
+      () => this.setupHandleNewIndex(),
+      (_, root) => this.setupHandleRotation(root),
+    ];
   }
 
   protected onConfig(config$: Observable<Partial<Config>>): Observable<unknown> {

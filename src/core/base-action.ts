@@ -43,17 +43,17 @@ export abstract class BaseAction<I = {}> {
     this.triggerSpec$ = new BehaviorSubject(defaultTriggerSpec);
   }
 
+  getInitFunctions(): InitFn[] {
+    return [
+      (vine, root) => this.setupTrigger(vine, root),
+      (_, root) => this.setupConfig(root),
+    ];
+  }
+
   install(): InitFn {
     return (vine, root) => {
-      const element = root.host;
-      if (!(element instanceof HTMLElement)) {
-        throw Errors.assert('element').shouldBeAnInstanceOf(HTMLElement).butWas(element);
-      }
-
-      return combineLatest([
-        this.setupTrigger(vine, root),
-        this.setupConfig(root),
-      ]);
+      const obs$ = this.getInitFunctions().map(fn => fn(vine, root));
+      return combineLatest(obs$);
     };
   }
 
