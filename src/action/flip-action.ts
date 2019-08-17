@@ -1,0 +1,91 @@
+import { debug } from '@gs-tools/rxjs';
+import { integerParser } from '@mask';
+import { attributeOut, element, InitFn } from '@persona';
+import { BehaviorSubject, combineLatest, Observable, Subject } from '@rxjs';
+import { distinctUntilChanged, map, tap, withLatestFrom } from '@rxjs/operators';
+
+import { BaseAction } from '../core/base-action';
+import { TriggerKey, TriggerType } from '../core/trigger-spec';
+
+export const $$ = {
+  currentFace: attributeOut('current-face', integerParser()),
+};
+
+const $ = {
+  host: element($$),
+};
+
+interface Config {
+  count: number;
+  index: number;
+}
+
+export class FlipAction extends BaseAction<Config> {
+  private readonly count$: BehaviorSubject<number>;
+  private readonly index$: BehaviorSubject<number>;
+  private readonly onSetIndex$ = new Subject<number>();
+
+  constructor(
+      count: number,
+      index: number,
+  ) {
+    super(
+        'flip',
+        'Flip',
+        {
+          count: integerParser(),
+          index: integerParser(),
+        },
+        {type: TriggerType.KEY, key: TriggerKey.F},
+    );
+
+    this.count$ = new BehaviorSubject(count);
+    this.index$ = new BehaviorSubject(index);
+  }
+
+  getInitFunctions(): InitFn[] {
+    return [
+      ...super.getInitFunctions(),
+      () => this.setupOnSetIndex(),
+      (_, root) => this.setupUpdateHost(root),
+    ];
+  }
+
+  protected onConfig(config$: Observable<Partial<Config>>): Observable<unknown> {
+    return config$.pipe(
+        tap(config => {
+          if (config.count !== undefined) {
+            this.count$.next(config.count);
+          }
+
+          if (config.index !== undefined) {
+            this.onSetIndex$.next(config.index);
+          }
+        }),
+    );
+  }
+
+  protected onTrigger(trigger$: Observable<unknown>): Observable<unknown> {
+    return trigger$.pipe(
+        withLatestFrom(this.index$),
+        tap(([, index]) => this.onSetIndex$.next(index + 1)),
+    );
+  }
+
+  protected setupOnSetIndex(): Observable<unknown> {
+    return this.onSetIndex$.pipe(
+        withLatestFrom(this.count$),
+        tap(([newIndex, count]) => this.index$.next(newIndex % count)),
+    );
+  }
+
+  protected setupUpdateHost(root: ShadowRoot): Observable<unknown> {
+    const currentFace$ = combineLatest([
+      this.index$,
+      this.count$,
+    ])
+    .pipe(map(([index, count]) => index % count));
+
+    return $.host._.currentFace.output(root, currentFace$);
+  }
+}

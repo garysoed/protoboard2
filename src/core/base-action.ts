@@ -1,6 +1,5 @@
 import { Vine } from '@grapevine';
-import { Errors } from '@gs-tools/error';
-import { mapNonNull } from '@gs-tools/rxjs';
+import { mapNonNull, switchMapNonNull } from '@gs-tools/rxjs';
 import { Converter } from '@nabu';
 import { element, InitFn, mutationObservable, onDom } from '@persona';
 import { BehaviorSubject, combineLatest, EMPTY, fromEvent, merge, Observable } from '@rxjs';
@@ -31,7 +30,7 @@ export abstract class BaseAction<I = {}> {
   private readonly appendedActionConfigConverters: ConverterOf<I> & ConverterOf<TriggerConfig>;
 
   constructor(
-      private readonly actionKey: string,
+      readonly key: string,
       readonly actionName: string,
       actionConfigConverters: ConverterOf<I>,
       defaultTriggerSpec: TriggerSpec,
@@ -70,13 +69,21 @@ export abstract class BaseAction<I = {}> {
         root.host,
         {
           childList: true,
-          attributes: true,
           subtree: true,
         })
         .pipe(
             startWith({}),
             map(() => {
-              return root.host.querySelector(`pb-action-config[action="${this.actionKey}"]`);
+              return root.host.querySelector(`pb-action-config[action="${this.key}"]`);
+            }),
+            switchMapNonNull(configEl => {
+              return mutationObservable(
+                  configEl,
+                  {
+                    attributes: true,
+                    attributeFilter: Object.keys(this.appendedActionConfigConverters),
+                  })
+                  .pipe(startWith({}), mapTo(configEl));
             }),
             mapNonNull(configEl => {
               const config: Partial<I & TriggerConfig> = {};

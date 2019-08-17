@@ -3,13 +3,15 @@ import { assert, match, setup, should, test } from '@gs-testing';
 import { ArrayDiff } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { EMPTY, Observable, ReplaySubject } from '@rxjs';
-import { switchMap } from '@rxjs/operators';
+import { switchMap, take } from '@rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerType } from '../core/trigger-spec';
+import { TriggerKey, TriggerType } from '../core/trigger-spec';
+import { trigger } from '../testing/component-tester';
 
 import { HelpAction } from './help-action';
 import { $helpService } from './help-service';
+
 
 class TestAction extends BaseAction {
   constructor() {
@@ -45,8 +47,7 @@ test('@protoboard2/action/help-action', () => {
           .pipe(switchMap(service => service.actions$))
           .subscribe(actions$);
 
-      el.dispatchEvent(new CustomEvent('mouseover'));
-      window.dispatchEvent(new KeyboardEvent('keydown', {key: '?'}));
+      action.triggerSpec$.pipe(trigger(el), take(1)).subscribe();
 
       assert(actions$).to.emitSequence([
         match.anyObjectThat<ArrayDiff<BaseAction>>().haveProperties({
