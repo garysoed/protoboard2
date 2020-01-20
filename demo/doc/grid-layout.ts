@@ -1,4 +1,3 @@
-import { createImmutableMap, ImmutableMap } from '@gs-tools/collect';
 import { ElementWithTagType } from '@gs-types';
 import { $textInput, _p, _v, TextInput, ThemedCustomElementCtrl } from '@mask';
 import { api, element, InitFn } from '@persona';
@@ -43,14 +42,13 @@ export class GridLayout extends ThemedCustomElementCtrl {
     ];
   }
 
-  private renderLayoutAttr(): Observable<ImmutableMap<string, string>> {
+  private renderLayoutAttr(): Observable<ReadonlyMap<string, string>> {
     return combineLatest([
       this.column$,
       this.row$,
     ])
     .pipe(
         map(([column, row]) => new Map([['column-count', column], ['row-count', row]])),
-        map(map => createImmutableMap(map)),
     );
   }
 

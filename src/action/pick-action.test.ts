@@ -1,5 +1,5 @@
 import { Vine } from '@grapevine';
-import { assert, match, setup, should, test } from '@gs-testing';
+import { arrayThat, assert, setup, should, test } from '@gs-testing';
 import { scanArray } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { ReplaySubject } from '@rxjs';
@@ -34,8 +34,8 @@ test('@protoboard2/action/pick-action', () => {
       el.click();
 
       assert(elements$).to.emitSequence([
-        match.anyArrayThat<Element>().beEmpty(),
-        match.anyArrayThat<Element>().haveExactElements([el]),
+        arrayThat<Element>().beEmpty(),
+        arrayThat<Element>().haveExactElements([el]),
       ]);
     });
   });

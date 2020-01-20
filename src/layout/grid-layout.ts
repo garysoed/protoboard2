@@ -1,4 +1,4 @@
-import { InstanceofType } from '@gs-types';
+import { instanceofType } from '@gs-types';
 import { _p, integerParser, ThemedCustomElementCtrl } from '@mask';
 import { attributeIn, element, InitFn, mutationObservable } from '@persona';
 import { combineLatest, Observable, of as observableOf, Subscription } from '@rxjs';
@@ -25,7 +25,7 @@ export const $$ = {
 
 export const $ = {
   host: element($$),
-  rows: element('rows', InstanceofType(HTMLDivElement), {}),
+  rows: element('rows', instanceofType(HTMLDivElement), {}),
 };
 
 @_p.customElement({

@@ -1,12 +1,12 @@
 import { Vine } from '@grapevine';
-import { assert, match, setup, should, test } from '@gs-testing';
+import { assert, objectThat, setup, should, test } from '@gs-testing';
 import { ArrayDiff } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { EMPTY, Observable, ReplaySubject } from '@rxjs';
 import { switchMap, take } from '@rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerKey, TriggerType } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 import { trigger } from '../testing/component-tester';
 
 import { HelpAction } from './help-action';
@@ -50,7 +50,7 @@ test('@protoboard2/action/help-action', () => {
       action.triggerSpec$.pipe(trigger(el), take(1)).subscribe();
 
       assert(actions$).to.emitSequence([
-        match.anyObjectThat<ArrayDiff<BaseAction>>().haveProperties({
+        objectThat<ArrayDiff<BaseAction>>().haveProperties({
           type: 'insert',
           value: TEST_ACTION,
           index: 0,

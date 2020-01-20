@@ -1,5 +1,4 @@
 import { Vine } from '@grapevine';
-import { createImmutableMap } from '@gs-tools/collect';
 import { ElementWithTagType } from '@gs-types';
 import { $svgConfig, _p, _v, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
 import { api, attributeIn, dispatcher, element, InitFn, onDom } from '@persona';
@@ -23,10 +22,10 @@ export class AddDropZoneEvent extends Event {
 }
 
 export const $$ = {
-  layoutAttr: attributeIn(
+  layoutAttr: attributeIn<ReadonlyMap<string, string>>(
       'layout-attr',
       mapParser(stringParser(), stringParser()),
-      createImmutableMap(new Map()),
+      new Map(),
   ),
   layoutTag: attributeIn('layout-tag', stringParser()),
   onAddDropZone: dispatcher<AddDropZoneEvent>(ADD_DROP_ZONE_EVENT),

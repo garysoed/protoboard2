@@ -22,7 +22,7 @@
   "homepage": "https://github.com/garysoed/protoboard2#readme",
   "dependencies": {
     "gs-tools": "github:garysoed/gs-tools",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.13",

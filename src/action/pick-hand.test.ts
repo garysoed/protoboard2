@@ -1,4 +1,4 @@
-import { assert, match, setup, should, test } from '@gs-testing';
+import { arrayThat, assert, setup, should, test } from '@gs-testing';
 import { _p } from '@mask';
 import { ElementTester, PersonaTester, PersonaTesterFactory } from '@persona/testing';
 import { ReplaySubject, Subject } from '@rxjs';
@@ -63,13 +63,13 @@ test('@protoboard2/action/pick-hand', () => {
       });
 
       assert(contents$).to.emitSequence([
-        match.anyArrayThat<Element>().haveExactElements([]),
-        match.anyArrayThat<Element>().haveExactElements([el1]),
-        match.anyArrayThat<Element>().haveExactElements([el1, el2]),
-        match.anyArrayThat<Element>().haveExactElements([el1, el2, el3]),
-        match.anyArrayThat<Element>().haveExactElements([el1, el3]),
-        match.anyArrayThat<Element>().haveExactElements([el3]),
-        match.anyArrayThat<Element>().haveExactElements([]),
+        arrayThat<Element>().haveExactElements([]),
+        arrayThat<Element>().haveExactElements([el1]),
+        arrayThat<Element>().haveExactElements([el1, el2]),
+        arrayThat<Element>().haveExactElements([el1, el2, el3]),
+        arrayThat<Element>().haveExactElements([el1, el3]),
+        arrayThat<Element>().haveExactElements([el3]),
+        arrayThat<Element>().haveExactElements([]),
       ]);
     });
   });

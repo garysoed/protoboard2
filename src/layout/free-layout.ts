@@ -89,10 +89,10 @@ export class FreeLayout extends CustomElementCtrl {
 
               const oldValue = node[__oldValue];
               if (node instanceof HTMLElement && oldValue) {
-                node.style.left = oldValue.left;
-                node.style.top = oldValue.top;
-                node.style.height = oldValue.height;
-                node.style.width = oldValue.width;
+                node.style.left = oldValue.left || '';
+                node.style.top = oldValue.top || '';
+                node.style.height = oldValue.height || '';
+                node.style.width = oldValue.width || '';
               }
             });
           }

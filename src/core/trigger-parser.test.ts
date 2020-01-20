@@ -1,4 +1,4 @@
-import { assert, match, setup, should, test } from '@gs-testing';
+import { assert, objectThat, setup, should, test } from '@gs-testing';
 
 import { TriggerParser } from './trigger-parser';
 import { TriggerKey, TriggerType } from './trigger-spec';
@@ -12,18 +12,18 @@ test('@protoboard2/core/trigger-parser', () => {
 
   test('convertBackward', () => {
     should(`convert 'click' correctly`, () => {
-      assert(parser.convertBackward('click')).to.equal(match.anyObjectThat().haveProperties({
+      assert(parser.convertBackward('click')).to.equal(objectThat().haveProperties({
         success: true,
-        result: match.anyObjectThat().haveProperties({
+        result: objectThat().haveProperties({
           type: TriggerType.CLICK,
         }),
       }));
     });
 
     should(`convert keys correctly`, () => {
-      assert(parser.convertBackward('t')).to.equal(match.anyObjectThat().haveProperties({
+      assert(parser.convertBackward('t')).to.equal(objectThat().haveProperties({
         success: true,
-        result: match.anyObjectThat().haveProperties({
+        result: objectThat().haveProperties({
           key: TriggerKey.T,
           type: TriggerType.KEY,
         }),
@@ -31,7 +31,7 @@ test('@protoboard2/core/trigger-parser', () => {
     });
 
     should(`fail if the string is invalid`, () => {
-      assert(parser.convertBackward('invalid')).to.equal(match.anyObjectThat().haveProperties({
+      assert(parser.convertBackward('invalid')).to.equal(objectThat().haveProperties({
         success: false,
       }));
     });
@@ -40,7 +40,7 @@ test('@protoboard2/core/trigger-parser', () => {
   test('convertForward', () => {
     should(`convert CLICK correctly`, () => {
       assert(parser.convertForward({type: TriggerType.CLICK}))
-          .to.equal(match.anyObjectThat().haveProperties({
+          .to.equal(objectThat().haveProperties({
             success: true,
             result: 'click',
           }));
@@ -48,7 +48,7 @@ test('@protoboard2/core/trigger-parser', () => {
 
     should(`convert KEY correctly`, () => {
       assert(parser.convertForward({key: TriggerKey.T, type: TriggerType.KEY}))
-          .to.equal(match.anyObjectThat().haveProperties({
+          .to.equal(objectThat().haveProperties({
             success: true,
             result: 't',
           }));

@@ -1,5 +1,5 @@
 import { Vine } from '@grapevine';
-import { assert, match, setup, should, test } from '@gs-testing';
+import { arrayThat, assert, setup, should, test } from '@gs-testing';
 import { scanArray } from '@gs-tools/rxjs';
 import { _v } from '@mask';
 import { ReplaySubject } from '@rxjs';
@@ -32,7 +32,7 @@ test('@protoboard2/action/drop-action', () => {
           .pipe(take(1))
           .subscribe(service => service.add(componentEl));
 
-      const components$ = new ReplaySubject<Element[]>(2);
+      const components$ = new ReplaySubject<readonly Element[]>(2);
       $pickService.get(vine)
           .pipe(
               switchMap(service => service.getComponents()),
@@ -43,8 +43,8 @@ test('@protoboard2/action/drop-action', () => {
       el.click();
 
       assert(components$).to.emitSequence([
-        match.anyArrayThat<Element>().haveExactElements([componentEl]),
-        match.anyArrayThat<Element>().haveExactElements([]),
+        arrayThat<Element>().haveExactElements([componentEl]),
+        arrayThat<Element>().haveExactElements([]),
       ]);
       assert(parentEl.children.item(0)).to.equal(componentEl);
     });
@@ -57,7 +57,7 @@ test('@protoboard2/action/drop-action', () => {
     const parentEl = document.createElement('div');
     parentNode$.next(parentEl);
 
-    const components$ = new ReplaySubject<Element[]>(2);
+    const components$ = new ReplaySubject<readonly Element[]>(2);
     $pickService.get(vine)
         .pipe(
             switchMap(service => service.getComponents()),
@@ -68,7 +68,7 @@ test('@protoboard2/action/drop-action', () => {
     el.click();
 
     assert(components$).to.emitSequence([
-      match.anyArrayThat<Element>().haveExactElements([]),
+      arrayThat<Element>().haveExactElements([]),
     ]);
     assert(parentEl.children.item(0)).to.equal(null);
   });
@@ -85,7 +85,7 @@ test('@protoboard2/action/drop-action', () => {
         .pipe(take(1))
         .subscribe(service => service.add(componentEl));
 
-    const components$ = new ReplaySubject<Element[]>(2);
+    const components$ = new ReplaySubject<readonly Element[]>(2);
     $pickService.get(vine)
         .pipe(
             switchMap(service => service.getComponents()),

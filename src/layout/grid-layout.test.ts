@@ -1,4 +1,4 @@
-import { assert, match, setup, should, test } from '@gs-testing';
+import { arrayThat, assert, setup, should, test } from '@gs-testing';
 import { _p } from '@mask';
 import { ElementTester, PersonaTesterFactory } from '@persona/testing';
 import { Observable } from '@rxjs';
@@ -118,16 +118,16 @@ test('@protoboard2/layout/grid-layout', () => {
       tester.setAttribute($.host._.colCount, 2).subscribe();
       tester.setAttribute($.host._.rowCount, 3).subscribe();
 
-      assert(tags$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['slot', 'slot']),
-        match.anyArrayThat<string>().haveExactElements(['slot', 'slot']),
-        match.anyArrayThat<string>().haveExactElements(['slot', 'slot']),
+      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['slot', 'slot']),
+        arrayThat<string>().haveExactElements(['slot', 'slot']),
+        arrayThat<string>().haveExactElements(['slot', 'slot']),
       ]));
 
-      assert(slotName$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['0_0', '0_1']),
-        match.anyArrayThat<string>().haveExactElements(['1_0', '1_1']),
-        match.anyArrayThat<string>().haveExactElements(['2_0', '2_1']),
+      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['0_0', '0_1']),
+        arrayThat<string>().haveExactElements(['1_0', '1_1']),
+        arrayThat<string>().haveExactElements(['2_0', '2_1']),
       ]));
     });
 
@@ -137,12 +137,12 @@ test('@protoboard2/layout/grid-layout', () => {
 
       tester.setAttribute($.host._.rowCount, 1).subscribe();
 
-      assert(tags$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['slot', 'slot']),
+      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['slot', 'slot']),
       ]));
 
-      assert(slotName$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['0_0', '0_1']),
+      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['0_0', '0_1']),
       ]));
     });
 
@@ -152,26 +152,26 @@ test('@protoboard2/layout/grid-layout', () => {
 
       tester.setAttribute($.host._.colCount, 1).subscribe();
 
-      assert(tags$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['slot']),
-        match.anyArrayThat<string>().haveExactElements(['slot']),
-        match.anyArrayThat<string>().haveExactElements(['slot']),
+      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['slot']),
+        arrayThat<string>().haveExactElements(['slot']),
+        arrayThat<string>().haveExactElements(['slot']),
       ]));
 
-      assert(slotName$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['0_0']),
-        match.anyArrayThat<string>().haveExactElements(['1_0']),
-        match.anyArrayThat<string>().haveExactElements(['2_0']),
+      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['0_0']),
+        arrayThat<string>().haveExactElements(['1_0']),
+        arrayThat<string>().haveExactElements(['2_0']),
       ]));
     });
 
     should(`render the default values`, () => {
-      assert(tags$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['slot']),
+      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['slot']),
       ]));
 
-      assert(slotName$).to.emitWith(match.anyArrayThat<string[]>().haveExactElements([
-        match.anyArrayThat<string>().haveExactElements(['0_0']),
+      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+        arrayThat<string>().haveExactElements(['0_0']),
       ]));
     });
   });
