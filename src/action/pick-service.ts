@@ -1,6 +1,7 @@
-import { ArrayDiff, ArraySubject } from '@gs-tools/rxjs';
-import { _v } from '@mask';
-import { Observable, of as observableOf } from '@rxjs';
+import { stream } from 'grapevine';
+import { ArrayDiff, ArraySubject } from 'gs-tools/export/rxjs';
+import { _v } from 'mask';
+import { Observable, of as observableOf } from 'rxjs';
 
 export class PickService {
   private readonly components$ = new ArraySubject<Element>();
@@ -18,4 +19,4 @@ export class PickService {
   }
 }
 
-export const $pickService = _v.stream(() => observableOf(new PickService()), globalThis);
+export const $pickService = stream(() => observableOf(new PickService()), globalThis);

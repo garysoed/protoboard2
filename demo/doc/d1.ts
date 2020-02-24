@@ -1,9 +1,10 @@
-import { debug, filterNonNull, mapNonNull } from '@gs-tools/rxjs';
-import { ElementWithTagType } from '@gs-types';
-import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from '@mask';
-import { api, element, InitFn, mutationObservable, onDom } from '@persona';
-import { BehaviorSubject, Observable, of as observableOf } from '@rxjs';
-import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
+import { ElementWithTagType } from 'gs-types';
+import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
+import { api, element, mutationObservable, onDom } from 'persona';
+import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
+import { filter, map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { D1 as D1Impl } from '../../src/component/d1';
 import coinSvg from '../asset/coin.svg';
@@ -46,18 +47,16 @@ const $ = {
   template,
 })
 export class D1 extends ThemedCustomElementCtrl {
-  private readonly createEl$ = _p.input($.create, this);
-  private readonly onCustomizeClick$ = _p.input($.customize._.onClick, this);
+  private readonly createEl$ = this.declareInput($.create);
+  private readonly onCustomizeClick$ = this.declareInput($.customize._.onClick);
   private readonly pieceEl$ = this.createPieceEl();
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      () => this.setupHandleCustomizeClick(),
-      (_vine, root) => this.setupHandleSelectedIcon(root),
-      () => this.setupHandlePieceRemoved(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.setupHandleCustomizeClick();
+    this.setupHandleSelectedIcon();
+    this.setupHandlePieceRemoved();
   }
 
   private createPieceEl(): Observable<HTMLElement|null> {
@@ -72,8 +71,8 @@ export class D1 extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleCustomizeClick(): Observable<unknown> {
-    return this.onCustomizeClick$
+  private setupHandleCustomizeClick(): void {
+    this.onCustomizeClick$
         .pipe(
             map(event => event.target),
             mapNonNull(target => {
@@ -88,32 +87,36 @@ export class D1 extends ThemedCustomElementCtrl {
               return target.id;
             }),
             filterNonNull(),
-            tap(icon => this.selectedIcon$.next(icon)),
-        );
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(icon => this.selectedIcon$.next(icon));
   }
 
-  private setupHandlePieceRemoved(): Observable<unknown> {
-    return this.pieceEl$
+  private setupHandlePieceRemoved(): void {
+    this.pieceEl$
         .pipe(
             filter(piece => piece === null),
             withLatestFrom(this.createEl$),
-            tap(([, createEl]) => {
-              const pieceEl = document.createElement('pb-d1');
-              const iconEl = document.createElement('mk-icon');
-              pieceEl.appendChild(iconEl);
-              createEl.appendChild(pieceEl);
-            }),
-        );
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([, createEl]) => {
+          const pieceEl = document.createElement('pb-d1');
+          const iconEl = document.createElement('mk-icon');
+          pieceEl.appendChild(iconEl);
+          createEl.appendChild(pieceEl);
+        });
   }
 
-  private setupHandleSelectedIcon(root: ShadowRoot): Observable<unknown> {
-    return this.pieceEl$
+  private setupHandleSelectedIcon(): void {
+    this.pieceEl$
         .pipe(
             filterNonNull(),
-            switchMap(iconEl => api($icon).icon
+            switchMap(iconEl => api($icon.api).icon
                 .resolve(() => observableOf(iconEl))
-                .output(root, this.selectedIcon$),
+                .output(this.shadowRoot, this.selectedIcon$),
             ),
-        );
+            takeUntil(this.onDispose$),
+        )
+        .subscribe();
   }
 }

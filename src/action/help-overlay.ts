@@ -1,9 +1,10 @@
-import { ArrayDiff, scanArray } from '@gs-tools/rxjs';
-import { ElementWithTagType, InstanceofType } from '@gs-types';
-import { _p, _v, ThemedCustomElementCtrl } from '@mask';
-import { classToggle, element, InitFn, innerHtml, onDom, renderFromTemplate, RenderSpec, repeated, style } from '@persona';
-import { combineLatest, Observable, of as observableOf } from '@rxjs';
-import { map, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
+import { ElementWithTagType, InstanceofType } from 'gs-types';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { classToggle, element, innerHtml, onDom, renderFromTemplate, RenderSpec, repeated } from 'persona';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerSpec, TriggerType } from '../core/trigger-spec';
@@ -37,17 +38,15 @@ const $template = {
   template,
 })
 export class HelpOverlay extends ThemedCustomElementCtrl {
-  private readonly helpService$ = $helpService.asSubject();
-  private readonly onRootClick$ = _p.input($.root._.click, this);
-  private readonly tableRowTemplate$ = _p.input($.template, this);
+  private readonly helpService$ = $helpService.get(this.vine);
+  private readonly onRootClick$ = this.declareInput($.root._.click);
+  private readonly tableRowTemplate$ = this.declareInput($.template);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.content._.rows).withVine(_v.stream(this.renderRows, this)),
-      _p.render($.root._.isVisibleClass).withVine(_v.stream(this.renderIsVisible, this)),
-      () => this.setupHandleClick(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.render($.content._.rows).withFunction(this.renderRows);
+    this.render($.root._.isVisibleClass).withFunction(this.renderIsVisible);
+    this.setupHandleClick();
   }
 
   private renderIsVisible(): Observable<boolean> {
@@ -83,11 +82,13 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleClick(): Observable<unknown> {
-    return this.onRootClick$.pipe(
-        withLatestFrom(this.helpService$),
-        tap(([, service]) => service.hide()),
-    );
+  private setupHandleClick(): void {
+    this.onRootClick$
+        .pipe(
+            withLatestFrom(this.helpService$),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([, service]) => service.hide());
   }
 }
 

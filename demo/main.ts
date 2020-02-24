@@ -1,4 +1,4 @@
-import { $svgConfig, Palette, start, Theme } from '@mask';
+import { $svgConfig, Palette, start, Theme } from 'mask';
 
 import protoboardSvg from './asset/icon.svg';
 import { Root } from './root';

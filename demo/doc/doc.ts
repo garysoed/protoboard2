@@ -1,16 +1,17 @@
-import { Vine } from '@grapevine';
-import { mapNonNull } from '@gs-tools/rxjs';
-import { InstanceofType } from '@gs-types';
-import { _p, _v, ThemedCustomElementCtrl } from '@mask';
-import { element, InitFn, SimpleElementRenderSpec, single } from '@persona';
-import { Observable } from '@rxjs';
-import { map, switchMap } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { mapNonNull } from 'gs-tools/export/rxjs';
+import { InstanceofType } from 'gs-types';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { element, SimpleElementRenderSpec, single } from 'persona';
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { $locationService } from '../location-service';
 
 import { D1 } from './d1';
 import template from './doc.html';
 import { Instruction } from './instruction';
+
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -27,11 +28,9 @@ const $ = {
   template,
 })
 export class Doc extends ThemedCustomElementCtrl {
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.root._.content).withVine(_v.stream(this.renderContent, this)),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.render($.root._.content).withFunction(this.renderContent);
   }
 
   private renderContent(vine: Vine): Observable<SimpleElementRenderSpec|null> {

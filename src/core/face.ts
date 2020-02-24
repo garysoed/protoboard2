@@ -1,8 +1,10 @@
-import { InstanceofType } from '@gs-types';
-import { _p, stringParser, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, attributeOut, element, InitFn } from '@persona';
+import { Vine } from 'grapevine';
+import { InstanceofType } from 'gs-types';
+import { _p, stringParser, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, attributeOut, element } from 'persona';
 
 import template from './face.html';
+
 
 const $$ = {
   display: attributeIn('display', stringParser()),
@@ -27,12 +29,11 @@ const $ = {
   template,
 })
 export class Face extends ThemedCustomElementCtrl {
-  private readonly display$ = _p.input($.host._.display, this);
+  private readonly display$ = this.declareInput($.host._.display);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.slot._.name).withObservable(this.display$),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.render($.slot._.name).withObservable(this.display$);
   }
 }

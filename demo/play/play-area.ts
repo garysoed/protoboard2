@@ -1,13 +1,15 @@
-import { filterNonNull } from '@gs-tools/rxjs';
-import { InstanceofType } from '@gs-types';
-import { _p, _v, ThemedCustomElementCtrl } from '@mask';
-import { element, InitFn, mutationObservable, SimpleElementRenderSpec, single } from '@persona';
-import { Observable } from '@rxjs';
-import { distinctUntilChanged, map, startWith, switchMap, tap } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { filterNonNull } from 'gs-tools/export/rxjs';
+import { InstanceofType } from 'gs-types';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { element, mutationObservable, SimpleElementRenderSpec, single } from 'persona';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { $playAreaService } from './play-area-service';
 import template from './play-area.html';
 import { PlayDefault } from './play-default';
+
 
 const $ = {
   root: element('root', InstanceofType(HTMLDivElement), {
@@ -25,15 +27,14 @@ const LAYOUT_ID = 'layout';
   template,
 })
 export class PlayArea extends ThemedCustomElementCtrl {
-  private readonly playAreaService$ = $playAreaService.asSubject();
-  private readonly rootEl$ = _p.input($.root, this);
+  private readonly playAreaService$ = $playAreaService.get(this.vine);
+  private readonly rootEl$ = this.declareInput($.root);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.root._.content).withVine(_v.stream(this.renderContent, this)),
-      () => this.setupHandleDropZones(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.render($.root._.content).withFunction(this.renderContent);
+    this.setupHandleDropZones();
   }
 
   private renderContent(): Observable<SimpleElementRenderSpec> {
@@ -63,8 +64,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleDropZones(): Observable<unknown> {
-    return this.rootEl$.pipe(
+  private setupHandleDropZones(): void {
+    this.rootEl$.pipe(
         switchMap(rootEl => {
           return mutationObservable(rootEl, {childList: true}).pipe(
               startWith({}),
@@ -93,7 +94,9 @@ export class PlayArea extends ThemedCustomElementCtrl {
               }),
           );
         }),
-    );
+        takeUntil(this.onDispose$),
+    )
+    .subscribe();
   }
 }
 

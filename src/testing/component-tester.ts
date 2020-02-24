@@ -1,5 +1,5 @@
-import { MonoTypeOperatorFunction, Observable } from '@rxjs';
-import { tap } from '@rxjs/operators';
+import { MonoTypeOperatorFunction, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { TriggerSpec, TriggerType } from '../core/trigger-spec';
 

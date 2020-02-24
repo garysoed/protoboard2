@@ -1,6 +1,7 @@
-import { ArraySubject } from '@gs-tools/rxjs';
-import { _v } from '@mask';
-import { BehaviorSubject } from '@rxjs';
+import { source } from 'grapevine';
+import { ArraySubject } from 'gs-tools/export/rxjs';
+import { _v } from 'mask';
+import { BehaviorSubject } from 'rxjs';
 
 import { BaseAction } from '../core/base-action';
 
@@ -16,4 +17,4 @@ export class HelpService {
   }
 }
 
-export const $helpService = _v.source(() => new BehaviorSubject(new HelpService()), globalThis);
+export const $helpService = source(() => new BehaviorSubject(new HelpService()), globalThis);

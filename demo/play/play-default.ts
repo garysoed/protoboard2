@@ -1,4 +1,4 @@
-import { _p, ThemedCustomElementCtrl } from '@mask';
+import { _p, ThemedCustomElementCtrl } from 'mask';
 
 import template from './play-default.html';
 

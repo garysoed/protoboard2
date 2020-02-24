@@ -1,6 +1,6 @@
-import { assert, setup, should, test } from '@gs-testing';
-import { _p } from '@mask';
-import { ElementTester, PersonaTesterFactory } from '@persona/testing';
+import { assert, setup, should, test } from 'gs-testing';
+import { _p } from 'mask';
+import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
 
 import { $, D2 } from './d2';
 

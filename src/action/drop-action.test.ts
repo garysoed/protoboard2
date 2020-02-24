@@ -1,9 +1,9 @@
-import { Vine } from '@grapevine';
-import { arrayThat, assert, setup, should, test } from '@gs-testing';
-import { scanArray } from '@gs-tools/rxjs';
-import { _v } from '@mask';
-import { ReplaySubject } from '@rxjs';
-import { switchMap, take } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { arrayThat, assert, setup, should, test } from 'gs-testing';
+import { scanArray } from 'gs-tools/export/rxjs';
+import { _v } from 'mask';
+import { ReplaySubject } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { DropAction } from './drop-action';
 import { $pickService } from './pick-service';
@@ -22,7 +22,7 @@ test('@protoboard2/action/drop-action', () => {
   test('onTrigger', () => {
     should(`add the component correctly`, () => {
       const el = document.createElement('div');
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       const parentEl = document.createElement('div');
       parentNode$.next(parentEl);
@@ -52,7 +52,7 @@ test('@protoboard2/action/drop-action', () => {
 
   should(`not throw if there are no components`, () => {
     const el = document.createElement('div');
-    action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+    action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
     const parentEl = document.createElement('div');
     parentNode$.next(parentEl);
@@ -75,7 +75,7 @@ test('@protoboard2/action/drop-action', () => {
 
   should(`not add the component if component is changed without triggering`, () => {
     const el = document.createElement('div');
-    action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+    action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
     const parentEl = document.createElement('div');
     parentNode$.next(parentEl);

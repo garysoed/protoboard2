@@ -1,8 +1,8 @@
-import { Vine } from '@grapevine';
-import { assert, setup, should, test } from '@gs-testing';
-import { _v, integerParser } from '@mask';
-import { Observable, ReplaySubject, Subject } from '@rxjs';
-import { tap } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { assert, setup, should, test } from 'gs-testing';
+import { _v, integerParser } from 'mask';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { BaseAction } from './base-action';
 import { TriggerKey, TriggerSpec, TriggerType } from './trigger-spec';
@@ -50,7 +50,7 @@ test('@protoboard2/core/base-action', () => {
       const action = new TestAction({type: TriggerType.CLICK}, onTrigger$);
       const element = document.createElement('div');
 
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       element.dispatchEvent(new CustomEvent('click'));
 
@@ -69,7 +69,7 @@ test('@protoboard2/core/base-action', () => {
 
     should(`update the configuration when element is added`, () => {
       const element = document.createElement('div');
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
@@ -87,7 +87,7 @@ test('@protoboard2/core/base-action', () => {
       configEl.setAttribute('value', '123');
       element.appendChild(configEl);
 
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       configEl.setAttribute('value', '345');
 
@@ -102,7 +102,7 @@ test('@protoboard2/core/base-action', () => {
       configEl.setAttribute('trigger', 'click');
       element.appendChild(configEl);
 
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       element.dispatchEvent(new CustomEvent('click'));
 
@@ -124,7 +124,7 @@ test('@protoboard2/core/base-action', () => {
 
     should(`emit when hovered and the correct key was pressed`, () => {
       const element = document.createElement('div');
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       // Hover over the element.
       element.dispatchEvent(new CustomEvent('mouseover'));
@@ -137,7 +137,7 @@ test('@protoboard2/core/base-action', () => {
 
     should(`not emit when the wrong key was pressed`, () => {
       const element = document.createElement('div');
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       // Hover over the element.
       element.dispatchEvent(new CustomEvent('mouseover'));
@@ -150,7 +150,7 @@ test('@protoboard2/core/base-action', () => {
 
     should(`not emit when not hovered`, () => {
       const element = document.createElement('div');
-      action.install()(vine, element.attachShadow({mode: 'open'})).subscribe();
+      action.install(element.attachShadow({mode: 'open'}), vine).subscribe();
 
       // Hover over the element, then hover off.
       element.dispatchEvent(new CustomEvent('mouseover'));

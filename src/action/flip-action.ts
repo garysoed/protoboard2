@@ -1,11 +1,12 @@
-import { debug } from '@gs-tools/rxjs';
-import { integerParser } from '@mask';
-import { attributeOut, element, InitFn } from '@persona';
-import { BehaviorSubject, combineLatest, Observable, Subject } from '@rxjs';
-import { distinctUntilChanged, map, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { integerParser } from 'mask';
+import { attributeOut, element } from 'persona';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
+
 
 export const $$ = {
   currentFace: attributeOut('current-face', integerParser()),
@@ -43,11 +44,11 @@ export class FlipAction extends BaseAction<Config> {
     this.index$ = new BehaviorSubject(index);
   }
 
-  getInitFunctions(): InitFn[] {
+  protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
     return [
-      ...super.getInitFunctions(),
-      () => this.setupOnSetIndex(),
-      (_, root) => this.setupUpdateHost(root),
+      ...super.getSetupObs(shadowRoot, vine),
+      this.setupOnSetIndex(),
+      this.setupUpdateHost(shadowRoot),
     ];
   }
 

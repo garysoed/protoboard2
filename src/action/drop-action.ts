@@ -1,7 +1,7 @@
-import { Vine } from '@grapevine';
-import { scanArray } from '@gs-tools/rxjs';
-import { Observable } from '@rxjs';
-import { map, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { scanArray } from 'gs-tools/export/rxjs';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerType } from '../core/trigger-spec';

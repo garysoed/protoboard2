@@ -1,6 +1,6 @@
-import { Vine } from '@grapevine';
-import { assert, setup, should, test } from '@gs-testing';
-import { _v } from '@mask';
+import { Vine } from 'grapevine';
+import { assert, setup, should, test } from 'gs-testing';
+import { _v } from 'mask';
 
 import { RotateAction } from './rotate-action';
 
@@ -16,7 +16,7 @@ test('@protoboard2/action/rotate-action', () => {
   test('onConfig', () => {
     should(`change the index when updated`, () => {
       const action = new RotateAction(0, [1, 2, 3]);
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'rotate');
@@ -28,7 +28,7 @@ test('@protoboard2/action/rotate-action', () => {
 
     should(`change the stops when updated`, () => {
       const action = new RotateAction(1, []);
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'rotate');
@@ -42,7 +42,7 @@ test('@protoboard2/action/rotate-action', () => {
   test('onTrigger', () => {
     should(`change the rotation`, () => {
       const action = new RotateAction(1, [11, 22, 33]);
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       // Trigger the action.
       el.dispatchEvent(new CustomEvent('mouseover'));
@@ -55,7 +55,7 @@ test('@protoboard2/action/rotate-action', () => {
   test('setupHandleNewIndex', () => {
     should(`should handle cycling`, () => {
       const action = new RotateAction(2, [11, 22, 33]);
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       // Trigger the action.
       el.dispatchEvent(new CustomEvent('mouseover'));

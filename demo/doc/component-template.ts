@@ -1,9 +1,11 @@
-import { ElementWithTagType } from '@gs-types';
-import { _p, stringParser, ThemedCustomElementCtrl } from '@mask';
-import { api, attributeIn, element, InitFn } from '@persona';
+import { Vine } from 'grapevine';
+import { ElementWithTagType } from 'gs-types';
+import { _p, stringParser, ThemedCustomElementCtrl } from 'mask';
+import { api, attributeIn, element } from 'persona';
 
 import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
+
 
 const $$ = {
   label: attributeIn('label', stringParser()),
@@ -22,12 +24,11 @@ const $ = {
   template,
 })
 export class ComponentTemplate extends ThemedCustomElementCtrl {
-  private readonly label$ = _p.input($.host._.label, this);
+  private readonly label$ = this.declareInput($.host._.label);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.template._.label).withObservable(this.label$),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.render($.template._.label).withObservable(this.label$);
   }
 }

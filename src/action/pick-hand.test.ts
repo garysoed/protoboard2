@@ -1,8 +1,8 @@
-import { arrayThat, assert, setup, should, test } from '@gs-testing';
-import { _p } from '@mask';
-import { ElementTester, PersonaTester, PersonaTesterFactory } from '@persona/testing';
-import { ReplaySubject, Subject } from '@rxjs';
-import { map, mapTo, switchMap, take, tap } from '@rxjs/operators';
+import { arrayThat, assert, setup, should, test } from 'gs-testing';
+import { _p } from 'mask';
+import { ElementTester, PersonaTester, PersonaTesterFactory } from 'persona/export/testing';
+import { ReplaySubject, Subject } from 'rxjs';
+import { map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 
 import { $, PickHand } from './pick-hand';
 import { $pickService } from './pick-service';

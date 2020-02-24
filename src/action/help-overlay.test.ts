@@ -1,8 +1,8 @@
-import { assert, setup, should, test } from '@gs-testing';
-import { scanArray } from '@gs-tools/rxjs';
-import { _p } from '@mask';
-import { ElementTester, PersonaTesterFactory } from '@persona/testing';
-import { map, switchMap, take } from '@rxjs/operators';
+import { assert, setup, should, test } from 'gs-testing';
+import { scanArray } from 'gs-tools/export/rxjs';
+import { _p } from 'mask';
+import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { $, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';

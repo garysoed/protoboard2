@@ -1,8 +1,8 @@
-import { arrayThat, assert, setup, should, test } from '@gs-testing';
-import { _p } from '@mask';
-import { ElementTester, PersonaTesterFactory } from '@persona/testing';
-import { Observable } from '@rxjs';
-import { map } from '@rxjs/operators';
+import { arrayThat, assert, setup, should, test } from 'gs-testing';
+import { _p } from 'mask';
+import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { $, GridLayout } from './grid-layout';
 

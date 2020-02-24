@@ -1,9 +1,10 @@
-import { assertUnreachable } from '@gs-tools/typescript';
-import { InstanceofType } from '@gs-types';
-import { _p, _v } from '@mask';
-import { CustomElementCtrl, element, InitFn, style } from '@persona';
-import { fromEvent, Observable } from '@rxjs';
-import { map, share, switchMap, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { assertUnreachable } from 'gs-tools/export/typescript';
+import { InstanceofType } from 'gs-types';
+import { _p, _v } from 'mask';
+import { CustomElementCtrl, element, style } from 'persona';
+import { fromEvent, Observable } from 'rxjs';
+import { map, share, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import template from './pick-hand.html';
 import { $pickService } from './pick-service';
@@ -25,7 +26,7 @@ export const $ = {
   template,
 })
 export class PickHand extends CustomElementCtrl {
-  private readonly container$ = _p.input($.container, this);
+  private readonly container$ = this.declareInput($.container);
   private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
       .pipe(
           withLatestFrom(this.container$),
@@ -36,57 +37,55 @@ export class PickHand extends CustomElementCtrl {
           share(),
       );
 
-  getInitFunctions(): InitFn[] {
-    return [
-      this.renderContentElements(),
-      _p.render($.container._.left).withVine(_v.stream(this.renderLeft, this)),
-      _p.render($.container._.top).withVine(_v.stream(this.renderTop, this)),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.renderContentElements();
+    this.render($.container._.left).withFunction(this.renderLeft);
+    this.render($.container._.top).withFunction(this.renderTop);
   }
 
-  private renderContentElements(): InitFn {
-    return vine => {
-      return $pickService.get(vine)
-          .pipe(
-              switchMap(service => service.getComponents()),
-              withLatestFrom(this.container$),
-              tap(([diff, container]) => {
-                switch (diff.type) {
-                  case 'delete':
-                    const deleteEl = container.children.item(diff.index);
-                    if (deleteEl) {
-                      container.removeChild(deleteEl);
-                    }
+  private renderContentElements(): void {
+    $pickService.get(this.vine)
+        .pipe(
+            switchMap(service => service.getComponents()),
+            withLatestFrom(this.container$),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([diff, container]) => {
+          switch (diff.type) {
+            case 'delete':
+              const deleteEl = container.children.item(diff.index);
+              if (deleteEl) {
+                container.removeChild(deleteEl);
+              }
+              break;
+              case 'init':
+                while (container.childElementCount > 0) {
+                  const toDelete = container.firstElementChild;
+                  if (!toDelete) {
                     break;
-                    case 'init':
-                      while (container.childElementCount > 0) {
-                        const toDelete = container.firstElementChild;
-                        if (!toDelete) {
-                          break;
-                        }
-                        container.removeChild(toDelete);
-                      }
-
-                      for (const el of diff.value) {
-                        container.appendChild(el);
-                      }
-                      break;
-                  case 'insert':
-                    const afterEl = container.children.item(diff.index);
-                    container.insertBefore(diff.value, afterEl);
-                    break;
-                  case 'set':
-                    const replacedEl = container.children.item(diff.index);
-                    if (replacedEl) {
-                      container.replaceChild(diff.value, replacedEl);
-                    }
-                    break;
-                  default:
-                    assertUnreachable(diff);
+                  }
+                  container.removeChild(toDelete);
                 }
-              }),
-          );
-    };
+
+                for (const el of diff.value) {
+                  container.appendChild(el);
+                }
+                break;
+            case 'insert':
+              const afterEl = container.children.item(diff.index);
+              container.insertBefore(diff.value, afterEl);
+              break;
+            case 'set':
+              const replacedEl = container.children.item(diff.index);
+              if (replacedEl) {
+                container.replaceChild(diff.value, replacedEl);
+              }
+              break;
+            default:
+              assertUnreachable(diff);
+          }
+        });
   }
 
   private renderLeft(): Observable<string> {

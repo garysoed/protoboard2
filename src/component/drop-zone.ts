@@ -1,5 +1,6 @@
-import { _p } from '@mask';
-import { element } from '@persona';
+import { Vine } from 'grapevine';
+import { _p } from 'mask';
+import { element } from 'persona';
 
 import { DropAction } from '../action/drop-action';
 import { BaseComponent } from '../core/base-component';
@@ -15,10 +16,11 @@ const $ = {
   template,
 })
 export class DropZone extends BaseComponent {
-  constructor(shadowRoot: ShadowRoot) {
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(
         [new DropAction($.host.getValue(shadowRoot))],
         shadowRoot,
+        vine,
     );
   }
 }

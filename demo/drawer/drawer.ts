@@ -1,16 +1,20 @@
-import { ArrayDiff, filterNonNull } from '@gs-tools/rxjs';
-import { InstanceofType } from '@gs-types';
-import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, element, InitFn, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from '@persona';
-import { map, switchMap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { ArrayDiff, filterNonNull } from 'gs-tools/export/rxjs';
+import { InstanceofType } from 'gs-types';
+import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, element, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
+import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 import { $locationService } from '../location-service';
 
 import template from './drawer.html';
 
+
 export const $$ = {
-  drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
+  api: {
+    drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
+  },
 };
 
 
@@ -18,7 +22,7 @@ const $ = {
   components: element('components', InstanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
-  host: element($$),
+  host: element($$.api),
   layouts: element('layouts', InstanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
@@ -63,19 +67,18 @@ const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
   template,
 })
 export class Drawer extends ThemedCustomElementCtrl {
-  private readonly onRootClick$ = _p.input($.root._.onClick, this);
+  private readonly onRootClick$ = this.declareInput($.root._.onClick);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS)),
-      _p.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS)),
-      this.setupRootOnClick(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS));
+    this.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS));
+    this.setupRootOnClick();
   }
 
-  private setupRootOnClick(): InitFn {
-    return vine => this.onRootClick$
+  private setupRootOnClick(): void {
+    this.onRootClick$
         .pipe(
             map(event => {
               if (!(event.target instanceof HTMLElement)) {
@@ -85,9 +88,11 @@ export class Drawer extends ThemedCustomElementCtrl {
               return event.target.getAttribute('path') || null;
             }),
             filterNonNull(),
-            withLatestFrom($locationService.get(vine)),
+            withLatestFrom($locationService.get(this.vine)),
             switchMap(([path, locationService]) => locationService.goToPath(path, {})),
-        );
+            takeUntil(this.onDispose$),
+        )
+        .subscribe();
   }
 }
 

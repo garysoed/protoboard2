@@ -1,12 +1,12 @@
-import { Vine } from '@grapevine';
-import { mapNonNull, switchMapNonNull } from '@gs-tools/rxjs';
-import { Converter } from '@nabu';
-import { element, InitFn, mutationObservable, onDom } from '@persona';
-import { BehaviorSubject, combineLatest, EMPTY, fromEvent, merge, Observable } from '@rxjs';
-import { filter, map, mapTo, startWith, switchMap, tap } from '@rxjs/operators';
-
+import { Vine } from 'grapevine';
+import { mapNonNull, switchMapNonNull } from 'gs-tools/export/rxjs';
+import { Converter } from 'nabu';
+import { element, mutationObservable, onDom } from 'persona';
+import { BehaviorSubject, EMPTY, fromEvent, merge, Observable } from 'rxjs';
+import { filter, map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
 import { TriggerParser } from './trigger-parser';
 import { TriggerSpec, TriggerType } from './trigger-spec';
+
 
 
 const $ = {
@@ -26,8 +26,8 @@ type TriggerConfig = {trigger: TriggerSpec};
 const TRIGGER_CONVERTER = new TriggerParser();
 
 export abstract class BaseAction<I = {}> {
-  readonly triggerSpec$: BehaviorSubject<TriggerSpec>;
   private readonly appendedActionConfigConverters: ConverterOf<I> & ConverterOf<TriggerConfig>;
+  readonly triggerSpec$: BehaviorSubject<TriggerSpec>;
 
   constructor(
       readonly key: string,
@@ -42,18 +42,15 @@ export abstract class BaseAction<I = {}> {
     this.triggerSpec$ = new BehaviorSubject(defaultTriggerSpec);
   }
 
-  getInitFunctions(): InitFn[] {
-    return [
-      (vine, root) => this.setupTrigger(vine, root),
-      (_, root) => this.setupConfig(root),
-    ];
+  install(shadowRoot: ShadowRoot, vine: Vine): Observable<unknown> {
+    return merge(...this.getSetupObs(shadowRoot, vine));
   }
 
-  install(): InitFn {
-    return (vine, root) => {
-      const obs$ = this.getInitFunctions().map(fn => fn(vine, root));
-      return combineLatest(obs$);
-    };
+  protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.setupTrigger(vine, shadowRoot),
+      this.setupConfig(shadowRoot),
+    ];
   }
 
   protected abstract onConfig(config$: Observable<Partial<I>>): Observable<unknown>;

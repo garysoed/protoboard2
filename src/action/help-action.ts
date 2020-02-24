@@ -1,6 +1,6 @@
-import { Vine } from '@grapevine';
-import { Observable } from '@rxjs';
-import { tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { Observable } from 'rxjs';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';

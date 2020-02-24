@@ -1,6 +1,7 @@
-import { SetDiff, SetSubject } from '@gs-tools/rxjs';
-import { _v } from '@mask';
-import { BehaviorSubject, Observable } from '@rxjs';
+import { source } from 'grapevine';
+import { SetDiff, SetSubject } from 'gs-tools/export/rxjs';
+import { _v } from 'mask';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export type DropZoneSpec = Map<string, string>;
 
@@ -34,7 +35,7 @@ class PlayAreaService {
   }
 }
 
-export const $playAreaService = _v.source(
+export const $playAreaService = source(
     () => new BehaviorSubject(new PlayAreaService()),
     globalThis,
 );

@@ -1,8 +1,9 @@
-import { ElementWithTagType } from '@gs-types';
-import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from '@mask';
-import { api, element, InitFn } from '@persona';
-import { Observable } from '@rxjs';
-import { tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { ElementWithTagType } from 'gs-types';
+import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
+import { api, element } from 'persona';
+import { Observable } from 'rxjs';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
 
@@ -12,10 +13,10 @@ import { $$ as $layoutTemplate, LayoutTemplate } from './layout-template';
 
 const $ = {
   template: element('template', ElementWithTagType('pbd-layout-template'), api($layoutTemplate)),
-  x: element('x', ElementWithTagType('mk-text-input'), api($textInput)),
-  y: element('y', ElementWithTagType('mk-text-input'), api($textInput)),
-  height: element('height', ElementWithTagType('mk-text-input'), api($textInput)),
-  width: element('width', ElementWithTagType('mk-text-input'), api($textInput)),
+  x: element('x', ElementWithTagType('mk-text-input'), api($textInput.api)),
+  y: element('y', ElementWithTagType('mk-text-input'), api($textInput.api)),
+  height: element('height', ElementWithTagType('mk-text-input'), api($textInput.api)),
+  width: element('width', ElementWithTagType('mk-text-input'), api($textInput.api)),
 };
 
 @_p.customElement({
@@ -28,22 +29,20 @@ const $ = {
   template,
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
-  private readonly onAddDropZone$ = _p.input($.template._.onAddDropZone, this);
+  private readonly onAddDropZone$ = this.declareInput($.template._.onAddDropZone);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      (_, root) => this.setupHandleAddDropZone(root),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.setupHandleAddDropZone();
   }
 
-  private setupHandleAddDropZone(root: ShadowRoot): Observable<unknown> {
+  private setupHandleAddDropZone(): Observable<unknown> {
     return this.onAddDropZone$.pipe(
         withLatestFrom(
-            $.x._.value.getValue(root),
-            $.y._.value.getValue(root),
-            $.height._.value.getValue(root),
-            $.width._.value.getValue(root),
+            $.x._.value.getValue(this.shadowRoot),
+            $.y._.value.getValue(this.shadowRoot),
+            $.height._.value.getValue(this.shadowRoot),
+            $.width._.value.getValue(this.shadowRoot),
         ),
         tap(([event, x, y, height, width]) => {
           event.addDropZone(new Map([

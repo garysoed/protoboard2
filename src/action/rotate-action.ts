@@ -1,8 +1,9 @@
-import { integerParser, listParser } from '@mask';
-import { identity } from '@nabu';
-import { element, InitFn } from '@persona';
-import { BehaviorSubject, combineLatest, Observable, Subject } from '@rxjs';
-import { filter, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { integerParser, listParser } from 'mask';
+import { identity } from 'nabu';
+import { element } from 'persona';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { filter, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
@@ -33,11 +34,11 @@ export class RotateAction extends BaseAction<Config> {
     );
   }
 
-  getInitFunctions(): InitFn[] {
+  getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
     return [
-      ...super.getInitFunctions(),
-      () => this.setupHandleNewIndex(),
-      (_, root) => this.setupHandleRotation(root),
+      ...super.getSetupObs(shadowRoot, vine),
+      this.setupHandleNewIndex(),
+      this.setupHandleRotation(shadowRoot),
     ];
   }
 

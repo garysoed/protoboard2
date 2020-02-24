@@ -1,8 +1,9 @@
-import { InstanceofType } from '@gs-types';
-import { _p, _v, stringParser } from '@mask';
-import { api, attributeOut, element, InitFn } from '@persona';
-import { Observable } from '@rxjs';
-import { map } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { InstanceofType } from 'gs-types';
+import { _p, stringParser } from 'mask';
+import { api, attributeOut, element } from 'persona';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { $$ as $flipAction, FlipAction } from '../action/flip-action';
 import { PickAction } from '../action/pick-action';
@@ -10,6 +11,7 @@ import { RotateAction } from '../action/rotate-action';
 import { BaseComponent } from '../core/base-component';
 
 import template from './d2.html';
+
 
 export const $ = {
   host: element(api($flipAction)),
@@ -23,9 +25,9 @@ export const $ = {
   template,
 })
 export class D2 extends BaseComponent {
-  private readonly currentFace$ = _p.input($.host._.currentFace, this);
+  private readonly currentFace$ = this.declareInput($.host._.currentFace);
 
-  constructor(shadowRoot: ShadowRoot) {
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(
         [
           new PickAction(),
@@ -33,14 +35,9 @@ export class D2 extends BaseComponent {
           new FlipAction(2, 0),
         ],
         shadowRoot,
+        vine,
     );
-  }
-
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      _p.render($.face._.name).withVine(_v.stream(this.renderFaceName, this)),
-    ];
+    this.render($.face._.name).withFunction(this.renderFaceName);
   }
 
   private renderFaceName(): Observable<string> {

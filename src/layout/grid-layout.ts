@@ -1,10 +1,12 @@
-import { instanceofType } from '@gs-types';
-import { _p, integerParser, ThemedCustomElementCtrl } from '@mask';
-import { attributeIn, element, InitFn, mutationObservable } from '@persona';
-import { combineLatest, Observable, of as observableOf, Subscription } from '@rxjs';
-import { startWith, switchMap, tap } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { instanceofType } from 'gs-types';
+import { _p, integerParser, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, element, mutationObservable } from 'persona';
+import { combineLatest, of as observableOf, Subscription } from 'rxjs';
+import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import template from './grid-layout.html';
+
 
 const __mutationSubscription = Symbol('mutationSubscription');
 const __oldValue = Symbol('oldValue');
@@ -33,24 +35,26 @@ export const $ = {
   template,
 })
 export class GridLayout extends ThemedCustomElementCtrl {
-  private readonly colCount$ = _p.input($.host._.colCount, this);
-  private readonly host$ = _p.input($.host, this);
-  private readonly rowCount$ = _p.input($.host._.rowCount, this);
-  private readonly rowsEl$ = _p.input($.rows, this);
+  private readonly colCount$ = this.declareInput($.host._.colCount);
+  private readonly host$ = this.declareInput($.host);
+  private readonly rowCount$ = this.declareInput($.host._.rowCount);
+  private readonly rowsEl$ = this.declareInput($.rows);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      () => this.setupOnHostMutation(),
-      () => this.setupRenderGrid(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.setupOnHostMutation();
+    this.setupRenderGrid();
   }
 
-  private setupOnHostMutation(): Observable<unknown> {
-    return this.host$.pipe(
-        switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
-        switchMap(records => observableOf(...records)),
-        tap(record => {
+  private setupOnHostMutation(): void {
+    this.host$
+        .pipe(
+            switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
+            switchMap(records => observableOf(...records)),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(record => {
           record.addedNodes.forEach((node: NodeWithPayload) => {
             node[__oldValue] = getOldPayload(node);
 
@@ -82,13 +86,13 @@ export class GridLayout extends ThemedCustomElementCtrl {
               node.setAttribute('slot', oldValue.slot || '');
             }
           });
-        }),
-    );
+        });
   }
 
-  private setupRenderGrid(): Observable<unknown> {
-    return combineLatest([this.colCount$, this.rowCount$, this.rowsEl$]).pipe(
-        tap(([cols, rows, rowsEl]) => {
+  private setupRenderGrid(): void {
+    combineLatest([this.colCount$, this.rowCount$, this.rowsEl$])
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe(([cols, rows, rowsEl]) => {
           // Empty the content of rowsEl
           rowsEl.innerHTML = '';
 
@@ -110,8 +114,7 @@ export class GridLayout extends ThemedCustomElementCtrl {
 
             rowsEl.appendChild(rowEl);
           }
-        }),
-    );
+        });
   }
 }
 

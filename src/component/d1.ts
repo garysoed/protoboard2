@@ -1,4 +1,5 @@
-import { _p } from '@mask';
+import { Vine } from 'grapevine';
+import { _p } from 'mask';
 import { RotateAction } from 'src/action/rotate-action';
 
 import { PickAction } from '../action/pick-action';
@@ -11,13 +12,14 @@ import template from './d1.html';
   template,
 })
 export class D1 extends BaseComponent {
-  constructor(shadowRoot: ShadowRoot) {
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(
         [
           new PickAction(),
           new RotateAction(0, [0, 90, 180, 270]),
         ],
         shadowRoot,
+        vine,
     );
   }
 }

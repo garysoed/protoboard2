@@ -1,9 +1,9 @@
-import { Vine } from '@grapevine';
-import { ElementWithTagType } from '@gs-types';
-import { $svgConfig, _p, _v, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from '@mask';
-import { api, attributeIn, dispatcher, element, InitFn, onDom } from '@persona';
-import { Observable, Subject } from '@rxjs';
-import { map, tap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { ElementWithTagType } from 'gs-types';
+import { $svgConfig, _p, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { api, attributeIn, dispatcher, element, onDom } from 'persona';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { DropZone } from '../../src/component/drop-zone';
 import addSvg from '../asset/add.svg';
@@ -11,6 +11,7 @@ import { $playAreaService, DropZoneSpec } from '../play/play-area-service';
 
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
 import template from './layout-template.html';
+
 
 type AddDropZoneFn = (spec: DropZoneSpec) => void;
 const ADD_DROP_ZONE_EVENT = 'pbd-addDropZone';
@@ -57,19 +58,18 @@ const $ = {
   },
 })
 export class LayoutTemplate extends ThemedCustomElementCtrl {
-  private readonly label$ = _p.input($.host._.label, this);
-  private readonly layoutAttr$ = _p.input($.host._.layoutAttr, this);
-  private readonly layoutTag$ = _p.input($.host._.layoutTag, this);
-  private readonly onAddClick$ = _p.input($.addButton._.onAddClick, this);
+  private readonly label$ = this.declareInput($.host._.label);
+  private readonly layoutAttr$ = this.declareInput($.host._.layoutAttr);
+  private readonly layoutTag$ = this.declareInput($.host._.layoutTag);
+  private readonly onAddClick$ = this.declareInput($.addButton._.onAddClick);
   private readonly onAddDropZone$ = new Subject<DropZoneSpec>();
-  private readonly playAreaService$ = $playAreaService.asSubject();
+  private readonly playAreaService$ = $playAreaService.get(this.vine);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      () => this.setupHandleAddDropZone(),
-      _p.render($.host._.onAddDropZone).withVine(_v.stream(this.renderOnAddClick, this)),
-      _p.render($.template._.label).withObservable(this.label$),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.render($.host._.onAddDropZone).withFunction(this.renderOnAddClick);
+    this.render($.template._.label).withObservable(this.label$);
   }
 
   private renderOnAddClick(): Observable<AddDropZoneEvent> {
@@ -78,16 +78,17 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleAddDropZone(): Observable<unknown> {
-    return this.onAddDropZone$.pipe(
+  private setupHandleAddDropZone(): void {
+    this.onAddDropZone$.pipe(
         withLatestFrom(this.playAreaService$, this.layoutAttr$, this.layoutTag$),
-        tap(([, playAreaService, layoutAttr, layoutTag]) => {
-          playAreaService.setLayout({
-            attr: new Map(layoutAttr),
-            tag: layoutTag,
-          });
-        }),
-        tap(([dropZone, playAreaService]) => playAreaService.addDropZone(dropZone)),
-    );
+        takeUntil(this.onDispose$),
+    )
+    .subscribe(([dropZone, playAreaService, layoutAttr, layoutTag]) => {
+      playAreaService.setLayout({
+        attr: new Map(layoutAttr),
+        tag: layoutTag,
+      });
+      playAreaService.addDropZone(dropZone);
+    });
   }
 }

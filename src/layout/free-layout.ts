@@ -1,7 +1,8 @@
-import { _p } from '@mask';
-import { CustomElementCtrl, element, InitFn, mutationObservable } from '@persona';
-import { Observable, of as observableOf, Subscription } from '@rxjs';
-import { map, startWith, switchMap, tap } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { _p } from 'mask';
+import { CustomElementCtrl, element, mutationObservable } from 'persona';
+import { of as observableOf, Subscription } from 'rxjs';
+import { map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
 import template from './free-layout.html';
 
@@ -31,18 +32,21 @@ const $ = {
   template,
 })
 export class FreeLayout extends CustomElementCtrl {
-  private readonly host$ = _p.input($.host, this);
+  private readonly host$ = this.declareInput($.host);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      () => this.setupOnHostMutation(),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+
+    this.setupOnHostMutation();
   }
 
-  private setupOnHostMutation(): Observable<unknown> {
-    return this.host$.pipe(
-        switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
-        tap(records => {
+  private setupOnHostMutation(): void {
+    this.host$
+        .pipe(
+            switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(records => {
           for (const record of records) {
             record.addedNodes.forEach((node: NodeWithPayload) => {
               node[__oldValue] = getOldPayload(node);
@@ -96,8 +100,7 @@ export class FreeLayout extends CustomElementCtrl {
               }
             });
           }
-        }),
-    );
+        });
   }
 }
 

@@ -1,9 +1,9 @@
-import { Vine } from '@grapevine';
-import { assert, objectThat, setup, should, test } from '@gs-testing';
-import { ArrayDiff } from '@gs-tools/rxjs';
-import { _v } from '@mask';
-import { EMPTY, Observable, ReplaySubject } from '@rxjs';
-import { switchMap, take } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { assert, objectThat, setup, should, test } from 'gs-testing';
+import { ArrayDiff } from 'gs-tools/export/rxjs';
+import { _v } from 'mask';
+import { EMPTY, Observable, ReplaySubject } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerType } from '../core/trigger-spec';
@@ -40,7 +40,7 @@ test('@protoboard2/action/help-action', () => {
   test('onTrigger', () => {
     should(`show the help correctly`, () => {
       const el = document.createElement('div');
-      action.install()(vine, el.attachShadow({mode: 'open'})).subscribe();
+      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
 
       const actions$ = new ReplaySubject<ArrayDiff<BaseAction>>(1);
       $helpService.get(vine)

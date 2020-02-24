@@ -1,7 +1,8 @@
-import { ElementWithTagType } from '@gs-types';
-import { $rootLayout, _p, _v, RootLayout, ThemedCustomElementCtrl } from '@mask';
-import { api, element, InitFn } from '@persona';
-import { switchMap, withLatestFrom } from '@rxjs/operators';
+import { Vine } from 'grapevine';
+import { ElementWithTagType } from 'gs-types';
+import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
+import { api, element } from 'persona';
+import { switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
 import { PickHand } from '../src/action/pick-hand';
@@ -14,9 +15,10 @@ import { $locationService } from './location-service';
 import { PlayArea } from './play/play-area';
 import template from './root.html';
 
+
 const $ = {
-  drawer: element('drawer', ElementWithTagType('pbd-drawer'), api($drawer)),
-  root: element('root', ElementWithTagType('mk-root-layout'), api($rootLayout)),
+  drawer: element('drawer', ElementWithTagType('pbd-drawer'), api($drawer.api)),
+  root: element('root', ElementWithTagType('mk-root-layout'), api($rootLayout.api)),
 };
 
 @_p.customElement({
@@ -34,23 +36,23 @@ const $ = {
   template,
 })
 export class Root extends ThemedCustomElementCtrl {
-  private readonly locationService$ = $locationService.asSubject();
-  private readonly onRootActive$ = _p.input($.root._.onTitleClick, this);
-  private readonly rootDrawerExpanded$ = _p.input($.root._.drawerExpanded, this);
+  private readonly locationService$ = $locationService.get(this.vine);
+  private readonly onRootActive$ = this.declareInput($.root._.onTitleClick);
+  private readonly rootDrawerExpanded$ = this.declareInput($.root._.drawerExpanded);
 
-  getInitFunctions(): InitFn[] {
-    return [
-      ...super.getInitFunctions(),
-      this.setupHandleOnRootActive(),
-      _p.render($.drawer._.drawerExpanded).withObservable(this.rootDrawerExpanded$),
-    ];
+  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+    super(shadowRoot, vine);
+    this.setupHandleOnRootActive();
+    this.render($.drawer._.drawerExpanded).withObservable(this.rootDrawerExpanded$);
   }
 
-  private setupHandleOnRootActive(): InitFn {
-    return () => this.onRootActive$
+  private setupHandleOnRootActive(): void {
+    this.onRootActive$
         .pipe(
             withLatestFrom(this.locationService$),
             switchMap(([, service]) => service.goToPath('INSTRUCTION', {})),
-        );
+            takeUntil(this.onDispose$),
+        )
+        .subscribe();
   }
 }
