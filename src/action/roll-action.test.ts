@@ -1,14 +1,14 @@
 import { assert, init, should, test } from 'gs-testing';
 import { FakeSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
-import { take } from 'rxjs/operators';
 
 import { configure, trigger } from '../testing/component-tester';
 
 import { $$ as $rollAction, RollAction } from './roll-action';
 
+
 test('@protoboard2/action/roll-action', () => {
-  const state = init(() => {
+  const _ = init(() => {
     const seed = new FakeSeed();
     const action = new RollAction({count: 3}, seed);
 
@@ -20,21 +20,21 @@ test('@protoboard2/action/roll-action', () => {
 
   test('onConfig', () => {
     should(`change the count correctly`, () => {
-      configure(state.el, state.action.key, new Map([['count', '4']]));
-      state.seed.values = [1];
+      configure(_.el, _.action.key, new Map([['count', '4']]));
+      _.seed.values = [1];
 
-      state.action.triggerSpec$.pipe(trigger(state.el), take(1)).subscribe();
-      assert(state.el.getAttribute($rollAction.currentFace.attrName)).to.equal('4');
+      trigger(_.el, _.action);
+      assert(_.el.getAttribute($rollAction.currentFace.attrName)).to.equal('4');
     });
   });
 
   test('onTrigger', () => {
     should(`change the current face correctly`, () => {
-      state.seed.values = [1];
+      _.seed.values = [1];
 
-      state.action.triggerSpec$.pipe(trigger(state.el), take(1)).subscribe();
+      trigger(_.el, _.action);
 
-      assert(state.el.getAttribute($rollAction.currentFace.attrName)).to.equal('3');
+      assert(_.el.getAttribute($rollAction.currentFace.attrName)).to.equal('3');
     });
   });
 });

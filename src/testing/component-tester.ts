@@ -1,7 +1,8 @@
-import { MonoTypeOperatorFunction, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
-import { TriggerSpec, TriggerType } from '../core/trigger-spec';
+import { BaseAction } from '../core/base-action';
+import { TriggerType } from '../core/trigger-spec';
+
 
 export function configure(el: HTMLElement, actionKey: string, configs: Map<string, string>): void {
   const configEl = getConfigEl(el, actionKey);
@@ -12,18 +13,20 @@ export function configure(el: HTMLElement, actionKey: string, configs: Map<strin
   el.appendChild(configEl);
 }
 
-export function trigger(el: HTMLElement): MonoTypeOperatorFunction<TriggerSpec> {
-  return tap(spec => {
-    switch (spec.type) {
-      case TriggerType.KEY:
-        el.dispatchEvent(new CustomEvent('mouseover'));
-        window.dispatchEvent(new KeyboardEvent('keydown', {key: spec.key}));
-        break;
-      case TriggerType.CLICK:
-        el.click();
-        break;
-    }
-  });
+export function trigger(el: HTMLElement, action: BaseAction): void {
+  action.triggerSpec$
+      .pipe(take(1))
+      .subscribe(spec => {
+        switch (spec.type) {
+          case TriggerType.KEY:
+            el.dispatchEvent(new CustomEvent('mouseover'));
+            window.dispatchEvent(new KeyboardEvent('keydown', {key: spec.key}));
+            break;
+          case TriggerType.CLICK:
+            el.click();
+            break;
+        }
+      });
 }
 
 function getConfigEl(el: HTMLElement, actionKey: string): HTMLElement {
