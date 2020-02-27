@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { $$ as $flipAction, FlipAction } from '../action/flip-action';
 import { PickAction } from '../action/pick-action';
+import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { BaseComponent } from '../core/base-component';
 
@@ -33,6 +34,7 @@ export class D2 extends BaseComponent {
           new PickAction(),
           new RotateAction(0, [0, 90, 180, 270]),
           new FlipAction(2, 0),
+          new RollAction({count: 2}),
         ],
         shadowRoot,
         vine,

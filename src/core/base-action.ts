@@ -4,9 +4,9 @@ import { Converter } from 'nabu';
 import { element, mutationObservable, onDom } from 'persona';
 import { BehaviorSubject, EMPTY, fromEvent, merge, Observable } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
+
 import { TriggerParser } from './trigger-parser';
 import { TriggerSpec, TriggerType } from './trigger-spec';
-
 
 
 const $ = {
@@ -103,7 +103,7 @@ export abstract class BaseAction<I = {}> {
                 this.triggerSpec$.next(config.trigger as TriggerSpec);
               }
             }),
-            this.onConfig.bind(this),
+            config$ => this.onConfig(config$),
         );
   }
 

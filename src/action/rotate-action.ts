@@ -10,8 +10,8 @@ import { TriggerKey, TriggerType } from '../core/trigger-spec';
 
 
 interface Config {
-  index: number;
-  stops: number[];
+  readonly index: number;
+  readonly stops: readonly number[];
 }
 
 export class RotateAction extends BaseAction<Config> {
@@ -21,7 +21,7 @@ export class RotateAction extends BaseAction<Config> {
 
   constructor(
       private readonly index: number,
-      private readonly stops: number[],
+      private readonly stops: readonly number[],
   ) {
     super(
         'rotate',

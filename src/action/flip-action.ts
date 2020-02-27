@@ -17,8 +17,8 @@ const $ = {
 };
 
 interface Config {
-  count: number;
-  index: number;
+  readonly count: number;
+  readonly index: number;
 }
 
 export class FlipAction extends BaseAction<Config> {
