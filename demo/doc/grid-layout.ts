@@ -30,14 +30,14 @@ const $ = {
 })
 export class GridLayout extends ThemedCustomElementCtrl {
   private readonly column$ = this.declareInput($.column._.value);
-  private readonly onAddDropZone$ = this.declareInput($.template._.onAddDropZone);
+  private readonly onAddZone$ = this.declareInput($.template._.onAddZone);
   private readonly row$ = this.declareInput($.row._.value);
   private readonly x$ = this.declareInput($.x._.value);
   private readonly y$ = this.declareInput($.y._.value);
 
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
-    this.setupHandleAddDropZone();
+    this.setupHandleAddZone();
     this.render($.template._.layoutAttr).withFunction(this.renderLayoutAttr);
   }
 
@@ -51,8 +51,8 @@ export class GridLayout extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleAddDropZone(): void {
-    this.onAddDropZone$
+  private setupHandleAddZone(): void {
+    this.onAddZone$
         .pipe(
             withLatestFrom(
                 this.x$,
@@ -61,7 +61,7 @@ export class GridLayout extends ThemedCustomElementCtrl {
             takeUntil(this.onDispose$),
         )
         .subscribe(([event, x, y]) => {
-          event.addDropZone(new Map([
+          event.addZone(new Map([
             ['x', x],
             ['y', y],
           ]));

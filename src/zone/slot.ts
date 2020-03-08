@@ -5,17 +5,17 @@ import { element } from 'persona';
 import { DropAction } from '../action/drop-action';
 import { BaseComponent } from '../core/base-component';
 
-import template from './drop-zone.html';
+import template from './slot.html';
 
 const $ = {
   host: element({}),
 };
 
 @_p.customElement({
-  tag: 'pb-drop-zone',
+  tag: 'pb-slot',
   template,
 })
-export class DropZone extends BaseComponent {
+export class Slot extends BaseComponent {
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(
         [new DropAction($.host.getValue(shadowRoot))],

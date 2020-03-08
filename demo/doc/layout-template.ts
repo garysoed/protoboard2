@@ -5,20 +5,20 @@ import { api, attributeIn, dispatcher, element, onDom } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
-import { DropZone } from '../../src/component/drop-zone';
+import { Slot } from '../../src/zone/slot';
 import addSvg from '../asset/add.svg';
-import { $playAreaService, DropZoneSpec } from '../play/play-area-service';
+import { $playAreaService, ZoneSpec } from '../play/play-area-service';
 
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
 import template from './layout-template.html';
 
 
-type AddDropZoneFn = (spec: DropZoneSpec) => void;
-const ADD_DROP_ZONE_EVENT = 'pbd-addDropZone';
+type AddZoneFn = (spec: ZoneSpec) => void;
+const ADD_ZONE_EVENT = 'pbd-addZone';
 
-export class AddDropZoneEvent extends Event {
-  constructor(readonly addDropZone: AddDropZoneFn) {
-    super(ADD_DROP_ZONE_EVENT, {bubbles: true});
+export class AddZoneEvent extends Event {
+  constructor(readonly addZone: AddZoneFn) {
+    super(ADD_ZONE_EVENT, {bubbles: true});
   }
 }
 
@@ -29,7 +29,7 @@ export const $$ = {
       new Map(),
   ),
   layoutTag: attributeIn('layout-tag', stringParser()),
-  onAddDropZone: dispatcher<AddDropZoneEvent>(ADD_DROP_ZONE_EVENT),
+  onAddZone: dispatcher<AddZoneEvent>(ADD_ZONE_EVENT),
   label: attributeIn('label', stringParser()),
 };
 
@@ -44,7 +44,7 @@ const $ = {
 @_p.customElement({
   dependencies: [
     DocTemplate,
-    DropZone,
+    Slot,
     TextIconButton,
   ],
   tag: 'pbd-layout-template',
@@ -62,34 +62,34 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
   private readonly layoutAttr$ = this.declareInput($.host._.layoutAttr);
   private readonly layoutTag$ = this.declareInput($.host._.layoutTag);
   private readonly onAddClick$ = this.declareInput($.addButton._.onAddClick);
-  private readonly onAddDropZone$ = new Subject<DropZoneSpec>();
+  private readonly onAddZone$ = new Subject<ZoneSpec>();
   private readonly playAreaService$ = $playAreaService.get(this.vine);
 
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
 
-    this.render($.host._.onAddDropZone).withFunction(this.renderOnAddClick);
+    this.render($.host._.onAddZone).withFunction(this.renderOnAddClick);
     this.render($.template._.label).withObservable(this.label$);
-    this.setupHandleAddDropZone();
+    this.setupHandleAddZone();
   }
 
-  private renderOnAddClick(): Observable<AddDropZoneEvent> {
+  private renderOnAddClick(): Observable<AddZoneEvent> {
     return this.onAddClick$.pipe(
-        map(() => new AddDropZoneEvent(spec => this.onAddDropZone$.next(spec))),
+        map(() => new AddZoneEvent(spec => this.onAddZone$.next(spec))),
     );
   }
 
-  private setupHandleAddDropZone(): void {
-    this.onAddDropZone$.pipe(
+  private setupHandleAddZone(): void {
+    this.onAddZone$.pipe(
         withLatestFrom(this.playAreaService$, this.layoutAttr$, this.layoutTag$),
         takeUntil(this.onDispose$),
     )
-    .subscribe(([dropZone, playAreaService, layoutAttr, layoutTag]) => {
+    .subscribe(([zone, playAreaService, layoutAttr, layoutTag]) => {
       playAreaService.setLayout({
         attr: new Map(layoutAttr),
         tag: layoutTag,
       });
-      playAreaService.addDropZone(dropZone);
+      playAreaService.addZone(zone);
     });
   }
 }

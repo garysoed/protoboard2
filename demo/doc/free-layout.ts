@@ -28,15 +28,15 @@ const $ = {
   template,
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
-  private readonly onAddDropZone$ = this.declareInput($.template._.onAddDropZone);
+  private readonly onAddZone$ = this.declareInput($.template._.onAddZone);
 
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
-    this.setupHandleAddDropZone();
+    this.setupHandleAddZone();
   }
 
-  private setupHandleAddDropZone(): void {
-    this.onAddDropZone$
+  private setupHandleAddZone(): void {
+    this.onAddZone$
         .pipe(
             withLatestFrom(
                 $.x._.value.getValue(this.shadowRoot),
@@ -47,7 +47,7 @@ export class FreeLayout extends ThemedCustomElementCtrl {
             takeUntil(this.onDispose$),
         )
         .subscribe(([event, x, y, height, width]) => {
-          event.addDropZone(new Map([
+          event.addZone(new Map([
             ['x', x],
             ['y', y],
             ['height', height],

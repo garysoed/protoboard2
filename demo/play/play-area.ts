@@ -13,7 +13,7 @@ import { PlayDefault } from './play-default';
 
 const $ = {
   info: element('info', $drawer, {}),
-  layoutInfo: element('layoutInfo', instanceofType(HTMLParagraphElement), {
+  layoutInfo: element('layoutInfo', instanceofType(HTMLPreElement), {
     text: textContent(),
   }),
   main: element('main', instanceofType(HTMLDivElement), {
@@ -45,7 +45,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
     super(shadowRoot, vine);
 
     this.render($.main._.content).withFunction(this.renderContent);
-    this.setupHandleDropZones();
+    this.setupHandleZones();
     this.render($.info._.expanded).withFunction(this.renderInfoExpanded);
     this.render($.layoutInfo._.text).withFunction(this.renderLayoutInfo);
   }
@@ -98,7 +98,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleDropZones(): void {
+  private setupHandleZones(): void {
     this.mainEl$.pipe(
         switchMap(mainEl => {
           return mutationObservable(mainEl, {childList: true}).pipe(
@@ -110,11 +110,11 @@ export class PlayArea extends ThemedCustomElementCtrl {
         filterNonNull(),
         switchMap(layoutEl => {
           return this.playAreaService$.pipe(
-              switchMap(service => service.dropZones$),
+              switchMap(service => service.zones$),
               tap(diff => {
                 switch (diff.type) {
                   case 'add':
-                    layoutEl.appendChild(createDropZone(diff.value));
+                    layoutEl.appendChild(createZone(diff.value));
                     return;
                   case 'delete':
                     // Can't delete zones. So skip it.
@@ -122,7 +122,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
                   case 'init':
                     layoutEl.innerHTML = '';
                     for (const spec of diff.value) {
-                      layoutEl.appendChild(createDropZone(spec));
+                      layoutEl.appendChild(createZone(spec));
                     }
                     return;
                 }
@@ -135,8 +135,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
   }
 }
 
-function createDropZone(attrs: Map<string, string>): HTMLElement {
-  const el = document.createElement('pb-drop-zone');
+function createZone(attrs: Map<string, string>): HTMLElement {
+  const el = document.createElement('pb-slot');
   for (const [key, value] of attrs) {
     el.setAttribute(key, value);
   }
