@@ -8,6 +8,7 @@ export interface Routes extends LocationSpec {
   'FREE_LAYOUT': {};
   'GRID_LAYOUT': {};
   'INSTRUCTION': {};
+  'SLOT': {};
 }
 
 const ROUTE_SPEC: Array<RouteSpec<keyof Routes>> = [
@@ -15,6 +16,7 @@ const ROUTE_SPEC: Array<RouteSpec<keyof Routes>> = [
   {path: '/freelayout', type: 'FREE_LAYOUT'},
   {path: '/gridlayout', type: 'GRID_LAYOUT'},
   {path: '/d1', type: 'D1'},
+  {path: '/slot', type: 'SLOT'},
 ];
 
 const DEFAULT_ROUTE: Route<Routes, 'INSTRUCTION'> = {payload: {}, type: 'INSTRUCTION'};

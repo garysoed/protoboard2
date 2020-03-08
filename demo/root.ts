@@ -9,8 +9,6 @@ import { PickHand } from '../src/action/pick-hand';
 
 import { Doc } from './core/doc';
 import { $$ as $drawer, Drawer } from './core/drawer';
-import { FreeLayout } from './layout/free-layout';
-import { GridLayout } from './layout/grid-layout';
 import { $locationService } from './location-service';
 import { PlayArea } from './play/play-area';
 import template from './root.html';
@@ -25,9 +23,7 @@ const $ = {
   dependencies: [
     Doc,
     Drawer,
-    GridLayout,
     HelpOverlay,
-    FreeLayout,
     PickHand,
     PlayArea,
     RootLayout,

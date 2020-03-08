@@ -72,7 +72,11 @@ export class PlayArea extends ThemedCustomElementCtrl {
         }),
         map(spec => new SimpleElementRenderSpec(
           spec.tag,
-          new Map([...spec.attr, ['id', LAYOUT_ID]]),
+          new Map([
+            ...spec.attr,
+            ['id', LAYOUT_ID],
+            ['fill-parent', ''],
+          ]),
         )),
     );
   }

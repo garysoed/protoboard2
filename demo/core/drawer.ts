@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { ArrayDiff, filterNonNull } from 'gs-tools/export/rxjs';
-import { InstanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
@@ -19,15 +19,18 @@ export const $$ = {
 
 
 const $ = {
-  components: element('components', InstanceofType(HTMLDivElement), {
+  components: element('components', instanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
   host: element($$.api),
-  layouts: element('layouts', InstanceofType(HTMLDivElement), {
+  layouts: element('layouts', instanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
-  root: element('root', InstanceofType(HTMLDivElement), {
+  root: element('root', instanceofType(HTMLDivElement), {
     onClick: onDom('click'),
+  }),
+  zones: element('zones', instanceofType(HTMLDivElement), {
+    contents: repeated('#contents'),
   }),
 };
 
@@ -43,6 +46,10 @@ const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
   {label: 'Free', path: 'FREE_LAYOUT'},
   {label: 'Grid', path: 'GRID_LAYOUT'},
+];
+
+const ZONE_LINK_CONFIGS: LinkConfig[] = [
+  {label: 'Slot', path: 'SLOT'},
 ];
 
 @_p.customElement({
@@ -74,6 +81,7 @@ export class Drawer extends ThemedCustomElementCtrl {
 
     this.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS));
     this.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS));
+    this.render($.zones._.contents).withValue(createRepeatedSpecs(ZONE_LINK_CONFIGS));
     this.setupRootOnClick();
   }
 

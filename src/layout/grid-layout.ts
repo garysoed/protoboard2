@@ -21,17 +21,20 @@ interface NodeWithPayload extends Node {
 }
 
 export const $$ = {
-  colCount: attributeIn('column-count', integerParser(), 1),
-  rowCount: attributeIn('row-count', integerParser(), 1),
+  api: {
+    colCount: attributeIn('column-count', integerParser(), 1),
+    rowCount: attributeIn('row-count', integerParser(), 1),
+  },
+  tag: 'pb-grid-layout',
 };
 
 export const $ = {
-  host: element($$),
+  host: element($$.api),
   rows: element('rows', instanceofType(HTMLDivElement), {}),
 };
 
 @_p.customElement({
-  tag: 'pb-grid-layout',
+  ...$$,
   template,
 })
 export class GridLayout extends ThemedCustomElementCtrl {

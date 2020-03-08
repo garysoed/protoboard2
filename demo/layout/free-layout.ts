@@ -2,13 +2,18 @@ import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element } from 'persona';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
+import { $$ as $freeLayout, FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import template from './free-layout.html';
 
+
+const $$ = {
+  tag: 'pbd-free-layout',
+};
 
 const $ = {
   template: element('template', ElementWithTagType('pbd-layout-template'), api($layoutTemplate)),
@@ -19,40 +24,29 @@ const $ = {
 };
 
 @_p.customElement({
+  ...$$,
   dependencies: [
     FreeLayoutImpl,
     LayoutTemplate,
     TextInput,
   ],
-  tag: 'pbd-free-layout',
   template,
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
-  private readonly onAddZone$ = this.declareInput($.template._.onAddZone);
-
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
-    this.setupHandleAddZone();
+    this.setupHandleSetLayout();
   }
 
-  private setupHandleAddZone(): void {
-    this.onAddZone$
-        .pipe(
-            withLatestFrom(
-                $.x._.value.getValue(this.shadowRoot),
-                $.y._.value.getValue(this.shadowRoot),
-                $.height._.value.getValue(this.shadowRoot),
-                $.width._.value.getValue(this.shadowRoot),
-            ),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([event, x, y, height, width]) => {
-          event.addZone(new Map([
-            ['x', x],
-            ['y', y],
-            ['height', height],
-            ['width', width],
-          ]));
+  private setupHandleSetLayout(): void {
+    this.declareInput($.template._.onSetLayout)
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe(event => {
+          event.setLayout({
+            addZoneRender$: observableOf(null),
+            attr: new Map<string, string>(),
+            tag: $freeLayout.tag,
+          });
         });
   }
 }

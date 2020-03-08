@@ -12,19 +12,23 @@ import template from './doc-template.html';
 
 
 export const $$ = {
-  label: attributeIn('label', stringParser()),
+  tag: 'pbd-doc-template',
+  api: {
+    label: attributeIn('label', stringParser()),
+  },
 };
 
 const $ = {
   drawer: element('drawer', ElementWithTagType('mk-drawer'), api($drawer.api)),
   drawerIcon: element('drawerIcon', $textIconButton, {}),
-  host: element($$),
+  host: element($$.api),
   title: element('title', InstanceofType(HTMLHeadingElement), {
     inner: innerHtml(),
   }),
 };
 
 @_p.customElement({
+  ...$$,
   configure: vine => {
     const icons = new Map([
       ['chevron_down', chevronDownSvg],
@@ -43,7 +47,6 @@ const $ = {
     Drawer,
     TextIconButton,
   ],
-  tag: 'pbd-doc-template',
   template,
 })
 export class DocTemplate extends ThemedCustomElementCtrl {

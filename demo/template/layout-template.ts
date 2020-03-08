@@ -1,44 +1,37 @@
 import { Vine } from 'grapevine';
-import { ElementWithTagType } from 'gs-types';
-import { $svgConfig, _p, ACTION_EVENT, mapParser, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { api, attributeIn, dispatcher, element, onDom } from 'persona';
+import { $svgConfig, $textIconButton, _p, ACTION_EVENT, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, dispatcher, element, onDom } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { Slot } from '../../src/zone/slot';
 import addSvg from '../asset/add.svg';
-import { $playAreaService, ZoneSpec } from '../play/play-area-service';
+import { $playAreaService, LayoutSpec } from '../play/play-area-service';
 
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
 import template from './layout-template.html';
 
 
-type AddZoneFn = (spec: ZoneSpec) => void;
-const ADD_ZONE_EVENT = 'pbd-addZone';
+type SetLayoutFn = (spec: LayoutSpec) => void;
+const SET_LAYOUT_EVENT = 'pbd-setLayout';
 
-export class AddZoneEvent extends Event {
-  constructor(readonly addZone: AddZoneFn) {
-    super(ADD_ZONE_EVENT, {bubbles: true});
+export class SetLayoutEvent extends Event {
+  constructor(readonly setLayout: SetLayoutFn) {
+    super(SET_LAYOUT_EVENT, {bubbles: true});
   }
 }
 
 export const $$ = {
-  layoutAttr: attributeIn<ReadonlyMap<string, string>>(
-      'layout-attr',
-      mapParser(stringParser(), stringParser()),
-      new Map(),
-  ),
-  layoutTag: attributeIn('layout-tag', stringParser()),
-  onAddZone: dispatcher<AddZoneEvent>(ADD_ZONE_EVENT),
+  onSetLayout: dispatcher<SetLayoutEvent>(SET_LAYOUT_EVENT),
   label: attributeIn('label', stringParser()),
 };
 
 const $ = {
-  addButton: element('addButton', ElementWithTagType('mk-text-icon-button'), {
+  setLayoutButton: element('setLayout', $textIconButton, {
     onAddClick: onDom(ACTION_EVENT),
   }),
   host: element($$),
-  template: element('template', ElementWithTagType('pbd-doc-template'), api($docTemplate)),
+  template: element('template', $docTemplate, {}),
 };
 
 @_p.customElement({
@@ -59,37 +52,30 @@ const $ = {
 })
 export class LayoutTemplate extends ThemedCustomElementCtrl {
   private readonly label$ = this.declareInput($.host._.label);
-  private readonly layoutAttr$ = this.declareInput($.host._.layoutAttr);
-  private readonly layoutTag$ = this.declareInput($.host._.layoutTag);
-  private readonly onAddClick$ = this.declareInput($.addButton._.onAddClick);
-  private readonly onAddZone$ = new Subject<ZoneSpec>();
-  private readonly playAreaService$ = $playAreaService.get(this.vine);
+  private readonly onSetLayout$ = new Subject<LayoutSpec>();
 
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
 
-    this.render($.host._.onAddZone).withFunction(this.renderOnAddClick);
+    this.render($.host._.onSetLayout).withFunction(this.renderOnAddClick);
     this.render($.template._.label).withObservable(this.label$);
-    this.setupHandleAddZone();
+    this.setupHandleSetLayout();
   }
 
-  private renderOnAddClick(): Observable<AddZoneEvent> {
-    return this.onAddClick$.pipe(
-        map(() => new AddZoneEvent(spec => this.onAddZone$.next(spec))),
-    );
+  private renderOnAddClick(): Observable<SetLayoutEvent> {
+    return this.declareInput($.setLayoutButton._.onAddClick)
+        .pipe(
+            map(() => new SetLayoutEvent(spec => this.onSetLayout$.next(spec))),
+        );
   }
 
-  private setupHandleAddZone(): void {
-    this.onAddZone$.pipe(
-        withLatestFrom(this.playAreaService$, this.layoutAttr$, this.layoutTag$),
+  private setupHandleSetLayout(): void {
+    this.onSetLayout$.pipe(
+        withLatestFrom($playAreaService.get(this.vine)),
         takeUntil(this.onDispose$),
     )
-    .subscribe(([zone, playAreaService, layoutAttr, layoutTag]) => {
-      playAreaService.setLayout({
-        attr: new Map(layoutAttr),
-        tag: layoutTag,
-      });
-      playAreaService.addZone(zone);
+    .subscribe(([layoutSpec, playAreaService]) => {
+      playAreaService.setLayout(layoutSpec);
     });
   }
 }

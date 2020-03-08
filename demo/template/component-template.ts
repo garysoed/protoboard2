@@ -1,7 +1,6 @@
 import { Vine } from 'grapevine';
-import { ElementWithTagType } from 'gs-types';
 import { _p, stringParser, ThemedCustomElementCtrl } from 'mask';
-import { api, attributeIn, element } from 'persona';
+import { attributeIn, element } from 'persona';
 
 import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
@@ -13,7 +12,7 @@ const $$ = {
 
 const $ = {
   host: element($$),
-  template: element('template', ElementWithTagType('pbd-doc-template'), api($docTemplate)),
+  template: element('template', $docTemplate, {}),
 };
 
 @_p.customElement({

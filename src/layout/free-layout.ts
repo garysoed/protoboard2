@@ -23,12 +23,16 @@ interface NodeWithPayload extends Node {
   [__oldValue]?: Payload;
 }
 
+export const $$ = {
+  tag: 'pb-free-layout',
+};
+
 const $ = {
   host: element({}),
 };
 
 @_p.customElement({
-  tag: 'pb-free-layout',
+  ...$$,
   template,
 })
 export class FreeLayout extends CustomElementCtrl {

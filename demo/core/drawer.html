@@ -8,7 +8,7 @@
     --pbdAccordionHeight: 16rem;
   }
 
-  #components, #layouts {
+  #components, #layouts, #zones {
     height: var(--pbdAccordionHeight);
     overflow: hidden;
     transition: height var(--mkAnimationTime);
@@ -16,12 +16,16 @@
 </style>
 
 <div id="root">
-  <mk-icon-with-text label="Components" icon="chevron_down"></mk-icon-with-text>
-  <div id="components">
-    <!-- #contents -->
-  </div>
   <mk-icon-with-text label="Layouts" icon="chevron_down"></mk-icon-with-text>
   <div id="layouts">
+    <!-- #contents -->
+  </div>
+  <mk-icon-with-text label="Zones" icon="chevron_down"></mk-icon-with-text>
+  <div id="zones">
+    <!-- #contents -->
+  </div>
+  <mk-icon-with-text label="Components" icon="chevron_down"></mk-icon-with-text>
+  <div id="components">
     <!-- #contents -->
   </div>
 </div>

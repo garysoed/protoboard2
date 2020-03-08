@@ -1,12 +1,14 @@
 import { source } from 'grapevine';
 import { SetDiff, SetSubject } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
+import { RenderSpec } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export type ZoneSpec = Map<string, string>;
 
-interface LayoutSpec {
-  attr: Map<string, string>;
+export interface LayoutSpec {
+  addZoneRender$: Observable<RenderSpec|null>;
+  attr: ReadonlyMap<string, string>;
   tag: string;
 }
 
@@ -39,3 +41,4 @@ export const $playAreaService = source(
     () => new BehaviorSubject(new PlayAreaService()),
     globalThis,
 );
+

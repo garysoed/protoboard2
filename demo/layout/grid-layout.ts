@@ -2,10 +2,10 @@ import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element } from 'persona';
-import { combineLatest, Observable } from 'rxjs';
-import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
+import { takeUntil, withLatestFrom } from 'rxjs/operators';
 
-import { GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
+import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import template from './grid-layout.html';
@@ -15,8 +15,6 @@ const $ = {
   column: element('column', ElementWithTagType('mk-text-input'), api($textInput.api)),
   row: element('row', ElementWithTagType('mk-text-input'), api($textInput.api)),
   template: element('template', ElementWithTagType('pbd-layout-template'), api($layoutTemplate)),
-  x: element('x', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  y: element('y', ElementWithTagType('mk-text-input'), api($textInput.api)),
 };
 
 @_p.customElement({
@@ -29,42 +27,29 @@ const $ = {
   template,
 })
 export class GridLayout extends ThemedCustomElementCtrl {
-  private readonly column$ = this.declareInput($.column._.value);
-  private readonly onAddZone$ = this.declareInput($.template._.onAddZone);
-  private readonly row$ = this.declareInput($.row._.value);
-  private readonly x$ = this.declareInput($.x._.value);
-  private readonly y$ = this.declareInput($.y._.value);
-
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
-    this.setupHandleAddZone();
-    this.render($.template._.layoutAttr).withFunction(this.renderLayoutAttr);
+    this.setupHandleSetLayout();
   }
 
-  private renderLayoutAttr(): Observable<ReadonlyMap<string, string>> {
-    return combineLatest([
-      this.column$,
-      this.row$,
-    ])
-    .pipe(
-        map(([column, row]) => new Map([['column-count', column], ['row-count', row]])),
-    );
-  }
-
-  private setupHandleAddZone(): void {
-    this.onAddZone$
+  private setupHandleSetLayout(): void {
+    this.declareInput($.template._.onSetLayout)
         .pipe(
             withLatestFrom(
-                this.x$,
-                this.y$,
+                this.declareInput($.column._.value),
+                this.declareInput($.row._.value),
             ),
             takeUntil(this.onDispose$),
         )
-        .subscribe(([event, x, y]) => {
-          event.addZone(new Map([
-            ['x', x],
-            ['y', y],
-          ]));
+        .subscribe(([event, column, row]) => {
+          event.setLayout({
+            addZoneRender$: observableOf(null),
+            attr: new Map([
+              [$gridLayout.api.colCount.attrName, column],
+              [$gridLayout.api.rowCount.attrName, row],
+            ]),
+            tag: $gridLayout.tag,
+          });
         });
   }
 }
