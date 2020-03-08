@@ -5,9 +5,9 @@ import { api, element } from 'persona';
 import { takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
+import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import template from './free-layout.html';
-import { $$ as $layoutTemplate, LayoutTemplate } from './layout-template';
 
 
 const $ = {

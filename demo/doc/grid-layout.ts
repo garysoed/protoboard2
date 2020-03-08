@@ -6,9 +6,9 @@ import { combineLatest, Observable } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
+import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import template from './grid-layout.html';
-import { $$ as $layoutTemplate, LayoutTemplate } from './layout-template';
 
 
 const $ = {

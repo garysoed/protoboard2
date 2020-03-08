@@ -10,8 +10,8 @@ import { D1 as D1Impl } from '../../src/component/d1';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
+import { ComponentTemplate } from '../template/component-template';
 
-import { ComponentTemplate } from './component-template';
 import template from './d1.html';
 
 
