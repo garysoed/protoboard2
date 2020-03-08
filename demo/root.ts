@@ -7,10 +7,10 @@ import { switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { HelpOverlay } from '../src/action/help-overlay';
 import { PickHand } from '../src/action/pick-hand';
 
-import { Doc } from './doc/doc';
-import { FreeLayout } from './doc/free-layout';
-import { GridLayout } from './doc/grid-layout';
-import { $$ as $drawer, Drawer } from './drawer/drawer';
+import { Doc } from './core/doc';
+import { $$ as $drawer, Drawer } from './core/drawer';
+import { FreeLayout } from './layout/free-layout';
+import { GridLayout } from './layout/grid-layout';
 import { $locationService } from './location-service';
 import { PlayArea } from './play/play-area';
 import template from './root.html';

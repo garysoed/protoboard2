@@ -6,9 +6,9 @@ import { element, SimpleElementRenderSpec, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+import { D1 } from '../component/d1';
 import { $locationService } from '../location-service';
 
-import { D1 } from './d1';
 import template from './doc.html';
 import { Instruction } from './instruction';
 
