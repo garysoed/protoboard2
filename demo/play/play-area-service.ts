@@ -11,27 +11,27 @@ interface LayoutSpec {
 }
 
 class PlayAreaService {
-  private readonly dropZones$ = new SetSubject<DropZoneSpec>();
-  private readonly layout$ = new BehaviorSubject<LayoutSpec|null>(null);
+  private readonly _dropZones$ = new SetSubject<DropZoneSpec>();
+  private readonly _layout$ = new BehaviorSubject<LayoutSpec|null>(null);
 
   addDropZone(spec: DropZoneSpec): void {
-    this.dropZones$.add(spec);
+    this._dropZones$.add(spec);
   }
 
-  getDropZones(): Observable<SetDiff<DropZoneSpec>> {
-    return this.dropZones$;
+  get dropZones$(): Observable<SetDiff<DropZoneSpec>> {
+    return this._dropZones$;
   }
 
-  getLayout(): Observable<LayoutSpec|null> {
-    return this.layout$;
+  get layout$(): Observable<LayoutSpec|null> {
+    return this._layout$;
   }
 
   setLayout(layout: LayoutSpec): void {
-    const currentLayout = this.layout$.getValue();
+    const currentLayout = this._layout$.getValue();
     if (!currentLayout || currentLayout.tag !== layout.tag) {
-      this.dropZones$.next({type: 'init', value: new Set()});
+      this._dropZones$.next({type: 'init', value: new Set()});
     }
-    this.layout$.next(layout);
+    this._layout$.next(layout);
   }
 }
 

@@ -1,10 +1,10 @@
 import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { InstanceofType } from 'gs-types';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, mutationObservable, SimpleElementRenderSpec, single } from 'persona';
-import { Observable } from 'rxjs';
-import { distinctUntilChanged, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { instanceofType } from 'gs-types';
+import { $drawer, _p, Drawer, ThemedCustomElementCtrl } from 'mask';
+import { element, mutationObservable, onDom, SimpleElementRenderSpec, single, textContent } from 'persona';
+import { merge, Observable } from 'rxjs';
+import { distinctUntilChanged, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { $playAreaService } from './play-area-service';
 import template from './play-area.html';
@@ -12,8 +12,16 @@ import { PlayDefault } from './play-default';
 
 
 const $ = {
-  root: element('root', InstanceofType(HTMLDivElement), {
+  info: element('info', $drawer, {}),
+  layoutInfo: element('layoutInfo', instanceofType(HTMLParagraphElement), {
+    text: textContent(),
+  }),
+  main: element('main', instanceofType(HTMLDivElement), {
     content: single('#content'),
+  }),
+  root: element('root', instanceofType(HTMLDivElement), {
+    onMouseOut: onDom('mouseout'),
+    onMouseOver: onDom('mouseover'),
   }),
 };
 
@@ -22,24 +30,29 @@ const LAYOUT_ID = 'layout';
 @_p.customElement({
   dependencies: [
     PlayDefault,
+    Drawer,
   ],
   tag: 'pbd-play-area',
   template,
 })
 export class PlayArea extends ThemedCustomElementCtrl {
+  private readonly onRootMouseOut$ = this.declareInput($.root._.onMouseOut);
+  private readonly onRootMouseOver$ = this.declareInput($.root._.onMouseOver);
   private readonly playAreaService$ = $playAreaService.get(this.vine);
-  private readonly rootEl$ = this.declareInput($.root);
+  private readonly mainEl$ = this.declareInput($.main);
 
   constructor(shadowRoot: ShadowRoot, vine: Vine) {
     super(shadowRoot, vine);
 
-    this.render($.root._.content).withFunction(this.renderContent);
+    this.render($.main._.content).withFunction(this.renderContent);
     this.setupHandleDropZones();
+    this.render($.info._.expanded).withFunction(this.renderInfoExpanded);
+    this.render($.layoutInfo._.text).withFunction(this.renderLayoutInfo);
   }
 
   private renderContent(): Observable<SimpleElementRenderSpec> {
     return this.playAreaService$.pipe(
-        switchMap(service => service.getLayout()),
+        switchMap(service => service.layout$),
         distinctUntilChanged((prev, curr) => {
           if (!!prev && !!curr) {
             return prev.tag === curr.tag;
@@ -64,19 +77,40 @@ export class PlayArea extends ThemedCustomElementCtrl {
     );
   }
 
+  private renderInfoExpanded(): Observable<boolean> {
+    return merge(
+        this.onRootMouseOut$.pipe(mapTo(false)),
+        this.onRootMouseOver$.pipe(mapTo(true)),
+    )
+    .pipe(startWith(false));
+  }
+
+  private renderLayoutInfo(): Observable<string> {
+    return this.playAreaService$.pipe(
+        switchMap(service => service.layout$),
+        map(spec => {
+          if (!spec) {
+            return '';
+          }
+          const params = [...spec.attr].map(([key, value]) => `${key}: ${value}`).join(', ');
+          return `${spec.tag} (${params})`;
+        }),
+    );
+  }
+
   private setupHandleDropZones(): void {
-    this.rootEl$.pipe(
-        switchMap(rootEl => {
-          return mutationObservable(rootEl, {childList: true}).pipe(
+    this.mainEl$.pipe(
+        switchMap(mainEl => {
+          return mutationObservable(mainEl, {childList: true}).pipe(
               startWith({}),
-              map(() => rootEl.querySelector(`#${LAYOUT_ID}`)),
+              map(() => mainEl.querySelector(`#${LAYOUT_ID}`)),
           );
         }),
         distinctUntilChanged(),
         filterNonNull(),
         switchMap(layoutEl => {
           return this.playAreaService$.pipe(
-              switchMap(service => service.getDropZones()),
+              switchMap(service => service.dropZones$),
               tap(diff => {
                 switch (diff.type) {
                   case 'add':

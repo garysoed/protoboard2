@@ -1,4 +1,16 @@
 <style id="theme"></style>
-<div id="root">
-  <!-- #content-->
+<style>
+  #layoutInfo {
+    background-color: var(--mkThemePassiveBG);
+    padding: 0 1rem;
+  }
+</style>
+
+<div id="root" layout="column" fill-parent>
+  <div id="main" flex>
+    <!-- #content-->
+  </div>
+  <mk-drawer id="info" mode="horizontal" max-size="4rem" min-size="0">
+    <p id="layoutInfo" mk-body-1></p>
+  </mk-drawer>
 </div>
