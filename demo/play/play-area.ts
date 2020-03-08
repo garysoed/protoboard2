@@ -83,7 +83,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
                     layoutEl.appendChild(createDropZone(diff.value));
                     return;
                   case 'delete':
-                    throw new Error('Cannot delete drop zones');
+                    // Can't delete zones. So skip it.
+                    return;
                   case 'init':
                     layoutEl.innerHTML = '';
                     for (const spec of diff.value) {

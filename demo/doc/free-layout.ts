@@ -2,8 +2,7 @@ import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element } from 'persona';
-import { Observable } from 'rxjs';
-import { tap, withLatestFrom } from 'rxjs/operators';
+import { takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
 
@@ -36,22 +35,24 @@ export class FreeLayout extends ThemedCustomElementCtrl {
     this.setupHandleAddDropZone();
   }
 
-  private setupHandleAddDropZone(): Observable<unknown> {
-    return this.onAddDropZone$.pipe(
-        withLatestFrom(
-            $.x._.value.getValue(this.shadowRoot),
-            $.y._.value.getValue(this.shadowRoot),
-            $.height._.value.getValue(this.shadowRoot),
-            $.width._.value.getValue(this.shadowRoot),
-        ),
-        tap(([event, x, y, height, width]) => {
+  private setupHandleAddDropZone(): void {
+    this.onAddDropZone$
+        .pipe(
+            withLatestFrom(
+                $.x._.value.getValue(this.shadowRoot),
+                $.y._.value.getValue(this.shadowRoot),
+                $.height._.value.getValue(this.shadowRoot),
+                $.width._.value.getValue(this.shadowRoot),
+            ),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([event, x, y, height, width]) => {
           event.addDropZone(new Map([
             ['x', x],
             ['y', y],
             ['height', height],
             ['width', width],
           ]));
-        }),
-    );
+        });
   }
 }

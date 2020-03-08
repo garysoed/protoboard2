@@ -70,6 +70,7 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
 
     this.render($.host._.onAddDropZone).withFunction(this.renderOnAddClick);
     this.render($.template._.label).withObservable(this.label$);
+    this.setupHandleAddDropZone();
   }
 
   private renderOnAddClick(): Observable<AddDropZoneEvent> {
