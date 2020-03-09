@@ -6,7 +6,7 @@ import { element, mutationObservable, onDom, SimpleElementRenderSpec, single, te
 import { merge, Observable } from 'rxjs';
 import { distinctUntilChanged, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
-import { $playAreaService } from './play-area-service';
+import { $playAreaService, ZoneSpec } from './play-area-service';
 import template from './play-area.html';
 import { PlayDefault } from './play-default';
 
@@ -139,9 +139,9 @@ export class PlayArea extends ThemedCustomElementCtrl {
   }
 }
 
-function createZone(attrs: Map<string, string>): HTMLElement {
-  const el = document.createElement('pb-slot');
-  for (const [key, value] of attrs) {
+function createZone({tag, attr}: ZoneSpec): HTMLElement {
+  const el = document.createElement(tag);
+  for (const [key, value] of attr) {
     el.setAttribute(key, value);
   }
 

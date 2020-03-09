@@ -1,9 +1,40 @@
 <style id="theme"></style>
+<style>
+  #content {
+    padding: 4rem 1rem;
+  }
+
+  #x {
+    padding-right: .5rem;
+  }
+
+  #y {
+    padding-left: .5rem;
+  }
+</style>
 
 <pbd-doc-template id="template">
   <section layout="column" slot="content">
-    <div id="layoutContent">
-      <!-- #content -->
+    <div id="content">
+      <div layout="row">
+        <mk-text-input
+            id="x"
+            flex
+            init-value="0"
+            label="X"
+            type="number"
+        ></mk-text-input>
+        <mk-text-input
+            id="y"
+            flex
+            init-value="0"
+            label="Y"
+            type="number"
+        ></mk-text-input>
+      </div>
+      <div id="layoutContent">
+        <!-- #content -->
+      </div>
     </div>
     <mk-text-icon-button
         icon="add"

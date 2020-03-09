@@ -2,7 +2,6 @@ import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element } from 'persona';
-import { of as observableOf } from 'rxjs';
 import { takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
@@ -43,12 +42,13 @@ export class GridLayout extends ThemedCustomElementCtrl {
         )
         .subscribe(([event, column, row]) => {
           event.setLayout({
-            addZoneRender$: observableOf(null),
+            addZoneTag: null,
             attr: new Map([
               [$gridLayout.api.colCount.attrName, column],
               [$gridLayout.api.rowCount.attrName, row],
             ]),
             tag: $gridLayout.tag,
+            getZoneAttr: () => new Map(),
           });
         });
   }

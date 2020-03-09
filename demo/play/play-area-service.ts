@@ -4,12 +4,21 @@ import { _v } from 'mask';
 import { RenderSpec } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export type ZoneSpec = Map<string, string>;
+export interface ZoneRender {
+  readonly render: RenderSpec;
+  readonly zoneAttr: Observable<ReadonlyMap<string, string>>;
+}
+
+export type ZoneSpec = {
+  readonly tag: string;
+  readonly attr: ReadonlyMap<string, string>;
+};
 
 export interface LayoutSpec {
-  addZoneRender$: Observable<RenderSpec|null>;
-  attr: ReadonlyMap<string, string>;
-  tag: string;
+  readonly addZoneTag: string|null;
+  readonly attr: ReadonlyMap<string, string>;
+  readonly tag: string;
+  getZoneAttr(addZoneEl: HTMLElement): ReadonlyMap<string, string>;
 }
 
 class PlayAreaService {
