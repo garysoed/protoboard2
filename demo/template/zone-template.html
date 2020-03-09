@@ -1,6 +1,6 @@
 <style id="theme"></style>
 <style>
-  #content {
+  #content, #noLayout {
     padding: 4rem 1rem;
   }
 
@@ -11,10 +11,28 @@
   #y {
     padding-left: .5rem;
   }
+
+  #rootContent.hasLayout #noLayout {
+    display: none;
+  }
+  #rootContent.hasLayout #content {
+    display: block;
+  }
+
+  #noLayout {
+    display: block;
+  }
+
+  #content {
+    display: none;
+  }
 </style>
 
 <pbd-doc-template id="template">
-  <section layout="column" slot="content">
+  <section id="rootContent" layout="column" slot="content">
+    <div id="noLayout" mk-body-1>
+      To start, select a layout.
+    </div>
     <div id="content">
       <div layout="row">
         <mk-text-input

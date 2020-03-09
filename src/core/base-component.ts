@@ -26,6 +26,6 @@ export class BaseComponent extends ThemedCustomElementCtrl {
     allActions.push(helpAction);
 
     const obs$ = allActions.map(action => action.install(this.shadowRoot, this.vine));
-    merge(obs$).pipe(takeUntil(this.onDispose$)).subscribe();
+    merge(...obs$).pipe(takeUntil(this.onDispose$)).subscribe();
   }
 }

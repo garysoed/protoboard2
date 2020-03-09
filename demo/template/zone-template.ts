@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, onDom, RenderSpec, SimpleElementRenderSpec, single } from 'persona';
+import { attributeIn, classToggle, dispatcher, element, onDom, RenderSpec, SimpleElementRenderSpec, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -42,6 +42,9 @@ const $ = {
   layoutContent: element('layoutContent', instanceofType(HTMLDivElement), {
     content: single('#content'),
   }),
+  rootContent: element('rootContent', elementWithTagType('section'), {
+    hasLayoutClass: classToggle('hasLayout'),
+  }),
   template: element('template', $docTemplate, {}),
   x: element('x', $textInput, {}),
   y: element('y', $textInput, {}),
@@ -60,6 +63,7 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
 
     this.render($.template._.label).withObservable(this.declareInput($.host._.label));
     this.render($.layoutContent._.content).withFunction(this.renderLayoutContent);
+    this.render($.rootContent._.hasLayoutClass).withFunction(this.renderHasLayoutClass);
     this.setupHandleAddZone();
   }
 
@@ -69,6 +73,10 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
         .pipe(
             switchMap(service => service.layout$),
         );
+  }
+
+  private renderHasLayoutClass(): Observable<boolean> {
+    return this.layoutSpec$.pipe(map(spec => !!spec));
   }
 
   private renderLayoutContent(): Observable<RenderSpec|null> {
