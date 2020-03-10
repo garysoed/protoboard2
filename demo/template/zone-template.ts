@@ -107,16 +107,10 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
                 this.declareInput($.y._.value),
             ),
             map(([, layoutSpec, layoutContentEl, tag, x, y]) => {
-              const addZoneEl = layoutContentEl.querySelector(`#${ADD_ZONE_ID}`);
-              if (!(addZoneEl instanceof HTMLElement)) {
-                return null;
-              }
-
-              const zoneAttr = layoutSpec?.getZoneAttr(addZoneEl) || new Map<string, string>();
               return {
                 tag,
                 attr: new Map([
-                  ...zoneAttr,
+                  ...getZoneAttr(layoutSpec, layoutContentEl),
                   ['x', x],
                   ['y', y],
                 ]),
@@ -130,4 +124,16 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
           playAreaService.addZone(zoneSpec);
         });
   }
+}
+
+function getZoneAttr(
+    layoutSpec: LayoutSpec|null,
+    layoutContentEl: HTMLElement,
+): ReadonlyMap<string, string> {
+  const addZoneEl = layoutContentEl.querySelector(`#${ADD_ZONE_ID}`);
+  if (!(addZoneEl instanceof HTMLElement)) {
+    return new Map();
+  }
+
+  return layoutSpec?.getZoneAttr(addZoneEl) || new Map<string, string>();
 }
