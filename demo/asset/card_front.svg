@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="100"
+   width="100"
+   viewBox="0 0 100 100"
+   version="1.1"
+   x="0px"
+   y="0px"
+   id="svg22"
+   sodipodi:docname="card_front.svg"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)">
+  <metadata
+     id="metadata28">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>King of Spades inverted</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs26" />
+  <sodipodi:namedview
+     units="px"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     inkscape:document-rotation="0"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1381"
+     inkscape:window-height="870"
+     id="namedview24"
+     showgrid="false"
+     inkscape:zoom="5.376"
+     inkscape:cx="40.885417"
+     inkscape:cy="51.525298"
+     inkscape:window-x="26"
+     inkscape:window-y="91"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg22" />
+  <title
+     id="title10">King of Spades inverted</title>
+  <desc
+     id="desc12">Created with Sketch.</desc>
+  <path
+     style="stroke:none;stroke-width:1"
+     inkscape:connector-curvature="0"
+     id="foreground"
+     fill-rule="nonzero"
+     fill="#000000"
+     d="M 62.772688,48.716834 C 63.72873,48.704458 64.5,47.91098 64.5,46.933962 c 0,-0.984734 -0.783502,-1.783019 -1.75,-1.783019 -0.966498,0 -1.75,0.798285 -1.75,1.783019 0,0.680117 0.373739,1.271295 0.92338,1.571964 l -2.685516,3.762255 -8.346567,-10.20486 C 52.086135,41.871964 53,40.818303 53,39.54717 53,38.140407 51.880712,37 50.5,37 49.119288,37 48,38.140407 48,39.54717 c 0,1.271133 0.913865,2.324794 2.108703,2.516151 L 41.762136,52.268181 39.07662,48.505926 C 39.626261,48.205257 40,47.614079 40,46.933962 c 0,-0.984734 -0.783502,-1.783019 -1.75,-1.783019 -0.966498,0 -1.75,0.798285 -1.75,1.783019 0,0.977018 0.77127,1.770496 1.727312,1.782872 l -1.282527,4.791327 -4.836206,-3.35067 C 32.653635,49.690242 33,48.990107 33,48.207547 c 0,-1.406763 -1.119288,-2.54717 -2.5,-2.54717 -1.380712,0 -2.5,1.140407 -2.5,2.54717 0,1.406763 1.119288,2.54717 2.5,2.54717 0.421644,0 0.818908,-0.106352 1.167361,-0.294163 L 33.5,58.396226 V 64 h 34 v -5.603774 l 1.832639,-7.935672 c 0.348453,0.187811 0.745717,0.294163 1.167361,0.294163 1.380712,0 2.5,-1.140407 2.5,-2.54717 0,-1.406763 -1.119288,-2.54717 -2.5,-2.54717 -1.380712,0 -2.5,1.140407 -2.5,2.54717 0,0.78256 0.346366,1.482695 0.891421,1.949944 l -4.836206,3.35067 z m -3.204691,3.954981 2.723699,-3.815748 1.326335,4.954988 -1.990371,1.378989 z m -18.135994,0 -2.059663,2.518229 -1.990371,-1.378989 1.326335,-4.954988 z M 25,5 h 50 c 2.485281,0 4.5,2.0147186 4.5,4.5 v 81 C 79.5,92.985281 77.485281,95 75,95 H 25 c -2.485281,0 -4.5,-2.014719 -4.5,-4.5 V 9.5 C 20.5,7.0147186 22.514719,5 25,5 Z m 7.422364,77.146583 c 1.022339,0.655988 2.407392,0.5437 3.305558,-0.336863 1.029437,-1.009261 1.029437,-2.645598 0,-3.65486 L 32,74.5 28.272078,78.15486 c -1.029437,1.009262 -1.029437,2.645599 0,3.65486 0.898166,0.880563 2.283219,0.992851 3.305558,0.336863 -0.194023,1.381008 -0.970648,2.580382 -2.079609,3.353417 h 5.003946 c -1.108961,-0.773035 -1.885586,-1.972409 -2.079609,-3.353417 z m 36,-60 c 1.022339,0.655988 2.407392,0.5437 3.305558,-0.336863 1.029437,-1.009261 1.029437,-2.645598 0,-3.65486 L 68,14.5 64.272078,18.15486 c -1.029437,1.009262 -1.029437,2.645599 0,3.65486 0.898166,0.880563 2.283219,0.992851 3.305558,0.336863 -0.194023,1.381008 -0.970648,2.580382 -2.079609,3.353417 h 5.003946 c -1.108961,-0.773035 -1.885586,-1.972409 -2.079609,-3.353417 z" />
+  <text
+     x="0.18601191"
+     y="124.11459"
+     fill="#000000"
+     font-size="5px"
+     font-weight="bold"
+     font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"
+     id="text18">Created by Joel Wisneski</text>
+  <text
+     x="0.18601191"
+     y="129.11458"
+     fill="#000000"
+     font-size="5px"
+     font-weight="bold"
+     font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif"
+     id="text20">from the Noun Project</text>
+</svg>

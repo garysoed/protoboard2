@@ -41,6 +41,7 @@ interface LinkConfig {
 
 const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
   {label: 'D1', path: Views.D1},
+  {label: 'D2', path: Views.D2},
 ];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
