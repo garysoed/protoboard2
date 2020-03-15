@@ -9,7 +9,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { D1 } from '../component/d1';
 import { FreeLayout } from '../layout/free-layout';
 import { GridLayout } from '../layout/grid-layout';
-import { $locationService } from '../location-service';
+import { $locationService, Views } from '../location-service';
 import { Slot } from '../zone/slot';
 
 import template from './doc.html';
@@ -45,15 +45,15 @@ export class Doc extends ThemedCustomElementCtrl {
             switchMap(service => service.getLocation()),
             map(location => {
               switch (location.type) {
-                case 'D1':
+                case Views.D1:
                   return 'pbd-d1';
-                case 'FREE_LAYOUT':
+                case Views.FREE_LAYOUT:
                   return 'pbd-free-layout';
-                case 'GRID_LAYOUT':
+                case Views.GRID_LAYOUT:
                   return 'pbd-grid-layout';
-                case 'INSTRUCTION':
+                case Views.INSTRUCTION:
                   return 'pbd-instruction';
-                case 'SLOT':
+                case Views.SLOT:
                   return 'pbd-slot';
                 default:
                   return null;

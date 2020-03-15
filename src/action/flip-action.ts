@@ -1,6 +1,5 @@
 import { Vine } from 'grapevine';
-import { integerParser } from 'mask';
-import { attributeOut, element } from 'persona';
+import { attributeOut, element, integerParser } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 

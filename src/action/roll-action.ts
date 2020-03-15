@@ -1,12 +1,12 @@
 import { Vine } from 'grapevine';
 import { aleaSeed, fromSeed, Random, RandomSeed } from 'gs-tools/export/random';
-import { integerParser } from 'mask';
-import { attributeOut, element } from 'persona';
+import { attributeOut, element, integerParser } from 'persona';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
+
 
 export const $$ = {
   currentFace: attributeOut('current-face', integerParser()),

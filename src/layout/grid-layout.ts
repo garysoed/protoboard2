@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { instanceofType } from 'gs-types';
-import { _p, integerParser, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, mutationObservable } from 'persona';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, element, integerParser, mutationObservable } from 'persona';
 import { combineLatest, of as observableOf, Subscription } from 'rxjs';
 import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 

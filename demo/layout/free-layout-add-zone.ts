@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
-import { $textInput, _p, stringParser, TextInput, ThemedCustomElementCtrl } from 'mask';
-import { attributeOut, element } from 'persona';
+import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
+import { attributeOut, element, stringParser } from 'persona';
 
 import template from './free-layout-add-zone.html';
 

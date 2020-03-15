@@ -1,6 +1,7 @@
 import { Vine } from 'grapevine';
 import { assert, setup, should, test } from 'gs-testing';
-import { _v, integerParser } from 'mask';
+import { _v } from 'mask';
+import { integerParser } from 'persona';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 

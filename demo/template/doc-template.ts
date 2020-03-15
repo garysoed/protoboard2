@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { ElementWithTagType, InstanceofType } from 'gs-types';
-import { $drawer, $svgConfig, $textIconButton, _p, Drawer, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { api, attributeIn, element, innerHtml } from 'persona';
+import { $drawer, $svgConfig, $textIconButton, _p, Drawer, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { api, attributeIn, element, innerHtml, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 

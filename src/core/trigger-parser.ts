@@ -1,5 +1,5 @@
-import { enumParser } from 'mask';
 import { Converter, Result } from 'nabu';
+import { enumParser } from 'persona';
 
 import { TriggerKey, TriggerSpec, TriggerType } from './trigger-spec';
 

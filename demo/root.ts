@@ -2,14 +2,14 @@ import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, element } from 'persona';
-import { switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
 import { PickHand } from '../src/action/pick-hand';
 
 import { Doc } from './core/doc';
 import { $$ as $drawer, Drawer } from './core/drawer';
-import { $locationService } from './location-service';
+import { $locationService, Views } from './location-service';
 import { PlayArea } from './play/play-area';
 import template from './root.html';
 
@@ -46,7 +46,9 @@ export class Root extends ThemedCustomElementCtrl {
     this.onRootActive$
         .pipe(
             withLatestFrom(this.locationService$),
-            switchMap(([, service]) => service.goToPath('INSTRUCTION', {})),
+            tap(([, service]) => {
+              service.goToPath(Views.INSTRUCTION, {});
+            }),
             takeUntil(this.onDispose$),
         )
         .subscribe();

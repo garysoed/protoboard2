@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { InstanceofType } from 'gs-types';
-import { _p, stringParser, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, attributeOut, element } from 'persona';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, attributeOut, element, stringParser } from 'persona';
 
 import template from './face.html';
 

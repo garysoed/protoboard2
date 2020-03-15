@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
-import { $svgConfig, $textIconButton, _p, ACTION_EVENT, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, onDom } from 'persona';
+import { $svgConfig, $textIconButton, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, dispatcher, element, onDom, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 

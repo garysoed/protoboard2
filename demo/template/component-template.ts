@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
-import { _p, stringParser, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element } from 'persona';
+import { _p, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, element, stringParser } from 'persona';
 
 import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';

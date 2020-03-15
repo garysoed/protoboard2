@@ -1,12 +1,12 @@
 import { Vine } from 'grapevine';
-import { ArrayDiff, filterNonNull } from 'gs-tools/export/rxjs';
-import { instanceofType } from 'gs-types';
-import { $svgConfig, _p, booleanParser, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
-import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
+import { enumType, instanceofType } from 'gs-types';
+import { $svgConfig, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, booleanParser, element, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
+import { map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
-import { $locationService } from '../location-service';
+import { $locationService, Views } from '../location-service';
 
 import template from './drawer.html';
 
@@ -36,20 +36,20 @@ const $ = {
 
 interface LinkConfig {
   label: string;
-  path: string;
+  path: Views;
 }
 
 const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'D1', path: 'D1'},
+  {label: 'D1', path: Views.D1},
 ];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Free', path: 'FREE_LAYOUT'},
-  {label: 'Grid', path: 'GRID_LAYOUT'},
+  {label: 'Free', path: Views.FREE_LAYOUT},
+  {label: 'Grid', path: Views.GRID_LAYOUT},
 ];
 
 const ZONE_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Slot', path: 'SLOT'},
+  {label: 'Slot', path: Views.SLOT},
 ];
 
 @_p.customElement({
@@ -96,8 +96,11 @@ export class Drawer extends ThemedCustomElementCtrl {
               return event.target.getAttribute('path') || null;
             }),
             filterNonNull(),
+            assertByType(enumType<Views>(Views)),
             withLatestFrom($locationService.get(this.vine)),
-            switchMap(([path, locationService]) => locationService.goToPath(path, {})),
+            tap(([path, locationService]) => {
+              locationService.goToPath(path, {});
+            }),
             takeUntil(this.onDispose$),
         )
         .subscribe();

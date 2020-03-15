@@ -1,8 +1,8 @@
 import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
-import { $textInput, _p, ACTION_EVENT, stringParser, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, classToggle, dispatcher, element, onDom, RenderSpec, SimpleElementRenderSpec, single } from 'persona';
+import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, classToggle, dispatcher, element, onDom, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 

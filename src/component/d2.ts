@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { InstanceofType } from 'gs-types';
-import { _p, stringParser } from 'mask';
-import { api, attributeOut, element } from 'persona';
+import { _p } from 'mask';
+import { api, attributeOut, element, stringParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
