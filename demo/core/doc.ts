@@ -11,6 +11,7 @@ import { D2 } from '../component/d2';
 import { FreeLayout } from '../layout/free-layout';
 import { GridLayout } from '../layout/grid-layout';
 import { $locationService, Views } from '../location-service';
+import { Deck } from '../zone/deck';
 import { Slot } from '../zone/slot';
 
 import template from './doc.html';
@@ -27,6 +28,7 @@ const $ = {
   dependencies: [
     D1,
     D2,
+    Deck,
     FreeLayout,
     GridLayout,
     Instruction,
@@ -51,6 +53,8 @@ export class Doc extends ThemedCustomElementCtrl {
                   return 'pbd-d1';
                 case Views.D2:
                   return 'pbd-d2';
+                case Views.DECK:
+                  return 'pbd-deck';
                 case Views.FREE_LAYOUT:
                   return 'pbd-free-layout';
                 case Views.GRID_LAYOUT:

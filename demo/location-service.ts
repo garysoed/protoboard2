@@ -1,11 +1,12 @@
 import { source } from 'grapevine';
 import { $window } from 'mask';
-import { fromPattern, LocationService, Route } from 'persona';
+import { fromPattern, LocationService } from 'persona';
 import { BehaviorSubject } from 'rxjs';
 
 export enum Views {
   D1 = 'd1',
   D2 = 'd2',
+  DECK = 'de',
   FREE_LAYOUT = 'fl',
   GRID_LAYOUT = 'gl',
   INSTRUCTION = 'in',
@@ -18,6 +19,7 @@ const ROUTE_SPEC = {
   [Views.GRID_LAYOUT]: fromPattern('/gridlayout', {}),
   [Views.D1]: fromPattern('/d1', {}),
   [Views.D2]: fromPattern('/d2', {}),
+  [Views.DECK]: fromPattern('/deck', {}),
   [Views.SLOT]: fromPattern('/slot', {}),
 };
 

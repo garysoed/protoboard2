@@ -4,7 +4,6 @@ import { attributeIn, dispatcher, element, onDom, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
-import { Slot } from '../../src/zone/slot';
 import addSvg from '../asset/add.svg';
 import { $playAreaService, LayoutSpec } from '../play/play-area-service';
 
@@ -37,7 +36,6 @@ const $ = {
 @_p.customElement({
   dependencies: [
     DocTemplate,
-    Slot,
     TextIconButton,
   ],
   tag: 'pbd-layout-template',

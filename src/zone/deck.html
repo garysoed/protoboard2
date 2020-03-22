@@ -1,0 +1,24 @@
+<style id="theme"></style>
+<style>
+  :host {
+    --pbSlotBorderColor: var(--mkThemeActionFG2);
+  }
+
+  :host(:hover) {
+    --pbSlotBorderColor: var(--mkThemeActionFocusFG2);
+  }
+
+  #root {
+    border: 1px solid var(--pbSlotBorderColor);
+    border-radius: .5rem;
+    box-sizing: border-box;
+  }
+
+  ::slotted(*:not(:last-child)) {
+    display: none;
+  }
+</style>
+
+<div id="root" fill-parent>
+  <slot></slot>
+</div>

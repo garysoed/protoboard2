@@ -1,5 +1,6 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
+import { Slot as SlotImpl } from '../../src/zone/slot';
 import { ZoneTemplate } from '../template/zone-template';
 
 import template from './slot.html';
@@ -8,6 +9,7 @@ import template from './slot.html';
   tag: 'pbd-slot',
   template,
   dependencies: [
+    SlotImpl,
     ZoneTemplate,
   ],
 })
