@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { aleaSeed, fromSeed, Random, RandomSeed } from 'gs-tools/export/random';
-import { attributeOut, element, integerParser } from 'persona';
+import { attributeOut, element, integerParser, PersonaContext } from 'persona';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
@@ -32,10 +31,10 @@ export class RollAction extends BaseAction<Config> {
     super('roll', 'Roll', {count: integerParser()}, {type: TriggerType.KEY, key: TriggerKey.L});
   }
 
-  protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
+  protected getSetupObs(context: PersonaContext): ReadonlyArray<Observable<unknown>> {
     return [
-      ...super.getSetupObs(shadowRoot, vine),
-      this.setupOnIndexSwitch(shadowRoot),
+      ...super.getSetupObs(context),
+      this.setupOnIndexSwitch(context.shadowRoot),
     ];
   }
 

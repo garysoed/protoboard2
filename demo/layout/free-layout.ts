@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
-import { api, element } from 'persona';
+import { api, element, PersonaContext } from 'persona';
 import { takeUntil } from 'rxjs/operators';
 
 import { $$ as $freeLayout, FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
@@ -34,8 +33,8 @@ const $ = {
   template,
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.setupHandleSetLayout();
   }
 

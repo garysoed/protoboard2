@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, integerParser, mutationObservable } from 'persona';
+import { attributeIn, element, integerParser, mutationObservable, PersonaContext } from 'persona';
 import { combineLatest, of as observableOf, Subscription } from 'rxjs';
 import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 
@@ -43,8 +42,8 @@ export class GridLayout extends ThemedCustomElementCtrl {
   private readonly rowCount$ = this.declareInput($.host._.rowCount);
   private readonly rowsEl$ = this.declareInput($.rows);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.setupOnHostMutation();
     this.setupRenderGrid();

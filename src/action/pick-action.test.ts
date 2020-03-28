@@ -20,7 +20,7 @@ test('@protoboard2/action/pick-action', () => {
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
       const el = document.createElement('div');
-      action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
+      action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine}).subscribe();
 
       const elements$ = new ReplaySubject<Element[]>(2);
       $pickService.get(vine)

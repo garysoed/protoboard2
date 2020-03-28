@@ -1,8 +1,7 @@
-import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, classToggle, dispatcher, element, onDom, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
+import { attributeIn, classToggle, dispatcher, element, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -58,8 +57,8 @@ const $ = {
 export class ZoneTemplate extends ThemedCustomElementCtrl {
   private readonly layoutSpec$ = this.createLayoutSpec();
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.template._.label).withObservable(this.declareInput($.host._.label));
     this.render($.layoutContent._.content).withFunction(this.renderLayoutContent);

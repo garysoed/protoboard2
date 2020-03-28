@@ -26,7 +26,7 @@ test('@protoboard2/action/shuffle', () => {
       $random.get(vine).next(fromSeed(seed));
 
       const action = new ShuffleAction();
-      action.install(shadowRoot, vine).subscribe();
+      action.install({shadowRoot, vine}).subscribe();
 
       trigger(rootEl, action);
 

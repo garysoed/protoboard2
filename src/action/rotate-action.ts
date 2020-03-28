@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { identity } from 'nabu';
-import { element, integerParser, listParser } from 'persona';
+import { element, integerParser, listParser, PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { filter, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -33,11 +32,11 @@ export class RotateAction extends BaseAction<Config> {
     );
   }
 
-  getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
+  getSetupObs(context: PersonaContext): ReadonlyArray<Observable<unknown>> {
     return [
-      ...super.getSetupObs(shadowRoot, vine),
+      ...super.getSetupObs(context),
       this.setupHandleNewIndex(),
-      this.setupHandleRotation(shadowRoot),
+      this.setupHandleRotation(context.shadowRoot),
     ];
   }
 

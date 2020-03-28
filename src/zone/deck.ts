@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { _p } from 'mask';
-import { element } from 'persona';
+import { element, PersonaContext } from 'persona';
 
 import { DropAction } from '../action/drop-action';
 import { ShuffleAction } from '../action/shuffle-action';
@@ -18,14 +17,13 @@ const $ = {
   template,
 })
 export class Deck extends BaseComponent {
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+  constructor(context: PersonaContext) {
     super(
         [
-          new DropAction($.host.getValue(shadowRoot)),
+          new DropAction($.host.getValue(context.shadowRoot)),
           new ShuffleAction(),
         ],
-        shadowRoot,
-        vine,
+        context,
     );
   }
 }

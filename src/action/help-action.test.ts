@@ -38,7 +38,7 @@ test('@protoboard2/action/help-action', init => {
   test('onTrigger', () => {
     should(`show the help correctly`, () => {
       const el = document.createElement('div');
-      _.action.install(el.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       const actions$ = new ReplaySubject<ArrayDiff<BaseAction>>(1);
       $helpService.get(_.vine)

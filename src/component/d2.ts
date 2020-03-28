@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { InstanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { api, attributeOut, element, stringParser } from 'persona';
+import { api, attributeOut, element, PersonaContext, stringParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -28,7 +27,7 @@ export const $ = {
 export class D2 extends BaseComponent {
   private readonly currentFace$ = this.declareInput($.host._.currentFace);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+  constructor(context: PersonaContext) {
     super(
         [
           new PickAction(),
@@ -36,8 +35,7 @@ export class D2 extends BaseComponent {
           new FlipAction(2, 0),
           new RollAction({count: 2}),
         ],
-        shadowRoot,
-        vine,
+        context,
     );
     this.render($.face._.name).withFunction(this.renderFaceName);
   }

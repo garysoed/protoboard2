@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { mapNonNull, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
-import { element, mutationObservable, onDom } from 'persona';
+import { element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { BehaviorSubject, EMPTY, fromEvent, merge, Observable, Subject } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -44,11 +44,11 @@ export abstract class BaseAction<I = {}> {
     this.triggerSpec$ = new BehaviorSubject(defaultTriggerSpec);
   }
 
-  install(shadowRoot: ShadowRoot, vine: Vine): Observable<unknown> {
-    return merge(...this.getSetupObs(shadowRoot, vine));
+  install(context: PersonaContext): Observable<unknown> {
+    return merge(...this.getSetupObs(context));
   }
 
-  protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
+  protected getSetupObs({vine, shadowRoot}: PersonaContext): ReadonlyArray<Observable<unknown>> {
     return [
       this.setupHandleTrigger(this.createOnTrigger(shadowRoot), vine, shadowRoot),
       this.setupTriggerFunction(shadowRoot),

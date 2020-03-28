@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { mapNonNull } from 'gs-tools/export/rxjs';
 import { InstanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, SimpleElementRenderSpec, single } from 'persona';
+import { element, PersonaContext, SimpleElementRenderSpec, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -38,8 +38,8 @@ const $ = {
   template,
 })
 export class Doc extends ThemedCustomElementCtrl {
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.render($.root._.content).withFunction(this.renderContent);
   }
 

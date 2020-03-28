@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { ElementWithTagType, InstanceofType } from 'gs-types';
 import { $drawer, $svgConfig, $textIconButton, _p, Drawer, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { api, attributeIn, element, innerHtml, stringParser } from 'persona';
+import { api, attributeIn, element, innerHtml, PersonaContext, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -54,8 +53,8 @@ export class DocTemplate extends ThemedCustomElementCtrl {
   private readonly label$ = this.declareInput($.host._.label);
   private readonly onDrawerIconClick$ = this.declareInput($.drawerIcon._.actionEvent);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.drawer._.expanded).withObservable(this.drawerExpanded$);
     this.render($.drawerIcon._.icon).withFunction(this.renderDrawerIcon);

@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { ElementWithTagType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
-import { api, element } from 'persona';
+import { api, element, PersonaContext } from 'persona';
 import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
@@ -36,8 +35,8 @@ export class Root extends ThemedCustomElementCtrl {
   private readonly onRootActive$ = this.declareInput($.root._.onTitleClick);
   private readonly rootDrawerExpanded$ = this.declareInput($.root._.drawerExpanded);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.setupHandleOnRootActive();
     this.render($.drawer._.drawerExpanded).withObservable(this.rootDrawerExpanded$);
   }

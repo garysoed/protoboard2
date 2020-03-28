@@ -1,11 +1,11 @@
-import { Vine } from 'grapevine';
 import { _p } from 'mask';
-import { element } from 'persona';
+import { element, PersonaContext } from 'persona';
 
 import { DropAction } from '../action/drop-action';
 import { BaseComponent } from '../core/base-component';
 
 import template from './slot.html';
+
 
 const $ = {
   host: element({}),
@@ -16,11 +16,10 @@ const $ = {
   template,
 })
 export class Slot extends BaseComponent {
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
+  constructor(context: PersonaContext) {
     super(
-        [new DropAction($.host.getValue(shadowRoot))],
-        shadowRoot,
-        vine,
+        [new DropAction($.host.getValue(context.shadowRoot))],
+        context,
     );
   }
 }

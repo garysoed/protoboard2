@@ -1,9 +1,8 @@
-import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { debug, filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
+import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { ElementWithTagType } from 'gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
-import { api, element, mutationObservable, onDom } from 'persona';
+import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -54,8 +53,8 @@ export class D2 extends ThemedCustomElementCtrl {
   private readonly onCustomizeClick$ = this.declareInput($.customize._.onClick);
   private readonly selectedIcon$ = this.createSelectedIcon();
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.setupHandleSelectedIcon('0');
     this.setupHandleSelectedIcon('1');
     this.setupHandlePieceRemoved();

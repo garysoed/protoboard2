@@ -1,5 +1,4 @@
-import { Vine } from 'grapevine';
-import { assert, setup, should, test } from 'gs-testing';
+import { assert, should, test } from 'gs-testing';
 import { _v } from 'mask';
 import { integerParser } from 'persona';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
@@ -7,6 +6,7 @@ import { tap } from 'rxjs/operators';
 
 import { BaseAction } from './base-action';
 import { TriggerKey, TriggerSpec, TriggerType } from './trigger-spec';
+
 
 const ACTION_KEY = 'test';
 
@@ -50,7 +50,7 @@ test('@protoboard2/core/base-action', init => {
       const action = new TestAction({type: TriggerType.CLICK}, onTrigger$);
       const element = document.createElement('div');
 
-      action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       element.dispatchEvent(new CustomEvent('click'));
 
@@ -67,7 +67,9 @@ test('@protoboard2/core/base-action', init => {
 
     should(`update the configuration when element is added`, () => {
       const element = document.createElement('div');
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action
+          .install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine})
+          .subscribe();
 
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
@@ -85,7 +87,7 @@ test('@protoboard2/core/base-action', init => {
       configEl.setAttribute('value', '123');
       element.appendChild(configEl);
 
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       configEl.setAttribute('value', '345');
 
@@ -100,7 +102,7 @@ test('@protoboard2/core/base-action', init => {
       configEl.setAttribute('trigger', 'click');
       element.appendChild(configEl);
 
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       element.dispatchEvent(new CustomEvent('click'));
 
@@ -115,7 +117,7 @@ test('@protoboard2/core/base-action', init => {
       const onTrigger$ = new ReplaySubject<{}>(1);
       const action = new TestAction({type: TriggerType.KEY, key: TriggerKey.P}, onTrigger$);
       const element = document.createElement('div');
-      action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       (element as any)[ACTION_KEY]();
 
@@ -134,7 +136,7 @@ test('@protoboard2/core/base-action', init => {
 
     should(`emit when hovered and the correct key was pressed`, () => {
       const element = document.createElement('div');
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       // Hover over the element.
       element.dispatchEvent(new CustomEvent('mouseover'));
@@ -147,7 +149,7 @@ test('@protoboard2/core/base-action', init => {
 
     should(`not emit when the wrong key was pressed`, () => {
       const element = document.createElement('div');
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       // Hover over the element.
       element.dispatchEvent(new CustomEvent('mouseover'));
@@ -160,7 +162,7 @@ test('@protoboard2/core/base-action', init => {
 
     should(`not emit when not hovered`, () => {
       const element = document.createElement('div');
-      _.action.install(element.attachShadow({mode: 'open'}), _.vine).subscribe();
+      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
 
       // Hover over the element, then hover off.
       element.dispatchEvent(new CustomEvent('mouseover'));

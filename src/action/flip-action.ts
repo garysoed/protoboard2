@@ -1,5 +1,4 @@
-import { Vine } from 'grapevine';
-import { attributeOut, element, integerParser } from 'persona';
+import { attributeOut, element, integerParser, PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -43,11 +42,11 @@ export class FlipAction extends BaseAction<Config> {
     this.index$ = new BehaviorSubject(index);
   }
 
-  protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
+  protected getSetupObs(context: PersonaContext): ReadonlyArray<Observable<unknown>> {
     return [
-      ...super.getSetupObs(shadowRoot, vine),
+      ...super.getSetupObs(context),
       this.setupOnSetIndex(),
-      this.setupUpdateHost(shadowRoot),
+      this.setupUpdateHost(context.shadowRoot),
     ];
   }
 

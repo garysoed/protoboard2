@@ -12,7 +12,7 @@ test('@protoboard2/action/flip-action', init => {
     const vine = _v.build('test');
 
     const el = document.createElement('div');
-    action.install(el.attachShadow({mode: 'open'}), vine).subscribe();
+    action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine}).subscribe();
 
     return {action, el, vine};
   });

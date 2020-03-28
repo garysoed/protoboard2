@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { $drawer, _p, Drawer, ThemedCustomElementCtrl } from 'mask';
-import { element, mutationObservable, onDom, SimpleElementRenderSpec, single, textContent } from 'persona';
+import { element, mutationObservable, onDom, PersonaContext, SimpleElementRenderSpec, single, textContent } from 'persona';
 import { merge, Observable } from 'rxjs';
 import { distinctUntilChanged, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
@@ -41,8 +41,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
   private readonly playAreaService$ = $playAreaService.get(this.vine);
   private readonly mainEl$ = this.declareInput($.main);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.main._.content).withFunction(this.renderContent);
     this.setupHandleZones();

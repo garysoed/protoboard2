@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
 import { $svgConfig, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, element, onDom, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
+import { attributeIn, booleanParser, element, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
 import { map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -78,8 +78,8 @@ const ZONE_LINK_CONFIGS: LinkConfig[] = [
 export class Drawer extends ThemedCustomElementCtrl {
   private readonly onRootClick$ = this.declareInput($.root._.onClick);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS));
     this.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS));

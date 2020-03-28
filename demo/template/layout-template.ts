@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { $svgConfig, $textIconButton, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, onDom, stringParser } from 'persona';
+import { attributeIn, dispatcher, element, onDom, PersonaContext, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -52,8 +52,8 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
   private readonly label$ = this.declareInput($.host._.label);
   private readonly onSetLayout$ = new Subject<LayoutSpec>();
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.host._.onSetLayout).withFunction(this.renderOnAddClick);
     this.render($.template._.label).withObservable(this.label$);

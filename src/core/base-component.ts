@@ -1,5 +1,5 @@
-import { Vine } from 'grapevine';
 import { _p, ThemedCustomElementCtrl } from 'mask';
+import { PersonaContext } from 'persona';
 import { merge } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -12,10 +12,9 @@ import { BaseAction } from './base-action';
 export class BaseComponent extends ThemedCustomElementCtrl {
   constructor(
       private readonly actions: readonly BaseAction[],
-      shadowRoot: ShadowRoot,
-      vine: Vine,
+      context: PersonaContext,
   ) {
-    super(shadowRoot, vine);
+    super(context);
 
     this.setupActions();
   }
@@ -25,7 +24,8 @@ export class BaseComponent extends ThemedCustomElementCtrl {
     const helpAction = new HelpAction(this.actions);
     allActions.push(helpAction);
 
-    const obs$ = allActions.map(action => action.install(this.shadowRoot, this.vine));
+    const obs$ = allActions
+        .map(action => action.install({vine: this.vine, shadowRoot: this.shadowRoot}));
     merge(...obs$).pipe(takeUntil(this.onDispose$)).subscribe();
   }
 }

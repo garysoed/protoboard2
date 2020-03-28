@@ -1,8 +1,7 @@
-import { Vine } from 'grapevine';
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { ElementWithTagType } from 'gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
-import { api, element, mutationObservable, onDom } from 'persona';
+import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -52,8 +51,8 @@ export class D1 extends ThemedCustomElementCtrl {
   private readonly pieceEl$ = this.createPieceEl();
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.setupHandleCustomizeClick();
     this.setupHandleSelectedIcon();
     this.setupHandlePieceRemoved();

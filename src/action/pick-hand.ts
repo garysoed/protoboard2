@@ -1,13 +1,13 @@
-import { Vine } from 'grapevine';
 import { assertUnreachable } from 'gs-tools/export/typescript';
 import { InstanceofType } from 'gs-types';
-import { _p, _v } from 'mask';
-import { CustomElementCtrl, element, style } from 'persona';
+import { _p } from 'mask';
+import { CustomElementCtrl, element, PersonaContext, style } from 'persona';
 import { fromEvent, Observable } from 'rxjs';
 import { map, share, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import template from './pick-hand.html';
 import { $pickService } from './pick-service';
+
 
 interface Rect {
   height: number;
@@ -37,8 +37,8 @@ export class PickHand extends CustomElementCtrl {
           share(),
       );
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.renderContentElements();
     this.render($.container._.left).withFunction(this.renderLeft);
     this.render($.container._.top).withFunction(this.renderTop);

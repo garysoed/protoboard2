@@ -13,7 +13,9 @@ test('@protoboard2/action/roll-action', init => {
     const action = new RollAction({count: 3}, seed);
 
     const el = document.createElement('div');
-    action.install(el.attachShadow({mode: 'open'}), _v.build('test')).subscribe();
+    action
+        .install({shadowRoot: el.attachShadow({mode: 'open'}), vine: _v.build('test')})
+        .subscribe();
 
     return {action, el, seed};
   });

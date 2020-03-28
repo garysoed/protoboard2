@@ -1,7 +1,6 @@
-import { Vine } from 'grapevine';
 import { InstanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, attributeOut, element, stringParser } from 'persona';
+import { attributeIn, attributeOut, element, PersonaContext, stringParser } from 'persona';
 
 import template from './face.html';
 
@@ -31,8 +30,8 @@ const $ = {
 export class Face extends ThemedCustomElementCtrl {
   private readonly display$ = this.declareInput($.host._.display);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.slot._.name).withObservable(this.display$);
   }

@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
-import { attributeOut, element, stringParser } from 'persona';
+import { attributeOut, element, PersonaContext, stringParser } from 'persona';
 
 import template from './free-layout-add-zone.html';
 
@@ -27,8 +26,8 @@ const $ = {
   ],
 })
 export class FreeLayoutAddZone extends ThemedCustomElementCtrl {
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.host._.height).withObservable(this.declareInput($.height._.value));
     this.render($.host._.width).withObservable(this.declareInput($.width._.value));

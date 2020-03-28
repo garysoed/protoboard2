@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { _p } from 'mask';
-import { CustomElementCtrl, element, mutationObservable } from 'persona';
+import { CustomElementCtrl, element, mutationObservable, PersonaContext } from 'persona';
 import { of as observableOf, Subscription } from 'rxjs';
 import { map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 
@@ -38,8 +37,8 @@ const $ = {
 export class FreeLayout extends CustomElementCtrl {
   private readonly host$ = this.declareInput($.host);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.setupOnHostMutation();
   }

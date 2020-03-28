@@ -1,8 +1,7 @@
-import { Vine } from 'grapevine';
 import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
 import { ElementWithTagType, InstanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { classToggle, element, innerHtml, onDom, renderFromTemplate, RenderSpec, repeated } from 'persona';
+import { classToggle, element, innerHtml, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -11,6 +10,7 @@ import { TriggerSpec, TriggerType } from '../core/trigger-spec';
 
 import template from './help-overlay.html';
 import { $helpService } from './help-service';
+;
 
 
 export const $ = {
@@ -42,8 +42,8 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   private readonly onRootClick$ = this.declareInput($.root._.click);
   private readonly tableRowTemplate$ = this.declareInput($.template);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
     this.render($.content._.rows).withFunction(this.renderRows);
     this.render($.root._.isVisibleClass).withFunction(this.renderIsVisible);
     this.setupHandleClick();

@@ -1,6 +1,5 @@
-import { Vine } from 'grapevine';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, stringParser } from 'persona';
+import { attributeIn, element, PersonaContext, stringParser } from 'persona';
 
 import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
@@ -25,8 +24,8 @@ const $ = {
 export class ComponentTemplate extends ThemedCustomElementCtrl {
   private readonly label$ = this.declareInput($.host._.label);
 
-  constructor(shadowRoot: ShadowRoot, vine: Vine) {
-    super(shadowRoot, vine);
+  constructor(context: PersonaContext) {
+    super(context);
 
     this.render($.template._.label).withObservable(this.label$);
   }
