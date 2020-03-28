@@ -22,7 +22,7 @@ export class PickAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(
+  protected setupHandleTrigger(
       trigger$: Observable<unknown>,
       vine: Vine,
       root: ShadowRoot,

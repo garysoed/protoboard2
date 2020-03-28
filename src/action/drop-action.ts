@@ -22,7 +22,7 @@ export class DropAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(trigger$: Observable<unknown>, vine: Vine): Observable<unknown> {
+  protected setupHandleTrigger(trigger$: Observable<unknown>, vine: Vine): Observable<unknown> {
     const components$ = $pickService.get(vine).pipe(
         switchMap(pickService => {
           return pickService.getComponents()

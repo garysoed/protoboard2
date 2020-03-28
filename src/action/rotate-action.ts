@@ -55,7 +55,7 @@ export class RotateAction extends BaseAction<Config> {
     );
   }
 
-  protected onTrigger(trigger$: Observable<{}>): Observable<unknown> {
+  protected setupHandleTrigger(trigger$: Observable<{}>): Observable<unknown> {
     return trigger$.pipe(
         withLatestFrom(this.index$),
         tap(([, index]) => {

@@ -1,4 +1,4 @@
-import { assert, init, should, test } from 'gs-testing';
+import { assert, should, test } from 'gs-testing';
 import { FakeSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
 
@@ -7,7 +7,7 @@ import { configure, trigger } from '../testing/component-tester';
 import { $$ as $rollAction, RollAction } from './roll-action';
 
 
-test('@protoboard2/action/roll-action', () => {
+test('@protoboard2/action/roll-action', init => {
   const _ = init(() => {
     const seed = new FakeSeed();
     const action = new RollAction({count: 3}, seed);

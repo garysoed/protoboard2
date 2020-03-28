@@ -1,4 +1,4 @@
-import { assert, init, should, test } from 'gs-testing';
+import { assert, should, test } from 'gs-testing';
 import { _v } from 'mask';
 
 import { configure, trigger } from '../testing/component-tester';
@@ -6,7 +6,7 @@ import { configure, trigger } from '../testing/component-tester';
 import { $$ as $flipAction, FlipAction } from './flip-action';
 
 
-test('@protoboard2/action/flip-action', () => {
+test('@protoboard2/action/flip-action', init => {
   const _ = init(() => {
     const action = new FlipAction(2, 0);
     const vine = _v.build('test');

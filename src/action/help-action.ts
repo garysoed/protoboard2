@@ -21,7 +21,7 @@ export class HelpAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(
+  protected setupHandleTrigger(
       trigger$: Observable<unknown>,
       vine: Vine,
   ): Observable<unknown> {

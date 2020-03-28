@@ -33,7 +33,7 @@ export class ShuffleAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(
+  protected setupHandleTrigger(
       trigger$: Observable<unknown>,
       _: Vine,
       root: ShadowRoot,

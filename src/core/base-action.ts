@@ -1,8 +1,9 @@
 import { Vine } from 'grapevine';
+import { cache } from 'gs-tools/export/data';
 import { mapNonNull, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { element, mutationObservable, onDom } from 'persona';
-import { BehaviorSubject, EMPTY, fromEvent, merge, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, fromEvent, merge, Observable, Subject } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { TriggerParser } from './trigger-parser';
@@ -27,6 +28,7 @@ const TRIGGER_CONVERTER = new TriggerParser();
 
 export abstract class BaseAction<I = {}> {
   private readonly appendedActionConfigConverters: ConverterOf<I> & ConverterOf<TriggerConfig>;
+  private readonly onTriggerFunction$ = new Subject<void>();
   readonly triggerSpec$: BehaviorSubject<TriggerSpec>;
 
   constructor(
@@ -48,18 +50,54 @@ export abstract class BaseAction<I = {}> {
 
   protected getSetupObs(shadowRoot: ShadowRoot, vine: Vine): ReadonlyArray<Observable<unknown>> {
     return [
-      this.setupTrigger(vine, shadowRoot),
+      this.setupHandleTrigger(this.createOnTrigger(shadowRoot), vine, shadowRoot),
+      this.setupTriggerFunction(shadowRoot),
       this.setupConfig(shadowRoot),
     ];
   }
 
   protected abstract onConfig(config$: Observable<Partial<I>>): Observable<unknown>;
 
-  protected abstract onTrigger(
+  protected abstract setupHandleTrigger(
       trigger$: Observable<unknown>,
       vine: Vine,
       root: ShadowRoot,
   ): Observable<unknown>;
+
+  @cache()
+  private createOnTrigger(root: ShadowRoot): Observable<unknown> {
+    const userTrigger$ = this.triggerSpec$
+        .pipe(
+            switchMap(spec => {
+              switch (spec.type) {
+                case TriggerType.CLICK:
+                  return this.createTriggerClick(root);
+                case TriggerType.KEY:
+                  return this.createTriggerKey(root, spec.key);
+              }
+            }),
+        );
+
+    return merge(userTrigger$, this.onTriggerFunction$);
+  }
+
+  private createTriggerClick(root: ShadowRoot): Observable<unknown> {
+    return $.host._.click.getValue(root);
+  }
+
+  private createTriggerKey(root: ShadowRoot, specKey: string): Observable<unknown> {
+    return merge(
+        $.host._.mouseout.getValue(root).pipe(mapTo(false)),
+        $.host._.mouseover.getValue(root).pipe(mapTo(true)),
+    )
+    .pipe(
+        switchMap(hovered => {
+          return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
+        }),
+        map(event => event.key),
+        filter(key => key === specKey),
+    );
+  }
 
   private setupConfig(root: ShadowRoot): Observable<unknown> {
     return mutationObservable(
@@ -107,36 +145,13 @@ export abstract class BaseAction<I = {}> {
         );
   }
 
-  private setupTrigger(vine: Vine, root: ShadowRoot): Observable<unknown> {
-    return this.triggerSpec$
-        .pipe(
-            switchMap(spec => {
-              switch (spec.type) {
-                case TriggerType.CLICK:
-                  return this.setupTriggerClick(root);
-                case TriggerType.KEY:
-                  return this.setupTriggerKey(root, spec.key);
-              }
-            }),
-            trigger$ => this.onTrigger(trigger$, vine, root),
-        );
-  }
-
-  private setupTriggerClick(root: ShadowRoot): Observable<unknown> {
-    return $.host._.click.getValue(root);
-  }
-
-  private setupTriggerKey(root: ShadowRoot, specKey: string): Observable<unknown> {
-    return merge(
-        $.host._.mouseout.getValue(root).pipe(mapTo(false)),
-        $.host._.mouseover.getValue(root).pipe(mapTo(true)),
-    )
-    .pipe(
-        switchMap(hovered => {
-          return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
+  private setupTriggerFunction(root: ShadowRoot): Observable<unknown> {
+    return $.host.getValue(root).pipe(
+        tap(hostEl => {
+          (hostEl as any)[this.key] = () => {
+            this.onTriggerFunction$.next();
+          };
         }),
-        map(event => event.key),
-        filter(key => key === specKey),
     );
   }
 }

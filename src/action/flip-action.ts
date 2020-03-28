@@ -65,7 +65,7 @@ export class FlipAction extends BaseAction<Config> {
     );
   }
 
-  protected onTrigger(trigger$: Observable<unknown>): Observable<unknown> {
+  protected setupHandleTrigger(trigger$: Observable<unknown>): Observable<unknown> {
     return trigger$.pipe(
         withLatestFrom(this.index$),
         tap(([, index]) => this.onSetIndex$.next(index + 1)),

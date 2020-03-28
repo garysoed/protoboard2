@@ -1,4 +1,4 @@
-import { assert, init, objectThat, should, test } from 'gs-testing';
+import { assert, objectThat, should, test } from 'gs-testing';
 import { ArrayDiff } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { EMPTY, Observable, ReplaySubject } from 'rxjs';
@@ -21,12 +21,12 @@ class TestAction extends BaseAction {
     return config$;
   }
 
-  protected onTrigger(): Observable<unknown> {
+  protected setupHandleTrigger(): Observable<unknown> {
     return EMPTY;
   }
 }
 
-test('@protoboard2/action/help-action', () => {
+test('@protoboard2/action/help-action', init => {
   const TEST_ACTION = new TestAction();
   const _ = init(() => {
     const action = new HelpAction([TEST_ACTION]);

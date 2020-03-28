@@ -49,7 +49,7 @@ export class RollAction extends BaseAction<Config> {
     );
   }
 
-  protected onTrigger(
+  protected setupHandleTrigger(
       trigger$: Observable<unknown>,
   ): Observable<unknown> {
     return trigger$.pipe(
