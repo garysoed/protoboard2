@@ -20,8 +20,8 @@ export class Deck extends BaseComponent {
   constructor(context: PersonaContext) {
     super(
         [
-          new DropAction($.host.getValue(context.shadowRoot)),
-          new ShuffleAction(),
+          new DropAction($.host.getValue(context.shadowRoot), context),
+          new ShuffleAction(context),
         ],
         context,
     );

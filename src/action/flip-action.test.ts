@@ -8,11 +8,10 @@ import { $$ as $flipAction, FlipAction } from './flip-action';
 
 test('@protoboard2/action/flip-action', init => {
   const _ = init(() => {
-    const action = new FlipAction(2, 0);
     const vine = _v.build('test');
-
     const el = document.createElement('div');
-    action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine}).subscribe();
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const action = new FlipAction(2, 0, {shadowRoot, vine});
 
     return {action, el, vine};
   });

@@ -1,6 +1,8 @@
+import { cache } from 'gs-tools/export/data';
+import { filterNonNull } from 'gs-tools/export/rxjs';
 import { attributeOut, element, integerParser, PersonaContext } from 'persona';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { combineLatest, merge, Observable, Subject } from 'rxjs';
+import { map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
@@ -20,13 +22,10 @@ interface Config {
 }
 
 export class FlipAction extends BaseAction<Config> {
-  private readonly count$: BehaviorSubject<number>;
-  private readonly index$: BehaviorSubject<number>;
-  private readonly onSetIndex$ = new Subject<number>();
-
   constructor(
-      count: number,
-      index: number,
+      private readonly count: number,
+      private readonly index: number,
+      context: PersonaContext,
   ) {
     super(
         'flip',
@@ -36,55 +35,63 @@ export class FlipAction extends BaseAction<Config> {
           index: integerParser(),
         },
         {type: TriggerType.KEY, key: TriggerKey.F},
+        context,
     );
 
-    this.count$ = new BehaviorSubject(count);
-    this.index$ = new BehaviorSubject(index);
+    this.setupOnSetIndex$();
+    this.setupUpdateHost();
   }
 
-  protected getSetupObs(context: PersonaContext): ReadonlyArray<Observable<unknown>> {
-    return [
-      ...super.getSetupObs(context),
-      this.setupOnSetIndex(),
-      this.setupUpdateHost(context.shadowRoot),
-    ];
-  }
-
-  protected onConfig(config$: Observable<Partial<Config>>): Observable<unknown> {
-    return config$.pipe(
-        tap(config => {
-          if (config.count !== undefined) {
-            this.count$.next(config.count);
-          }
-
-          if (config.index !== undefined) {
-            this.onSetIndex$.next(config.index);
-          }
-        }),
+  @cache()
+  private get count$(): Observable<number> {
+    return this.config$.pipe(
+        map(config => config.count || null),
+        filterNonNull(),
+        startWith(this.count),
     );
   }
 
-  protected setupHandleTrigger(trigger$: Observable<unknown>): Observable<unknown> {
-    return trigger$.pipe(
+  @cache()
+  private get index$(): Observable<number> {
+    return combineLatest([this.onSetIndex$, this.count$])
+        .pipe(
+            map(([newIndex, count]) => newIndex % count),
+            startWith(this.index),
+        );
+  }
+
+  @cache()
+  private get onSetIndex$(): Subject<number> {
+    return new Subject<number>();
+  }
+
+  private setupOnSetIndex$(): void {
+    const onTrigger$ = this.onTrigger$.pipe(
         withLatestFrom(this.index$),
-        tap(([, index]) => this.onSetIndex$.next(index + 1)),
+        map(([, index]) => index + 1),
     );
+
+    const onConfig$ = this.config$.pipe(
+        map(config => config.index || null),
+        filterNonNull(),
+    );
+
+    merge(onConfig$, onTrigger$)
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe(value => {
+          this.onSetIndex$.next(value);
+        });
   }
 
-  protected setupOnSetIndex(): Observable<unknown> {
-    return this.onSetIndex$.pipe(
-        withLatestFrom(this.count$),
-        tap(([newIndex, count]) => this.index$.next(newIndex % count)),
-    );
-  }
-
-  protected setupUpdateHost(root: ShadowRoot): Observable<unknown> {
+  private setupUpdateHost(): void {
     const currentFace$ = combineLatest([
       this.index$,
       this.count$,
     ])
     .pipe(map(([index, count]) => index % count));
 
-    return $.host._.currentFace.output(root, currentFace$);
+    $.host._.currentFace.output(this.shadowRoot, currentFace$)
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe();
   }
 }

@@ -1,7 +1,6 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { PersonaContext } from 'persona';
-import { merge } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 import { HelpAction } from '../action/help-action';
 
@@ -21,11 +20,13 @@ export class BaseComponent extends ThemedCustomElementCtrl {
 
   private setupActions(): void {
     const allActions = [...this.actions];
-    const helpAction = new HelpAction(this.actions);
+    const helpAction = new HelpAction(this.actions, {shadowRoot: this.shadowRoot, vine: this.vine});
     allActions.push(helpAction);
 
-    const obs$ = allActions
-        .map(action => action.install({vine: this.vine, shadowRoot: this.shadowRoot}));
-    merge(...obs$).pipe(takeUntil(this.onDispose$)).subscribe();
+    this.onDispose$.pipe(take(1)).subscribe(() => {
+      for (const action of allActions) {
+        action.dispose();
+      }
+    });
   }
 }

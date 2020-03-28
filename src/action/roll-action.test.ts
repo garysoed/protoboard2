@@ -1,21 +1,22 @@
 import { assert, should, test } from 'gs-testing';
-import { FakeSeed } from 'gs-tools/export/random';
+import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
 
 import { configure, trigger } from '../testing/component-tester';
+import { $random } from '../util/random';
 
 import { $$ as $rollAction, RollAction } from './roll-action';
 
 
 test('@protoboard2/action/roll-action', init => {
   const _ = init(() => {
-    const seed = new FakeSeed();
-    const action = new RollAction({count: 3}, seed);
-
     const el = document.createElement('div');
-    action
-        .install({shadowRoot: el.attachShadow({mode: 'open'}), vine: _v.build('test')})
-        .subscribe();
+    const shadowRoot = el.attachShadow({mode: 'open'});
+
+    const vine = _v.build('test');
+    const seed = new FakeSeed();
+    $random.get(vine).next(fromSeed(seed));
+    const action = new RollAction({count: 3}, {shadowRoot, vine});
 
     return {action, el, seed};
   });

@@ -1,10 +1,12 @@
-import { aleaSeed, fromSeed, Random, RandomSeed } from 'gs-tools/export/random';
+import { cache } from 'gs-tools/export/data';
+import { filterNonNull } from 'gs-tools/export/rxjs';
 import { attributeOut, element, integerParser, PersonaContext } from 'persona';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, startWith, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerKey, TriggerType } from '../core/trigger-spec';
+import { $random } from '../util/random';
 
 
 export const $$ = {
@@ -20,51 +22,52 @@ interface Config {
 }
 
 export class RollAction extends BaseAction<Config> {
-  private readonly count$ = new BehaviorSubject(this.config.count);
   private readonly onIndexSwitch$ = new Subject<number>();
-  private readonly random$ = new BehaviorSubject<Random<unknown>>(fromSeed(this.seed));
 
   constructor(
       private readonly config: Config,
-      private readonly seed: RandomSeed = aleaSeed(Math.random()),
+      context: PersonaContext,
   ) {
-    super('roll', 'Roll', {count: integerParser()}, {type: TriggerType.KEY, key: TriggerKey.L});
+    super(
+        'roll',
+        'Roll',
+        {count: integerParser()},
+        {type: TriggerType.KEY, key: TriggerKey.L},
+        context,
+    );
+
+    this.setupOnIndexSwitch();
+    this.setupHandleTrigger();
   }
 
-  protected getSetupObs(context: PersonaContext): ReadonlyArray<Observable<unknown>> {
-    return [
-      ...super.getSetupObs(context),
-      this.setupOnIndexSwitch(context.shadowRoot),
-    ];
-  }
-
-  protected onConfig(config$: Observable<Partial<Config>>): Observable<unknown> {
-    return config$.pipe(
-        tap(config => {
-          if (config.count !== undefined) {
-            this.count$.next(config.count);
-          }
-        }),
+  @cache()
+  private get count$(): Observable<number> {
+    return this.config$.pipe(
+        map(config => config.count || null),
+        filterNonNull(),
+        startWith(this.config.count),
     );
   }
 
-  protected setupHandleTrigger(
-      trigger$: Observable<unknown>,
-  ): Observable<unknown> {
-    return trigger$.pipe(
-        withLatestFrom(this.count$, this.random$),
-        tap(([, count, random]) => {
+  protected setupOnIndexSwitch(): void {
+    $.host._.currentFace.output(this.shadowRoot, this.onIndexSwitch$)
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe();
+  }
+
+  private setupHandleTrigger(): void {
+    this.onTrigger$
+        .pipe(
+            withLatestFrom(this.count$, $random.get(this.vine)),
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([, count, random]) => {
           const nextRand = random.next(({random, rng}) => {
             this.onIndexSwitch$.next(Math.floor(random * count));
             return rng;
           });
 
-          this.random$.next(nextRand);
-        }),
-    );
-  }
-
-  protected setupOnIndexSwitch(root: ShadowRoot): Observable<unknown> {
-    return $.host._.currentFace.output(root, this.onIndexSwitch$);
+          $random.get(this.vine).next(nextRand);
+        });
   }
 }

@@ -18,7 +18,7 @@ const $ = {
 export class Slot extends BaseComponent {
   constructor(context: PersonaContext) {
     super(
-        [new DropAction($.host.getValue(context.shadowRoot))],
+        [new DropAction($.host.getValue(context.shadowRoot), context)],
         context,
     );
   }

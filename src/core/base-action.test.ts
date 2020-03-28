@@ -1,8 +1,9 @@
+import { Vine } from 'grapevine';
 import { assert, should, test } from 'gs-testing';
 import { _v } from 'mask';
-import { integerParser } from 'persona';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { integerParser, PersonaContext } from 'persona';
+import { Observable, ReplaySubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { BaseAction } from './base-action';
 import { TriggerKey, TriggerSpec, TriggerType } from './trigger-spec';
@@ -15,79 +16,77 @@ class TestAction extends BaseAction<{value: number}> {
 
   constructor(
       defaultTriggerSpec: TriggerSpec,
-      private readonly onTrigger$: Subject<{}>,
+      context: PersonaContext,
   ) {
-    super(ACTION_KEY, 'Test', {value: integerParser()}, defaultTriggerSpec);
+    super(ACTION_KEY, 'Test', {value: integerParser()}, defaultTriggerSpec, context);
+
+    this.setupConfig();
   }
 
-  setupHandleTrigger(trigger$: Observable<unknown>): Observable<unknown> {
-    return trigger$.pipe(
-        tap(() => this.onTrigger$.next({})),
-    );
+  get onTriggerOut$(): Observable<unknown> {
+    return this.onTrigger$;
   }
 
-  protected onConfig(config$: Observable<Partial<{value: number}>>): Observable<unknown> {
-    return config$.pipe(
-        tap(config => {
+  private setupConfig(): void {
+    this.config$
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe(config => {
           if (config.value) {
             this.value$.next(config.value);
           }
-        }),
-    );
+        });
   }
 }
 
+interface TestState {
+  readonly action: TestAction;
+  readonly element: HTMLElement;
+  readonly onTrigger$: Observable<unknown>;
+  readonly vine: Vine;
+}
+
 test('@protoboard2/core/base-action', init => {
-  const _ = init(() => {
-    const spec$ = new ReplaySubject(1);
+  function setupTest(triggerSpec: TriggerSpec): TestState {
     const vine = _v.build('test');
-    return {spec$, vine};
+
+    const element = document.createElement('div');
+    const shadowRoot = element.attachShadow({mode: 'open'});
+
+    const onTrigger$ = new ReplaySubject(1);
+    const action = new TestAction(triggerSpec, {shadowRoot, vine});
+    action.onTriggerOut$.subscribe(onTrigger$);
+
+    return {action, element, onTrigger$, vine};
+  }
+
+  const _ = init(() => {
+    return setupTest({type: TriggerType.CLICK});
   });
 
   test('setupClick', () => {
     should(`emit correctly when clicked`, () => {
-      const onTrigger$ = new ReplaySubject<{}>(1);
-      const action = new TestAction({type: TriggerType.CLICK}, onTrigger$);
-      const element = document.createElement('div');
+      _.element.dispatchEvent(new CustomEvent('click'));
 
-      action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
-      element.dispatchEvent(new CustomEvent('click'));
-
-      assert(onTrigger$).to.emit();
+      assert(_.onTrigger$).to.emit();
     });
   });
 
-  test('setupConfig', _, init => {
-    const _ = init(_ => {
-      const onTrigger$ = new ReplaySubject<{}>(1);
-      const action = new TestAction({type: TriggerType.KEY, key: TriggerKey.P}, onTrigger$);
-      return {..._, onTrigger$, action};
-    });
+  test('setupConfig', () => {
 
     should(`update the configuration when element is added`, () => {
-      const element = document.createElement('div');
-      _.action
-          .install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine})
-          .subscribe();
-
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
       configEl.setAttribute('value', '123');
-      element.appendChild(configEl);
+      _.element.appendChild(configEl);
 
       assert(_.action.value$).to.emitSequence([123]);
     });
 
     should(`update the configuration when attribute has changed`, () => {
-      const element = document.createElement('div');
-
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
       configEl.setAttribute('value', '123');
-      element.appendChild(configEl);
-
-      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
+      _.element.appendChild(configEl);
 
       configEl.setAttribute('value', '345');
 
@@ -95,16 +94,12 @@ test('@protoboard2/core/base-action', init => {
     });
 
     should(`update the trigger configuration correctly`, () => {
-      const element = document.createElement('div');
-
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
       configEl.setAttribute('trigger', 'click');
-      element.appendChild(configEl);
+      _.element.appendChild(configEl);
 
-      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
-      element.dispatchEvent(new CustomEvent('click'));
+      _.element.dispatchEvent(new CustomEvent('click'));
 
       configEl.setAttribute('value', '345');
 
@@ -114,14 +109,9 @@ test('@protoboard2/core/base-action', init => {
 
   test('setupTriggerFunction', () => {
     should(`create a function that triggers`, () => {
-      const onTrigger$ = new ReplaySubject<{}>(1);
-      const action = new TestAction({type: TriggerType.KEY, key: TriggerKey.P}, onTrigger$);
-      const element = document.createElement('div');
-      action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
+      (_.element as any)[ACTION_KEY]();
 
-      (element as any)[ACTION_KEY]();
-
-      assert(onTrigger$).to.emit();
+      assert(_.onTrigger$).to.emit();
     });
   });
 
@@ -129,17 +119,12 @@ test('@protoboard2/core/base-action', init => {
     const KEY = TriggerKey.P;
 
     const _ = init(_ => {
-      const onTrigger$ = new ReplaySubject<{}>(1);
-      const action = new TestAction({type: TriggerType.KEY, key: KEY}, onTrigger$);
-      return {..._, action, onTrigger$};
+      return setupTest({type: TriggerType.KEY, key: KEY});
     });
 
     should(`emit when hovered and the correct key was pressed`, () => {
-      const element = document.createElement('div');
-      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
       // Hover over the element.
-      element.dispatchEvent(new CustomEvent('mouseover'));
+      _.element.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
@@ -148,11 +133,8 @@ test('@protoboard2/core/base-action', init => {
     });
 
     should(`not emit when the wrong key was pressed`, () => {
-      const element = document.createElement('div');
-      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
       // Hover over the element.
-      element.dispatchEvent(new CustomEvent('mouseover'));
+      _.element.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: 'o'}));
@@ -161,12 +143,9 @@ test('@protoboard2/core/base-action', init => {
     });
 
     should(`not emit when not hovered`, () => {
-      const element = document.createElement('div');
-      _.action.install({shadowRoot: element.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
       // Hover over the element, then hover off.
-      element.dispatchEvent(new CustomEvent('mouseover'));
-      element.dispatchEvent(new CustomEvent('mouseout'));
+      _.element.dispatchEvent(new CustomEvent('mouseover'));
+      _.element.dispatchEvent(new CustomEvent('mouseout'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));

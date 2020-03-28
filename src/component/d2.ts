@@ -30,10 +30,10 @@ export class D2 extends BaseComponent {
   constructor(context: PersonaContext) {
     super(
         [
-          new PickAction(),
-          new RotateAction(0, [0, 90, 180, 270]),
-          new FlipAction(2, 0),
-          new RollAction({count: 2}),
+          new PickAction(context),
+          new RotateAction(0, [0, 90, 180, 270], context),
+          new FlipAction(2, 0, context),
+          new RollAction({count: 2}, context),
         ],
         context,
     );

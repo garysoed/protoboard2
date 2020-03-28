@@ -1,6 +1,7 @@
 import { assert, objectThat, should, test } from 'gs-testing';
 import { ArrayDiff } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
+import { PersonaContext } from 'persona';
 import { EMPTY, Observable, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -13,8 +14,8 @@ import { $helpService } from './help-service';
 
 
 class TestAction extends BaseAction {
-  constructor() {
-    super('test', 'test', {}, {type: TriggerType.CLICK});
+  constructor(context: PersonaContext) {
+    super('test', 'test', {}, {type: TriggerType.CLICK}, context);
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
@@ -27,30 +28,30 @@ class TestAction extends BaseAction {
 }
 
 test('@protoboard2/action/help-action', init => {
-  const TEST_ACTION = new TestAction();
   const _ = init(() => {
-    const action = new HelpAction([TEST_ACTION]);
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
+    const testAction = new TestAction({shadowRoot, vine});
 
-    return {action, vine};
+    const action = new HelpAction([testAction], {shadowRoot, vine});
+
+    return {action, el, testAction, vine};
   });
 
   test('onTrigger', () => {
     should(`show the help correctly`, () => {
-      const el = document.createElement('div');
-      _.action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine: _.vine}).subscribe();
-
       const actions$ = new ReplaySubject<ArrayDiff<BaseAction>>(1);
       $helpService.get(_.vine)
           .pipe(switchMap(service => service.actions$))
           .subscribe(actions$);
 
-      trigger(el, _.action);
+      trigger(_.el, _.action);
 
       assert(actions$).to.emitSequence([
         objectThat<ArrayDiff<BaseAction>>().haveProperties({
           type: 'insert',
-          value: TEST_ACTION,
+          value: _.testAction,
           index: 0,
         }),
       ]);

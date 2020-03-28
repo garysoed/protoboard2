@@ -1,44 +1,50 @@
-import { assert, setup, should, test } from 'gs-testing';
+import { assert, should, test } from 'gs-testing';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { _p } from 'mask';
-import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
+import { PersonaTesterFactory } from 'persona/export/testing';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { $, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';
 import { PickAction } from './pick-action';
 
+
 const testerFactory = new PersonaTesterFactory(_p);
 
-test('@protoboard2/action/help-overlay', () => {
-  let tester: ElementTester;
+function createShadowRoot(): ShadowRoot {
+  const element = document.createElement('div');
+  return element.attachShadow({mode: 'open'});
+}
 
-  setup(() => {
-    tester = testerFactory.build([HelpOverlay]).createElement('pb-help-overlay', document.body);
+test('@protoboard2/action/help-overlay', init => {
+  const _ = init(() => {
+    const tester = testerFactory.build([HelpOverlay])
+        .createElement('pb-help-overlay', document.body);
+    return {tester};
   });
 
   test('renderIsVisible', () => {
     should(`not add the isVisible class if there are no actions in the help service`, () => {
-      assert(tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
     });
 
     should(`add the isVisible class if there is an action in the help service`, () => {
-      $helpService.get(tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([new PickAction()]);
+      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
+        service.show([new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine})]);
       });
 
-      assert(tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
+      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
     });
   });
 
   test('renderRows', () => {
     should(`render rows correctly`, () => {
-      const action = new PickAction();
-      $helpService.get(tester.vine).pipe(take(1)).subscribe(service => {
+      const action = new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine});
+      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
         service.show([action]);
       });
 
-      const nodes$ = tester.getNodesAfter($.content._.rows);
+      const nodes$ = _.tester.getNodesAfter($.content._.rows);
       const triggers$ = nodes$.pipe(
           map(nodes => {
             return (nodes[0] as HTMLElement).querySelector('#trigger')!.innerHTML;
@@ -55,13 +61,13 @@ test('@protoboard2/action/help-overlay', () => {
     });
 
     should(`render deletion correctly`, () => {
-      const action = new PickAction();
-      $helpService.get(tester.vine).pipe(take(1)).subscribe(service => {
+      const action = new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine});
+      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
         service.show([action]);
         service.show([]);
       });
 
-      const nodes$ = tester.getNodesAfter($.content._.rows)
+      const nodes$ = _.tester.getNodesAfter($.content._.rows)
           .pipe(map(nodes => nodes.filter(node => node instanceof HTMLElement).length));
       assert(nodes$).to.emitWith(0);
     });
@@ -69,15 +75,15 @@ test('@protoboard2/action/help-overlay', () => {
 
   test('setupHandleClick', () => {
     should(`hide the help when clicked`, () => {
-      $helpService.get(tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([new PickAction()]);
+      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
+        service.show([new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine})]);
       });
 
-      tester.dispatchEvent($.root._.click).subscribe();
+      _.tester.dispatchEvent($.root._.click).subscribe();
 
-      assert(tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
 
-      const actionsLength$ = $helpService.get(tester.vine)
+      const actionsLength$ = $helpService.get(_.tester.vine)
           .pipe(
               switchMap(service => service.actions$),
               scanArray(),

@@ -1,29 +1,32 @@
-import { Vine } from 'grapevine';
 import { scanArray } from 'gs-tools/export/rxjs';
+import { PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerType } from '../core/trigger-spec';
 
 import { $pickService } from './pick-service';
 
+
 export class DropAction extends BaseAction {
-  constructor(private readonly parentNode$: Observable<Node>) {
+  constructor(
+      private readonly parentNode$: Observable<Node>,
+      context: PersonaContext,
+  ) {
     super(
         'Drop',
         'drop',
         {},
         {type: TriggerType.CLICK},
+        context,
     );
+
+    this.setupHandleTrigger();
   }
 
-  protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
-    return config$;
-  }
-
-  protected setupHandleTrigger(trigger$: Observable<unknown>, vine: Vine): Observable<unknown> {
-    const components$ = $pickService.get(vine).pipe(
+  private setupHandleTrigger(): void {
+    const components$ = $pickService.get(this.vine).pipe(
         switchMap(pickService => {
           return pickService.getComponents()
               .pipe(
@@ -33,20 +36,20 @@ export class DropAction extends BaseAction {
         }),
     );
 
-    return trigger$
+    this.onTrigger$
         .pipe(
             withLatestFrom(this.parentNode$, components$),
-            tap(([, parentNode, {components, pickService}]) => {
-              const nextComponent = components[components.length - 1] || null;
-              if (!nextComponent) {
-                return null;
-              }
+            takeUntil(this.onDispose$),
+        )
+        .subscribe(([, parentNode, {components, pickService}]) => {
+          const nextComponent = components[components.length - 1] || null;
+          if (!nextComponent) {
+            return;
+          }
 
-              pickService.deleteAt(components.length - 1);
+          pickService.deleteAt(components.length - 1);
 
-              parentNode.appendChild(nextComponent);
-              return nextComponent;
-            }),
-        );
+          parentNode.appendChild(nextComponent);
+        });
   }
 }

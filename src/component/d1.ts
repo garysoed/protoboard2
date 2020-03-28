@@ -16,8 +16,8 @@ export class D1 extends BaseComponent {
   constructor(context: PersonaContext) {
     super(
         [
-          new PickAction(),
-          new RotateAction(0, [0, 90, 180, 270]),
+          new PickAction(context),
+          new RotateAction(0, [0, 90, 180, 270], context),
         ],
         context,
     );

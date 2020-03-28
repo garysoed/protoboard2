@@ -1,5 +1,4 @@
-import { Vine } from 'grapevine';
-import { arrayThat, assert, setup, should, test } from 'gs-testing';
+import { arrayThat, assert, should, test } from 'gs-testing';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { ReplaySubject } from 'rxjs';
@@ -8,22 +7,21 @@ import { map, switchMap } from 'rxjs/operators';
 import { PickAction } from './pick-action';
 import { $pickService } from './pick-service';
 
-test('@protoboard2/action/pick-action', () => {
-  let action: PickAction;
-  let vine: Vine;
 
-  setup(() => {
-    action = new PickAction();
-    vine = _v.build('test');
+test('@protoboard2/action/pick-action', init => {
+  const _ = init(() => {
+    const vine = _v.build('test');
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const action = new PickAction({shadowRoot, vine});
+
+    return {action, el, vine};
   });
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const el = document.createElement('div');
-      action.install({shadowRoot: el.attachShadow({mode: 'open'}), vine}).subscribe();
-
       const elements$ = new ReplaySubject<Element[]>(2);
-      $pickService.get(vine)
+      $pickService.get(_.vine)
           .pipe(
               switchMap(service => service.getComponents()),
               scanArray(),
@@ -31,11 +29,11 @@ test('@protoboard2/action/pick-action', () => {
           )
           .subscribe(elements$);
 
-      el.click();
+      _.el.click();
 
       assert(elements$).to.emitSequence([
         arrayThat<Element>().beEmpty(),
-        arrayThat<Element>().haveExactElements([el]),
+        arrayThat<Element>().haveExactElements([_.el]),
       ]);
     });
   });
