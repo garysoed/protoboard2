@@ -1,21 +1,20 @@
+import { Vine } from 'grapevine';
 import { assert, objectThat, should, test } from 'gs-testing';
 import { ArrayDiff } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
-import { PersonaContext } from 'persona';
 import { EMPTY, Observable, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerType } from '../core/trigger-spec';
-import { trigger } from '../testing/component-tester';
+import { TriggerSpec } from '../core/trigger-spec';
 
 import { HelpAction } from './help-action';
-import { $helpService } from './help-service';
+import { $helpService, ActionTrigger } from './help-service';
 
 
 class TestAction extends BaseAction {
-  constructor(context: PersonaContext) {
-    super('test', 'test', {}, {type: TriggerType.CLICK}, context);
+  constructor(vine: Vine) {
+    super('test', 'test', {}, vine);
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
@@ -28,30 +27,36 @@ class TestAction extends BaseAction {
 }
 
 test('@protoboard2/action/help-action', init => {
+  const TRIGGER = TriggerSpec.T;
+
   const _ = init(() => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
-    const testAction = new TestAction({shadowRoot, vine});
+    const testAction = new TestAction(vine);
 
-    const action = new HelpAction([testAction], {shadowRoot, vine});
+    const action = new HelpAction(new Map([[TRIGGER, testAction]]), vine);
+    action.setActionTarget(shadowRoot);
 
     return {action, el, testAction, vine};
   });
 
   test('onTrigger', () => {
     should(`show the help correctly`, () => {
-      const actions$ = new ReplaySubject<ArrayDiff<BaseAction>>(1);
+      const actions$ = new ReplaySubject<ArrayDiff<ActionTrigger>>(1);
       $helpService.get(_.vine)
           .pipe(switchMap(service => service.actions$))
           .subscribe(actions$);
 
-      trigger(_.el, _.action);
+      _.action.trigger();
 
       assert(actions$).to.emitSequence([
-        objectThat<ArrayDiff<BaseAction>>().haveProperties({
+        objectThat<ArrayDiff<ActionTrigger>>().haveProperties({
           type: 'insert',
-          value: _.testAction,
+          value: objectThat<ActionTrigger>().haveProperties({
+            action: _.testAction,
+            trigger: TRIGGER,
+          }),
           index: 0,
         }),
       ]);

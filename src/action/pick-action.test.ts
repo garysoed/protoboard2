@@ -13,7 +13,8 @@ test('@protoboard2/action/pick-action', init => {
     const vine = _v.build('test');
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const action = new PickAction({shadowRoot, vine});
+    const action = new PickAction(vine);
+    action.setActionTarget(shadowRoot);
 
     return {action, el, vine};
   });
@@ -29,7 +30,7 @@ test('@protoboard2/action/pick-action', init => {
           )
           .subscribe(elements$);
 
-      _.el.click();
+      _.action.trigger();
 
       assert(elements$).to.emitSequence([
         arrayThat<Element>().beEmpty(),

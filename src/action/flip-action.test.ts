@@ -1,7 +1,7 @@
 import { assert, should, test } from 'gs-testing';
 import { _v } from 'mask';
 
-import { configure, trigger } from '../testing/component-tester';
+import { configure } from '../testing/component-tester';
 
 import { $$ as $flipAction, FlipAction } from './flip-action';
 
@@ -11,14 +11,15 @@ test('@protoboard2/action/flip-action', init => {
     const vine = _v.build('test');
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const action = new FlipAction(2, 0, {shadowRoot, vine});
+    const action = new FlipAction(2, 0, vine);
+    action.setActionTarget(shadowRoot);
 
     return {action, el, vine};
   });
 
   test('onTrigger', () => {
     should(`increase the face by 1`, () => {
-      trigger(_.el, _.action);
+      _.action.trigger();
 
       assert(_.el.getAttribute($flipAction.currentFace.attrName)).to.equal('1');
     });
@@ -34,8 +35,8 @@ test('@protoboard2/action/flip-action', init => {
 
   test('setupOnSetIndex', () => {
     should(`wrap the face index by the count`, () => {
-      trigger(_.el, _.action);
-      trigger(_.el, _.action);
+      _.action.trigger();
+      _.action.trigger();
 
       assert(_.el.getAttribute($flipAction.currentFace.attrName)).to.equal('0');
     });

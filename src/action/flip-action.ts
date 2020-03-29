@@ -1,11 +1,11 @@
+import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { attributeOut, element, integerParser, PersonaContext } from 'persona';
+import { attributeOut, element, integerParser } from 'persona';
 import { combineLatest, merge, Observable, Subject } from 'rxjs';
-import { map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerKey, TriggerType } from '../core/trigger-spec';
 
 
 export const $$ = {
@@ -21,21 +21,22 @@ interface Config {
   readonly index: number;
 }
 
+export const KEY = 'flip';
+
 export class FlipAction extends BaseAction<Config> {
   constructor(
       private readonly count: number,
       private readonly index: number,
-      context: PersonaContext,
+      vine: Vine,
   ) {
     super(
-        'flip',
+        KEY,
         'Flip',
         {
           count: integerParser(),
           index: integerParser(),
         },
-        {type: TriggerType.KEY, key: TriggerKey.F},
-        context,
+        vine,
     );
 
     this.setupOnSetIndex$();
@@ -90,8 +91,11 @@ export class FlipAction extends BaseAction<Config> {
     ])
     .pipe(map(([index, count]) => index % count));
 
-    $.host._.currentFace.output(this.shadowRoot, currentFace$)
-        .pipe(takeUntil(this.onDispose$))
+    this.actionTarget$
+        .pipe(
+            switchMap(shadowRoot => $.host._.currentFace.output(shadowRoot, currentFace$)),
+            takeUntil(this.onDispose$),
+        )
         .subscribe();
   }
 }

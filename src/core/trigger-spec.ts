@@ -1,9 +1,5 @@
-export enum TriggerType {
-  CLICK,
-  KEY,
-}
-
-export enum TriggerKey {
+export enum TriggerSpec {
+  // Keys
   A = 'a',
   B = 'b',
   C = 'c',
@@ -31,15 +27,40 @@ export enum TriggerKey {
   Y = 'y',
   Z = 'z',
   QUESTION = '?',
+
+  // Others
+  CLICK = 'click',
 }
 
-interface KeySpec {
-  readonly key: TriggerKey;
-  readonly type: TriggerType.KEY;
-}
+type ReservedTriggerSpec = TriggerSpec.QUESTION;
+export type UnreservedTriggerSpec = Exclude<TriggerSpec, ReservedTriggerSpec>;
 
-interface SimpleSpec {
-  readonly type: TriggerType.CLICK;
-}
-
-export type TriggerSpec = KeySpec|SimpleSpec;
+export const TRIGGER_KEYS: ReadonlySet<TriggerSpec> = new Set([
+  TriggerSpec.A,
+  TriggerSpec.B,
+  TriggerSpec.C,
+  TriggerSpec.D,
+  TriggerSpec.E,
+  TriggerSpec.F,
+  TriggerSpec.G,
+  TriggerSpec.H,
+  TriggerSpec.I,
+  TriggerSpec.J,
+  TriggerSpec.K,
+  TriggerSpec.L,
+  TriggerSpec.M,
+  TriggerSpec.N,
+  TriggerSpec.O,
+  TriggerSpec.P,
+  TriggerSpec.Q,
+  TriggerSpec.R,
+  TriggerSpec.S,
+  TriggerSpec.T,
+  TriggerSpec.U,
+  TriggerSpec.V,
+  TriggerSpec.W,
+  TriggerSpec.X,
+  TriggerSpec.Y,
+  TriggerSpec.Z,
+  TriggerSpec.QUESTION,
+]);

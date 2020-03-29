@@ -1,32 +1,32 @@
-import { PersonaContext } from 'persona';
+import { Vine } from 'grapevine';
 import { takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerKey, TriggerType } from '../core/trigger-spec';
+import { TriggerSpec } from '../core/trigger-spec';
 
 import { $helpService } from './help-service';
 
 
 export class HelpAction extends BaseAction {
   constructor(
-      private readonly actions: Iterable<BaseAction>,
-      context: PersonaContext,
+      private readonly actions: ReadonlyMap<TriggerSpec, BaseAction>,
+      vine: Vine,
   ) {
     super(
         'help',
         'Help',
         {},
-        {type: TriggerType.KEY, key: TriggerKey.QUESTION},
-        context,
+        vine,
     );
 
     this.setupHandleTrigger();
   }
 
   private setupHandleTrigger(): void {
+    const helpService$ = $helpService.get(this.vine);
     this.onTrigger$
         .pipe(
-            withLatestFrom($helpService.get(this.vine)),
+            withLatestFrom(helpService$),
             takeUntil(this.onDispose$),
         )
         .subscribe(([, helpService]) => {

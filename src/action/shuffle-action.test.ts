@@ -3,8 +3,6 @@ import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
 import { $random } from 'src/util/random';
 
-import { trigger } from '../testing/component-tester';
-
 import { ShuffleAction } from './shuffle-action';
 
 
@@ -24,9 +22,10 @@ test('@protoboard2/action/shuffle-action', () => {
     const vine = _v.build('test');
     $random.get(vine).next(fromSeed(seed));
 
-    const action = new ShuffleAction({shadowRoot, vine});
+    const action = new ShuffleAction(vine);
+    action.setActionTarget(shadowRoot);
 
-    trigger(rootEl, action);
+    action.trigger();
 
     assert(rootEl.children.item(0)).to.equal(childEl2);
     assert(rootEl.children.item(1)).to.equal(childEl3);

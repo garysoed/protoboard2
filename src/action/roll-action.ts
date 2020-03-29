@@ -1,11 +1,11 @@
+import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { attributeOut, element, integerParser, PersonaContext } from 'persona';
+import { attributeOut, element, integerParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
-import { map, startWith, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerKey, TriggerType } from '../core/trigger-spec';
 import { $random } from '../util/random';
 
 
@@ -26,14 +26,13 @@ export class RollAction extends BaseAction<Config> {
 
   constructor(
       private readonly config: Config,
-      context: PersonaContext,
+      vine: Vine,
   ) {
     super(
         'roll',
         'Roll',
         {count: integerParser()},
-        {type: TriggerType.KEY, key: TriggerKey.L},
-        context,
+        vine,
     );
 
     this.setupOnIndexSwitch();
@@ -50,8 +49,11 @@ export class RollAction extends BaseAction<Config> {
   }
 
   protected setupOnIndexSwitch(): void {
-    $.host._.currentFace.output(this.shadowRoot, this.onIndexSwitch$)
-        .pipe(takeUntil(this.onDispose$))
+    this.actionTarget$
+        .pipe(
+            switchMap(shadowRoot => $.host._.currentFace.output(shadowRoot, this.onIndexSwitch$)),
+            takeUntil(this.onDispose$),
+        )
         .subscribe();
   }
 

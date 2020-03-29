@@ -14,11 +14,11 @@ test('@protoboard2/action/rotate-action', init => {
     const el = document.createElement('div');
     const vine = _v.build('test');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const action = new RotateAction(index, stops, {shadowRoot, vine});
+    const action = new RotateAction(index, stops, vine);
+    action.setActionTarget(shadowRoot);
 
     return {action, el};
   }
-
 
   test('onConfig', () => {
     should(`change the index when updated`, () => {
@@ -48,9 +48,7 @@ test('@protoboard2/action/rotate-action', init => {
     should(`change the rotation`, () => {
       const _ = setupTest(1, [11, 22, 33]);
 
-      // Trigger the action.
-      _.el.dispatchEvent(new CustomEvent('mouseover'));
-      window.dispatchEvent(new KeyboardEvent('keydown', {key: 'r'}));
+      _.action.trigger();
 
       assert(_.el.style.transform).to.equal('rotateZ(33deg)');
     });
@@ -60,9 +58,7 @@ test('@protoboard2/action/rotate-action', init => {
     should(`should handle cycling`, () => {
       const _ = setupTest(2, [11, 22, 33]);
 
-      // Trigger the action.
-      _.el.dispatchEvent(new CustomEvent('mouseover'));
-      window.dispatchEvent(new KeyboardEvent('keydown', {key: 'r'}));
+      _.action.trigger();
 
       assert(_.el.style.transform).to.equal('rotateZ(11deg)');
     });

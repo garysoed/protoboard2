@@ -8,7 +8,9 @@ import { $$ as $flipAction, FlipAction } from '../action/flip-action';
 import { PickAction } from '../action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
+import { BaseAction } from '../core/base-action';
 import { BaseComponent } from '../core/base-component';
+import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
 import template from './d2.html';
 
@@ -29,12 +31,12 @@ export class D2 extends BaseComponent {
 
   constructor(context: PersonaContext) {
     super(
-        [
-          new PickAction(context),
-          new RotateAction(0, [0, 90, 180, 270], context),
-          new FlipAction(2, 0, context),
-          new RollAction({count: 2}, context),
-        ],
+        new Map<UnreservedTriggerSpec, BaseAction>([
+          [TriggerSpec.P, new PickAction(context.vine)],
+          [TriggerSpec.R, new RotateAction(0, [0, 90, 180, 270], context.vine)],
+          [TriggerSpec.F, new FlipAction(2, 0, context.vine)],
+          [TriggerSpec.L, new RollAction({count: 2}, context.vine)],
+        ]),
         context,
     );
     this.render($.face._.name).withFunction(this.renderFaceName);

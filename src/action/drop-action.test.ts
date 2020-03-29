@@ -14,7 +14,8 @@ test('@protoboard2/action/drop-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
-    const action = new DropAction(parentNode$, {shadowRoot, vine});
+    const action = new DropAction(parentNode$, vine);
+    action.setActionTarget(shadowRoot);
 
     return {action, el, parentNode$, vine};
   });
@@ -37,7 +38,7 @@ test('@protoboard2/action/drop-action', init => {
           )
           .subscribe(components$);
 
-      _.el.click();
+      _.action.trigger();
 
       assert(components$).to.emitSequence([
         arrayThat<Element>().haveExactElements([componentEl]),
@@ -59,7 +60,7 @@ test('@protoboard2/action/drop-action', init => {
         )
         .subscribe(components$);
 
-    _.el.click();
+    _.action.trigger();
 
     assert(components$).to.emitSequence([
       arrayThat<Element>().haveExactElements([]),
@@ -84,7 +85,7 @@ test('@protoboard2/action/drop-action', init => {
         )
         .subscribe(components$);
 
-    _.el.click();
+    _.action.trigger();
 
     const componentEl2 = document.createElement('div');
     $pickService.get(_.vine)

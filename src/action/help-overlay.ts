@@ -2,15 +2,11 @@ import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
 import { ElementWithTagType, InstanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { classToggle, element, innerHtml, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
-import { BaseAction } from '../core/base-action';
-import { TriggerSpec, TriggerType } from '../core/trigger-spec';
-
 import template from './help-overlay.html';
-import { $helpService } from './help-service';
-;
+import { $helpService, ActionTrigger } from './help-service';
 
 
 export const $ = {
@@ -61,22 +57,27 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
     return this.helpService$.pipe(
         switchMap(service => service.actions$),
         withLatestFrom(this.tableRowTemplate$),
-        switchMap(([diff, template]): Observable<ArrayDiff<RenderSpec>> => {
+        map(([diff, template]): ArrayDiff<RenderSpec> => {
           switch (diff.type) {
             case 'delete':
-              return observableOf(diff);
+              return diff;
             case 'init':
-              return combineLatest(diff.value.map(action => renderRow(action, template))).pipe(
-                  map(value => ({type: 'init', value})),
-              );
+              return {
+                type: 'init',
+                value: diff.value.map(action => renderRow(action, template)),
+              };
             case 'insert':
-              return renderRow(diff.value, template).pipe(
-                  map(value => ({type: 'insert', value, index: diff.index})),
-              );
+              return {
+                type: 'insert',
+                value: renderRow(diff.value, template),
+                index: diff.index,
+              };
             case 'set':
-              return renderRow(diff.value, template).pipe(
-                  map(value => ({type: 'set', value, index: diff.index})),
-              );
+              return {
+                type: 'set',
+                value: renderRow(diff.value, template),
+                index: diff.index,
+              };
           }
         }),
     );
@@ -92,22 +93,12 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   }
 }
 
-function renderRow(action: BaseAction, template: HTMLTemplateElement): Observable<RenderSpec> {
-  return action.triggerSpec$.pipe(
-      map(trigger => {
-        return renderFromTemplate(template)
-            .addOutput($template.trigger._.inner, renderTrigger(trigger))
-            .addOutput($template.action._.inner, action.actionName)
-            .build();
-      }),
-  );
-}
-
-function renderTrigger(spec: TriggerSpec): string {
-  switch (spec.type) {
-    case TriggerType.KEY:
-      return spec.key;
-    case TriggerType.CLICK:
-      return 'click';
-  }
+function renderRow(
+    {action, trigger}: ActionTrigger,
+    template: HTMLTemplateElement,
+): RenderSpec {
+  return renderFromTemplate(template)
+      .addOutput($template.trigger._.inner, trigger)
+      .addOutput($template.action._.inner, action.actionName)
+      .build();
 }

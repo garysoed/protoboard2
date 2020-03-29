@@ -4,17 +4,14 @@ import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map, switchMap, take } from 'rxjs/operators';
 
+import { TriggerSpec } from '../core/trigger-spec';
+
 import { $, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';
 import { PickAction } from './pick-action';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
-
-function createShadowRoot(): ShadowRoot {
-  const element = document.createElement('div');
-  return element.attachShadow({mode: 'open'});
-}
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
@@ -30,7 +27,7 @@ test('@protoboard2/action/help-overlay', init => {
 
     should(`add the isVisible class if there is an action in the help service`, () => {
       $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine})]);
+        service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
       });
 
       assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
@@ -39,9 +36,9 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('renderRows', () => {
     should(`render rows correctly`, () => {
-      const action = new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine});
+      const action = new PickAction(_.tester.vine);
       $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([action]);
+        service.show(new Map([[TriggerSpec.CLICK, action]]));
       });
 
       const nodes$ = _.tester.getNodesAfter($.content._.rows);
@@ -61,10 +58,10 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should(`render deletion correctly`, () => {
-      const action = new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine});
+      const action = new PickAction(_.tester.vine);
       $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([action]);
-        service.show([]);
+        service.show(new Map([[TriggerSpec.CLICK, action]]));
+        service.show(new Map());
       });
 
       const nodes$ = _.tester.getNodesAfter($.content._.rows)
@@ -76,7 +73,7 @@ test('@protoboard2/action/help-overlay', init => {
   test('setupHandleClick', () => {
     should(`hide the help when clicked`, () => {
       $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show([new PickAction({shadowRoot: createShadowRoot(), vine: _.tester.vine})]);
+        service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
       });
 
       _.tester.dispatchEvent($.root._.click).subscribe();

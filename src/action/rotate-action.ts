@@ -1,12 +1,12 @@
+import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { identity } from 'nabu';
-import { element, integerParser, listParser, PersonaContext } from 'persona';
+import { element, integerParser, listParser } from 'persona';
 import { combineLatest, merge, Observable, Subject } from 'rxjs';
-import { filter, map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
-import { TriggerKey, TriggerType } from '../core/trigger-spec';
 
 
 interface Config {
@@ -39,7 +39,7 @@ export class RotateAction extends BaseAction<Config> {
   constructor(
       private readonly index: number,
       private readonly stops: readonly number[],
-      context: PersonaContext,
+      vine: Vine,
   ) {
     super(
         'rotate',
@@ -48,8 +48,7 @@ export class RotateAction extends BaseAction<Config> {
           index: integerParser(),
           stops: listParser(identity<number>()),
         },
-        {type: TriggerType.KEY, key: TriggerKey.R},
-        context,
+        vine,
     );
 
     this.setupHandleRotation();
@@ -57,13 +56,15 @@ export class RotateAction extends BaseAction<Config> {
   }
 
   private setupHandleRotation(): void {
+    const host$ = this.actionTarget$.pipe(
+        switchMap(shadowRoot => {
+          return element({}).getValue(shadowRoot);
+        }),
+        filter((el): el is HTMLElement => el instanceof HTMLElement),
+    );
     combineLatest([this.index$, this.stops$])
         .pipe(
-            withLatestFrom(
-                element({}).getValue(this.shadowRoot).pipe(
-                    filter((el): el is HTMLElement => el instanceof HTMLElement),
-                ),
-            ),
+            withLatestFrom(host$),
             takeUntil(this.onDispose$),
         )
         .subscribe(([[index, stops], hostEl]) => {
