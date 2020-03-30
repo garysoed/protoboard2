@@ -1,20 +1,17 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull } from 'gs-tools/export/rxjs';
-import { attributeOut, element, integerParser } from 'persona';
+import { element, integerParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
-import { map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { $random } from '../util/random';
 
+import { $face } from './face';
 
-export const $$ = {
-  currentFace: attributeOut('current-face', integerParser()),
-};
 
 const $ = {
-  host: element($$),
+  host: element($face),
 };
 
 interface Config {
@@ -35,41 +32,39 @@ export class RollAction extends BaseAction<Config> {
         vine,
     );
 
-    this.setupOnIndexSwitch();
-    this.setupHandleTrigger();
+    this.setup();
   }
 
-  @cache()
-  private get count$(): Observable<number> {
-    return this.config$.pipe(
-        map(config => config.count || null),
-        filterNonNull(),
-        startWith(this.config.count),
-    );
-  }
+  private setup(): void {
+    const newValue$ = this.onTrigger$
+        .pipe(
+            withLatestFrom(this.count$, $random.get(this.vine)),
+            map(([, count, random]) => {
+              return random.next(({random, rng}) => {
+                return rng.map(() => Math.floor(random * count));
+              });
+            }),
+            tap(nextRandom => {
+              $random.get(this.vine).next(nextRandom);
+            }),
+            map(({value}) => value),
+        );
 
-  protected setupOnIndexSwitch(): void {
+
     this.actionTarget$
         .pipe(
-            switchMap(shadowRoot => $.host._.currentFace.output(shadowRoot, this.onIndexSwitch$)),
+            switchMap(shadowRoot => {
+              return $.host._.currentFaceOut.output(shadowRoot, newValue$);
+            }),
             takeUntil(this.onDispose$),
         )
         .subscribe();
   }
 
-  private setupHandleTrigger(): void {
-    this.onTrigger$
-        .pipe(
-            withLatestFrom(this.count$, $random.get(this.vine)),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, count, random]) => {
-          const nextRand = random.next(({random, rng}) => {
-            this.onIndexSwitch$.next(Math.floor(random * count));
-            return rng;
-          });
-
-          $random.get(this.vine).next(nextRand);
-        });
+  @cache()
+  private get count$(): Observable<number> {
+    return this.config$.pipe(
+        map(config => config.count ?? this.config.count),
+    );
   }
 }

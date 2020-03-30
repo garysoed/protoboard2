@@ -6,7 +6,7 @@ import { $$ as $docTemplate, DocTemplate } from './doc-template';
 
 
 const $$ = {
-  label: attributeIn('label', stringParser()),
+  label: attributeIn('label', stringParser(), ''),
 };
 
 const $ = {

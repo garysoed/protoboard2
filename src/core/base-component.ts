@@ -1,7 +1,7 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext } from 'persona';
 import { EMPTY, fromEvent, merge, Observable } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
+import { filter, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { HelpAction } from '../action/help-action';
 
@@ -53,6 +53,7 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
 
     for (const [trigger, action] of allActions) {
       action.setActionTarget(this.shadowRoot);
+      this.setupTriggerFunction(action);
       this.setupTrigger(trigger, action);
       this.addDisposable(action);
     }
@@ -66,6 +67,16 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
         .pipe(takeUntil(this.onDispose$))
         .subscribe(() => {
           action.trigger();
+        });
+  }
+
+  private setupTriggerFunction(action: BaseAction): void {
+    $.host.getValue(this.shadowRoot)
+        .pipe(takeUntil(this.onDispose$))
+        .subscribe(hostEl => {
+          Object.assign(hostEl, {[action.key]: () => {
+            action.trigger();
+          }});
         });
   }
 }

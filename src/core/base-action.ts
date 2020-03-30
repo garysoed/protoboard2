@@ -22,7 +22,7 @@ type ConverterOf<O> = {
 
 export abstract class BaseAction<C = {}> extends BaseDisposable {
   protected readonly actionTarget$ = new ReplaySubject<ShadowRoot>(1);
-  private readonly onTriggerFunction$ = new Subject<void>();
+  readonly #onTrigger$ = new Subject<void>();
 
   constructor(
       readonly key: string,
@@ -31,8 +31,6 @@ export abstract class BaseAction<C = {}> extends BaseDisposable {
       protected readonly vine: Vine,
   ) {
     super();
-
-    this.setupTriggerFunction();
   }
 
   setActionTarget(shadowRoot: ShadowRoot): void {
@@ -40,7 +38,7 @@ export abstract class BaseAction<C = {}> extends BaseDisposable {
   }
 
   trigger(): void {
-    this.onTriggerFunction$.next();
+    this.#onTrigger$.next();
   }
 
   @cache()
@@ -85,20 +83,11 @@ export abstract class BaseAction<C = {}> extends BaseDisposable {
   }
 
   @cache()
-  get onTrigger$(): Observable<unknown> {
-    return this.onTriggerFunction$;
+  get host$(): Observable<Element> {
+    return this.actionTarget$.pipe(switchMap(root => element({}).getValue(root)));
   }
 
-  private setupTriggerFunction(): void {
-    this.actionTarget$
-        .pipe(
-            switchMap(shadowRoot => $.host.getValue(shadowRoot)),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(hostEl => {
-          (hostEl as any)[this.key] = () => {
-            this.trigger();
-          };
-        });
+  get onTrigger$(): Observable<unknown> {
+    return this.#onTrigger$;
   }
 }

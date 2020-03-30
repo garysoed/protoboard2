@@ -13,7 +13,7 @@ import template from './doc-template.html';
 export const $$ = {
   tag: 'pbd-doc-template',
   api: {
-    label: attributeIn('label', stringParser()),
+    label: attributeIn('label', stringParser(), ''),
   },
 };
 

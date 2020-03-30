@@ -4,7 +4,8 @@ import { api, attributeOut, element, PersonaContext, stringParser } from 'person
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { $$ as $flipAction, FlipAction } from '../action/flip-action';
+import { $face } from '../action/face';
+import { FlipAction } from '../action/flip-action';
 import { PickAction } from '../action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
@@ -16,7 +17,7 @@ import template from './d2.html';
 
 
 export const $ = {
-  host: element(api($flipAction)),
+  host: element(api($face)),
   face: element('face', InstanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
@@ -27,12 +28,12 @@ export const $ = {
   template,
 })
 export class D2 extends BaseComponent {
-  private readonly currentFace$ = this.declareInput($.host._.currentFace);
+  private readonly currentFace$ = this.declareInput($.host._.currentFaceOut);
 
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseAction>([
-          [TriggerSpec.P, new PickAction(context.vine)],
+          [TriggerSpec.CLICK, new PickAction(context.vine)],
           [TriggerSpec.R, new RotateAction(0, [0, 90, 180, 270], context.vine)],
           [TriggerSpec.F, new FlipAction(2, 0, context.vine)],
           [TriggerSpec.L, new RollAction({count: 2}, context.vine)],

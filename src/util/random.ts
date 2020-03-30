@@ -1,8 +1,8 @@
 import { source } from 'grapevine';
-import { aleaSeed, fromSeed } from 'gs-tools/export/random';
+import { aleaSeed, fromSeed, Random } from 'gs-tools/export/random';
 import { BehaviorSubject } from 'rxjs';
 
 export const $random = source(
-    () => new BehaviorSubject(fromSeed(aleaSeed(''))),
+    () => new BehaviorSubject<Random<unknown>>(fromSeed(aleaSeed(''))),
     globalThis,
 );

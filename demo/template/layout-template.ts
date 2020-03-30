@@ -22,7 +22,7 @@ export class SetLayoutEvent extends Event {
 
 export const $$ = {
   onSetLayout: dispatcher<SetLayoutEvent>(SET_LAYOUT_EVENT),
-  label: attributeIn('label', stringParser()),
+  label: attributeIn('label', stringParser(), ''),
 };
 
 const $ = {

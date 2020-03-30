@@ -17,7 +17,7 @@ test('@protoboard2/component/d2', () => {
 
   test('renderFaceName', () => {
     should(`render the face name correctly`, () => {
-      el.setAttribute($.host._.currentFace, 2).subscribe();
+      el.setAttribute($.host._.currentFaceOut, 2).subscribe();
 
       assert(el.getAttribute($.face._.name)).to.emitSequence(['face-2']);
     });

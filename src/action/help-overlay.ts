@@ -1,7 +1,7 @@
 import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
 import { ElementWithTagType, InstanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { classToggle, element, innerHtml, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
+import { classToggle, element, innerHtml, NoopRenderSpec, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 
@@ -60,7 +60,11 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
         map(([diff, template]): ArrayDiff<RenderSpec> => {
           switch (diff.type) {
             case 'delete':
-              return diff;
+              return {
+                type: 'delete',
+                index: diff.index,
+                value: new NoopRenderSpec(),
+              };
             case 'init':
               return {
                 type: 'init',

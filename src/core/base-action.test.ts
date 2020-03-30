@@ -90,12 +90,4 @@ test('@protoboard2/core/base-action', init => {
       assert(_.action.value$).to.emitSequence([345]);
     });
   });
-
-  test('setupTriggerFunction', () => {
-    should(`create a function that triggers`, () => {
-      (_.element as any)[ACTION_KEY]();
-
-      assert(_.onTrigger$).to.emit();
-    });
-  });
 });

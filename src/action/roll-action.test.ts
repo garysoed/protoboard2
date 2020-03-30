@@ -5,7 +5,8 @@ import { _v } from 'mask';
 import { configure } from '../testing/component-tester';
 import { $random } from '../util/random';
 
-import { $$ as $rollAction, RollAction } from './roll-action';
+import { $face } from './face';
+import { RollAction } from './roll-action';
 
 
 test('@protoboard2/action/roll-action', init => {
@@ -28,7 +29,7 @@ test('@protoboard2/action/roll-action', init => {
       _.seed.values = [1];
 
       _.action.trigger();
-      assert(_.el.getAttribute($rollAction.currentFace.attrName)).to.equal('4');
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('4');
     });
   });
 
@@ -38,7 +39,16 @@ test('@protoboard2/action/roll-action', init => {
 
       _.action.trigger();
 
-      assert(_.el.getAttribute($rollAction.currentFace.attrName)).to.equal('3');
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('3');
+    });
+
+    should(`handle the value if changed by other action`, () => {
+      _.el.setAttribute($face.currentFaceOut.attrName, '5');
+
+      _.seed.values = [1];
+      _.action.trigger();
+
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('3');
     });
   });
 });

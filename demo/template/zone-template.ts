@@ -1,4 +1,4 @@
-import { filterNonNull } from 'gs-tools/export/rxjs';
+import { filterDefined, filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, classToggle, dispatcher, element, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
@@ -26,7 +26,7 @@ const ADD_ZONE_ID = 'addZoneSection';
 const $$ = {
   tag: 'pbd-zone-template',
   api: {
-    label: attributeIn('label', stringParser()),
+    label: attributeIn('label', stringParser(), ''),
     onAddZone: dispatcher<AddZoneEvent>(ADD_ZONE_EVENT),
     tag: attributeIn('tag', stringParser()),
   },
@@ -101,7 +101,7 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
             withLatestFrom(
                 this.layoutSpec$,
                 this.declareInput($.layoutContent),
-                this.declareInput($.host._.tag),
+                this.declareInput($.host._.tag).pipe(filterDefined()),
                 this.declareInput($.x._.value),
                 this.declareInput($.y._.value),
             ),

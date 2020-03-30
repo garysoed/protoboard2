@@ -3,7 +3,8 @@ import { _v } from 'mask';
 
 import { configure } from '../testing/component-tester';
 
-import { $$ as $flipAction, FlipAction } from './flip-action';
+import { $face } from './face';
+import { FlipAction } from './flip-action';
 
 
 test('@protoboard2/action/flip-action', init => {
@@ -17,28 +18,48 @@ test('@protoboard2/action/flip-action', init => {
     return {action, el, vine};
   });
 
-  test('onTrigger', () => {
+  test('setup', () => {
+    should(`render the default face`, () => {
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('0');
+    });
+
+    should(`read the configs correctly`, () => {
+      const el = document.createElement('div');
+      const shadowRoot = el.attachShadow({mode: 'open'});
+      configure(el, _.action.key, new Map([['count', '4'], ['index', '10']]));
+      const action = new FlipAction(2, 0, _.vine);
+      action.setActionTarget(shadowRoot);
+
+      assert(el.getAttribute($face.currentFaceOut.attrName)).to.equal('2');
+    });
+
+    should(`ignore the config when configured later`, () => {
+      configure(_.el, _.action.key, new Map([['count', '4'], ['index', '10']]));
+
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('0');
+    });
+  });
+
+  test('trigger', () => {
     should(`increase the face by 1`, () => {
       _.action.trigger();
 
-      assert(_.el.getAttribute($flipAction.currentFace.attrName)).to.equal('1');
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('1');
     });
-  });
 
-  test('onConfig', () => {
-    should(`read the configs correctly`, () => {
-      configure(_.el, _.action.key, new Map([['count', '4'], ['index', '10']]));
-
-      assert(_.el.getAttribute($flipAction.currentFace.attrName)).to.equal('2');
-    });
-  });
-
-  test('setupOnSetIndex', () => {
     should(`wrap the face index by the count`, () => {
       _.action.trigger();
       _.action.trigger();
 
-      assert(_.el.getAttribute($flipAction.currentFace.attrName)).to.equal('0');
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('0');
+    });
+
+    should(`handle the value if changed by other action`, () => {
+      _.el.setAttribute($face.currentFaceOut.attrName, '5');
+
+      _.action.trigger();
+
+      assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('0');
     });
   });
 });

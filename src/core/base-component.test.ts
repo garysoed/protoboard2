@@ -111,4 +111,15 @@ test('@protoboard2/core/base-component', init => {
       assert(_.onTrigger$).toNot.emit();
     });
   });
+
+  test('setupTriggerFunction', () => {
+    should(`create a function that triggers`, () => {
+      const onTrigger$ = new ReplaySubject(1);
+      _.keyAction.onTrigger$.subscribe(onTrigger$);
+
+      (_.element as any)[ACTION_KEY]();
+
+      assert(onTrigger$).to.emit();
+    });
+  });
 });
