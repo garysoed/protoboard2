@@ -1,4 +1,4 @@
-import { ElementWithTagType, InstanceofType } from 'gs-types';
+import { elementWithTagType, instanceofType } from 'gs-types';
 import { $drawer, $svgConfig, $textIconButton, _p, Drawer, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, innerHtml, PersonaContext, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,10 +18,10 @@ export const $$ = {
 };
 
 const $ = {
-  drawer: element('drawer', ElementWithTagType('mk-drawer'), api($drawer.api)),
+  drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
   drawerIcon: element('drawerIcon', $textIconButton, {}),
   host: element($$.api),
-  title: element('title', InstanceofType(HTMLHeadingElement), {
+  title: element('title', instanceofType(HTMLHeadingElement), {
     inner: innerHtml(),
   }),
 };

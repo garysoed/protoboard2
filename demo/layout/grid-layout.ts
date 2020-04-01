@@ -1,4 +1,4 @@
-import { ElementWithTagType } from 'gs-types';
+import { elementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
 import { takeUntil, withLatestFrom } from 'rxjs/operators';
@@ -10,9 +10,9 @@ import template from './grid-layout.html';
 
 
 const $ = {
-  column: element('column', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  row: element('row', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  template: element('template', ElementWithTagType('pbd-layout-template'), api($layoutTemplate)),
+  column: element('column', elementWithTagType('mk-text-input'), api($textInput.api)),
+  row: element('row', elementWithTagType('mk-text-input'), api($textInput.api)),
+  template: element('template', elementWithTagType('pbd-layout-template'), api($layoutTemplate)),
 };
 
 @_p.customElement({

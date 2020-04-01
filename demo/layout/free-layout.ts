@@ -1,4 +1,4 @@
-import { ElementWithTagType } from 'gs-types';
+import { elementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
 import { takeUntil } from 'rxjs/operators';
@@ -15,11 +15,11 @@ const $$ = {
 };
 
 const $ = {
-  template: element('template', ElementWithTagType('pbd-layout-template'), api($layoutTemplate)),
-  x: element('x', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  y: element('y', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  height: element('height', ElementWithTagType('mk-text-input'), api($textInput.api)),
-  width: element('width', ElementWithTagType('mk-text-input'), api($textInput.api)),
+  template: element('template', elementWithTagType('pbd-layout-template'), api($layoutTemplate)),
+  x: element('x', elementWithTagType('mk-text-input'), api($textInput.api)),
+  y: element('y', elementWithTagType('mk-text-input'), api($textInput.api)),
+  height: element('height', elementWithTagType('mk-text-input'), api($textInput.api)),
+  width: element('width', elementWithTagType('mk-text-input'), api($textInput.api)),
 };
 
 @_p.customElement({

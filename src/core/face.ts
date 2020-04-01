@@ -1,4 +1,4 @@
-import { InstanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, attributeOut, element, PersonaContext, stringParser } from 'persona';
 
@@ -11,7 +11,7 @@ const $$ = {
 
 const $ = {
   host: element($$),
-  slot: element('slot', InstanceofType(HTMLSlotElement), {
+  slot: element('slot', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
 };

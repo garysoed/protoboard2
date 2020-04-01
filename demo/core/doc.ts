@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { mapNonNull } from 'gs-tools/export/rxjs';
-import { InstanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { element, PersonaContext, SimpleElementRenderSpec, single } from 'persona';
 import { Observable } from 'rxjs';
@@ -19,7 +19,7 @@ import { Instruction } from './instruction';
 
 
 const $ = {
-  root: element('root', InstanceofType(HTMLDivElement), {
+  root: element('root', instanceofType(HTMLDivElement), {
     content: single('#content'),
   }),
 };

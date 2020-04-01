@@ -1,4 +1,4 @@
-import { InstanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { api, attributeOut, element, PersonaContext, stringParser } from 'persona';
 import { Observable } from 'rxjs';
@@ -18,7 +18,7 @@ import template from './d2.html';
 
 export const $ = {
   host: element(api($face)),
-  face: element('face', InstanceofType(HTMLSlotElement), {
+  face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
 };

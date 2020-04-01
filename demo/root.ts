@@ -1,4 +1,4 @@
-import { ElementWithTagType } from 'gs-types';
+import { elementWithTagType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
 import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
@@ -14,8 +14,8 @@ import template from './root.html';
 
 
 const $ = {
-  drawer: element('drawer', ElementWithTagType('pbd-drawer'), api($drawer.api)),
-  root: element('root', ElementWithTagType('mk-root-layout'), api($rootLayout.api)),
+  drawer: element('drawer', elementWithTagType('pbd-drawer'), api($drawer.api)),
+  root: element('root', elementWithTagType('mk-root-layout'), api($rootLayout.api)),
 };
 
 @_p.customElement({

@@ -1,5 +1,5 @@
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
-import { ElementWithTagType } from 'gs-types';
+import { elementWithTagType } from 'gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
 import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
@@ -15,8 +15,8 @@ import template from './d1.html';
 
 
 const $ = {
-  create: element('create', ElementWithTagType('section'), {}),
-  customize: element('customize', ElementWithTagType('section'), {
+  create: element('create', elementWithTagType('section'), {}),
+  customize: element('customize', elementWithTagType('section'), {
     onClick: onDom('click'),
   }),
 };

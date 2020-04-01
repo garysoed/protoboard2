@@ -1,5 +1,5 @@
 import { assertUnreachable } from 'gs-tools/export/typescript';
-import { InstanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { CustomElementCtrl, element, PersonaContext, style } from 'persona';
 import { fromEvent, Observable } from 'rxjs';
@@ -15,7 +15,7 @@ interface Rect {
 }
 
 export const $ = {
-  container: element('container', InstanceofType(HTMLDivElement), {
+  container: element('container', instanceofType(HTMLDivElement), {
     left: style('left'),
     top: style('top'),
   }),

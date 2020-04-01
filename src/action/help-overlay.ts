@@ -1,5 +1,5 @@
 import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
-import { ElementWithTagType, InstanceofType } from 'gs-types';
+import { elementWithTagType, instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { classToggle, element, innerHtml, NoopRenderSpec, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
 import { Observable } from 'rxjs';
@@ -10,21 +10,21 @@ import { $helpService, ActionTrigger } from './help-service';
 
 
 export const $ = {
-  content: element('content', InstanceofType(HTMLTableSectionElement), {
+  content: element('content', instanceofType(HTMLTableSectionElement), {
     rows: repeated('#content'),
   }),
-  root: element('root', InstanceofType(HTMLDivElement), {
+  root: element('root', instanceofType(HTMLDivElement), {
     click: onDom('click'),
     isVisibleClass: classToggle('isVisible'),
   }),
-  template: element('tableRow', InstanceofType(HTMLTemplateElement), {}),
+  template: element('tableRow', instanceofType(HTMLTemplateElement), {}),
 };
 
 const $template = {
-  action: element('action', ElementWithTagType('td'), {
+  action: element('action', elementWithTagType('td'), {
     inner: innerHtml(),
   }),
-  trigger: element('trigger', ElementWithTagType('td'), {
+  trigger: element('trigger', elementWithTagType('td'), {
     inner: innerHtml(),
   }),
 };
