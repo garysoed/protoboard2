@@ -56,9 +56,9 @@ export class DocTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.drawer._.expanded).withObservable(this.drawerExpanded$);
-    this.render($.drawerIcon._.icon).withFunction(this.renderDrawerIcon);
-    this.render($.title._.inner).withObservable(this.label$);
+    this.render($.drawer._.expanded, this.drawerExpanded$);
+    this.render($.drawerIcon._.icon, this.renderDrawerIcon());
+    this.render($.title._.inner, this.label$);
     this.setupHandleDrawerIconClick();
   }
 

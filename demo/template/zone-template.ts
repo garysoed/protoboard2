@@ -60,9 +60,9 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.template._.label).withObservable(this.declareInput($.host._.label));
-    this.render($.layoutContent._.content).withFunction(this.renderLayoutContent);
-    this.render($.rootContent._.hasLayoutClass).withFunction(this.renderHasLayoutClass);
+    this.render($.template._.label, this.declareInput($.host._.label));
+    this.render($.layoutContent._.content, this.renderLayoutContent());
+    this.render($.rootContent._.hasLayoutClass, this.renderHasLayoutClass());
     this.setupHandleAddZone();
   }
 

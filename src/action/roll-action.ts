@@ -54,7 +54,7 @@ export class RollAction extends BaseAction<Config> {
     this.actionTarget$
         .pipe(
             switchMap(shadowRoot => {
-              return $.host._.currentFaceOut.output(shadowRoot, newValue$);
+              return newValue$.pipe($.host._.currentFaceOut.output(shadowRoot));
             }),
             takeUntil(this.onDispose$),
         )

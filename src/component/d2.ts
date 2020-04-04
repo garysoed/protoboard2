@@ -40,7 +40,7 @@ export class D2 extends BaseComponent {
         ]),
         context,
     );
-    this.render($.face._.name).withFunction(this.renderFaceName);
+    this.render($.face._.name, this.renderFaceName());
   }
 
   private renderFaceName(): Observable<string> {

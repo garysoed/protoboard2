@@ -40,8 +40,8 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
 
   constructor(context: PersonaContext) {
     super(context);
-    this.render($.content._.rows).withFunction(this.renderRows);
-    this.render($.root._.isVisibleClass).withFunction(this.renderIsVisible);
+    this.render($.content._.rows, this.renderRows());
+    this.render($.root._.isVisibleClass, this.renderIsVisible());
     this.setupHandleClick();
   }
 

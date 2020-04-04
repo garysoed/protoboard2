@@ -55,8 +55,8 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.host._.onSetLayout).withFunction(this.renderOnAddClick);
-    this.render($.template._.label).withObservable(this.label$);
+    this.render($.host._.onSetLayout, this.renderOnAddClick());
+    this.render($.template._.label, this.label$);
     this.setupHandleSetLayout();
   }
 

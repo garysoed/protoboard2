@@ -123,11 +123,11 @@ export class D2 extends ThemedCustomElementCtrl {
         .pipe(
             filterNonNull(),
             switchMap(faceEl => {
-              return api($icon.api).icon
-                  .resolve(() => observableOf(faceEl))
-                  .output(
-                      this.shadowRoot,
-                      this.selectedIcon$.pipe(map(icon => `${icon}-${suffix}`)),
+              const output = api($icon.api).icon.resolve(() => observableOf(faceEl));
+              return this.selectedIcon$
+                  .pipe(
+                      map(icon => `${icon}-${suffix}`),
+                      output.output(this.shadowRoot),
                   );
             }),
             takeUntil(this.onDispose$),

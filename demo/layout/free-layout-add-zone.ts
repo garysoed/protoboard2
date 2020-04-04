@@ -29,8 +29,8 @@ export class FreeLayoutAddZone extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.host._.height).withObservable(this.declareInput($.height._.value));
-    this.render($.host._.width).withObservable(this.declareInput($.width._.value));
+    this.render($.host._.height, this.declareInput($.height._.value));
+    this.render($.host._.width, this.declareInput($.width._.value));
   }
 }
 

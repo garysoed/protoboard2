@@ -110,10 +110,10 @@ export class D1 extends ThemedCustomElementCtrl {
     this.pieceEl$
         .pipe(
             filterNonNull(),
-            switchMap(iconEl => api($icon.api).icon
-                .resolve(() => observableOf(iconEl))
-                .output(this.shadowRoot, this.selectedIcon$),
-            ),
+            switchMap(iconEl => {
+              const output = api($icon.api).icon.resolve(() => observableOf(iconEl));
+              return this.selectedIcon$.pipe(output.output(this.shadowRoot));
+            }),
             takeUntil(this.onDispose$),
         )
         .subscribe();

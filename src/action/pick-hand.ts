@@ -40,8 +40,8 @@ export class PickHand extends CustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
     this.renderContentElements();
-    this.render($.container._.left).withFunction(this.renderLeft);
-    this.render($.container._.top).withFunction(this.renderTop);
+    this.render($.container._.left, this.renderLeft());
+    this.render($.container._.top, this.renderTop());
   }
 
   private renderContentElements(): void {

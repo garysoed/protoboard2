@@ -33,6 +33,6 @@ export class Face extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.slot._.name).withObservable(this.display$);
+    this.render($.slot._.name, this.display$);
   }
 }

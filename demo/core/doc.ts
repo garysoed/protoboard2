@@ -40,11 +40,11 @@ const $ = {
 export class Doc extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
-    this.render($.root._.content).withFunction(this.renderContent);
+    this.render($.root._.content, this.renderContent());
   }
 
-  private renderContent(vine: Vine): Observable<SimpleElementRenderSpec|null> {
-    return $locationService.get(vine)
+  private renderContent(): Observable<SimpleElementRenderSpec|null> {
+    return $locationService.get(this.vine)
         .pipe(
             switchMap(service => service.getLocation()),
             map(location => {

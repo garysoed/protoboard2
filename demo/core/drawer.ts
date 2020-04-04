@@ -1,8 +1,8 @@
-import { Vine } from 'grapevine';
 import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
 import { $svgConfig, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, booleanParser, element, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
+import { of as observableOf } from 'rxjs';
 import { map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -81,9 +81,9 @@ export class Drawer extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.components._.contents).withValue(createRepeatedSpecs(COMPONENT_LINK_CONFIGS));
-    this.render($.layouts._.contents).withValue(createRepeatedSpecs(LAYOUT_LINK_CONFIGS));
-    this.render($.zones._.contents).withValue(createRepeatedSpecs(ZONE_LINK_CONFIGS));
+    this.render($.components._.contents, observableOf(createRepeatedSpecs(COMPONENT_LINK_CONFIGS)));
+    this.render($.layouts._.contents, observableOf(createRepeatedSpecs(LAYOUT_LINK_CONFIGS)));
+    this.render($.zones._.contents, observableOf(createRepeatedSpecs(ZONE_LINK_CONFIGS)));
     this.setupRootOnClick();
   }
 

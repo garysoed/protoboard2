@@ -38,7 +38,7 @@ export class Root extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
     this.setupHandleOnRootActive();
-    this.render($.drawer._.drawerExpanded).withObservable(this.rootDrawerExpanded$);
+    this.render($.drawer._.drawerExpanded, this.rootDrawerExpanded$);
   }
 
   private setupHandleOnRootActive(): void {

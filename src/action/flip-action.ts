@@ -62,7 +62,7 @@ export class FlipAction extends BaseAction<Config> {
     this.actionTarget$
         .pipe(
             switchMap(shadowRoot => {
-              return $.host._.currentFaceOut.output(shadowRoot, index$);
+              return index$.pipe($.host._.currentFaceOut.output(shadowRoot));
             }),
             takeUntil(this.onDispose$),
         )

@@ -27,6 +27,6 @@ export class ComponentTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.template._.label).withObservable(this.label$);
+    this.render($.template._.label, this.label$);
   }
 }

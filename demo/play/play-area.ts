@@ -44,10 +44,10 @@ export class PlayArea extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.main._.content).withFunction(this.renderContent);
+    this.render($.main._.content, this.renderContent());
     this.setupHandleZones();
-    this.render($.info._.expanded).withFunction(this.renderInfoExpanded);
-    this.render($.layoutInfo._.text).withFunction(this.renderLayoutInfo);
+    this.render($.info._.expanded, this.renderInfoExpanded());
+    this.render($.layoutInfo._.text, this.renderLayoutInfo());
   }
 
   private renderContent(): Observable<SimpleElementRenderSpec> {
