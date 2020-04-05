@@ -1,7 +1,7 @@
 import { elementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
@@ -37,18 +37,17 @@ export class GridLayout extends ThemedCustomElementCtrl {
                 this.declareInput($.column._.value),
                 this.declareInput($.row._.value),
             ),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([event, column, row]) => {
-          event.setLayout({
-            addZoneTag: null,
-            attr: new Map([
-              [$gridLayout.api.colCount.attrName, column],
-              [$gridLayout.api.rowCount.attrName, row],
-            ]),
-            tag: $gridLayout.tag,
-            getZoneAttr: () => new Map(),
-          });
-        });
+            tap(([event, column, row]) => {
+              event.setLayout({
+                addZoneTag: null,
+                attr: new Map([
+                  [$gridLayout.api.colCount.attrName, column],
+                  [$gridLayout.api.rowCount.attrName, row],
+                ]),
+                tag: $gridLayout.tag,
+                getZoneAttr: () => new Map(),
+              });
+            }),
+        );
   }
 }

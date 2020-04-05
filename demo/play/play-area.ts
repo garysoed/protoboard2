@@ -44,8 +44,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
+    this.addSetup(this.setupHandleZones());
     this.render($.main._.content, this.renderContent());
-    this.setupHandleZones();
     this.render($.info._.expanded, this.renderInfoExpanded());
     this.render($.layoutInfo._.text, this.renderLayoutInfo());
   }
@@ -102,8 +102,8 @@ export class PlayArea extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleZones(): void {
-    this.mainEl$.pipe(
+  private setupHandleZones(): Observable<unknown> {
+    return this.mainEl$.pipe(
         switchMap(mainEl => {
           return mutationObservable(mainEl, {childList: true}).pipe(
               startWith({}),
@@ -133,9 +133,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
               }),
           );
         }),
-        takeUntil(this.onDispose$),
-    )
-    .subscribe();
+    );
   }
 }
 

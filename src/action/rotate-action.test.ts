@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
 
 import { RotateAction } from './rotate-action';
@@ -16,6 +16,7 @@ test('@protoboard2/action/rotate-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const action = new RotateAction(index, stops, vine);
     action.setActionTarget(shadowRoot);
+    run(action.run());
 
     return {action, el};
   }

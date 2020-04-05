@@ -3,7 +3,7 @@ import { $asSet, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { mutationObservable } from 'persona';
 import { Observable } from 'rxjs';
-import { map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../../core/base-action';
 
@@ -35,24 +35,23 @@ export class BatchAction extends BaseAction {
   ) {
     super(actionKey, actionDesc, {}, vine);
 
-    this.setupHandleTrigger();
+    this.addSetup(this.setupHandleTrigger());
   }
 
-  private setupHandleTrigger(): void {
-    this.onTrigger$
+  private setupHandleTrigger(): Observable<unknown> {
+    return this.onTrigger$
         .pipe(
             withLatestFrom(this.children$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, children]) => {
-          for (const child of children) {
-            const fn = (child as any)[this.key];
-            if (!(fn instanceof Function)) {
-              continue;
-            }
+            tap(([, children]) => {
+              for (const child of children) {
+                const fn = (child as any)[this.key];
+                if (!(fn instanceof Function)) {
+                  continue;
+                }
 
-            fn();
-          }
-        });
+                fn();
+              }
+            }),
+        );
   }
 }

@@ -1,7 +1,6 @@
-import { arrayThat, assert, should, test } from 'gs-testing';
+import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
-import { ReplaySubject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { PickAction } from './pick-action';
@@ -15,20 +14,21 @@ test('@protoboard2/action/pick-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const action = new PickAction(vine);
     action.setActionTarget(shadowRoot);
+    run(action.run());
 
     return {action, el, vine};
   });
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const elements$ = new ReplaySubject<Element[]>(2);
-      $pickService.get(_.vine)
-          .pipe(
-              switchMap(service => service.getComponents()),
-              scanArray(),
-              map(set => [...set]),
-          )
-          .subscribe(elements$);
+      const elements$ = createSpySubject(
+          $pickService.get(_.vine)
+              .pipe(
+                  switchMap(service => service.getComponents()),
+                  scanArray(),
+                  map(set => [...set]),
+              ),
+      );
 
       _.action.trigger();
 

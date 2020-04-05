@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
 
 import { $face } from '../face';
@@ -23,6 +23,7 @@ test('@protoboard2/action/util/sequence-action', () => {
           vine,
       );
       action.setActionTarget(shadowRoot);
+      run(action.run());
 
       action.trigger();
 

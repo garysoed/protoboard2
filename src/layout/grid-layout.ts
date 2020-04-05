@@ -1,8 +1,8 @@
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, integerParser, mutationObservable, PersonaContext } from 'persona';
-import { combineLatest, of as observableOf, Subscription } from 'rxjs';
-import { startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { combineLatest, Observable, of as observableOf, Subscription } from 'rxjs';
+import { startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import template from './grid-layout.html';
 
@@ -45,78 +45,78 @@ export class GridLayout extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.setupOnHostMutation();
-    this.setupRenderGrid();
+    this.addSetup(this.setupOnHostMutation());
+    this.addSetup(this.setupRenderGrid());
   }
 
-  private setupOnHostMutation(): void {
-    this.host$
+  private setupOnHostMutation(): Observable<unknown> {
+    return this.host$
         .pipe(
             switchMap(hostEl => mutationObservable(hostEl, {childList: true})),
             switchMap(records => observableOf(...records)),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(record => {
-          record.addedNodes.forEach((node: NodeWithPayload) => {
-            node[__oldValue] = getOldPayload(node);
+            tap(record => {
+              record.addedNodes.forEach((node: NodeWithPayload) => {
+                node[__oldValue] = getOldPayload(node);
 
-            const subscription = mutationObservable(
-                    node,
-                    {attributes: true, attributeFilter: ['x', 'y']},
-                )
-                .pipe(startWith({}))
-                .subscribe(() => {
-                  if (!(node instanceof HTMLElement)) {
-                    return;
-                  }
+                const subscription = mutationObservable(
+                        node,
+                        {attributes: true, attributeFilter: ['x', 'y']},
+                    )
+                    .pipe(startWith({}))
+                    .subscribe(() => {
+                      if (!(node instanceof HTMLElement)) {
+                        return;
+                      }
 
-                  const x = getIntAttr(node, 'x');
-                  const y = getIntAttr(node, 'y');
-                  node.setAttribute('slot', `${y}_${x}`);
-                });
-            node[__mutationSubscription] = subscription;
-          });
+                      const x = getIntAttr(node, 'x');
+                      const y = getIntAttr(node, 'y');
+                      node.setAttribute('slot', `${y}_${x}`);
+                    });
+                node[__mutationSubscription] = subscription;
+              });
 
-          record.removedNodes.forEach((node: NodeWithPayload) => {
-            const subscription = node[__mutationSubscription];
-            if (subscription) {
-              subscription.unsubscribe();
-            }
+              record.removedNodes.forEach((node: NodeWithPayload) => {
+                const subscription = node[__mutationSubscription];
+                if (subscription) {
+                  subscription.unsubscribe();
+                }
 
-            const oldValue = node[__oldValue];
-            if (node instanceof HTMLElement && oldValue) {
-              node.setAttribute('slot', oldValue.slot || '');
-            }
-          });
-        });
+                const oldValue = node[__oldValue];
+                if (node instanceof HTMLElement && oldValue) {
+                  node.setAttribute('slot', oldValue.slot || '');
+                }
+              });
+            }),
+        );
   }
 
-  private setupRenderGrid(): void {
-    combineLatest([this.colCount$, this.rowCount$, this.rowsEl$])
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(([cols, rows, rowsEl]) => {
-          // Empty the content of rowsEl
-          rowsEl.innerHTML = '';
+  private setupRenderGrid(): Observable<unknown> {
+    return combineLatest([this.colCount$, this.rowCount$, this.rowsEl$])
+        .pipe(
+            tap(([cols, rows, rowsEl]) => {
+              // Empty the content of rowsEl
+              rowsEl.innerHTML = '';
 
-          for (let row = 0; row < rows; row++) {
-            const rowEl = document.createElement('div');
-            rowEl.setAttribute('layout', 'row');
-            rowEl.setAttribute('flex', '');
-            for (let col = 0; col < cols; col++) {
-              const slotEl = document.createElement('slot');
-              slotEl.setAttribute('name', `${row}_${col}`);
+              for (let row = 0; row < rows; row++) {
+                const rowEl = document.createElement('div');
+                rowEl.setAttribute('layout', 'row');
+                rowEl.setAttribute('flex', '');
+                for (let col = 0; col < cols; col++) {
+                  const slotEl = document.createElement('slot');
+                  slotEl.setAttribute('name', `${row}_${col}`);
 
-              const colEl = document.createElement('div');
-              colEl.classList.add('col');
-              colEl.setAttribute('flex', '');
-              colEl.appendChild(slotEl);
+                  const colEl = document.createElement('div');
+                  colEl.classList.add('col');
+                  colEl.setAttribute('flex', '');
+                  colEl.appendChild(slotEl);
 
-              rowEl.appendChild(colEl);
-            }
+                  rowEl.appendChild(colEl);
+                }
 
-            rowsEl.appendChild(rowEl);
-          }
-        });
+                rowsEl.appendChild(rowEl);
+              }
+            }),
+        );
   }
 }
 

@@ -2,8 +2,8 @@ import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
 import { $svgConfig, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, booleanParser, element, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
-import { of as observableOf } from 'rxjs';
-import { map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of as observableOf } from 'rxjs';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 import { $locationService, Views } from '../location-service';
@@ -84,11 +84,11 @@ export class Drawer extends ThemedCustomElementCtrl {
     this.render($.components._.contents, observableOf(createRepeatedSpecs(COMPONENT_LINK_CONFIGS)));
     this.render($.layouts._.contents, observableOf(createRepeatedSpecs(LAYOUT_LINK_CONFIGS)));
     this.render($.zones._.contents, observableOf(createRepeatedSpecs(ZONE_LINK_CONFIGS)));
-    this.setupRootOnClick();
+    this.addSetup(this.setupRootOnClick());
   }
 
-  private setupRootOnClick(): void {
-    this.onRootClick$
+  private setupRootOnClick(): Observable<unknown> {
+    return this.onRootClick$
         .pipe(
             map(event => {
               if (!(event.target instanceof HTMLElement)) {
@@ -103,9 +103,7 @@ export class Drawer extends ThemedCustomElementCtrl {
             tap(([path, locationService]) => {
               locationService.goToPath(path, {});
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 }
 

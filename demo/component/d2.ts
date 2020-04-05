@@ -4,7 +4,7 @@ import { elementWithTagType } from 'gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
 import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mapTo, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { D2 as D2Impl } from '../../src/component/d2';
 import cardBack from '../asset/card_back.svg';
@@ -55,9 +55,9 @@ export class D2 extends ThemedCustomElementCtrl {
 
   constructor(context: PersonaContext) {
     super(context);
-    this.setupHandleSelectedIcon('0');
-    this.setupHandleSelectedIcon('1');
-    this.setupHandlePieceRemoved();
+    this.addSetup(this.setupHandleSelectedIcon('0'));
+    this.addSetup(this.setupHandleSelectedIcon('1'));
+    this.addSetup(this.setupHandlePieceRemoved());
   }
 
   @cache()
@@ -96,30 +96,28 @@ export class D2 extends ThemedCustomElementCtrl {
             }),
             startWith('card'),
             filterNonNull(),
-            takeUntil(this.onDispose$),
         );
   }
 
-  private setupHandlePieceRemoved(): void {
-    this.createCreateSectionEl()
+  private setupHandlePieceRemoved(): Observable<unknown> {
+    return this.createCreateSectionEl()
         .pipe(
             map(el => el.querySelector('pb-d2')),
             filter(piece => piece === null),
             withLatestFrom(this.createEl$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, createEl]) => {
-          const pieceEl = document.createElement('pb-d2');
-          const face0El = createFaceEl('0');
-          const face1El = createFaceEl('1');
-          pieceEl.appendChild(face0El);
-          pieceEl.appendChild(face1El);
-          createEl.appendChild(pieceEl);
-        });
+            tap(([, createEl]) => {
+              const pieceEl = document.createElement('pb-d2');
+              const face0El = createFaceEl('0');
+              const face1El = createFaceEl('1');
+              pieceEl.appendChild(face0El);
+              pieceEl.appendChild(face1El);
+              createEl.appendChild(pieceEl);
+            }),
+        );
   }
 
-  private setupHandleSelectedIcon(suffix: string): void {
-    this.createFaceEl(suffix)
+  private setupHandleSelectedIcon(suffix: string): Observable<unknown> {
+    return this.createFaceEl(suffix)
         .pipe(
             filterNonNull(),
             switchMap(faceEl => {
@@ -130,9 +128,7 @@ export class D2 extends ThemedCustomElementCtrl {
                       output.output(this.shadowRoot),
                   );
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 }
 

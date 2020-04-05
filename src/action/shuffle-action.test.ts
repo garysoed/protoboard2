@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
 import { $random } from 'src/util/random';
@@ -24,6 +24,7 @@ test('@protoboard2/action/shuffle-action', () => {
 
     const action = new ShuffleAction(vine);
     action.setActionTarget(shadowRoot);
+    run(action.run());
 
     action.trigger();
 

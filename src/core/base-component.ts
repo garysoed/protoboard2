@@ -1,7 +1,7 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext } from 'persona';
 import { EMPTY, fromEvent, merge, Observable } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { HelpAction } from '../action/help-action';
 
@@ -53,30 +53,32 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
 
     for (const [trigger, action] of allActions) {
       action.setActionTarget(this.shadowRoot);
-      this.setupTriggerFunction(action);
-      this.setupTrigger(trigger, action);
-      this.addDisposable(action);
+      this.addSetup(this.setupTriggerFunction(action));
+      this.addSetup(this.setupTrigger(trigger, action));
+      this.addSetup(action.run());
     }
   }
 
-  private setupTrigger(trigger: TriggerSpec, action: BaseAction): void {
+  private setupTrigger(trigger: TriggerSpec, action: BaseAction): Observable<unknown> {
     const trigger$ = TRIGGER_KEYS.has(trigger) ?
         this.createTriggerKey(trigger) :
         this.createTriggerClick();
-    trigger$
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(() => {
-          action.trigger();
-        });
+    return trigger$
+        .pipe(
+            tap(() => {
+              action.trigger();
+            }),
+        );
   }
 
-  private setupTriggerFunction(action: BaseAction): void {
-    $.host.getValue(this.shadowRoot)
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(hostEl => {
-          Object.assign(hostEl, {[action.key]: () => {
-            action.trigger();
-          }});
-        });
+  private setupTriggerFunction(action: BaseAction): Observable<unknown> {
+    return $.host.getValue(this.shadowRoot)
+        .pipe(
+            tap(hostEl => {
+              Object.assign(hostEl, {[action.key]: () => {
+                action.trigger();
+              }});
+            }),
+        );
   }
 }

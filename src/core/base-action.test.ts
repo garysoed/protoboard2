@@ -1,9 +1,9 @@
 import { Vine } from 'grapevine';
-import { assert, should, test } from 'gs-testing';
+import { assert, createSpySubject, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
 import { integerParser } from 'persona';
 import { Observable, ReplaySubject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import { BaseAction } from './base-action';
 
@@ -16,29 +16,23 @@ class TestAction extends BaseAction<{value: number}> {
   constructor(vine: Vine) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, vine);
 
-    this.setupConfig();
+    this.addSetup(this.setupConfig());
   }
 
   get onTriggerOut$(): Observable<unknown> {
     return this.onTrigger$;
   }
 
-  private setupConfig(): void {
-    this.config$
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(config => {
-          if (config.value) {
-            this.value$.next(config.value);
-          }
-        });
+  private setupConfig(): Observable<unknown> {
+    return this.config$
+        .pipe(
+            tap(config => {
+              if (config.value) {
+                this.value$.next(config.value);
+              }
+            }),
+        );
   }
-}
-
-interface TestState {
-  readonly action: TestAction;
-  readonly element: HTMLElement;
-  readonly onTrigger$: Observable<unknown>;
-  readonly vine: Vine;
 }
 
 test('@protoboard2/core/base-action', init => {
@@ -48,10 +42,10 @@ test('@protoboard2/core/base-action', init => {
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
 
-    const onTrigger$ = new ReplaySubject(1);
     const action = new TestAction(vine);
     action.setActionTarget(shadowRoot);
-    action.onTriggerOut$.subscribe(onTrigger$);
+    run(action.run());
+    const onTrigger$ = createSpySubject(action.onTriggerOut$);
 
     return {action, element, onTrigger$, vine};
   });

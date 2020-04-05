@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
 
@@ -19,6 +19,7 @@ test('@protoboard2/action/roll-action', init => {
     $random.get(vine).next(fromSeed(seed));
     const action = new RollAction({count: 3}, vine);
     action.setActionTarget(shadowRoot);
+    run(action.run());
 
     return {action, el, seed};
   });

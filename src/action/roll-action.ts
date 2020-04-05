@@ -32,10 +32,10 @@ export class RollAction extends BaseAction<Config> {
         vine,
     );
 
-    this.setup();
+    this.addSetup(this.setup());
   }
 
-  private setup(): void {
+  private setup(): Observable<unknown> {
     const newValue$ = this.onTrigger$
         .pipe(
             withLatestFrom(this.count$, $random.get(this.vine)),
@@ -51,14 +51,12 @@ export class RollAction extends BaseAction<Config> {
         );
 
 
-    this.actionTarget$
+    return this.actionTarget$
         .pipe(
             switchMap(shadowRoot => {
               return newValue$.pipe($.host._.currentFaceOut.output(shadowRoot));
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 
   @cache()

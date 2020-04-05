@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { BaseDisposable } from 'gs-tools/export/dispose';
-import { mapNonNull, switchMapNonNull } from 'gs-tools/export/rxjs';
+import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { element, mutationObservable, onDom } from 'persona';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
@@ -20,7 +20,7 @@ type ConverterOf<O> = {
   [K in keyof O]: Converter<O[K], string>;
 };
 
-export abstract class BaseAction<C = {}> extends BaseDisposable {
+export abstract class BaseAction<C = {}> extends Runnable {
   protected readonly actionTarget$ = new ReplaySubject<ShadowRoot>(1);
   readonly #onTrigger$ = new Subject<void>();
 

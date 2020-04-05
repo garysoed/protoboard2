@@ -1,9 +1,10 @@
 import { $svgConfig, Palette, start, Theme } from 'mask';
-import { initialize } from 'persona';
+import { switchMap } from 'rxjs/operators';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './location-service';
 import { Root } from './root';
+
 
 const iconConfigs: Map<string, string> = new Map([
   ['protoboard', protoboardSvg],
@@ -23,5 +24,7 @@ window.addEventListener('load', () => {
     svgMap$.next({type: 'set', key, value: {type: 'embed', content}});
   }
 
-  $locationService.get(vine).pipe(initialize()).subscribe();
+  $locationService.get(vine)
+      .pipe(switchMap(locationService => locationService.run()))
+      .subscribe();
 });

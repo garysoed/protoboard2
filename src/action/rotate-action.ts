@@ -4,7 +4,7 @@ import { filterNonNull } from 'gs-tools/export/rxjs';
 import { identity } from 'nabu';
 import { element, integerParser, listParser } from 'persona';
 import { combineLatest, merge, Observable, Subject } from 'rxjs';
-import { filter, map, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
@@ -15,7 +15,6 @@ interface Config {
 }
 
 export class RotateAction extends BaseAction<Config> {
-
   @cache()
   private get index$(): Observable<number> {
     return this.newIndex$
@@ -51,28 +50,27 @@ export class RotateAction extends BaseAction<Config> {
         vine,
     );
 
-    this.setupHandleRotation();
-    this.setupNewIndex$();
+    this.addSetup(this.setupHandleRotation());
+    this.addSetup(this.setupNewIndex$());
   }
 
-  private setupHandleRotation(): void {
+  private setupHandleRotation(): Observable<unknown> {
     const host$ = this.actionTarget$.pipe(
         switchMap(shadowRoot => {
           return element({}).getValue(shadowRoot);
         }),
         filter((el): el is HTMLElement => el instanceof HTMLElement),
     );
-    combineLatest([this.index$, this.stops$])
+    return combineLatest([this.index$, this.stops$])
         .pipe(
             withLatestFrom(host$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([[index, stops], hostEl]) => {
-          hostEl.style.transform = `rotateZ(${stops[index]}deg)`;
-        });
+            tap(([[index, stops], hostEl]) => {
+              hostEl.style.transform = `rotateZ(${stops[index]}deg)`;
+            }),
+        );
   }
 
-  private setupNewIndex$(): void {
+  private setupNewIndex$(): Observable<unknown> {
     const onConfig$: Observable<number> = this.config$.pipe(
         map(config => config.index || null),
         filterNonNull(),
@@ -84,10 +82,11 @@ export class RotateAction extends BaseAction<Config> {
             map(([, index]) => index + 1),
         );
 
-    merge(onConfig$, onTrigger$)
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(value => {
-          this.newIndex$.next(value);
-        });
+    return merge(onConfig$, onTrigger$)
+        .pipe(
+            tap(value => {
+              this.newIndex$.next(value);
+            }),
+        );
   }
 }

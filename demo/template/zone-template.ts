@@ -3,7 +3,7 @@ import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, classToggle, dispatcher, element, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
 import { Observable } from 'rxjs';
-import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $playAreaService, LayoutSpec, ZoneSpec } from '../play/play-area-service';
 
@@ -95,8 +95,8 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupHandleAddZone(): void {
-    this.declareInput($.addButton._.onAddClick)
+  private setupHandleAddZone(): Observable<unknown> {
+    return this.declareInput($.addButton._.onAddClick)
         .pipe(
             withLatestFrom(
                 this.layoutSpec$,
@@ -117,11 +117,10 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
             }),
             filterNonNull(),
             withLatestFrom($playAreaService.get(this.vine)),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([zoneSpec, playAreaService]) => {
-          playAreaService.addZone(zoneSpec);
-        });
+            tap(([zoneSpec, playAreaService]) => {
+              playAreaService.addZone(zoneSpec);
+            }),
+        );
   }
 }
 

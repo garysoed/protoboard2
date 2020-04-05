@@ -1,8 +1,8 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { TriggerSpec } from '../core/trigger-spec';
 
@@ -26,9 +26,12 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should(`add the isVisible class if there is an action in the help service`, () => {
-      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
-      });
+      run($helpService.get(_.tester.vine).pipe(
+          take(1),
+          tap(service => {
+            service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
+          }),
+      ));
 
       assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
     });
@@ -37,9 +40,12 @@ test('@protoboard2/action/help-overlay', init => {
   test('renderRows', () => {
     should(`render rows correctly`, () => {
       const action = new PickAction(_.tester.vine);
-      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show(new Map([[TriggerSpec.CLICK, action]]));
-      });
+      run($helpService.get(_.tester.vine).pipe(
+          take(1),
+          tap(service => {
+            service.show(new Map([[TriggerSpec.CLICK, action]]));
+          }),
+      ));
 
       const nodes$ = _.tester.getNodesAfter($.content._.rows);
       const triggers$ = nodes$.pipe(
@@ -59,10 +65,13 @@ test('@protoboard2/action/help-overlay', init => {
 
     should(`render deletion correctly`, () => {
       const action = new PickAction(_.tester.vine);
-      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show(new Map([[TriggerSpec.CLICK, action]]));
-        service.show(new Map());
-      });
+      run($helpService.get(_.tester.vine).pipe(
+          take(1),
+          tap(service => {
+            service.show(new Map([[TriggerSpec.CLICK, action]]));
+            service.show(new Map());
+          }),
+      ));
 
       const nodes$ = _.tester.getNodesAfter($.content._.rows)
           .pipe(map(nodes => nodes.filter(node => node instanceof HTMLElement).length));
@@ -72,11 +81,14 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('setupHandleClick', () => {
     should(`hide the help when clicked`, () => {
-      $helpService.get(_.tester.vine).pipe(take(1)).subscribe(service => {
-        service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
-      });
+      run($helpService.get(_.tester.vine).pipe(
+          take(1),
+          tap(service => {
+            service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
+          }),
+      ));
 
-      _.tester.dispatchEvent($.root._.click).subscribe();
+      run(_.tester.dispatchEvent($.root._.click));
 
       assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
 

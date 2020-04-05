@@ -3,7 +3,7 @@ import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { CustomElementCtrl, element, PersonaContext, style } from 'persona';
 import { fromEvent, Observable } from 'rxjs';
-import { map, share, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, share, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import template from './pick-hand.html';
 import { $pickService } from './pick-service';
@@ -39,53 +39,52 @@ export class PickHand extends CustomElementCtrl {
 
   constructor(context: PersonaContext) {
     super(context);
-    this.renderContentElements();
+    this.addSetup(this.renderContentElements());
     this.render($.container._.left, this.renderLeft());
     this.render($.container._.top, this.renderTop());
   }
 
-  private renderContentElements(): void {
-    $pickService.get(this.vine)
+  private renderContentElements(): Observable<unknown> {
+    return $pickService.get(this.vine)
         .pipe(
             switchMap(service => service.getComponents()),
             withLatestFrom(this.container$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([diff, container]) => {
-          switch (diff.type) {
-            case 'delete':
-              const deleteEl = container.children.item(diff.index);
-              if (deleteEl) {
-                container.removeChild(deleteEl);
-              }
-              break;
-              case 'init':
-                while (container.childElementCount > 0) {
-                  const toDelete = container.firstElementChild;
-                  if (!toDelete) {
-                    break;
+            tap(([diff, container]) => {
+              switch (diff.type) {
+                case 'delete':
+                  const deleteEl = container.children.item(diff.index);
+                  if (deleteEl) {
+                    container.removeChild(deleteEl);
                   }
-                  container.removeChild(toDelete);
-                }
+                  break;
+                  case 'init':
+                    while (container.childElementCount > 0) {
+                      const toDelete = container.firstElementChild;
+                      if (!toDelete) {
+                        break;
+                      }
+                      container.removeChild(toDelete);
+                    }
 
-                for (const el of diff.value) {
-                  container.appendChild(el);
-                }
-                break;
-            case 'insert':
-              const afterEl = container.children.item(diff.index);
-              container.insertBefore(diff.value, afterEl);
-              break;
-            case 'set':
-              const replacedEl = container.children.item(diff.index);
-              if (replacedEl) {
-                container.replaceChild(diff.value, replacedEl);
+                    for (const el of diff.value) {
+                      container.appendChild(el);
+                    }
+                    break;
+                case 'insert':
+                  const afterEl = container.children.item(diff.index);
+                  container.insertBefore(diff.value, afterEl);
+                  break;
+                case 'set':
+                  const replacedEl = container.children.item(diff.index);
+                  if (replacedEl) {
+                    container.replaceChild(diff.value, replacedEl);
+                  }
+                  break;
+                default:
+                  assertUnreachable(diff);
               }
-              break;
-            default:
-              assertUnreachable(diff);
-          }
-        });
+            }),
+        );
   }
 
   private renderLeft(): Observable<string> {

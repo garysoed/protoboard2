@@ -3,7 +3,7 @@ import { elementWithTagType, instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { classToggle, element, innerHtml, NoopRenderSpec, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
 import { Observable } from 'rxjs';
-import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import template from './help-overlay.html';
 import { $helpService, ActionTrigger } from './help-service';
@@ -42,7 +42,7 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
     super(context);
     this.render($.content._.rows, this.renderRows());
     this.render($.root._.isVisibleClass, this.renderIsVisible());
-    this.setupHandleClick();
+    this.addSetup(this.setupHandleClick());
   }
 
   private renderIsVisible(): Observable<boolean> {
@@ -87,13 +87,12 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleClick(): void {
-    this.onRootClick$
+  private setupHandleClick(): Observable<unknown> {
+    return this.onRootClick$
         .pipe(
             withLatestFrom(this.helpService$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, service]) => service.hide());
+            tap(([, service]) => service.hide()),
+        );
   }
 }
 

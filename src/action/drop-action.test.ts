@@ -1,8 +1,8 @@
-import { arrayThat, assert, should, test } from 'gs-testing';
+import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { ReplaySubject } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 
 import { DropAction } from './drop-action';
 import { $pickService } from './pick-service';
@@ -17,6 +17,8 @@ test('@protoboard2/action/drop-action', init => {
     const action = new DropAction(parentNode$, vine);
     action.setActionTarget(shadowRoot);
 
+    run(action.run());
+
     return {action, el, parentNode$, vine};
   });
 
@@ -26,17 +28,22 @@ test('@protoboard2/action/drop-action', init => {
       _.parentNode$.next(parentEl);
 
       const componentEl = document.createElement('div');
-      $pickService.get(_.vine)
-          .pipe(take(1))
-          .subscribe(service => service.add(componentEl));
+      run(
+          $pickService.get(_.vine)
+              .pipe(
+                  take(1),
+                  tap(service => {
+                    service.add(componentEl);
+                  }),
+              ),
+      );
 
-      const components$ = new ReplaySubject<readonly Element[]>(2);
-      $pickService.get(_.vine)
+      const components$ = createSpySubject($pickService.get(_.vine)
           .pipe(
               switchMap(service => service.getComponents()),
               scanArray(),
-          )
-          .subscribe(components$);
+          ),
+      );
 
       _.action.trigger();
 
@@ -52,13 +59,12 @@ test('@protoboard2/action/drop-action', init => {
     const parentEl = document.createElement('div');
     _.parentNode$.next(parentEl);
 
-    const components$ = new ReplaySubject<readonly Element[]>(2);
-    $pickService.get(_.vine)
+    const components$ = createSpySubject($pickService.get(_.vine)
         .pipe(
             switchMap(service => service.getComponents()),
             scanArray(),
-        )
-        .subscribe(components$);
+        ),
+    );
 
     _.action.trigger();
 
@@ -73,24 +79,29 @@ test('@protoboard2/action/drop-action', init => {
     _.parentNode$.next(parentEl);
 
     const componentEl = document.createElement('div');
-    $pickService.get(_.vine)
-        .pipe(take(1))
-        .subscribe(service => service.add(componentEl));
+    run($pickService.get(_.vine)
+        .pipe(
+            take(1),
+            tap(service => service.add(componentEl)),
+        ),
+    );
 
-    const components$ = new ReplaySubject<readonly Element[]>(2);
-    $pickService.get(_.vine)
+    const components$ = createSpySubject($pickService.get(_.vine)
         .pipe(
             switchMap(service => service.getComponents()),
             scanArray(),
-        )
-        .subscribe(components$);
+        ),
+    );
 
     _.action.trigger();
 
     const componentEl2 = document.createElement('div');
-    $pickService.get(_.vine)
-        .pipe(take(1))
-        .subscribe(service => service.add(componentEl2));
+    run($pickService.get(_.vine)
+        .pipe(
+            take(1),
+            tap(service => service.add(componentEl2)),
+        ),
+    );
 
     assert(parentEl.children.length).to.equal(1);
   });

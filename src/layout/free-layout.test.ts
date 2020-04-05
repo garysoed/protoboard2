@@ -1,15 +1,16 @@
-import { assert, setup, should, test } from 'gs-testing';
+import { assert, should, test } from 'gs-testing';
 import { _p } from 'mask';
-import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
+import { PersonaTesterFactory } from 'persona/export/testing';
 
 import { FreeLayout } from './free-layout';
 
-const testerFactory = new PersonaTesterFactory(_p);
-test('@protoboard2/layout/free-layout', () => {
-  let tester: ElementTester;
 
-  setup(() => {
-    tester = testerFactory.build([FreeLayout]).createElement('pb-free-layout', document.body);
+const testerFactory = new PersonaTesterFactory(_p);
+test('@protoboard2/layout/free-layout', init => {
+
+  const _ = init(() => {
+    const tester = testerFactory.build([FreeLayout]).createElement('pb-free-layout', document.body);
+    return {tester};
   });
 
   test('setupOnHostMutation', () => {
@@ -20,7 +21,7 @@ test('@protoboard2/layout/free-layout', () => {
       addedEl.setAttribute('height', '567');
       addedEl.setAttribute('width', '789');
 
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
 
       assert(addedEl.style.left).to.equal('123px');
       assert(addedEl.style.top).to.equal('345px');
@@ -30,7 +31,7 @@ test('@protoboard2/layout/free-layout', () => {
 
     should(`update left, top, height, width correctly when changed`, () => {
       const addedEl = document.createElement('div');
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
 
       addedEl.setAttribute('x', '123');
       addedEl.setAttribute('y', '345');
@@ -56,13 +57,13 @@ test('@protoboard2/layout/free-layout', () => {
       addedEl.setAttribute('width', '891');
 
       // Append the element, then change its attributes.
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
       addedEl.setAttribute('x', '135');
       addedEl.setAttribute('y', '246');
       addedEl.setAttribute('height', '357');
       addedEl.setAttribute('width', '468');
 
-      tester.element.removeChild(addedEl);
+      _.tester.element.removeChild(addedEl);
 
       assert(addedEl.style.left).to.equal('123px');
       assert(addedEl.style.top).to.equal('345px');
@@ -78,8 +79,8 @@ test('@protoboard2/layout/free-layout', () => {
       addedEl.style.width = '789px';
 
       // Append the element, remove it, then change its attributes.
-      tester.element.appendChild(addedEl);
-      tester.element.removeChild(addedEl);
+      _.tester.element.appendChild(addedEl);
+      _.tester.element.removeChild(addedEl);
       addedEl.setAttribute('x', '135');
       addedEl.setAttribute('y', '246');
       addedEl.setAttribute('height', '357');

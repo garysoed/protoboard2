@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { element } from 'persona';
 import { Observable } from 'rxjs';
-import { switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
@@ -17,23 +17,22 @@ export class PickAction extends BaseAction {
         vine,
     );
 
-    this.setupHandleTrigger();
+    this.addSetup(this.setupHandleTrigger());
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
     return config$;
   }
 
-  protected setupHandleTrigger(): void {
+  protected setupHandleTrigger(): Observable<unknown> {
     const host$ = this.actionTarget$
         .pipe(switchMap(shadowRoot => element({}).getValue(shadowRoot)));
-    this.onTrigger$
+    return this.onTrigger$
         .pipe(
             withLatestFrom(host$, $pickService.get(this.vine)),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, el, pickService]) => {
-          pickService.add(el);
-        });
+            tap(([, el, pickService]) => {
+              pickService.add(el);
+            }),
+        );
   }
 }

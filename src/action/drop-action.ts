@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { scanArray } from 'gs-tools/export/rxjs';
 import { Observable } from 'rxjs';
-import { map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
@@ -20,10 +20,10 @@ export class DropAction extends BaseAction {
         vine,
     );
 
-    this.setupHandleTrigger();
+    this.addSetup(this.setupHandleTrigger());
   }
 
-  private setupHandleTrigger(): void {
+  private setupHandleTrigger(): Observable<unknown> {
     const components$ = $pickService.get(this.vine).pipe(
         switchMap(pickService => {
           return pickService.getComponents()
@@ -34,20 +34,19 @@ export class DropAction extends BaseAction {
         }),
     );
 
-    this.onTrigger$
+    return this.onTrigger$
         .pipe(
             withLatestFrom(this.parentNode$, components$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, parentNode, {components, pickService}]) => {
-          const nextComponent = components[components.length - 1] || null;
-          if (!nextComponent) {
-            return;
-          }
+            tap(([, parentNode, {components, pickService}]) => {
+              const nextComponent = components[components.length - 1] || null;
+              if (!nextComponent) {
+                return;
+              }
 
-          pickService.deleteAt(components.length - 1);
+              pickService.deleteAt(components.length - 1);
 
-          parentNode.appendChild(nextComponent);
-        });
+              parentNode.appendChild(nextComponent);
+            }),
+        );
   }
 }

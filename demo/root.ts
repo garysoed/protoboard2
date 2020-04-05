@@ -1,6 +1,7 @@
 import { elementWithTagType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
+import { Observable } from 'rxjs';
 import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
@@ -37,19 +38,17 @@ export class Root extends ThemedCustomElementCtrl {
 
   constructor(context: PersonaContext) {
     super(context);
-    this.setupHandleOnRootActive();
+    this.addSetup(this.setupHandleOnRootActive());
     this.render($.drawer._.drawerExpanded, this.rootDrawerExpanded$);
   }
 
-  private setupHandleOnRootActive(): void {
-    this.onRootActive$
+  private setupHandleOnRootActive(): Observable<unknown> {
+    return this.onRootActive$
         .pipe(
             withLatestFrom(this.locationService$),
             tap(([, service]) => {
               service.goToPath(Views.INSTRUCTION, {});
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 }

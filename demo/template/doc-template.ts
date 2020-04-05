@@ -2,7 +2,7 @@ import { elementWithTagType, instanceofType } from 'gs-types';
 import { $drawer, $svgConfig, $textIconButton, _p, Drawer, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, innerHtml, PersonaContext, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 import chevronUpSvg from '../asset/chevron_up.svg';
@@ -59,19 +59,18 @@ export class DocTemplate extends ThemedCustomElementCtrl {
     this.render($.drawer._.expanded, this.drawerExpanded$);
     this.render($.drawerIcon._.icon, this.renderDrawerIcon());
     this.render($.title._.inner, this.label$);
-    this.setupHandleDrawerIconClick();
+    this.addSetup(this.setupHandleDrawerIconClick());
   }
 
   private renderDrawerIcon(): Observable<string> {
     return this.drawerExpanded$.pipe(map(expanded => expanded ? 'chevron_down' : 'chevron_up'));
   }
 
-  private setupHandleDrawerIconClick(): void {
-    this.onDrawerIconClick$
+  private setupHandleDrawerIconClick(): Observable<unknown> {
+    return this.onDrawerIconClick$
         .pipe(
             withLatestFrom(this.drawerExpanded$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, expanded]) => this.drawerExpanded$.next(!expanded));
+            tap(([, expanded]) => this.drawerExpanded$.next(!expanded)),
+        );
   }
 }

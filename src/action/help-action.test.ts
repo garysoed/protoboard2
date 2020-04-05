@@ -1,5 +1,5 @@
 import { Vine } from 'grapevine';
-import { assert, objectThat, should, test } from 'gs-testing';
+import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { ArrayDiff } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { EMPTY, Observable, ReplaySubject } from 'rxjs';
@@ -37,20 +37,21 @@ test('@protoboard2/action/help-action', init => {
 
     const action = new HelpAction(new Map([[TRIGGER, testAction]]), vine);
     action.setActionTarget(shadowRoot);
+    run(action.run());
 
     return {action, el, testAction, vine};
   });
 
   test('onTrigger', () => {
     should(`show the help correctly`, () => {
-      const actions$ = new ReplaySubject<ArrayDiff<ActionTrigger>>(1);
-      $helpService.get(_.vine)
-          .pipe(switchMap(service => service.actions$))
-          .subscribe(actions$);
+      const actions$ = createSpySubject($helpService.get(_.vine)
+          .pipe(switchMap(service => service.actions$)),
+      );
 
       _.action.trigger();
 
       assert(actions$).to.emitSequence([
+        objectThat<ArrayDiff<ActionTrigger>>().haveProperties({type: 'init'}),
         objectThat<ArrayDiff<ActionTrigger>>().haveProperties({
           type: 'insert',
           value: objectThat<ActionTrigger>().haveProperties({

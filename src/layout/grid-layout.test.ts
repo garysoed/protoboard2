@@ -1,18 +1,16 @@
-import { arrayThat, assert, setup, should, test } from 'gs-testing';
+import { arrayThat, assert, run, should, test } from 'gs-testing';
 import { _p } from 'mask';
-import { ElementTester, PersonaTesterFactory } from 'persona/export/testing';
-import { Observable } from 'rxjs';
+import { PersonaTesterFactory } from 'persona/export/testing';
 import { map } from 'rxjs/operators';
 
 import { $, GridLayout } from './grid-layout';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
-test('@protoboard2/layout/grid-layout', () => {
-  let tester: ElementTester;
-
-  setup(() => {
-    tester = testerFactory.build([GridLayout]).createElement('pb-grid-layout', document.body);
+test('@protoboard2/layout/grid-layout', init => {
+  const _ = init(() => {
+    const tester = testerFactory.build([GridLayout]).createElement('pb-grid-layout', document.body);
+    return {tester};
   });
 
   test('setupOnHostMutation', () => {
@@ -21,14 +19,14 @@ test('@protoboard2/layout/grid-layout', () => {
       addedEl.setAttribute('x', '123');
       addedEl.setAttribute('y', '345');
 
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
 
       assert(addedEl.getAttribute('slot')).to.equal('345_123');
     });
 
     should(`update slot correctly when changed`, () => {
       const addedEl = document.createElement('div');
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
 
       addedEl.setAttribute('x', '123');
       addedEl.setAttribute('y', '345');
@@ -45,11 +43,11 @@ test('@protoboard2/layout/grid-layout', () => {
       addedEl.setAttribute('y', '345');
 
       // Append the element, then change its attributes.
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
       addedEl.setAttribute('x', '135');
       addedEl.setAttribute('y', '246');
 
-      tester.element.removeChild(addedEl);
+      _.tester.element.removeChild(addedEl);
 
       assert(addedEl.getAttribute('slot')).to.equal(slot);
     });
@@ -60,8 +58,8 @@ test('@protoboard2/layout/grid-layout', () => {
       addedEl.setAttribute('slot', slot);
 
       // Append the element, remove it, then change its attributes.
-      tester.element.appendChild(addedEl);
-      tester.element.removeChild(addedEl);
+      _.tester.element.appendChild(addedEl);
+      _.tester.element.removeChild(addedEl);
       addedEl.setAttribute('x', '135');
       addedEl.setAttribute('y', '246');
 
@@ -73,18 +71,15 @@ test('@protoboard2/layout/grid-layout', () => {
       addedEl.setAttribute('x', '0');
       addedEl.setAttribute('y', '0');
 
-      tester.element.appendChild(addedEl);
+      _.tester.element.appendChild(addedEl);
 
       assert(addedEl.getAttribute('slot')).to.equal('0_0');
     });
   });
 
-  test('setupRenderGrid', () => {
-    let tags$: Observable<string[][]>;
-    let slotName$: Observable<string[][]>;
-
-    setup(() => {
-      const cellEls$ = tester
+  test('setupRenderGrid', _, init => {
+    const _ = init(_ => {
+      const cellEls$ = _.tester
           .getElement($.rows)
           .pipe(
               map(rowsEl => {
@@ -106,25 +101,27 @@ test('@protoboard2/layout/grid-layout', () => {
                 return rows;
               }),
           );
-      tags$ = cellEls$.pipe(
+      const tags$ = cellEls$.pipe(
           map(colEls => colEls.map(cols => cols.map(el => el.tagName.toLowerCase()))),
       );
-      slotName$ = cellEls$.pipe(
+      const slotName$ = cellEls$.pipe(
           map(colEls => colEls.map(cols => cols.map(el => el.getAttribute('name')!))),
       );
+
+      return {..._, tags$, slotName$};
     });
 
     should(`render the grid correctly`, () => {
-      tester.setAttribute($.host._.colCount, 2).subscribe();
-      tester.setAttribute($.host._.rowCount, 3).subscribe();
+      run(_.tester.setAttribute($.host._.colCount, 2));
+      run(_.tester.setAttribute($.host._.rowCount, 3));
 
-      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['slot', 'slot']),
         arrayThat<string>().haveExactElements(['slot', 'slot']),
         arrayThat<string>().haveExactElements(['slot', 'slot']),
       ]));
 
-      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['0_0', '0_1']),
         arrayThat<string>().haveExactElements(['1_0', '1_1']),
         arrayThat<string>().haveExactElements(['2_0', '2_1']),
@@ -132,33 +129,33 @@ test('@protoboard2/layout/grid-layout', () => {
     });
 
     should(`rerender the grid if row changes`, () => {
-      tester.setAttribute($.host._.colCount, 2).subscribe();
-      tester.setAttribute($.host._.rowCount, 3).subscribe();
+      run(_.tester.setAttribute($.host._.colCount, 2));
+      run(_.tester.setAttribute($.host._.rowCount, 3));
 
-      tester.setAttribute($.host._.rowCount, 1).subscribe();
+      run(_.tester.setAttribute($.host._.rowCount, 1));
 
-      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['slot', 'slot']),
       ]));
 
-      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['0_0', '0_1']),
       ]));
     });
 
     should(`rerender the grid if col changes`, () => {
-      tester.setAttribute($.host._.colCount, 2).subscribe();
-      tester.setAttribute($.host._.rowCount, 3).subscribe();
+      run(_.tester.setAttribute($.host._.colCount, 2));
+      run(_.tester.setAttribute($.host._.rowCount, 3));
 
-      tester.setAttribute($.host._.colCount, 1).subscribe();
+      run(_.tester.setAttribute($.host._.colCount, 1));
 
-      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['slot']),
         arrayThat<string>().haveExactElements(['slot']),
         arrayThat<string>().haveExactElements(['slot']),
       ]));
 
-      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['0_0']),
         arrayThat<string>().haveExactElements(['1_0']),
         arrayThat<string>().haveExactElements(['2_0']),
@@ -166,11 +163,11 @@ test('@protoboard2/layout/grid-layout', () => {
     });
 
     should(`render the default values`, () => {
-      assert(tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.tags$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['slot']),
       ]));
 
-      assert(slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
+      assert(_.slotName$).to.emitWith(arrayThat<string[]>().haveExactElements([
         arrayThat<string>().haveExactElements(['0_0']),
       ]));
     });

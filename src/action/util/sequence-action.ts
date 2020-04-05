@@ -1,5 +1,6 @@
 import { Vine } from 'grapevine';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 
 import { BaseAction } from '../../core/base-action';
 
@@ -16,27 +17,36 @@ export class SequenceAction extends BaseAction {
   ) {
     super(actionKey, actionDesc, {}, vine);
 
-    this.setupActionTarget();
-    this.setupHandleTrigger();
+    this.addSetup(this.setupActionTarget());
+    this.addSetup(this.setupHandleTrigger());
+    this.setupSubactions();
   }
 
-  private setupActionTarget(): void {
-    this.actionTarget$
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(actionTarget => {
-          for (const action of this.actions) {
-            action.setActionTarget(actionTarget);
-          }
-        });
+  private setupActionTarget(): Observable<unknown> {
+    return this.actionTarget$
+        .pipe(
+            tap(actionTarget => {
+              for (const action of this.actions) {
+                action.setActionTarget(actionTarget);
+              }
+            }),
+        );
   }
 
-  private setupHandleTrigger(): void {
-    this.onTrigger$
-        .pipe(takeUntil(this.onDispose$))
-        .subscribe(() => {
-          for (const action of this.actions) {
-            action.trigger();
-          }
-        });
+  private setupHandleTrigger(): Observable<unknown> {
+    return this.onTrigger$
+        .pipe(
+            tap(() => {
+              for (const action of this.actions) {
+                action.trigger();
+              }
+            }),
+        );
+  }
+
+  private setupSubactions(): void {
+    for (const action of this.actions) {
+      this.addSetup(action.run());
+    }
   }
 }

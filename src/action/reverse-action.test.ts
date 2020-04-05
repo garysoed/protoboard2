@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { arrayFrom } from 'gs-tools/export/collect';
 import { _v } from 'mask';
 
@@ -19,6 +19,7 @@ test('@protoboard2/action/reverse-action', () => {
       const vine = _v.build('test');
       const action = new ReverseAction(vine);
       action.setActionTarget(shadowRoot);
+      run(action.run());
 
       action.trigger();
 

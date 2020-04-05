@@ -1,8 +1,7 @@
 import { Vine } from 'grapevine';
-import { assert, should, test } from 'gs-testing';
-import { _p, _v } from 'mask';
+import { assert, createSpySubject, run, should, test } from 'gs-testing';
+import { _v } from 'mask';
 import { PersonaContext } from 'persona';
-import { PersonaTesterFactory } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
 import { BaseAction } from './base-action';
@@ -38,7 +37,11 @@ const KEY = TriggerSpec.T;
 test('@protoboard2/core/base-component', init => {
   const _ = init(() => {
     const element = document.createElement('div');
+    const styleEl = document.createElement('style');
+    styleEl.id = 'theme';
     const shadowRoot = element.attachShadow({mode: 'open'});
+    shadowRoot.appendChild(styleEl);
+
     const vine = _v.build('test');
     const clickAction = new TestAction(vine);
     const keyAction = new TestAction(vine);
@@ -50,6 +53,7 @@ test('@protoboard2/core/base-component', init => {
         ]),
         {shadowRoot, vine},
     );
+    run(component.run());
 
     return {
       clickAction,
@@ -61,8 +65,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerClick', () => {
     should(`trigger click based actions`, () => {
-      const onTrigger$ = new ReplaySubject(1);
-      _.clickAction.onTrigger$.subscribe(onTrigger$);
+      const onTrigger$ = createSpySubject(_.clickAction.onTrigger$);
       _.element.dispatchEvent(new CustomEvent('click'));
 
       assert(onTrigger$).to.emit();
@@ -71,8 +74,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerKey', _, init => {
     const _ = init(_ => {
-      const onTrigger$ = new ReplaySubject(1);
-      _.keyAction.onTrigger$.subscribe(onTrigger$);
+      const onTrigger$ = createSpySubject(_.keyAction.onTrigger$);
 
       return {
         ..._,
@@ -114,8 +116,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('setupTriggerFunction', () => {
     should(`create a function that triggers`, () => {
-      const onTrigger$ = new ReplaySubject(1);
-      _.keyAction.onTrigger$.subscribe(onTrigger$);
+      const onTrigger$ = createSpySubject(_.keyAction.onTrigger$);
 
       (_.element as any)[ACTION_KEY]();
 

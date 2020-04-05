@@ -1,4 +1,4 @@
-import { assert, should, test } from 'gs-testing';
+import { assert, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
 
 import { configure } from '../testing/component-tester';
@@ -15,6 +15,8 @@ test('@protoboard2/action/flip-action', init => {
     const action = new FlipAction(2, 0, vine);
     action.setActionTarget(shadowRoot);
 
+    run(action.run());
+
     return {action, el, vine};
   });
 
@@ -29,6 +31,7 @@ test('@protoboard2/action/flip-action', init => {
       configure(el, _.action.key, new Map([['count', '4'], ['index', '10']]));
       const action = new FlipAction(2, 0, _.vine);
       action.setActionTarget(shadowRoot);
+      run(action.run());
 
       assert(el.getAttribute($face.currentFaceOut.attrName)).to.equal('2');
     });

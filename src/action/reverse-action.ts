@@ -1,6 +1,7 @@
 import { Vine } from 'grapevine';
 import { $pipe, $reverse, arrayFrom } from 'gs-tools/export/collect';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
@@ -11,20 +12,19 @@ export class ReverseAction extends BaseAction {
   constructor(vine: Vine) {
     super('reverse', 'Reverse children', {}, vine);
 
-    this.setupHandleTrigger();
+    this.addSetup(this.setupHandleTrigger());
   }
 
-  private setupHandleTrigger(): void {
-    this.onTrigger$
+  private setupHandleTrigger(): Observable<unknown> {
+    return this.onTrigger$
         .pipe(
             withLatestFrom(this.host$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, hostEl]) => {
-          const children = $pipe(arrayFrom(hostEl.children), $reverse());
-          for (const child of children) {
-            hostEl.appendChild(child);
-          }
-        });
+            tap(([, hostEl]) => {
+              const children = $pipe(arrayFrom(hostEl.children), $reverse());
+              for (const child of children) {
+                hostEl.appendChild(child);
+              }
+            }),
+        );
   }
 }

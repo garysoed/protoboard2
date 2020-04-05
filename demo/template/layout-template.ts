@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { $svgConfig, $textIconButton, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, dispatcher, element, onDom, PersonaContext, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import addSvg from '../asset/add.svg';
 import { $playAreaService, LayoutSpec } from '../play/play-area-service';
@@ -67,13 +67,12 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupHandleSetLayout(): void {
-    this.onSetLayout$.pipe(
+  private setupHandleSetLayout(): Observable<unknown> {
+    return this.onSetLayout$.pipe(
         withLatestFrom($playAreaService.get(this.vine)),
-        takeUntil(this.onDispose$),
-    )
-    .subscribe(([layoutSpec, playAreaService]) => {
-      playAreaService.setLayout(layoutSpec);
-    });
+        tap(([layoutSpec, playAreaService]) => {
+          playAreaService.setLayout(layoutSpec);
+        }),
+    );
   }
 }

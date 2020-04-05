@@ -36,10 +36,10 @@ export class FlipAction extends BaseAction<Config> {
         vine,
     );
 
-    this.setup();
+    this.addSetup(this.setup());
   }
 
-  private setup(): void {
+  private setup(): Observable<unknown> {
     const indexAttr$ = this.actionTarget$.pipe(
         switchMap(shadowRoot => $.host._.currentFaceIn.getValue(shadowRoot)),
     );
@@ -59,14 +59,12 @@ export class FlipAction extends BaseAction<Config> {
         map(([value, count]) => value % count),
     );
 
-    this.actionTarget$
+    return this.actionTarget$
         .pipe(
             switchMap(shadowRoot => {
               return index$.pipe($.host._.currentFaceOut.output(shadowRoot));
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 
   @cache()

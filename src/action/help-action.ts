@@ -1,5 +1,6 @@
 import { Vine } from 'grapevine';
-import { takeUntil, withLatestFrom } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerSpec } from '../core/trigger-spec';
@@ -19,18 +20,17 @@ export class HelpAction extends BaseAction {
         vine,
     );
 
-    this.setupHandleTrigger();
+    this.addSetup(this.setupHandleTrigger());
   }
 
-  private setupHandleTrigger(): void {
+  private setupHandleTrigger(): Observable<unknown> {
     const helpService$ = $helpService.get(this.vine);
-    this.onTrigger$
+    return this.onTrigger$
         .pipe(
             withLatestFrom(helpService$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, helpService]) => {
-          helpService.show(this.actions);
-        });
+            tap(([, helpService]) => {
+              helpService.show(this.actions);
+            }),
+        );
   }
 }

@@ -3,7 +3,7 @@ import { elementWithTagType } from 'gs-types';
 import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
 import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mapTo, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { D1 as D1Impl } from '../../src/component/d1';
 import coinSvg from '../asset/coin.svg';
@@ -53,9 +53,9 @@ export class D1 extends ThemedCustomElementCtrl {
 
   constructor(context: PersonaContext) {
     super(context);
-    this.setupHandleCustomizeClick();
-    this.setupHandleSelectedIcon();
-    this.setupHandlePieceRemoved();
+    this.addSetup(this.setupHandleCustomizeClick());
+    this.addSetup(this.setupHandleSelectedIcon());
+    this.addSetup(this.setupHandlePieceRemoved());
   }
 
   private createPieceEl(): Observable<HTMLElement|null> {
@@ -70,8 +70,8 @@ export class D1 extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleCustomizeClick(): void {
-    this.onCustomizeClick$
+  private setupHandleCustomizeClick(): Observable<unknown> {
+    return this.onCustomizeClick$
         .pipe(
             map(event => event.target),
             mapNonNull(target => {
@@ -86,36 +86,32 @@ export class D1 extends ThemedCustomElementCtrl {
               return target.id;
             }),
             filterNonNull(),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(icon => this.selectedIcon$.next(icon));
+            tap(icon => this.selectedIcon$.next(icon)),
+        );
   }
 
-  private setupHandlePieceRemoved(): void {
-    this.pieceEl$
+  private setupHandlePieceRemoved(): Observable<unknown> {
+    return this.pieceEl$
         .pipe(
             filter(piece => piece === null),
             withLatestFrom(this.createEl$),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe(([, createEl]) => {
-          const pieceEl = document.createElement('pb-d1');
-          const iconEl = document.createElement('mk-icon');
-          pieceEl.appendChild(iconEl);
-          createEl.appendChild(pieceEl);
-        });
+            tap(([, createEl]) => {
+              const pieceEl = document.createElement('pb-d1');
+              const iconEl = document.createElement('mk-icon');
+              pieceEl.appendChild(iconEl);
+              createEl.appendChild(pieceEl);
+            }),
+        );
   }
 
-  private setupHandleSelectedIcon(): void {
-    this.pieceEl$
+  private setupHandleSelectedIcon(): Observable<unknown> {
+    return this.pieceEl$
         .pipe(
             filterNonNull(),
             switchMap(iconEl => {
               const output = api($icon.api).icon.resolve(() => observableOf(iconEl));
               return this.selectedIcon$.pipe(output.output(this.shadowRoot));
             }),
-            takeUntil(this.onDispose$),
-        )
-        .subscribe();
+        );
   }
 }
