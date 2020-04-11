@@ -15,6 +15,7 @@ window.addEventListener('load', () => {
   const {vine} = start(
       'protoboard',
       [Root],
+      document,
       theme,
       document.getElementById('globalStyle') as HTMLStyleElement,
   );

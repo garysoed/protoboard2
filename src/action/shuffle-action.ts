@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { shuffle } from 'gs-tools/export/random';
 import { element } from 'persona';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';

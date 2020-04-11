@@ -9,7 +9,8 @@ import { $, GridLayout } from './grid-layout';
 const testerFactory = new PersonaTesterFactory(_p);
 test('@protoboard2/layout/grid-layout', init => {
   const _ = init(() => {
-    const tester = testerFactory.build([GridLayout]).createElement('pb-grid-layout', document.body);
+    const tester = testerFactory.build([GridLayout], document)
+        .createElement('pb-grid-layout', document.body);
     return {tester};
   });
 

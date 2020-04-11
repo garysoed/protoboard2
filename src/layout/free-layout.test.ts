@@ -9,7 +9,8 @@ const testerFactory = new PersonaTesterFactory(_p);
 test('@protoboard2/layout/free-layout', init => {
 
   const _ = init(() => {
-    const tester = testerFactory.build([FreeLayout]).createElement('pb-free-layout', document.body);
+    const tester = testerFactory.build([FreeLayout], document)
+        .createElement('pb-free-layout', document.body);
     return {tester};
   });
 

@@ -15,7 +15,7 @@ const testerFactory = new PersonaTesterFactory(_p);
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
-    const tester = testerFactory.build([HelpOverlay])
+    const tester = testerFactory.build([HelpOverlay], document)
         .createElement('pb-help-overlay', document.body);
     return {tester};
   });

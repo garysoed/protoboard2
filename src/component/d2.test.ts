@@ -9,7 +9,7 @@ test('@protoboard2/component/d2', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
-    const tester = factory.build([D2]);
+    const tester = factory.build([D2], document);
     const el = tester.createElement('pb-d2', document.body);
     return {el};
   });

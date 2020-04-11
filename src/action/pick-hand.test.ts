@@ -24,7 +24,7 @@ test('@protoboard2/action/pick-hand', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
-    const tester = factory.build([PickHand]);
+    const tester = factory.build([PickHand], document);
     const el = tester.createElement('pb-pick-hand', document.body);
     return {el, tester};
   });
