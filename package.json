@@ -2,7 +2,7 @@
   "name": "protoboard2",
   "version": "1.0.0",
   "description": "Library to create components for prototyping boardgames",
-  "main": "main/exports.js",
+  "main": "export/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

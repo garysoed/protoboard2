@@ -25,7 +25,10 @@ test('@protoboard2/action/pick-hand', init => {
 
   const _ = init(() => {
     const tester = factory.build([PickHand], document);
-    const el = tester.createElement('pb-pick-hand', document.body);
+    const el = tester.createElement('pb-pick-hand');
+
+    // Need to add to body so the dimensions work.
+    document.body.appendChild(el.element);
     return {el, tester};
   });
 

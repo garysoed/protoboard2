@@ -10,7 +10,7 @@ test('@protoboard2/layout/free-layout', init => {
 
   const _ = init(() => {
     const tester = testerFactory.build([FreeLayout], document)
-        .createElement('pb-free-layout', document.body);
+        .createElement('pb-free-layout');
     return {tester};
   });
 

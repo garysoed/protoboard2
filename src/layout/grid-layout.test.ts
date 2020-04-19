@@ -10,7 +10,7 @@ const testerFactory = new PersonaTesterFactory(_p);
 test('@protoboard2/layout/grid-layout', init => {
   const _ = init(() => {
     const tester = testerFactory.build([GridLayout], document)
-        .createElement('pb-grid-layout', document.body);
+        .createElement('pb-grid-layout');
     return {tester};
   });
 
