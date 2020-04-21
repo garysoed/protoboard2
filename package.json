@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/garysoed/protoboard2#readme",
   "dependencies": {
-    "gs-tools": "github:garysoed/gs-tools",
     "typescript": "^3.8.2"
   },
   "devDependencies": {
@@ -36,6 +35,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "raw-loader": "^3.0.0",
     "source-map-loader": "^0.2.4",
+    "ts-loader": "^7.0.1",
     "tslib": "^1.10.0",
     "webpack": "^4.34.0"
   }

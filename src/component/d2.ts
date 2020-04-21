@@ -15,16 +15,20 @@ import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
 import template from './d2.html';
 
+export const $$ = {
+  api: {...$face},
+  tag: 'pb-d2',
+};
 
 export const $ = {
-  host: element(api($face)),
+  host: element(api($$.api)),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
 };
 
 @_p.customElement({
-  tag: 'pb-d2',
+  ...$$,
   template,
 })
 export class D2 extends BaseComponent {
