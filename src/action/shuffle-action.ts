@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { shuffle } from 'gs-tools/export/random';
 import { element } from 'persona';
 import { Observable } from 'rxjs';
-import { switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { $random } from '../util/random';
@@ -38,7 +38,7 @@ export class ShuffleAction extends BaseAction {
               }
 
               const newRng = shuffle(children, rng);
-              $random.get(this.vine).next(newRng.map(() => undefined));
+              $random.set(this.vine, () => newRng.map(() => undefined));
 
               for (const childEl of newRng.value) {
                 hostEl.appendChild(childEl);

@@ -1,9 +1,9 @@
 import { source } from 'grapevine';
 import { ArraySubject } from 'gs-tools/export/rxjs';
-import { BehaviorSubject } from 'rxjs';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerSpec } from '../core/trigger-spec';
+
 
 export interface ActionTrigger {
   readonly action: BaseAction<unknown>;
@@ -24,4 +24,4 @@ export class HelpService {
   }
 }
 
-export const $helpService = source(() => new BehaviorSubject(new HelpService()), globalThis);
+export const $helpService = source(() => new HelpService());

@@ -1,4 +1,4 @@
-import { $svgConfig, Palette, start, Theme } from 'mask';
+import { Palette, registerSvg, start, Theme } from 'mask';
 import { switchMap } from 'rxjs/operators';
 
 import protoboardSvg from './asset/icon.svg';
@@ -20,9 +20,8 @@ window.addEventListener('load', () => {
       document.getElementById('globalStyle') as HTMLStyleElement,
   );
 
-  const svgMap$ = $svgConfig.get(vine);
   for (const [key, content] of iconConfigs) {
-    svgMap$.next({type: 'set', key, value: {type: 'embed', content}});
+    registerSvg(vine, key, {type: 'embed', content});
   }
 
   $locationService.get(vine)

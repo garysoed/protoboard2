@@ -1,6 +1,6 @@
 import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
-import { $svgConfig, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { _p, IconWithText, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, booleanParser, element, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -56,17 +56,7 @@ const ZONE_LINK_CONFIGS: LinkConfig[] = [
 
 @_p.customElement({
   configure: vine => {
-    const icons = new Map([
-      ['chevron_down', chevronDownSvg],
-    ]);
-    const svgConfigMap$ = $svgConfig.get(vine);
-    for (const [key, content] of icons) {
-      svgConfigMap$.next({
-        key,
-        type: 'set',
-        value: {type: 'embed', content},
-      });
-    }
+    registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
   },
   dependencies: [
     IconWithText,

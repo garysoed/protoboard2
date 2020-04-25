@@ -1,6 +1,7 @@
 import { elementWithTagType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
+import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
@@ -27,11 +28,11 @@ const $ = {
 export class GridLayout extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
-    this.setupHandleSetLayout();
+    this.addSetup(this.setupHandleSetLayout());
   }
 
-  private setupHandleSetLayout(): void {
-    this.declareInput($.template._.onSetLayout)
+  private setupHandleSetLayout(): Observable<unknown> {
+    return this.declareInput($.template._.onSetLayout)
         .pipe(
             withLatestFrom(
                 this.declareInput($.column._.value),

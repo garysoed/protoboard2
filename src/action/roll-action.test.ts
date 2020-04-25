@@ -16,7 +16,7 @@ test('@protoboard2/action/roll-action', init => {
 
     const vine = _v.build('test');
     const seed = new FakeSeed();
-    $random.get(vine).next(fromSeed(seed));
+    $random.set(vine, () => fromSeed(seed));
     const action = new RollAction({count: 3}, vine);
     action.setActionTarget(shadowRoot);
     run(action.run());

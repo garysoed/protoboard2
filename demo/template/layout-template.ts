@@ -1,5 +1,5 @@
 import { Vine } from 'grapevine';
-import { $svgConfig, $textIconButton, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $textIconButton, _p, ACTION_EVENT, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, dispatcher, element, onDom, PersonaContext, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -41,11 +41,7 @@ const $ = {
   tag: 'pbd-layout-template',
   template,
   configure(vine: Vine): void {
-    $svgConfig.get(vine).next({
-      key: 'add',
-      type: 'set',
-      value: {type: 'embed', content: addSvg},
-    });
+    registerSvg(vine, 'add', {type: 'embed', content: addSvg});
   },
 })
 export class LayoutTemplate extends ThemedCustomElementCtrl {
@@ -57,7 +53,7 @@ export class LayoutTemplate extends ThemedCustomElementCtrl {
 
     this.render($.host._.onSetLayout, this.renderOnAddClick());
     this.render($.template._.label, this.label$);
-    this.setupHandleSetLayout();
+    this.addSetup(this.setupHandleSetLayout());
   }
 
   private renderOnAddClick(): Observable<SetLayoutEvent> {

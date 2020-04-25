@@ -1,5 +1,5 @@
 import { elementWithTagType, instanceofType } from 'gs-types';
-import { $drawer, $svgConfig, $textIconButton, _p, Drawer, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $drawer, $textIconButton, _p, Drawer, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, innerHtml, PersonaContext, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -29,18 +29,8 @@ const $ = {
 @_p.customElement({
   ...$$,
   configure: vine => {
-    const icons = new Map([
-      ['chevron_down', chevronDownSvg],
-      ['chevron_up', chevronUpSvg],
-    ]);
-    const svgConfigMap$ = $svgConfig.get(vine);
-    for (const [key, content] of icons) {
-      svgConfigMap$.next({
-        key,
-        type: 'set',
-        value: {type: 'embed', content},
-      });
-    }
+    registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
+    registerSvg(vine, 'chevron_up', {type: 'embed', content: chevronUpSvg});
   },
   dependencies: [
     Drawer,

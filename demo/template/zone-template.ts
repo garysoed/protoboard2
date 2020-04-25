@@ -63,7 +63,7 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
     this.render($.template._.label, this.declareInput($.host._.label));
     this.render($.layoutContent._.content, this.renderLayoutContent());
     this.render($.rootContent._.hasLayoutClass, this.renderHasLayoutClass());
-    this.setupHandleAddZone();
+    this.addSetup(this.setupHandleAddZone());
   }
 
   private createLayoutSpec(): Observable<LayoutSpec|null> {

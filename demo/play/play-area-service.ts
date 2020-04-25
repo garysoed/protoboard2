@@ -46,8 +46,5 @@ class PlayAreaService {
   }
 }
 
-export const $playAreaService = source(
-    () => new BehaviorSubject(new PlayAreaService()),
-    globalThis,
-);
+export const $playAreaService = source(() => new PlayAreaService());
 

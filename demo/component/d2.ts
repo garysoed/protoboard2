@@ -1,10 +1,10 @@
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
-import { $icon, $svgConfig, _p, Icon, ThemedCustomElementCtrl } from 'mask';
+import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { D2 as D2Impl } from '../../src/component/d2';
 import cardBack from '../asset/card_back.svg';
@@ -25,20 +25,10 @@ const $ = {
 
 @_p.customElement({
   configure: vine => {
-    const icons = new Map([
-      ['coin-0', coinHeadSvg],
-      ['coin-1', coinSvg],
-      ['card-0', cardBack],
-      ['card-1', cardFront],
-    ]);
-    const svgConfigMap$ = $svgConfig.get(vine);
-    for (const [key, content] of icons) {
-      svgConfigMap$.next({
-        key,
-        type: 'set',
-        value: {type: 'embed', content},
-      });
-    }
+    registerSvg(vine, 'coin-0', {type: 'embed', content: coinHeadSvg});
+    registerSvg(vine, 'coin-1', {type: 'embed', content: coinSvg});
+    registerSvg(vine, 'card-0', {type: 'embed', content: cardBack});
+    registerSvg(vine, 'card-1', {type: 'embed', content: cardFront});
   },
   dependencies: [
     ComponentTemplate,

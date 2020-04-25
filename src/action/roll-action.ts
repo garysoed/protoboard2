@@ -1,8 +1,8 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { element, integerParser } from 'persona';
-import { Observable, Subject } from 'rxjs';
-import { map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 import { $random } from '../util/random';
@@ -19,8 +19,6 @@ interface Config {
 }
 
 export class RollAction extends BaseAction<Config> {
-  private readonly onIndexSwitch$ = new Subject<number>();
-
   constructor(
       private readonly config: Config,
       vine: Vine,
@@ -45,7 +43,7 @@ export class RollAction extends BaseAction<Config> {
               });
             }),
             tap(nextRandom => {
-              $random.get(this.vine).next(nextRandom);
+              $random.set(this.vine, () => nextRandom);
             }),
             map(({value}) => value),
         );
