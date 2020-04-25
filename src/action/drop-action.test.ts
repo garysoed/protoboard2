@@ -1,5 +1,4 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
-import { scanArray } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { ReplaySubject } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
@@ -39,10 +38,7 @@ test('@protoboard2/action/drop-action', init => {
       );
 
       const components$ = createSpySubject($pickService.get(_.vine)
-          .pipe(
-              switchMap(service => service.getComponents()),
-              scanArray(),
-          ),
+          .pipe(switchMap(service => service.getComponents())),
       );
 
       _.action.trigger();
@@ -60,10 +56,7 @@ test('@protoboard2/action/drop-action', init => {
     _.parentNode$.next(parentEl);
 
     const components$ = createSpySubject($pickService.get(_.vine)
-        .pipe(
-            switchMap(service => service.getComponents()),
-            scanArray(),
-        ),
+        .pipe(switchMap(service => service.getComponents())),
     );
 
     _.action.trigger();
@@ -83,13 +76,6 @@ test('@protoboard2/action/drop-action', init => {
         .pipe(
             take(1),
             tap(service => service.add(componentEl)),
-        ),
-    );
-
-    const components$ = createSpySubject($pickService.get(_.vine)
-        .pipe(
-            switchMap(service => service.getComponents()),
-            scanArray(),
         ),
     );
 

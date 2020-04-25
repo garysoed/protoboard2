@@ -2,7 +2,7 @@ import { elementWithTagType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
 import { PickHand } from '../src/action/pick-hand';

@@ -1,8 +1,7 @@
 import { Vine } from 'grapevine';
-import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { ArrayDiff } from 'gs-tools/export/rxjs';
+import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
-import { EMPTY, Observable, ReplaySubject } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
@@ -51,15 +50,13 @@ test('@protoboard2/action/help-action', init => {
       _.action.trigger();
 
       assert(actions$).to.emitSequence([
-        objectThat<ArrayDiff<ActionTrigger>>().haveProperties({type: 'init'}),
-        objectThat<ArrayDiff<ActionTrigger>>().haveProperties({
-          type: 'insert',
-          value: objectThat<ActionTrigger>().haveProperties({
+        arrayThat<ActionTrigger>().haveExactElements([]),
+        arrayThat<ActionTrigger>().haveExactElements([
+          objectThat<ActionTrigger>().haveProperties({
             action: _.testAction,
             trigger: TRIGGER,
           }),
-          index: 0,
-        }),
+        ]),
       ]);
     });
   });

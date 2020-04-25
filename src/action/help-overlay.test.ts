@@ -1,5 +1,4 @@
 import { assert, run, should, test } from 'gs-testing';
-import { scanArray } from 'gs-tools/export/rxjs';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map, switchMap, take, tap } from 'rxjs/operators';
@@ -95,7 +94,6 @@ test('@protoboard2/action/help-overlay', init => {
       const actionsLength$ = $helpService.get(_.tester.vine)
           .pipe(
               switchMap(service => service.actions$),
-              scanArray(),
               map(actions => actions.length),
           );
       assert(actionsLength$).to.emitWith(0);

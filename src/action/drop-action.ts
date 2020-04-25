@@ -1,5 +1,4 @@
 import { Vine } from 'grapevine';
-import { scanArray } from 'gs-tools/export/rxjs';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -27,10 +26,7 @@ export class DropAction extends BaseAction {
     const components$ = $pickService.get(this.vine).pipe(
         switchMap(pickService => {
           return pickService.getComponents()
-              .pipe(
-                  scanArray(),
-                  map(components => ({components, pickService})),
-              );
+              .pipe(map(components => ({components, pickService})));
         }),
     );
 

@@ -1,20 +1,20 @@
 import { stream } from 'grapevine';
-import { ArrayDiff, ArraySubject } from 'gs-tools/export/rxjs';
-import { _v } from 'mask';
-import { Observable, of as observableOf } from 'rxjs';
+import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 
 export class PickService {
-  private readonly components$ = new ArraySubject<Element>();
+  private readonly components$ = new BehaviorSubject<readonly Element[]>([]);
 
   add(el: Element): void {
-    this.components$.insert(el);
+    this.components$.next([...this.components$.getValue(), el]);
   }
 
   deleteAt(index: number): void {
-    this.components$.deleteAt(index);
+    const elList = [...this.components$.getValue()];
+    elList.splice(index, 1);
+    this.components$.next(elList);
   }
 
-  getComponents(): Observable<ArrayDiff<Element>> {
+  getComponents(): Observable<readonly Element[]> {
     return this.components$;
   }
 }

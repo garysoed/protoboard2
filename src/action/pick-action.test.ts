@@ -1,5 +1,4 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
-import { scanArray } from 'gs-tools/export/rxjs';
 import { _v } from 'mask';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -25,7 +24,6 @@ test('@protoboard2/action/pick-action', init => {
           $pickService.get(_.vine)
               .pipe(
                   switchMap(service => service.getComponents()),
-                  scanArray(),
                   map(set => [...set]),
               ),
       );

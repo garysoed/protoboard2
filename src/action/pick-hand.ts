@@ -1,9 +1,10 @@
+import { diffArray } from 'gs-tools/export/rxjs';
 import { assertUnreachable } from 'gs-tools/export/typescript';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { CustomElementCtrl, element, PersonaContext, style } from 'persona';
 import { fromEvent, Observable } from 'rxjs';
-import { map, share, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { map, share, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import template from './pick-hand.html';
 import { $pickService } from './pick-service';
@@ -48,6 +49,7 @@ export class PickHand extends CustomElementCtrl {
     return $pickService.get(this.vine)
         .pipe(
             switchMap(service => service.getComponents()),
+            diffArray(),
             withLatestFrom(this.container$),
             tap(([diff, container]) => {
               switch (diff.type) {

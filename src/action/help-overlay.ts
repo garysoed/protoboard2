@@ -1,4 +1,4 @@
-import { ArrayDiff, scanArray } from 'gs-tools/export/rxjs';
+import { ArrayDiff, diffArray } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { classToggle, element, innerHtml, NoopRenderSpec, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
@@ -48,7 +48,6 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   private renderIsVisible(): Observable<boolean> {
     return this.helpService$.pipe(
         switchMap(service => service.actions$),
-        scanArray(),
         map(actions => actions.length > 0),
     );
   }
@@ -56,6 +55,7 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   private renderRows(): Observable<ArrayDiff<RenderSpec>> {
     return this.helpService$.pipe(
         switchMap(service => service.actions$),
+        diffArray(),
         withLatestFrom(this.tableRowTemplate$),
         map(([diff, template]): ArrayDiff<RenderSpec> => {
           switch (diff.type) {

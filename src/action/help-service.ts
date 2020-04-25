@@ -1,5 +1,5 @@
 import { source } from 'grapevine';
-import { ArraySubject } from 'gs-tools/export/rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerSpec } from '../core/trigger-spec';
@@ -11,14 +11,14 @@ export interface ActionTrigger {
 }
 
 export class HelpService {
-  readonly actions$ = new ArraySubject<ActionTrigger>();
+  readonly actions$ = new BehaviorSubject<readonly ActionTrigger[]>([]);
 
   hide(): void {
-    this.actions$.setAll([]);
+    this.actions$.next([]);
   }
 
   show(actions: ReadonlyMap<TriggerSpec, BaseAction<unknown>>): void {
-    this.actions$.setAll(
+    this.actions$.next(
         [...actions].map(([trigger, action]) => ({action, trigger})),
     );
   }
