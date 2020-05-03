@@ -101,7 +101,7 @@ function createRepeatedSpecs(linkConfig: LinkConfig[]): ArrayDiff<RenderSpec> {
   const specs: RenderSpec[] = linkConfig.map(({label, path}) => {
     return new SimpleElementRenderSpec(
         'mk-text-icon-button',
-        new Map([['label', label], ['path', path]]),
+        observableOf(new Map([['label', label], ['path', path]])),
     );
   });
 

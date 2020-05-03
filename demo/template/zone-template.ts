@@ -2,7 +2,7 @@ import { filterDefined, filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, classToggle, dispatcher, element, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
-import { Observable } from 'rxjs';
+import { Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $playAreaService, LayoutSpec, ZoneSpec } from '../play/play-area-service';
@@ -89,7 +89,7 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
 
               return new SimpleElementRenderSpec(
                   tag,
-                  new Map([['id', ADD_ZONE_ID]]),
+                  observableOf(new Map([['id', ADD_ZONE_ID]])),
               );
             }),
         );

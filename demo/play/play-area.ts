@@ -1,10 +1,9 @@
-import { Vine } from 'grapevine';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { $drawer, _p, Drawer, ThemedCustomElementCtrl } from 'mask';
 import { element, mutationObservable, onDom, PersonaContext, SimpleElementRenderSpec, single, textContent } from 'persona';
-import { merge, Observable } from 'rxjs';
-import { distinctUntilChanged, map, mapTo, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { merge, Observable, of as observableOf } from 'rxjs';
+import { distinctUntilChanged, map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { $playAreaService, ZoneSpec } from './play-area-service';
 import template from './play-area.html';
@@ -72,11 +71,11 @@ export class PlayArea extends ThemedCustomElementCtrl {
         }),
         map(spec => new SimpleElementRenderSpec(
           spec.tag,
-          new Map([
+          observableOf(new Map([
             ...spec.attr,
             ['id', LAYOUT_ID],
             ['fill-parent', ''],
-          ]),
+          ])),
         )),
     );
   }
