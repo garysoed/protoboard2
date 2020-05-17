@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { shuffle } from 'gs-tools/export/random';
-import { element } from 'persona';
+import { host } from 'persona';
 import { Observable } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -21,8 +21,8 @@ export class ShuffleAction extends BaseAction {
   }
 
   private setupHandleTrigger(): Observable<unknown> {
-    const host$ = this.actionTarget$
-        .pipe(switchMap(shadowRoot => element({}).getValue(shadowRoot)));
+    const host$ = this.actionContext$
+        .pipe(switchMap(shadowRoot => host({}).getValue(shadowRoot)));
 
     return this.onTrigger$
         .pipe(

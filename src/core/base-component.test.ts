@@ -1,8 +1,8 @@
 import { Vine } from 'grapevine';
 import { assert, createSpySubject, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
-import { PersonaContext } from 'persona';
-import { Observable, ReplaySubject } from 'rxjs';
+import { AttributeChangedEvent, PersonaContext } from 'persona';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { BaseAction } from './base-action';
 import { BaseComponent } from './base-component';
@@ -51,7 +51,12 @@ test('@protoboard2/core/base-component', init => {
           [TriggerSpec.CLICK, clickAction],
           [KEY, keyAction],
         ]),
-        {shadowRoot, vine},
+        {
+          shadowRoot,
+          vine,
+          onAttributeChanged$: new Subject<AttributeChangedEvent>(),
+          onDisconnect$: new ReplaySubject<void>(1),
+        },
     );
     run(component.run());
 

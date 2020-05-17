@@ -12,6 +12,7 @@ import template from './deck.html';
     DeckImpl,
     ZoneTemplate,
   ],
+  api: {},
 })
 export class Deck extends ThemedCustomElementCtrl {
 

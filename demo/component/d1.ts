@@ -34,6 +34,7 @@ const $ = {
   ],
   tag: 'pbd-d1',
   template,
+  api: {},
 })
 export class D1 extends ThemedCustomElementCtrl {
   private readonly createEl$ = this.declareInput($.create);
@@ -100,7 +101,7 @@ export class D1 extends ThemedCustomElementCtrl {
             filterNonNull(),
             switchMap(iconEl => {
               const output = api($icon.api).icon.resolve(() => observableOf(iconEl));
-              return this.selectedIcon$.pipe(output.output(this.shadowRoot));
+              return this.selectedIcon$.pipe(output.output(this.context));
             }),
         );
   }

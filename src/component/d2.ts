@@ -1,6 +1,6 @@
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { api, attributeOut, element, PersonaContext, stringParser } from 'persona';
+import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -21,7 +21,7 @@ export const $$ = {
 };
 
 export const $ = {
-  host: element(api($$.api)),
+  host: host(api($$.api)),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),

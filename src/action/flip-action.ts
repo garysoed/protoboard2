@@ -1,8 +1,8 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { element, integerParser } from 'persona';
+import { host, integerParser } from 'persona';
 import { combineLatest, concat, Observable } from 'rxjs';
-import { map, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
@@ -10,7 +10,7 @@ import { $face } from './face';
 
 
 const $ = {
-  host: element($face),
+  host: host($face),
 };
 
 interface Config {
@@ -40,7 +40,7 @@ export class FlipAction extends BaseAction<Config> {
   }
 
   private setup(): Observable<unknown> {
-    const indexAttr$ = this.actionTarget$.pipe(
+    const indexAttr$ = this.actionContext$.pipe(
         switchMap(shadowRoot => $.host._.currentFaceIn.getValue(shadowRoot)),
     );
 
@@ -59,7 +59,7 @@ export class FlipAction extends BaseAction<Config> {
         map(([value, count]) => value % count),
     );
 
-    return this.actionTarget$
+    return this.actionContext$
         .pipe(
             switchMap(shadowRoot => {
               return index$.pipe($.host._.currentFaceOut.output(shadowRoot));

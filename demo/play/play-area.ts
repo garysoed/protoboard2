@@ -33,6 +33,7 @@ const LAYOUT_ID = 'layout';
   ],
   tag: 'pbd-play-area',
   template,
+  api: {},
 })
 export class PlayArea extends ThemedCustomElementCtrl {
   private readonly onRootMouseOut$ = this.declareInput($.root._.onMouseOut);

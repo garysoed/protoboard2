@@ -1,5 +1,6 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 import { map, switchMap } from 'rxjs/operators';
 
 import { PickAction } from './pick-action';
@@ -12,7 +13,7 @@ test('@protoboard2/action/pick-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const action = new PickAction(vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
 
     return {action, el, vine};

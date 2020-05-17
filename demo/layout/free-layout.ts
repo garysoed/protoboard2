@@ -16,7 +16,11 @@ const $$ = {
 };
 
 const $ = {
-  template: element('template', elementWithTagType('pbd-layout-template'), api($layoutTemplate)),
+  template: element(
+      'template',
+      elementWithTagType('pbd-layout-template'),
+      api($layoutTemplate.api),
+  ),
   x: element('x', elementWithTagType('mk-text-input'), api($textInput.api)),
   y: element('y', elementWithTagType('mk-text-input'), api($textInput.api)),
   height: element('height', elementWithTagType('mk-text-input'), api($textInput.api)),
@@ -32,6 +36,7 @@ const $ = {
     TextInput,
   ],
   template,
+  api: {},
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {

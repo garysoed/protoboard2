@@ -1,27 +1,18 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { BaseDisposable } from 'gs-tools/export/dispose';
 import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
-import { element, mutationObservable, onDom } from 'persona';
+import { host, mutationObservable, PersonaContext } from 'persona';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { map, mapTo, startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { map, mapTo, startWith, switchMap } from 'rxjs/operators';
 
-
-const $ = {
-  host: element({
-    click: onDom('click'),
-    mouseout: onDom('mouseout'),
-    mouseover: onDom('mouseover'),
-  }),
-};
 
 type ConverterOf<O> = {
   [K in keyof O]: Converter<O[K], string>;
 };
 
 export abstract class BaseAction<C = {}> extends Runnable {
-  protected readonly actionTarget$ = new ReplaySubject<ShadowRoot>(1);
+  protected readonly actionContext$ = new ReplaySubject<PersonaContext>(1);
   readonly #onTrigger$ = new Subject<void>();
 
   constructor(
@@ -33,8 +24,8 @@ export abstract class BaseAction<C = {}> extends Runnable {
     super();
   }
 
-  setActionTarget(shadowRoot: ShadowRoot): void {
-    this.actionTarget$.next(shadowRoot);
+  setActionContext(context: PersonaContext): void {
+    this.actionContext$.next(context);
   }
 
   trigger(): void {
@@ -43,8 +34,8 @@ export abstract class BaseAction<C = {}> extends Runnable {
 
   @cache()
   get config$(): Observable<Partial<C>> {
-    return this.actionTarget$.pipe(
-        switchMap(shadowRoot => {
+    return this.actionContext$.pipe(
+        switchMap(({shadowRoot}) => {
           return mutationObservable(shadowRoot.host, {childList: true, subtree: true})
               .pipe(
                   mapTo(shadowRoot),
@@ -84,7 +75,7 @@ export abstract class BaseAction<C = {}> extends Runnable {
 
   @cache()
   get host$(): Observable<Element> {
-    return this.actionTarget$.pipe(switchMap(root => element({}).getValue(root)));
+    return this.actionContext$.pipe(switchMap(context => host({}).getValue(context)));
   }
 
   get onTrigger$(): Observable<unknown> {

@@ -25,6 +25,7 @@ export const $ = {
 @_p.customElement({
   tag: 'pb-pick-hand',
   template,
+  api: {},
 })
 export class PickHand extends CustomElementCtrl {
   private readonly container$ = this.declareInput($.container);

@@ -1,6 +1,6 @@
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $drawer, $textIconButton, _p, Drawer, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { api, attributeIn, element, innerHtml, PersonaContext, stringParser } from 'persona';
+import { api, attributeIn, element, host, PersonaContext, stringParser, textContent } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -20,9 +20,9 @@ export const $$ = {
 const $ = {
   drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
   drawerIcon: element('drawerIcon', $textIconButton, {}),
-  host: element($$.api),
+  host: host($$.api),
   title: element('title', instanceofType(HTMLHeadingElement), {
-    inner: innerHtml(),
+    text: textContent(),
   }),
 };
 
@@ -48,7 +48,7 @@ export class DocTemplate extends ThemedCustomElementCtrl {
 
     this.render($.drawer._.expanded, this.drawerExpanded$);
     this.render($.drawerIcon._.icon, this.renderDrawerIcon());
-    this.render($.title._.inner, this.label$);
+    this.render($.title._.text, this.label$);
     this.addSetup(this.setupHandleDrawerIconClick());
   }
 

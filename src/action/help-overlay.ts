@@ -1,18 +1,15 @@
-import { ArrayDiff, diffArray } from 'gs-tools/export/rxjs';
-import { elementWithTagType, instanceofType } from 'gs-types';
+import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { classToggle, element, innerHtml, NoopRenderSpec, onDom, PersonaContext, renderFromTemplate, RenderSpec, repeated } from 'persona';
+import { classToggle, element, onDom, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import template from './help-overlay.html';
-import { $helpService, ActionTrigger } from './help-service';
+import { $helpService } from './help-service';
 
 
 export const $ = {
-  content: element('content', instanceofType(HTMLTableSectionElement), {
-    rows: repeated('#content'),
-  }),
+  content: element('content', instanceofType(HTMLTableSectionElement), {}),
   root: element('root', instanceofType(HTMLDivElement), {
     click: onDom('click'),
     isVisibleClass: classToggle('isVisible'),
@@ -20,28 +17,19 @@ export const $ = {
   template: element('tableRow', instanceofType(HTMLTemplateElement), {}),
 };
 
-const $template = {
-  action: element('action', elementWithTagType('td'), {
-    inner: innerHtml(),
-  }),
-  trigger: element('trigger', elementWithTagType('td'), {
-    inner: innerHtml(),
-  }),
-};
-
 @_p.customElement({
   tag: 'pb-help-overlay',
   template,
+  api: {},
 })
 export class HelpOverlay extends ThemedCustomElementCtrl {
   private readonly helpService$ = $helpService.get(this.vine);
   private readonly onRootClick$ = this.declareInput($.root._.click);
-  private readonly tableRowTemplate$ = this.declareInput($.template);
 
   constructor(context: PersonaContext) {
     super(context);
-    this.render($.content._.rows, this.renderRows());
     this.render($.root._.isVisibleClass, this.renderIsVisible());
+    this.addSetup(this.setupTableRows());
     this.addSetup(this.setupHandleClick());
   }
 
@@ -52,41 +40,6 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
     );
   }
 
-  private renderRows(): Observable<ArrayDiff<RenderSpec>> {
-    return this.helpService$.pipe(
-        switchMap(service => service.actions$),
-        diffArray(),
-        withLatestFrom(this.tableRowTemplate$),
-        map(([diff, template]): ArrayDiff<RenderSpec> => {
-          switch (diff.type) {
-            case 'delete':
-              return {
-                type: 'delete',
-                index: diff.index,
-                value: new NoopRenderSpec(),
-              };
-            case 'init':
-              return {
-                type: 'init',
-                value: diff.value.map(action => renderRow(action, template)),
-              };
-            case 'insert':
-              return {
-                type: 'insert',
-                value: renderRow(diff.value, template),
-                index: diff.index,
-              };
-            case 'set':
-              return {
-                type: 'set',
-                value: renderRow(diff.value, template),
-                index: diff.index,
-              };
-          }
-        }),
-    );
-  }
-
   private setupHandleClick(): Observable<unknown> {
     return this.onRootClick$
         .pipe(
@@ -94,14 +47,25 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
             tap(([, service]) => service.hide()),
         );
   }
-}
 
-function renderRow(
-    {action, trigger}: ActionTrigger,
-    template: HTMLTemplateElement,
-): RenderSpec {
-  return renderFromTemplate(template)
-      .addOutput($template.trigger._.inner, trigger)
-      .addOutput($template.action._.inner, action.actionName)
-      .build();
+  private setupTableRows(): Observable<unknown> {
+    return this.helpService$.pipe(
+        switchMap(service => service.actions$),
+        withLatestFrom(this.declareInput($.content)),
+        tap(([actions, contentEl]) => {
+          contentEl.innerHTML = '';
+          for (const {action, trigger} of actions) {
+            const rowEl = document.createElement('tr');
+            const triggerEl = document.createElement('td');
+            triggerEl.textContent = trigger;
+            const actionEl = document.createElement('td');
+            actionEl.textContent = action.actionName;
+
+            rowEl.appendChild(triggerEl);
+            rowEl.appendChild(actionEl);
+            contentEl.appendChild(rowEl);
+          }
+        }),
+    );
+  }
 }

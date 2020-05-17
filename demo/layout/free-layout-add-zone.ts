@@ -1,5 +1,5 @@
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
-import { attributeOut, element, PersonaContext, stringParser } from 'persona';
+import { attributeOut, element, host, PersonaContext, stringParser } from 'persona';
 
 import template from './free-layout-add-zone.html';
 
@@ -13,7 +13,7 @@ export const $$ = {
 };
 
 const $ = {
-  host: element($$.api),
+  host: host($$.api),
   width: element('width', $textInput, {}),
   height: element('height', $textInput, {}),
 };

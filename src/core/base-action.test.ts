@@ -1,7 +1,8 @@
 import { Vine } from 'grapevine';
-import { assert, createSpySubject, run, should, test } from 'gs-testing';
+import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
 import { _v } from 'mask';
 import { integerParser } from 'persona';
+import { createFakeContext, PersonaTester, PersonaTesterEnvironment } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -37,13 +38,14 @@ class TestAction extends BaseAction<{value: number}> {
 
 test('@protoboard2/core/base-action', init => {
   const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
     const vine = _v.build('test');
 
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
 
     const action = new TestAction(vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 

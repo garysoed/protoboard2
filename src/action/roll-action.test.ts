@@ -1,6 +1,7 @@
-import { assert, run, should, test } from 'gs-testing';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 
 import { configure } from '../testing/component-tester';
 import { $random } from '../util/random';
@@ -11,6 +12,8 @@ import { RollAction } from './roll-action';
 
 test('@protoboard2/action/roll-action', init => {
   const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
+
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
 
@@ -18,7 +21,7 @@ test('@protoboard2/action/roll-action', init => {
     const seed = new FakeSeed();
     $random.set(vine, () => fromSeed(seed));
     const action = new RollAction({count: 3}, vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
 
     return {action, el, seed};

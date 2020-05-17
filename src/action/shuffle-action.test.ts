@@ -1,6 +1,7 @@
 import { assert, run, should, test } from 'gs-testing';
 import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 
 import { $random } from '../util/random';
 
@@ -24,7 +25,7 @@ test('@protoboard2/action/shuffle-action', () => {
     $random.set(vine, () => fromSeed(seed));
 
     const action = new ShuffleAction(vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
 
     action.trigger();

@@ -1,8 +1,8 @@
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, integerParser, mutationObservable, PersonaContext } from 'persona';
+import { attributeIn, element, host, integerParser, mutationObservable, PersonaContext } from 'persona';
 import { combineLatest, Observable, of as observableOf, Subscription } from 'rxjs';
-import { startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { startWith, switchMap, tap } from 'rxjs/operators';
 
 import template from './grid-layout.html';
 
@@ -28,7 +28,7 @@ export const $$ = {
 };
 
 export const $ = {
-  host: element($$.api),
+  host: host($$.api),
   rows: element('rows', instanceofType(HTMLDivElement), {}),
 };
 

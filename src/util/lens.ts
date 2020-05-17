@@ -1,6 +1,6 @@
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, onDom, PersonaContext } from 'persona';
+import { element, host, onDom, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
@@ -10,10 +10,11 @@ import template from './lens.html';
 
 export const $$ = {
   tag: 'pb-lens',
+  api: {},
 };
 
 export const $ = {
-  host: element({
+  host: host({
     onMouseOver: onDom('mouseover'),
     onMouseOut: onDom('mouseout'),
   }),

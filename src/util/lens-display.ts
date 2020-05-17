@@ -9,6 +9,7 @@ import { $lensService } from './lens-service';
 
 export const $$ = {
   tag: 'pb-lens-display',
+  api: {},
 };
 
 export const $ = {
@@ -29,7 +30,7 @@ export class LensDisplay extends ThemedCustomElementCtrl {
   private setupRenderContent(): Observable<unknown> {
     return $lensService.get(this.vine).pipe(
         switchMap(service => service.onNodes$),
-        withLatestFrom($.root.getValue(this.shadowRoot)),
+        withLatestFrom(this.declareInput($.root)),
         tap(([nodes, rootEl]) => {
           rootEl.innerHTML = '';
           if (!nodes) {

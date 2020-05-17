@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { Observable } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import { BaseAction } from '../../core/base-action';
 
@@ -23,11 +23,11 @@ export class SequenceAction extends BaseAction {
   }
 
   private setupActionTarget(): Observable<unknown> {
-    return this.actionTarget$
+    return this.actionContext$
         .pipe(
             tap(actionTarget => {
               for (const action of this.actions) {
-                action.setActionTarget(actionTarget);
+                action.setActionContext(actionTarget);
               }
             }),
         );

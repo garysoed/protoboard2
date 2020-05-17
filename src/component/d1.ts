@@ -13,6 +13,7 @@ import template from './d1.html';
 @_p.customElement({
   tag: 'pb-d1',
   template,
+  api: {},
 })
 export class D1 extends BaseComponent {
   constructor(context: PersonaContext) {

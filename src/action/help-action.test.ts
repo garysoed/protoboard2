@@ -1,6 +1,7 @@
 import { Vine } from 'grapevine';
 import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -35,7 +36,7 @@ test('@protoboard2/action/help-action', init => {
     const testAction = new TestAction(vine);
 
     const action = new HelpAction(new Map([[TRIGGER, testAction]]), vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
 
     return {action, el, testAction, vine};

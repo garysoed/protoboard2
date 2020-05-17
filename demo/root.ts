@@ -30,6 +30,7 @@ const $ = {
   ],
   tag: 'pbd-root',
   template,
+  api: {},
 })
 export class Root extends ThemedCustomElementCtrl {
   private readonly locationService$ = $locationService.get(this.vine);

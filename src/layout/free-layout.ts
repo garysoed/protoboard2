@@ -1,5 +1,5 @@
 import { _p } from 'mask';
-import { CustomElementCtrl, element, mutationObservable, PersonaContext } from 'persona';
+import { CustomElementCtrl, host, mutationObservable, PersonaContext } from 'persona';
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 import { map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -24,10 +24,11 @@ interface NodeWithPayload extends Node {
 
 export const $$ = {
   tag: 'pb-free-layout',
+  api: {},
 };
 
 const $ = {
-  host: element({}),
+  host: host({}),
 };
 
 @_p.customElement({

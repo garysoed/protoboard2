@@ -1,7 +1,7 @@
 import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
 import { _p, IconWithText, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, element, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
+import { attributeIn, booleanParser, element, host, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -12,6 +12,7 @@ import template from './drawer.html';
 
 
 export const $$ = {
+  tag: 'pbd-drawer',
   api: {
     drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
   },
@@ -22,7 +23,7 @@ const $ = {
   components: element('components', instanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
-  host: element($$.api),
+  host: host($$.api),
   layouts: element('layouts', instanceofType(HTMLDivElement), {
     contents: repeated('#contents'),
   }),
@@ -55,6 +56,7 @@ const ZONE_LINK_CONFIGS: LinkConfig[] = [
 ];
 
 @_p.customElement({
+  ...$$,
   configure: vine => {
     registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
   },
@@ -62,7 +64,6 @@ const ZONE_LINK_CONFIGS: LinkConfig[] = [
     IconWithText,
     TextIconButton,
   ],
-  tag: 'pbd-drawer',
   template,
 })
 export class Drawer extends ThemedCustomElementCtrl {

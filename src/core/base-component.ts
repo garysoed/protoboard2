@@ -1,5 +1,5 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, onDom, PersonaContext } from 'persona';
+import { element, host, onDom, PersonaContext } from 'persona';
 import { EMPTY, fromEvent, merge, Observable } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
@@ -8,13 +8,16 @@ import { HelpAction } from '../action/help-action';
 import { BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
 
-
-const $ = {
-  host: element({
+const $$ = {
+  api: {
     click: onDom('click'),
     mouseout: onDom('mouseout'),
     mouseover: onDom('mouseover'),
-  }),
+  },
+};
+
+const $ = {
+  host: host($$.api),
 };
 
 @_p.baseCustomElement({})
@@ -29,13 +32,13 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
   }
 
   private createTriggerClick(): Observable<unknown> {
-    return $.host._.click.getValue(this.shadowRoot);
+    return $.host._.click.getValue(this.context);
   }
 
   private createTriggerKey(specKey: string): Observable<unknown> {
     return merge(
-        $.host._.mouseout.getValue(this.shadowRoot).pipe(mapTo(false)),
-        $.host._.mouseover.getValue(this.shadowRoot).pipe(mapTo(true)),
+        this.declareInput($.host._.mouseout).pipe(mapTo(false)),
+        this.declareInput($.host._.mouseover).pipe(mapTo(true)),
     )
     .pipe(
         switchMap(hovered => {
@@ -52,7 +55,7 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
     allActions.set(TriggerSpec.QUESTION, helpAction);
 
     for (const [trigger, action] of allActions) {
-      action.setActionTarget(this.shadowRoot);
+      action.setActionContext(this.context);
       this.addSetup(this.setupTriggerFunction(action));
       this.addSetup(this.setupTrigger(trigger, action));
       this.addSetup(action.run());
@@ -72,7 +75,7 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
   }
 
   private setupTriggerFunction(action: BaseAction): Observable<unknown> {
-    return $.host.getValue(this.shadowRoot)
+    return this.declareInput($.host)
         .pipe(
             tap(hostEl => {
               Object.assign(hostEl, {[action.key]: () => {

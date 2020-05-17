@@ -1,7 +1,7 @@
 import { filterDefined, filterNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, classToggle, dispatcher, element, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
+import { attributeIn, classToggle, dispatcher, element, host, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -37,7 +37,7 @@ const $ = {
   addButton: element('addButton', elementWithTagType('mk-text-icon-button'), {
     onAddClick: onDom(ACTION_EVENT),
   }),
-  host: element($$.api),
+  host: host($$.api),
   layoutContent: element('layoutContent', instanceofType(HTMLDivElement), {
     content: single('#content'),
   }),
@@ -50,7 +50,7 @@ const $ = {
 };
 
 @_p.customElement({
-  tag: $$.tag,
+  ...$$,
   dependencies: [TextIconButton, DocTemplate],
   template,
 })

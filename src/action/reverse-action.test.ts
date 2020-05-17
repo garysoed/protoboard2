@@ -1,6 +1,7 @@
 import { assert, run, should, test } from 'gs-testing';
 import { arrayFrom } from 'gs-tools/export/collect';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 
 import { ReverseAction } from './reverse-action';
 
@@ -18,7 +19,7 @@ test('@protoboard2/action/reverse-action', () => {
       const shadowRoot = rootEl.attachShadow({mode: 'open'});
       const vine = _v.build('test');
       const action = new ReverseAction(vine);
-      action.setActionTarget(shadowRoot);
+      action.setActionContext(createFakeContext({shadowRoot}));
       run(action.run());
 
       action.trigger();

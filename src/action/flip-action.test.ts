@@ -1,5 +1,6 @@
 import { assert, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 
 import { configure } from '../testing/component-tester';
 
@@ -13,11 +14,12 @@ test('@protoboard2/action/flip-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const action = new FlipAction(2, 0, vine);
-    action.setActionTarget(shadowRoot);
+    const context = createFakeContext({shadowRoot});
+    action.setActionContext(context);
 
     run(action.run());
 
-    return {action, el, vine};
+    return {action, context, el, vine};
   });
 
   test('setup', () => {
@@ -30,7 +32,7 @@ test('@protoboard2/action/flip-action', init => {
       const shadowRoot = el.attachShadow({mode: 'open'});
       configure(el, _.action.key, new Map([['count', '4'], ['index', '10']]));
       const action = new FlipAction(2, 0, _.vine);
-      action.setActionTarget(shadowRoot);
+      action.setActionContext(createFakeContext({shadowRoot}));
       run(action.run());
 
       assert(el.getAttribute($face.currentFaceOut.attrName)).to.equal('2');
@@ -52,6 +54,7 @@ test('@protoboard2/action/flip-action', init => {
 
     should(`wrap the face index by the count`, () => {
       _.action.trigger();
+      _.context.onAttributeChanged$.next({attrName: $face.currentFaceIn.attrName});
       _.action.trigger();
 
       assert(_.el.getAttribute($face.currentFaceOut.attrName)).to.equal('0');
@@ -59,6 +62,7 @@ test('@protoboard2/action/flip-action', init => {
 
     should(`handle the value if changed by other action`, () => {
       _.el.setAttribute($face.currentFaceOut.attrName, '5');
+      _.context.onAttributeChanged$.next({attrName: $face.currentFaceOut.attrName});
 
       _.action.trigger();
 

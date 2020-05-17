@@ -12,6 +12,7 @@ import template from './slot.html';
     SlotImpl,
     ZoneTemplate,
   ],
+  api: {},
 })
 export class Slot extends ThemedCustomElementCtrl {
 

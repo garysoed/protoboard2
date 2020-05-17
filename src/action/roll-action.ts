@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { element, integerParser } from 'persona';
+import { element, host, integerParser } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import { $face } from './face';
 
 
 const $ = {
-  host: element($face),
+  host: host($face),
 };
 
 interface Config {
@@ -49,7 +49,7 @@ export class RollAction extends BaseAction<Config> {
         );
 
 
-    return this.actionTarget$
+    return this.actionContext$
         .pipe(
             switchMap(shadowRoot => {
               return newValue$.pipe($.host._.currentFaceOut.output(shadowRoot));

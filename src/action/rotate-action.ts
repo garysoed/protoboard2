@@ -2,7 +2,7 @@ import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { identity } from 'nabu';
-import { element, integerParser, listParser } from 'persona';
+import { element, host, integerParser, listParser } from 'persona';
 import { combineLatest, merge, Observable, Subject } from 'rxjs';
 import { filter, map, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -55,9 +55,9 @@ export class RotateAction extends BaseAction<Config> {
   }
 
   private setupHandleRotation(): Observable<unknown> {
-    const host$ = this.actionTarget$.pipe(
+    const host$ = this.actionContext$.pipe(
         switchMap(shadowRoot => {
-          return element({}).getValue(shadowRoot);
+          return host({}).getValue(shadowRoot);
         }),
         filter((el): el is HTMLElement => el instanceof HTMLElement),
     );

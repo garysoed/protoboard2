@@ -1,5 +1,6 @@
 import { assert, createSpy, run, should, Spy, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 
 import { BatchAction } from './batch-action';
 
@@ -32,7 +33,7 @@ test('@protoboard2/action/util/batch-action', init => {
       const shadowRoot = rootEl.attachShadow({mode: 'open'});
       const vine = _v.build('test');
       const action = new BatchAction(ACTION_KEY, 'Batch test', vine);
-      action.setActionTarget(shadowRoot);
+      action.setActionContext(createFakeContext({shadowRoot}));
       run(action.run());
 
       action.trigger();
@@ -54,7 +55,7 @@ test('@protoboard2/action/util/batch-action', init => {
       const shadowRoot = rootEl.attachShadow({mode: 'open'});
       const vine = _v.build('test');
       const action = new BatchAction(ACTION_KEY, 'Batch test', vine);
-      action.setActionTarget(shadowRoot);
+      action.setActionContext(createFakeContext({shadowRoot}));
       run(action.run());
 
       action.trigger();

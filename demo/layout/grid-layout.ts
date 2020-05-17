@@ -13,7 +13,11 @@ import template from './grid-layout.html';
 const $ = {
   column: element('column', elementWithTagType('mk-text-input'), api($textInput.api)),
   row: element('row', elementWithTagType('mk-text-input'), api($textInput.api)),
-  template: element('template', elementWithTagType('pbd-layout-template'), api($layoutTemplate)),
+  template: element(
+      'template',
+      elementWithTagType('pbd-layout-template'),
+      api($layoutTemplate.api),
+  ),
 };
 
 @_p.customElement({
@@ -24,6 +28,7 @@ const $ = {
   ],
   tag: 'pbd-grid-layout',
   template,
+  api: {},
 })
 export class GridLayout extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {

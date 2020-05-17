@@ -1,5 +1,5 @@
 import { _p } from 'mask';
-import { element, PersonaContext } from 'persona';
+import { host, PersonaContext } from 'persona';
 
 import { DropAction } from '../action/drop-action';
 import { KEY as FLIP_ACTION_KEY } from '../action/flip-action';
@@ -15,12 +15,13 @@ import template from './deck.html';
 
 
 const $ = {
-  host: element({}),
+  host: host({}),
 };
 
 @_p.customElement({
   tag: 'pb-deck',
   template,
+  api: {},
 })
 export class Deck extends BaseComponent {
   constructor(context: PersonaContext) {
@@ -38,7 +39,7 @@ export class Deck extends BaseComponent {
                 context.vine,
             ),
           ],
-          [TriggerSpec.D, new DropAction($.host.getValue(context.shadowRoot), context.vine)],
+          [TriggerSpec.D, new DropAction($.host.getValue(context), context.vine)],
           [TriggerSpec.S, new ShuffleAction(context.vine)],
         ]),
         context,

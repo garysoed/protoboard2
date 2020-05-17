@@ -1,5 +1,6 @@
-import { assert, run, should, test } from 'gs-testing';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 
 import { RotateAction } from './rotate-action';
 
@@ -15,11 +16,16 @@ test('@protoboard2/action/rotate-action', init => {
     const vine = _v.build('test');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const action = new RotateAction(index, stops, vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
     run(action.run());
 
     return {action, el};
   }
+
+  init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
+    return {};
+  });
 
   test('onConfig', () => {
     should(`change the index when updated`, () => {

@@ -1,24 +1,27 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, PersonaContext, stringParser } from 'persona';
+import { attributeIn, element, host, PersonaContext, stringParser } from 'persona';
 
 import template from './component-template.html';
 import { $$ as $docTemplate, DocTemplate } from './doc-template';
 
 
 const $$ = {
-  label: attributeIn('label', stringParser(), ''),
+  tag: 'pbd-component-template',
+  api: {
+    label: attributeIn('label', stringParser(), ''),
+  },
 };
 
 const $ = {
-  host: element($$),
+  host: host($$.api),
   template: element('template', $docTemplate, {}),
 };
 
 @_p.customElement({
+  ...$$,
   dependencies: [
     DocTemplate,
   ],
-  tag: 'pbd-component-template',
   template,
 })
 export class ComponentTemplate extends ThemedCustomElementCtrl {

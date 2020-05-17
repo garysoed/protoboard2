@@ -1,6 +1,6 @@
 import { Vine } from 'grapevine';
 import { $textIconButton, _p, ACTION_EVENT, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, onDom, PersonaContext, stringParser } from 'persona';
+import { attributeIn, dispatcher, element, host, onDom, PersonaContext, stringParser } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -21,24 +21,27 @@ export class SetLayoutEvent extends Event {
 }
 
 export const $$ = {
-  onSetLayout: dispatcher<SetLayoutEvent>(SET_LAYOUT_EVENT),
-  label: attributeIn('label', stringParser(), ''),
+  tag: 'pbd-layout-template',
+  api: {
+    onSetLayout: dispatcher<SetLayoutEvent>(SET_LAYOUT_EVENT),
+    label: attributeIn('label', stringParser(), ''),
+  },
 };
 
 const $ = {
   setLayoutButton: element('setLayout', $textIconButton, {
     onAddClick: onDom(ACTION_EVENT),
   }),
-  host: element($$),
+  host: host($$.api),
   template: element('template', $docTemplate, {}),
 };
 
 @_p.customElement({
+  ...$$,
   dependencies: [
     DocTemplate,
     TextIconButton,
   ],
-  tag: 'pbd-layout-template',
   template,
   configure(vine: Vine): void {
     registerSvg(vine, 'add', {type: 'embed', content: addSvg});

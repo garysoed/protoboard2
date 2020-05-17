@@ -1,4 +1,5 @@
 import { assert, run, should, test } from 'gs-testing';
+import { $asArray, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map, switchMap, take, tap } from 'rxjs/operators';
@@ -46,15 +47,15 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      const nodes$ = _.tester.getNodesAfter($.content._.rows);
+      const nodes$ = _.tester.getElement($.content).pipe(map(el => arrayFrom(el.children)));
       const triggers$ = nodes$.pipe(
           map(nodes => {
-            return (nodes[0] as HTMLElement).querySelector('#trigger')!.innerHTML;
+            return (nodes[0] as HTMLElement).children.item(0)?.textContent;
           }),
       );
       const actions$ = nodes$.pipe(
           map(nodes => {
-            return (nodes[0] as HTMLElement).querySelector('#action')!.innerHTML;
+            return (nodes[0] as HTMLElement).children.item(1)?.textContent;
           }),
       );
 
@@ -72,8 +73,15 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      const nodes$ = _.tester.getNodesAfter($.content._.rows)
-          .pipe(map(nodes => nodes.filter(node => node instanceof HTMLElement).length));
+      const nodes$ = _.tester.getElement($.content).pipe(
+          map(el => {
+            return $pipe(
+                arrayFrom(el.children),
+                $filter(node => node instanceof HTMLElement),
+                $asArray(),
+            ).length;
+          }),
+      );
       assert(nodes$).to.emitWith(0);
     });
   });

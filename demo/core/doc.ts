@@ -1,4 +1,3 @@
-import { Vine } from 'grapevine';
 import { mapNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
@@ -36,6 +35,7 @@ const $ = {
   ],
   tag: 'pbd-doc',
   template,
+  api: {},
 })
 export class Doc extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {

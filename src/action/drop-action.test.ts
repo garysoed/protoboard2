@@ -1,5 +1,6 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
@@ -14,7 +15,7 @@ test('@protoboard2/action/drop-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
     const action = new DropAction(parentNode$, vine);
-    action.setActionTarget(shadowRoot);
+    action.setActionContext(createFakeContext({shadowRoot}));
 
     run(action.run());
 

@@ -37,6 +37,7 @@ const $ = {
   ],
   tag: 'pbd-d2',
   template,
+  api: {},
 })
 export class D2 extends ThemedCustomElementCtrl {
   private readonly createEl$ = this.declareInput($.create);
@@ -115,7 +116,7 @@ export class D2 extends ThemedCustomElementCtrl {
               return this.selectedIcon$
                   .pipe(
                       map(icon => `${icon}-${suffix}`),
-                      output.output(this.shadowRoot),
+                      output.output(this.context),
                   );
             }),
         );
