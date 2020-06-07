@@ -1,5 +1,5 @@
-import { filterDefined, filterNonNull } from 'gs-tools/export/rxjs';
-import { elementWithTagType, instanceofType } from 'gs-types';
+import { filterByType, filterDefined, filterNonNull } from 'gs-tools/export/rxjs';
+import { elementWithTagType, instanceofType, stringType, tupleOfType } from 'gs-types';
 import { $textInput, _p, ACTION_EVENT, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, classToggle, dispatcher, element, host, onDom, PersonaContext, RenderSpec, SimpleElementRenderSpec, single, stringParser } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
@@ -99,13 +99,17 @@ export class ZoneTemplate extends ThemedCustomElementCtrl {
     return this.declareInput($.addButton._.onAddClick)
         .pipe(
             withLatestFrom(
-                this.layoutSpec$,
-                this.declareInput($.layoutContent),
-                this.declareInput($.host._.tag).pipe(filterDefined()),
                 this.declareInput($.x._.value),
                 this.declareInput($.y._.value),
+                this.declareInput($.host._.tag),
             ),
-            map(([, layoutSpec, layoutContentEl, tag, x, y]) => {
+            map(([, x, y, tag]) => [x, y, tag]),
+            filterByType(tupleOfType([stringType, stringType, stringType])),
+            withLatestFrom(
+                this.layoutSpec$,
+                this.declareInput($.layoutContent),
+            ),
+            map(([[x, y, tag], layoutSpec, layoutContentEl]) => {
               return {
                 tag,
                 attr: new Map([

@@ -55,7 +55,6 @@ test('@protoboard2/core/base-component', init => {
           shadowRoot,
           vine,
           onAttributeChanged$: new Subject<AttributeChangedEvent>(),
-          onDisconnect$: new ReplaySubject<void>(1),
         },
     );
     run(component.run());

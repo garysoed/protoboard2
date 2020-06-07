@@ -44,6 +44,10 @@ export class GridLayout extends ThemedCustomElementCtrl {
                 this.declareInput($.row._.value),
             ),
             tap(([event, column, row]) => {
+              if (typeof column !== 'string' || typeof row !== 'string') {
+                return;
+              }
+
               event.setLayout({
                 addZoneTag: null,
                 attr: new Map([

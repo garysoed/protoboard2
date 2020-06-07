@@ -1,5 +1,8 @@
+import { filterByType } from 'gs-tools/export/rxjs';
+import { stringType } from 'gs-types';
 import { $textInput, _p, TextInput, ThemedCustomElementCtrl } from 'mask';
 import { attributeOut, element, host, PersonaContext, stringParser } from 'persona';
+import { Observable } from 'rxjs';
 
 import template from './free-layout-add-zone.html';
 
@@ -29,8 +32,16 @@ export class FreeLayoutAddZone extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.host._.height, this.declareInput($.height._.value));
-    this.render($.host._.width, this.declareInput($.width._.value));
+    this.render($.host._.height, this.renderHeight());
+    this.render($.host._.width, this.renderWidth());
+  }
+
+  private renderHeight(): Observable<string> {
+    return this.declareInput($.height._.value).pipe(filterByType(stringType));
+  }
+
+  private renderWidth(): Observable<string> {
+    return this.declareInput($.width._.value).pipe(filterByType(stringType));
   }
 }
 
