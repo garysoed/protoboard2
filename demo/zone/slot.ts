@@ -1,6 +1,6 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
-import { Slot as SlotImpl } from '../../src/zone/slot';
+import { Slot as SlotImpl } from '../../src-old/zone/slot';
 import { ZoneTemplate } from '../template/zone-template';
 
 import template from './slot.html';

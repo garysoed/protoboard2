@@ -5,7 +5,7 @@ import { api, element, mutationObservable, onDom, PersonaContext } from 'persona
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { D1 as D1Impl } from '../../src/component/d1';
+import { D1 as D1Impl } from '../../src-old/component/d1';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';

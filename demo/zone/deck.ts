@@ -1,6 +1,6 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
-import { Deck as DeckImpl } from '../../src/zone/deck';
+import { Deck as DeckImpl } from '../../src-old/zone/deck';
 import { ZoneTemplate } from '../template/zone-template';
 
 import template from './deck.html';

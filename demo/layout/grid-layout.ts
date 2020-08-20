@@ -4,7 +4,7 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src/layout/grid-layout';
+import { $$ as $gridLayout, GridLayout as GridLayoutImpl } from '../../src-old/layout/grid-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import template from './grid-layout.html';

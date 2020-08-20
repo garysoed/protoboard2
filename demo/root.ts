@@ -4,8 +4,8 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { HelpOverlay } from '../src/action/help-overlay';
-import { PickHand } from '../src/action/pick-hand';
+import { HelpOverlay } from '../src-old/action/help-overlay';
+import { PickHand } from '../src-old/action/pick-hand';
 
 import { Doc } from './core/doc';
 import { $$ as $drawer, Drawer } from './core/drawer';

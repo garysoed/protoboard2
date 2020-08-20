@@ -6,7 +6,7 @@ import { api, element, mutationObservable, onDom, PersonaContext } from 'persona
 import { Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { D2 as D2Impl } from '../../src/component/d2';
+import { D2 as D2Impl } from '../../src-old/component/d2';
 import cardBack from '../asset/card_back.svg';
 import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';

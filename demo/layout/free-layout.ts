@@ -4,7 +4,7 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { $$ as $freeLayout, FreeLayout as FreeLayoutImpl } from '../../src/layout/free-layout';
+import { $$ as $freeLayout, FreeLayout as FreeLayoutImpl } from '../../src-old/layout/free-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import { FreeLayoutAddZone, getZoneAttr } from './free-layout-add-zone';
