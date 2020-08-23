@@ -1,0 +1,5 @@
+{
+  "/icon.svg": "./asset/icon.svg",
+  "/bin/*": "../out/$0",
+  "/*": "main.html"
+}
