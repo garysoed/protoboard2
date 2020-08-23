@@ -3,7 +3,7 @@ import { $window } from 'mask';
 import { fromPattern, LocationService } from 'persona';
 
 export enum Views {
-//   D1 = 'd1',
+  D1 = 'd1',
 //   D2 = 'd2',
 //   DECK = 'de',
 //   FREE_LAYOUT = 'fl',
@@ -16,7 +16,7 @@ const ROUTE_SPEC = {
   [Views.INSTRUCTION]: fromPattern('/', {}),
   // [Views.FREE_LAYOUT]: fromPattern('/freelayout', {}),
   // [Views.GRID_LAYOUT]: fromPattern('/gridlayout', {}),
-  // [Views.D1]: fromPattern('/d1', {}),
+  [Views.D1]: fromPattern('/d1', {}),
   // [Views.D2]: fromPattern('/d2', {}),
   // [Views.DECK]: fromPattern('/deck', {}),
   // [Views.SLOT]: fromPattern('/slot', {}),

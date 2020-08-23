@@ -1,17 +1,17 @@
 import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
-import { _p, IconWithText, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, element, host, onDom, PersonaContext, RenderSpec, repeated, SimpleElementRenderSpec } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
+import { $textIconButton, _p, IconWithText, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement } from 'persona';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
-import { $locationService, Views } from '../location-service';
 
 import template from './drawer.html';
+import { $locationService, Views } from './location-service';
 
 
-export const $$ = {
+export const $drawer = {
   tag: 'pbd-drawer',
   api: {
     drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
@@ -20,18 +20,18 @@ export const $$ = {
 
 
 const $ = {
-  components: element('components', instanceofType(HTMLDivElement), {
-    contents: repeated('#contents'),
-  }),
-  host: host($$.api),
+  host: host($drawer.api),
   layouts: element('layouts', instanceofType(HTMLDivElement), {
-    contents: repeated('#contents'),
+    contents: multi('#contents'),
+  }),
+  pieces: element('pieces', instanceofType(HTMLDivElement), {
+    contents: multi('#contents'),
   }),
   root: element('root', instanceofType(HTMLDivElement), {
     onClick: onDom('click'),
   }),
   zones: element('zones', instanceofType(HTMLDivElement), {
-    contents: repeated('#contents'),
+    contents: multi('#contents'),
   }),
 };
 
@@ -40,23 +40,23 @@ interface LinkConfig {
   path: Views;
 }
 
-const COMPONENT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'D1', path: Views.D1},
-  {label: 'D2', path: Views.D2},
+const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
+  // {label: 'Free', path: Views.FREE_LAYOUT},
+  // {label: 'Grid', path: Views.GRID_LAYOUT},
 ];
 
-const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Free', path: Views.FREE_LAYOUT},
-  {label: 'Grid', path: Views.GRID_LAYOUT},
+const PIECE_LINK_CONFIGS: LinkConfig[] = [
+  {label: 'D1', path: Views.D1},
+  // {label: 'D2', path: Views.D2},
 ];
 
 const ZONE_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Deck', path: Views.DECK},
-  {label: 'Slot', path: Views.SLOT},
+  // {label: 'Deck', path: Views.DECK},
+  // {label: 'Slot', path: Views.SLOT},
 ];
 
 @_p.customElement({
-  ...$$,
+  ...$drawer,
   configure: vine => {
     registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
   },
@@ -72,10 +72,25 @@ export class Drawer extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.components._.contents, observableOf(createRepeatedSpecs(COMPONENT_LINK_CONFIGS)));
-    this.render($.layouts._.contents, observableOf(createRepeatedSpecs(LAYOUT_LINK_CONFIGS)));
-    this.render($.zones._.contents, observableOf(createRepeatedSpecs(ZONE_LINK_CONFIGS)));
+    this.render($.layouts._.contents, this.createNodes(LAYOUT_LINK_CONFIGS));
+    this.render($.pieces._.contents, this.createNodes(PIECE_LINK_CONFIGS));
+    this.render($.zones._.contents, this.createNodes(ZONE_LINK_CONFIGS));
     this.addSetup(this.setupRootOnClick());
+  }
+
+  private createNodes(linkConfig: readonly LinkConfig[]): Observable<readonly Node[]> {
+    const node$list = linkConfig.map(({label, path}) => {
+      return renderCustomElement(
+          $textIconButton,
+          {
+            inputs: {label: observableOf(label)},
+            attrs: new Map([['path', observableOf(path)]]),
+          },
+          this.context,
+      );
+    });
+
+    return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
   }
 
   private setupRootOnClick(): Observable<unknown> {
@@ -96,18 +111,4 @@ export class Drawer extends ThemedCustomElementCtrl {
             }),
         );
   }
-}
-
-function createRepeatedSpecs(linkConfig: LinkConfig[]): ArrayDiff<RenderSpec> {
-  const specs: RenderSpec[] = linkConfig.map(({label, path}) => {
-    return new SimpleElementRenderSpec(
-        'mk-text-icon-button',
-        observableOf(new Map([['label', label], ['path', path]])),
-    );
-  });
-
-  return {
-    type: 'init',
-    value: specs,
-  };
 }

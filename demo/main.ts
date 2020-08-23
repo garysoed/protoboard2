@@ -10,7 +10,7 @@ const iconConfigs: Map<string, string> = new Map([
 ]);
 
 window.addEventListener('load', () => {
-  const theme = new Theme(document, Palette.GREY, Palette.YELLOW);
+  const theme = new Theme(document, Palette.GREY, Palette.LIME);
   const {vine} = start(
       'protoboard',
       [Root],
