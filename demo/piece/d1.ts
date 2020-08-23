@@ -2,15 +2,17 @@ import { cache } from 'gs-tools/export/data';
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { api, element, mutationObservable, onDom, PersonaContext } from 'persona';
-import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { D1 as D1Impl } from '../../src/piece/d1';
+import { registerStateHandler } from '../../src/state/register-state-handler';
+import { addObject } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { PieceTemplate } from '../template/piece-template';
+import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
 
@@ -25,7 +27,11 @@ const $ = {
   customize: element('customize', elementWithTagType('section'), {
     onClick: onDom('click'),
   }),
+  previewIcon: element('previewIcon', $icon, {}),
+  template: element('template', $pieceTemplate, {}),
 };
+
+const D1_PREVIEW_TYPE = 'preview-d1';
 
 @_p.customElement({
   ...$d1,
@@ -33,6 +39,26 @@ const $ = {
     registerSvg(vine, 'meeple', {type: 'embed', content: meepleSvg});
     registerSvg(vine, 'coin', {type: 'embed', content: coinSvg});
     registerSvg(vine, 'gem', {type: 'embed', content: gemSvg});
+
+    registerStateHandler(
+        D1_PREVIEW_TYPE,
+        (state, context) => {
+          const icon$ = renderCustomElement(
+              $icon,
+              {inputs: {icon: state.payload.get('icon')}},
+              context,
+          );
+          return renderCustomElement(
+              $d1,
+              {children: icon$.pipe(map(el => [el]))},
+              context,
+          );
+        },
+        vine,
+    );
+    addObject({type: D1_PREVIEW_TYPE, id: '1', payload: {icon: 'meeple'}}, vine);
+    addObject({type: D1_PREVIEW_TYPE, id: '2', payload: {icon: 'coin'}}, vine);
+    addObject({type: D1_PREVIEW_TYPE, id: '3', payload: {icon: 'gem'}}, vine);
   },
   dependencies: [
     PieceTemplate,
@@ -42,27 +68,13 @@ const $ = {
   template,
 })
 export class D1 extends ThemedCustomElementCtrl {
-  private readonly createEl$ = this.declareInput($.create);
-  private readonly pieceEl$ = this.createPieceEl();
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
   constructor(context: PersonaContext) {
     super(context);
     this.addSetup(this.handleOnCustomizeClick$);
-    this.addSetup(this.handleSelectedIcon$);
-    this.addSetup(this.handlePieceRemoved$);
-  }
-
-  private createPieceEl(): Observable<HTMLElement|null> {
-    return this.createEl$.pipe(
-        switchMap(createEl => mutationObservable(createEl, {childList: true})
-            .pipe(
-                mapTo(createEl),
-                startWith(createEl),
-            ),
-        ),
-        map(createEl => createEl.querySelector('pb-d1 mk-icon')),
-    );
+    this.render($.previewIcon._.icon, this.selectedIcon$);
+    this.addSetup(this.handleOnPieceAdd$);
   }
 
   @cache()
@@ -87,29 +99,12 @@ export class D1 extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get handlePieceRemoved$(): Observable<unknown> {
-    return this.pieceEl$
-        .pipe(
-            filter(piece => piece === null),
-            withLatestFrom(this.createEl$),
-            tap(([, createEl]) => {
-              const pieceEl = document.createElement('pb-d1');
-              const iconEl = document.createElement('mk-icon');
-              pieceEl.appendChild(iconEl);
-              createEl.appendChild(pieceEl);
-            }),
-        );
-  }
-
-  @cache()
-  private get handleSelectedIcon$(): Observable<unknown> {
-    return this.pieceEl$
-        .pipe(
-            filterNonNull(),
-            switchMap(iconEl => {
-              const output = api($icon.api).icon.resolve(() => observableOf(iconEl));
-              return this.selectedIcon$.pipe(output.output(this.context));
-            }),
-        );
+  private get handleOnPieceAdd$(): Observable<unknown> {
+    return this.declareInput($.template._.onAdd).pipe(
+        withLatestFrom(this.selectedIcon$),
+        tap(([, icon]) => {
+          addObject({type: D1_PREVIEW_TYPE, id: '1', payload: {icon}}, this.vine);
+        }),
+    );
   }
 }

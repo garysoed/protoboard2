@@ -1,14 +1,21 @@
 import { _p } from 'mask';
-import { PersonaContext } from 'persona';
+import { PersonaContext, renderCustomElement } from 'persona';
+import { Observable } from 'rxjs';
 
-// import { PickAction } from '../action/pick-action';
-// import { RotateAction } from '../action/rotate-action';
 import { BaseAction } from '../core/base-action';
 import { BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { State } from '../state/state';
 
 import template from './d1.html';
 
+// import { PickAction } from '../action/pick-action';
+// import { RotateAction } from '../action/rotate-action';
+
+export const $d1 = {
+  tag: 'pb-d1',
+  api: {},
+};
 
 @_p.customElement({
   tag: 'pb-d1',

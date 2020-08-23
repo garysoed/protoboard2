@@ -1,4 +1,5 @@
 import { source, Vine } from 'grapevine';
+import { PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 
 import { State } from './state';
@@ -8,7 +9,7 @@ import { State } from './state';
  *
  * @thHidden
  */
-export type OnCreateFn = (state: State) => Observable<Node>;
+export type OnCreateFn = (state: State, context: PersonaContext) => Observable<Node>;
 
 export const $stateHandlers = source<ReadonlyMap<string, OnCreateFn>>(() => new Map());
 
@@ -19,6 +20,8 @@ export const $stateHandlers = source<ReadonlyMap<string, OnCreateFn>>(() => new 
  * @param onCreate - Function called when creating the object corresponding to this state.
  * @param vine - The Vine object.
  * @thModule core
+ *
+ * TODO: Should take custom element spec.
  */
 export function registerStateHandler(
     type: string,

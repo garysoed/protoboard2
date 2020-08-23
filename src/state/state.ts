@@ -18,6 +18,7 @@ export interface State {
 
   /**
    * Used to generate the object.
+   * TODO: Remove the any
    */
-  readonly payload: ReadonlyMap<string, Observable<unknown>>;
+  readonly payload: ReadonlyMap<string, Observable<any>>;
 }

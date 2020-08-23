@@ -46,7 +46,7 @@ export class Render extends ThemedCustomElementCtrl {
           if (!objectId) {
             return observableOf(null);
           }
-          return stateService.getObject(objectId) || observableOf(null);
+          return stateService.getObject(objectId, this.context) || observableOf(null);
         }),
         assertNonNull(),
     );

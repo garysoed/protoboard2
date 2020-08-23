@@ -1,6 +1,7 @@
 import { source, stream, Vine } from 'grapevine';
 import { $asMap, $filterNonNull, $map, $pipe, $recordToMap } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
+import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,17 +12,41 @@ import { State } from './state';
 
 const $statesRaw = source<readonly SavedState[]>(() => []);
 
+class ObjectCache {
+  private object: Observable<Node>|null = null;
+
+  constructor(
+      private readonly fn: OnCreateFn,
+      private readonly state: State,
+  ) { }
+
+  getOrCreate(context: PersonaContext): Observable<Node> {
+    if (this.object) {
+      return this.object;
+    }
+
+    const object = this.fn(this.state, context);
+    this.object = object;
+    return object;
+  }
+}
+
 export class StateService {
   constructor(
       private readonly stateHandlers: ReadonlyMap<string, OnCreateFn>,
       private readonly statesRaw: readonly SavedState[]) { }
 
-  getObject(id: string): Observable<Node>|null {
-    return this.objectsMap.get(id) || null;
+  getObject(id: string, context: PersonaContext): Observable<Node>|null {
+    const cache = this.objectCachesMap.get(id);
+    if (!cache) {
+      return null;
+    }
+
+    return cache.getOrCreate(context);
   }
 
   @cache()
-  private get objectsMap(): ReadonlyMap<string, Observable<Node>> {
+  private get objectCachesMap(): ReadonlyMap<string, ObjectCache> {
     return $pipe(
         this.statesMap,
         $map(([id, state]) => {
@@ -30,7 +55,7 @@ export class StateService {
             return null;
           }
 
-          return [id, handler(state)] as [string, Observable<Node>];
+          return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
         }),
         $filterNonNull(),
         $asMap(),
@@ -73,6 +98,10 @@ export const $stateService = stream(
 );
 
 
-export function setState(states: readonly SavedState[], vine: Vine): void {
-  $statesRaw.set(vine, () => states);
+export function addObject(state: SavedState, vine: Vine): void {
+  $statesRaw.set(vine, states => [...states, state]);
+}
+
+export function clearObjects(vine: Vine): void {
+  $statesRaw.set(vine, () => []);
 }
