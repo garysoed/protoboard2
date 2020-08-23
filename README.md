@@ -33,16 +33,12 @@ On setup, user must register a mapping from state to object:
 ```typescript
 function registerStateHandler(
     type: string,
-    onCreate: (id: string, payload: ReadonlyMap<string, unknown>) => HTMLElement,
-    onMutate: (object: HTMLElement, payload: ReadonlyMap<string, unknown>) => void,
+    onCreate: (id: string, payload: ReadonlyMap<string, unknown>) => Observable<Node>,
 ): void;
 ```
 
 `onCreate` will only be called **once** - at the start of the game. For the rest of the game, no
 object will ever be destroyed.
-
-`onMutate` will be called every time the state related to the object changes. This function is
-expected to update the object's state in response to the payload.
 
 ## Rendering
 
