@@ -2,7 +2,7 @@ import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, PersonaContext, stringParser } from 'persona';
 
 import template from './component-template.html';
-import { $$ as $docTemplate, DocTemplate } from './doc-template';
+import { $docTemplate as $docTemplate, DocTemplate } from './doc-template';
 
 
 const $$ = {
@@ -25,11 +25,9 @@ const $ = {
   template,
 })
 export class ComponentTemplate extends ThemedCustomElementCtrl {
-  private readonly label$ = this.declareInput($.host._.label);
-
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.template._.label, this.label$);
+    this.render($.template._.label, this.declareInput($.host._.label));
   }
 }

@@ -5,8 +5,8 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { HelpOverlay } from '../src-old/action/help-overlay';
-import { PickHand } from '../src-old/action/pick-hand';
+// import { HelpOverlay } from '../src-old/action/help-overlay';
+// import { PickHand } from '../src-old/action/pick-hand';
 
 import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';
@@ -26,8 +26,8 @@ const $ = {
   dependencies: [
     Documentation,
     Drawer,
-    HelpOverlay,
-    PickHand,
+    // HelpOverlay,
+    // PickHand,
     // PlayArea,
     RootLayout,
   ],
@@ -38,12 +38,12 @@ const $ = {
 export class Root extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
-    this.addSetup(this.onRootActive$);
+    this.addSetup(this.handleOnRootActive$);
     this.render($.drawer._.drawerExpanded, this.declareInput($.root._.drawerExpanded));
   }
 
   @cache()
-  private get onRootActive$(): Observable<unknown> {
+  private get handleOnRootActive$(): Observable<unknown> {
     return this.declareInput($.root._.onTitleClick)
         .pipe(
             withLatestFrom($locationService.get(this.vine)),

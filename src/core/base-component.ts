@@ -3,7 +3,7 @@ import { element, host, onDom, PersonaContext } from 'persona';
 import { EMPTY, fromEvent, merge, Observable } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
-import { HelpAction } from '../action/help-action';
+// import { HelpAction } from '../action/help-action';
 
 import { BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
@@ -51,8 +51,9 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
 
   private setupActions(): void {
     const allActions: Map<TriggerSpec, BaseAction> = new Map(this.triggerActionMap);
-    const helpAction = new HelpAction(this.triggerActionMap, this.vine);
-    allActions.set(TriggerSpec.QUESTION, helpAction);
+    // TODO
+    // const helpAction = new HelpAction(this.triggerActionMap, this.vine);
+    // allActions.set(TriggerSpec.QUESTION, helpAction);
 
     for (const [trigger, action] of allActions) {
       action.setActionContext(this.context);

@@ -1,3 +1,4 @@
+import { cache } from 'gs-tools/export/data';
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
@@ -5,7 +6,7 @@ import { api, element, mutationObservable, onDom, PersonaContext } from 'persona
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { D1 as D1Impl } from '../../src-old/component/d1';
+import { D1 as D1Impl } from '../../src/piece/d1';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
@@ -13,6 +14,11 @@ import { ComponentTemplate } from '../template/component-template';
 
 import template from './d1.html';
 
+
+export const $d1 = {
+  tag: 'pbd-d1',
+  api: {},
+};
 
 const $ = {
   create: element('create', elementWithTagType('section'), {}),
@@ -22,6 +28,7 @@ const $ = {
 };
 
 @_p.customElement({
+  ...$d1,
   configure: vine => {
     registerSvg(vine, 'meeple', {type: 'embed', content: meepleSvg});
     registerSvg(vine, 'coin', {type: 'embed', content: coinSvg});
@@ -32,21 +39,18 @@ const $ = {
     Icon,
     D1Impl,
   ],
-  tag: 'pbd-d1',
   template,
-  api: {},
 })
 export class D1 extends ThemedCustomElementCtrl {
   private readonly createEl$ = this.declareInput($.create);
-  private readonly onCustomizeClick$ = this.declareInput($.customize._.onClick);
   private readonly pieceEl$ = this.createPieceEl();
   private readonly selectedIcon$ = new BehaviorSubject<string>('meeple');
 
   constructor(context: PersonaContext) {
     super(context);
-    this.addSetup(this.setupHandleCustomizeClick());
-    this.addSetup(this.setupHandleSelectedIcon());
-    this.addSetup(this.setupHandlePieceRemoved());
+    this.addSetup(this.handleOnCustomizeClick$);
+    this.addSetup(this.handleSelectedIcon$);
+    this.addSetup(this.handlePieceRemoved$);
   }
 
   private createPieceEl(): Observable<HTMLElement|null> {
@@ -61,8 +65,9 @@ export class D1 extends ThemedCustomElementCtrl {
     );
   }
 
-  private setupHandleCustomizeClick(): Observable<unknown> {
-    return this.onCustomizeClick$
+  @cache()
+  private get handleOnCustomizeClick$(): Observable<unknown> {
+    return this.declareInput($.customize._.onClick)
         .pipe(
             map(event => event.target),
             mapNonNull(target => {
@@ -81,7 +86,8 @@ export class D1 extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupHandlePieceRemoved(): Observable<unknown> {
+  @cache()
+  private get handlePieceRemoved$(): Observable<unknown> {
     return this.pieceEl$
         .pipe(
             filter(piece => piece === null),
@@ -95,7 +101,8 @@ export class D1 extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupHandleSelectedIcon(): Observable<unknown> {
+  @cache()
+  private get handleSelectedIcon$(): Observable<unknown> {
     return this.pieceEl$
         .pipe(
             filterNonNull(),

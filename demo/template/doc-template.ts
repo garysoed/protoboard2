@@ -1,3 +1,4 @@
+import { cache } from 'gs-tools/export/data';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $drawer, $textIconButton, _p, Drawer, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, host, PersonaContext, stringParser, textContent } from 'persona';
@@ -10,7 +11,7 @@ import chevronUpSvg from '../asset/chevron_up.svg';
 import template from './doc-template.html';
 
 
-export const $$ = {
+export const $docTemplate = {
   tag: 'pbd-doc-template',
   api: {
     label: attributeIn('label', stringParser(), ''),
@@ -20,14 +21,14 @@ export const $$ = {
 const $ = {
   drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
   drawerIcon: element('drawerIcon', $textIconButton, {}),
-  host: host($$.api),
+  host: host($docTemplate.api),
   title: element('title', instanceofType(HTMLHeadingElement), {
     text: textContent(),
   }),
 };
 
 @_p.customElement({
-  ...$$,
+  ...$docTemplate,
   configure: vine => {
     registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
     registerSvg(vine, 'chevron_up', {type: 'embed', content: chevronUpSvg});
@@ -47,16 +48,18 @@ export class DocTemplate extends ThemedCustomElementCtrl {
     super(context);
 
     this.render($.drawer._.expanded, this.drawerExpanded$);
-    this.render($.drawerIcon._.icon, this.renderDrawerIcon());
+    this.render($.drawerIcon._.icon, this.drawerIcon$);
     this.render($.title._.text, this.label$);
-    this.addSetup(this.setupHandleDrawerIconClick());
+    this.addSetup(this.handleDrawerIconClick$);
   }
 
-  private renderDrawerIcon(): Observable<string> {
+  @cache()
+  private get drawerIcon$(): Observable<string> {
     return this.drawerExpanded$.pipe(map(expanded => expanded ? 'chevron_down' : 'chevron_up'));
   }
 
-  private setupHandleDrawerIconClick(): Observable<unknown> {
+  @cache()
+  private get handleDrawerIconClick$(): Observable<unknown> {
     return this.onDrawerIconClick$
         .pipe(
             withLatestFrom(this.drawerExpanded$),
