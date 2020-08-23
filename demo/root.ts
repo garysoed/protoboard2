@@ -7,11 +7,13 @@ import { tap, withLatestFrom } from 'rxjs/operators';
 import { HelpOverlay } from '../src-old/action/help-overlay';
 import { PickHand } from '../src-old/action/pick-hand';
 
+import { Documentation } from './core/documentation';
+import template from './root.html';
+
 // import { Doc } from './core/doc';
 // import { $$ as $drawer, Drawer } from './core/drawer';
 // import { $locationService, Views } from './location-service';
 // import { PlayArea } from './play/play-area';
-import template from './root.html';
 
 
 const $ = {
@@ -21,7 +23,7 @@ const $ = {
 
 @_p.customElement({
   dependencies: [
-    // Doc,
+    Documentation,
     // Drawer,
     HelpOverlay,
     PickHand,

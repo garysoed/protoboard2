@@ -63,6 +63,7 @@ There are 4 classes of objects:
 Regions are used to group several objects together. This is used for custom layouts to make
 playtesting the game easier. Some example regions:
 
+-   **Active**: Refers to the player's cursor.
 -   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
 -   **Area**: Area on the desk that is available for all players.
 

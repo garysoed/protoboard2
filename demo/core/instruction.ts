@@ -2,9 +2,13 @@ import { _p, ThemedCustomElementCtrl } from 'mask';
 
 import template from './instruction.html';
 
-@_p.customElement({
+export const $instruction = {
   tag: 'pbd-instruction',
   api: {},
+};
+
+@_p.customElement({
+  ...$instruction,
   template,
 })
 export class Instruction extends ThemedCustomElementCtrl {
