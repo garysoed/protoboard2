@@ -10,7 +10,7 @@ import { D1 as D1Impl } from '../../src/piece/d1';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { ComponentTemplate } from '../template/component-template';
+import { PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
 
@@ -35,7 +35,7 @@ const $ = {
     registerSvg(vine, 'gem', {type: 'embed', content: gemSvg});
   },
   dependencies: [
-    ComponentTemplate,
+    PieceTemplate,
     Icon,
     D1Impl,
   ],

@@ -8,11 +8,11 @@ import { map, tap, withLatestFrom } from 'rxjs/operators';
 import chevronDownSvg from '../asset/chevron_down.svg';
 import chevronUpSvg from '../asset/chevron_up.svg';
 
-import template from './doc-template.html';
+import template from './documentation-template.html';
 
 
-export const $docTemplate = {
-  tag: 'pbd-doc-template',
+export const $documentationTemplate = {
+  tag: 'pbd-documentation-template',
   api: {
     label: attributeIn('label', stringParser(), ''),
   },
@@ -21,14 +21,14 @@ export const $docTemplate = {
 const $ = {
   drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
   drawerIcon: element('drawerIcon', $textIconButton, {}),
-  host: host($docTemplate.api),
+  host: host($documentationTemplate.api),
   title: element('title', instanceofType(HTMLHeadingElement), {
     text: textContent(),
   }),
 };
 
 @_p.customElement({
-  ...$docTemplate,
+  ...$documentationTemplate,
   configure: vine => {
     registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
     registerSvg(vine, 'chevron_up', {type: 'embed', content: chevronUpSvg});
@@ -39,7 +39,7 @@ const $ = {
   ],
   template,
 })
-export class DocTemplate extends ThemedCustomElementCtrl {
+export class DocumentationTemplate extends ThemedCustomElementCtrl {
   private readonly drawerExpanded$ = new BehaviorSubject(false);
   private readonly label$ = this.declareInput($.host._.label);
   private readonly onDrawerIconClick$ = this.declareInput($.drawerIcon._.actionEvent);

@@ -1,12 +1,12 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, PersonaContext, stringParser } from 'persona';
 
-import template from './component-template.html';
-import { $docTemplate as $docTemplate, DocTemplate } from './doc-template';
+import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
+import template from './piece-template.html';
 
 
 const $$ = {
-  tag: 'pbd-component-template',
+  tag: 'pbd-piece-template',
   api: {
     label: attributeIn('label', stringParser(), ''),
   },
@@ -14,17 +14,17 @@ const $$ = {
 
 const $ = {
   host: host($$.api),
-  template: element('template', $docTemplate, {}),
+  template: element('template', $documentationTemplate, {}),
 };
 
 @_p.customElement({
   ...$$,
   dependencies: [
-    DocTemplate,
+    DocumentationTemplate,
   ],
   template,
 })
-export class ComponentTemplate extends ThemedCustomElementCtrl {
+export class PieceTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
