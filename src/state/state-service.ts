@@ -50,7 +50,7 @@ export class StateService {
     return $pipe(
         this.statesMap,
         $map(([id, state]) => {
-          const handler = this.stateHandlers.get(id);
+          const handler = this.stateHandlers.get(state.type);
           if (!handler) {
             return null;
           }

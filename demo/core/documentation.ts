@@ -6,7 +6,7 @@ import { element, PersonaContext, renderCustomElement, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { D1, $d1 } from '../piece/d1';
+import { $d1, D1 } from '../piece/d1';
 
 // import { D2 } from '../component/d2';
 // import { FreeLayout } from '../layout/free-layout';

@@ -6,7 +6,7 @@ import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
-import { D1 as D1Impl } from '../../src/piece/d1';
+import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
 import { registerStateHandler } from '../../src/state/register-state-handler';
 import { addObject } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
@@ -49,16 +49,13 @@ const D1_PREVIEW_TYPE = 'preview-d1';
               context,
           );
           return renderCustomElement(
-              $d1,
+              $d1Impl,
               {children: icon$.pipe(map(el => [el]))},
               context,
           );
         },
         vine,
     );
-    addObject({type: D1_PREVIEW_TYPE, id: '1', payload: {icon: 'meeple'}}, vine);
-    addObject({type: D1_PREVIEW_TYPE, id: '2', payload: {icon: 'coin'}}, vine);
-    addObject({type: D1_PREVIEW_TYPE, id: '3', payload: {icon: 'gem'}}, vine);
   },
   dependencies: [
     PieceTemplate,

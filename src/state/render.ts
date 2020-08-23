@@ -1,5 +1,4 @@
 import { cache } from 'gs-tools/export/data';
-import { assertNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, PersonaContext, single, stringParser } from 'persona';
@@ -10,7 +9,7 @@ import template from './render.html';
 import { $stateService } from './state-service';
 
 
-const $render = {
+export const $render = {
   tag: 'pb-render',
   api: {
     objectId: attributeIn('object-id', stringParser()),
@@ -36,7 +35,7 @@ export class Render extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get object$(): Observable<Node> {
+  private get object$(): Observable<Node|null> {
     return combineLatest([
       this.declareInput($.host._.objectId),
       $stateService.get(this.vine),
@@ -48,7 +47,6 @@ export class Render extends ThemedCustomElementCtrl {
           }
           return stateService.getObject(objectId, this.context) || observableOf(null);
         }),
-        assertNonNull(),
     );
   }
 }

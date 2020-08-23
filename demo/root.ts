@@ -7,14 +7,11 @@ import { tap, withLatestFrom } from 'rxjs/operators';
 
 // import { HelpOverlay } from '../src-old/action/help-overlay';
 // import { PickHand } from '../src-old/action/pick-hand';
-
 import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';
 import { $locationService, Views } from './core/location-service';
+import { PlayArea } from './core/play-area';
 import template from './root.html';
-
-
-// import { PlayArea } from './play/play-area';
 
 
 const $ = {
@@ -28,7 +25,7 @@ const $ = {
     Drawer,
     // HelpOverlay,
     // PickHand,
-    // PlayArea,
+    PlayArea,
     RootLayout,
   ],
   tag: 'pbd-root',
