@@ -56,7 +56,6 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
     // allActions.set(TriggerSpec.QUESTION, helpAction);
 
     for (const [trigger, action] of allActions) {
-      action.setActionContext(this.context);
       this.addSetup(this.setupTriggerFunction(action));
       this.addSetup(this.setupTrigger(trigger, action));
       this.addSetup(action.run());

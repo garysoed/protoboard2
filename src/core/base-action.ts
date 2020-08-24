@@ -1,31 +1,36 @@
-import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
+import { assertDefined, mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
-import { host, mutationObservable, PersonaContext } from 'persona';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { attributeIn, host, mutationObservable, onMutation, PersonaContext, stringParser } from 'persona';
+import { Observable, of as observableOf, Subject, throwError } from 'rxjs';
 import { map, mapTo, startWith, switchMap } from 'rxjs/operators';
 
 
 type ConverterOf<O> = {
-  [K in keyof O]: Converter<O[K], string>;
+  readonly [K in keyof O]: Converter<O[K], string>;
+};
+
+export const $baseActionApi = {
+  objectId: attributeIn('object-id', stringParser()),
+};
+
+const $ = {
+  host: host({
+    ...$baseActionApi,
+    onMutation: onMutation({childList: true, subtree: true}),
+  }),
 };
 
 export abstract class BaseAction<C = {}> extends Runnable {
-  protected readonly actionContext$ = new ReplaySubject<PersonaContext>(1);
   readonly #onTrigger$ = new Subject<void>();
 
   constructor(
       readonly key: string,
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly vine: Vine,
+      protected readonly context: PersonaContext,
   ) {
     super();
-  }
-
-  setActionContext(context: PersonaContext): void {
-    this.actionContext$.next(context);
   }
 
   trigger(): void {
@@ -34,15 +39,10 @@ export abstract class BaseAction<C = {}> extends Runnable {
 
   @cache()
   get config$(): Observable<Partial<C>> {
-    return this.actionContext$.pipe(
-        switchMap(({shadowRoot}) => {
-          return mutationObservable(shadowRoot.host, {childList: true, subtree: true})
-              .pipe(
-                  mapTo(shadowRoot),
-                  startWith(shadowRoot),
-              );
-        }),
-        map(shadowRoot => {
+    const shadowRoot = this.context.shadowRoot;
+    return $.host._.onMutation.getValue(this.context).pipe(
+        startWith({}),
+        map(() => {
           return shadowRoot.host.querySelector(`pb-action-config[action="${this.key}"]`);
         }),
         switchMapNonNull(configEl => {
@@ -74,8 +74,16 @@ export abstract class BaseAction<C = {}> extends Runnable {
   }
 
   @cache()
-  get host$(): Observable<Element> {
-    return this.actionContext$.pipe(switchMap(context => host({}).getValue(context)));
+  get objectId$(): Observable<string> {
+    return $.host._.objectId.getValue(this.context).pipe(
+        switchMap(objectId => {
+          if (!objectId) {
+            return throwError('No object-id found');
+          }
+
+          return observableOf(objectId);
+        }),
+    );
   }
 
   get onTrigger$(): Observable<unknown> {

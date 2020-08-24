@@ -3,7 +3,7 @@ import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
@@ -55,7 +55,10 @@ interface D1PreviewPayload {
           );
           return renderCustomElement(
               $d1Impl,
-              {children: icon$.pipe(map(el => [el]))},
+              {
+                children: icon$.pipe(map(el => [el])),
+                inputs: {objectId: observableOf(state.id)},
+              },
               context,
           );
         },

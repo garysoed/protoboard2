@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { $face } from '../action/face';
 import { FlipAction } from '../action/flip-action';
-import { PickAction } from '../action/pick-action';
+import { PickAction } from '../../src/action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { BaseAction } from '../core/base-action';

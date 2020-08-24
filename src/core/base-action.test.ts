@@ -45,7 +45,7 @@ test('@protoboard2/core/base-action', init => {
     const shadowRoot = element.attachShadow({mode: 'open'});
 
     const action = new TestAction(vine);
-    action.setActionContext(createFakeContext({shadowRoot}));
+    action.setContext(createFakeContext({shadowRoot}));
     run(action.run());
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 

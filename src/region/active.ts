@@ -1,5 +1,6 @@
 import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
+import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser, style, textContent } from 'persona';
@@ -33,7 +34,7 @@ const $ = {
   }),
 };
 
-interface ActivePayload {
+export interface ActivePayload {
   readonly itemIds: readonly string[];
 }
 
@@ -88,6 +89,7 @@ export class Active extends ThemedCustomElementCtrl {
 
           return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
         }),
+        debug('content'),
     );
   }
 
