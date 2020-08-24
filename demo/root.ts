@@ -5,16 +5,17 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
+import { Active, ACTIVE_ID, ACTIVE_TYPE } from '../src/region/active';
 import { SUPPLY_ID, SUPPLY_TYPE } from '../src/region/supply';
+import { setStates } from '../src/state/state-service';
 
-// import { HelpOverlay } from '../src-old/action/help-overlay';
-// import { PickHand } from '../src-old/action/pick-hand';
 import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';
 import { $locationService, Views } from './core/location-service';
 import { PlayArea } from './core/play-area';
 import template from './root.html';
-import { setStates } from '../src/state/state-service';
+
+// import { HelpOverlay } from '../src-old/action/help-overlay';
 
 
 const $ = {
@@ -24,10 +25,10 @@ const $ = {
 
 @_p.customElement({
   dependencies: [
+    Active,
     Documentation,
     Drawer,
     // HelpOverlay,
-    // PickHand,
     PlayArea,
     RootLayout,
   ],
@@ -37,6 +38,7 @@ const $ = {
   configure: vine => {
     setStates(
         new Map([
+          [ACTIVE_ID, {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {itemIds: []}}],
           [SUPPLY_ID, {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {supplyIds: []}}],
         ]),
         vine,

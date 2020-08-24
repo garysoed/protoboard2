@@ -1,17 +1,16 @@
-import { source, Vine } from 'grapevine';
 import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
-import { $dialogState, _p, ThemedCustomElementCtrl } from 'mask';
+import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { registerStateHandler } from '../state/register-state-handler';
 import { $stateService } from '../state/state-service';
 
 import template from './supply.html';
+
 
 export const SUPPLY_TYPE = 'pb.supply';
 export const SUPPLY_ID = 'pb.supply';
@@ -34,14 +33,12 @@ const $ = {
   ...$supply,
   template,
   configure: vine => {
-    registerStateHandler(
+    registerStateHandler<SupplyPayload>(
         SUPPLY_TYPE,
         (state, context) => {
-          const subject = state.payload.get('supplyIds');
-          console.log(`supply: ${(subject as any).id}`);
           return renderCustomElement(
               $supply,
-              {inputs: {supplyIds: subject?.pipe(debug('supplyIds'))}},
+              {inputs: {supplyIds: state.payload.supplyIds}},
               context,
           );
         },
@@ -72,4 +69,8 @@ export class Supply extends ThemedCustomElementCtrl {
         }),
     );
   }
+}
+
+export interface SupplyPayload {
+  readonly supplyIds: readonly string[];
 }

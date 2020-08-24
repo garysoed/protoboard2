@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
  *
  * @thModule core
  */
-export interface State {
+export interface State<P extends object> {
   /**
    * Identifies the object. Must be globally unique.
    */
@@ -18,7 +18,6 @@ export interface State {
 
   /**
    * Used to generate the object.
-   * TODO: Remove the any
    */
-  readonly payload: ReadonlyMap<string, BehaviorSubject<any>>;
+  readonly payload: {readonly [K in keyof P]: BehaviorSubject<P[K]>};
 }

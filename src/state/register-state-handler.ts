@@ -9,9 +9,10 @@ import { State } from './state';
  *
  * @thHidden
  */
-export type OnCreateFn = (state: State, context: PersonaContext) => Observable<Node>;
+export type OnCreateFn<P extends object> =
+    (state: State<P>, context: PersonaContext) => Observable<Node>;
 
-export const $stateHandlers = source<ReadonlyMap<string, OnCreateFn>>(() => new Map());
+export const $stateHandlers = source<ReadonlyMap<string, OnCreateFn<object>>>(() => new Map());
 
 /**
  * Registers handler for the state.
@@ -23,10 +24,10 @@ export const $stateHandlers = source<ReadonlyMap<string, OnCreateFn>>(() => new 
  *
  * TODO: Should take custom element spec.
  */
-export function registerStateHandler(
+export function registerStateHandler<P extends object>(
     type: string,
-    onCreate: OnCreateFn,
+    onCreate: OnCreateFn<P>,
     vine: Vine,
 ): void {
-  $stateHandlers.set(vine, map => new Map([...map, [type, onCreate]]));
+  $stateHandlers.set(vine, map => new Map([...map, [type, onCreate as OnCreateFn<object>]]));
 }

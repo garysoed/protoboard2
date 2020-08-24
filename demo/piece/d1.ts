@@ -34,6 +34,10 @@ const $ = {
 
 const D1_PREVIEW_TYPE = 'preview-d1';
 
+interface D1PreviewPayload {
+  readonly icon: string;
+}
+
 @_p.customElement({
   ...$d1,
   configure: vine => {
@@ -41,12 +45,12 @@ const D1_PREVIEW_TYPE = 'preview-d1';
     registerSvg(vine, 'coin', {type: 'embed', content: coinSvg});
     registerSvg(vine, 'gem', {type: 'embed', content: gemSvg});
 
-    registerStateHandler(
+    registerStateHandler<D1PreviewPayload>(
         D1_PREVIEW_TYPE,
         (state, context) => {
           const icon$ = renderCustomElement(
               $icon,
-              {inputs: {icon: state.payload.get('icon')}},
+              {inputs: {icon: state.payload.icon}},
               context,
           );
           return renderCustomElement(
@@ -107,7 +111,7 @@ export class D1 extends ThemedCustomElementCtrl {
           const supplyState = currentState.get(SUPPLY_ID);
           const supplyIds = supplyState?.payload.supplyIds;
           if (!(supplyIds instanceof Array) || !supplyState) {
-            return;
+            throw new Error('supplyIds cannot be found');
           }
 
           const newState = new Map([

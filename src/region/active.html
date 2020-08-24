@@ -1,0 +1,18 @@
+<style>
+  #root {
+    pointer-events: none;
+    position: fixed;
+    z-index: 9999;
+  }
+
+  #root > * {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+</style>
+
+<div id="root" layout="row">
+  <!-- #content -->
+  <div id="count" mk-body-1></div>
+</div>

@@ -16,8 +16,8 @@ class ObjectCache {
   private object: Observable<Node>|null = null;
 
   constructor(
-      private readonly fn: OnCreateFn,
-      private readonly state: State,
+      private readonly fn: OnCreateFn<object>,
+      private readonly state: State<object>,
   ) { }
 
   getOrCreate(context: PersonaContext): Observable<Node> {
@@ -33,7 +33,7 @@ class ObjectCache {
 
 export class StateService {
   constructor(
-      private readonly stateHandlers: ReadonlyMap<string, OnCreateFn>,
+      private readonly stateHandlers: ReadonlyMap<string, OnCreateFn<object>>,
       private readonly statesRaw: ReadonlyMap<string, SavedState>,
   ) { }
 
@@ -68,8 +68,8 @@ export class StateService {
     return cache.getOrCreate(context);
   }
 
-  getState(id: string): State|null {
-    return this.statesMap.get(id) || null;
+  getState<P extends object>(id: string): State<P>|null {
+    return this.statesMap.get(id) as State<P> || null;
   }
 
   @cache()
@@ -90,19 +90,18 @@ export class StateService {
   }
 
   @cache()
-  private get statesMap(): ReadonlyMap<string, State> {
-    const statesMap = new Map<string, State>();
+  private get statesMap(): ReadonlyMap<string, State<object>> {
+    const statesMap = new Map<string, State<object>>();
     for (const [, state] of this.statesRaw) {
-      const runtimePayload = $pipe(
-          state.payload,
-          $recordToMap(),
-          $map(([key, value]) => {
-            const subject = new BehaviorSubject(value);
-            (subject as any).id = `${key}: ${Date.now()}`;
-            return [key, subject] as [string, BehaviorSubject<unknown>];
-          }),
-          $asMap(),
-      );
+      const runtimePayload: Record<string, BehaviorSubject<unknown>> = {};
+
+      for (const key in state.payload) {
+        if (!state.payload.hasOwnProperty(key)) {
+          continue;
+        }
+
+        runtimePayload[key] = new BehaviorSubject(state.payload[key]);
+      }
       statesMap.set(
           state.id,
           {
@@ -137,15 +136,21 @@ export function setStates(
 }
 
 function resolveMap(
-    subjectMap: ReadonlyMap<string, Observable<unknown>>,
+    subjectObject: object,
 ): Observable<Record<string, unknown>> {
-  const payloads$List = $pipe(
-      subjectMap,
-      $map(([key, subject]) => subject.pipe(
-          map(value => [key, value] as [string, unknown]),
-      )),
-      $asArray(),
-  );
+  const payloads$List: Array<Observable<[string, unknown]>> = [];
+  for (const key in subjectObject) {
+    if (!subjectObject.hasOwnProperty(key)) {
+      continue;
+    }
+
+    const subject = (subjectObject as any)[key];
+    if (!(subject instanceof BehaviorSubject)) {
+      continue;
+    }
+
+    payloads$List.push(subject.pipe(map(value => [key, value])));
+  }
 
   if (payloads$List.length <= 0) {
     return observableOf({});
