@@ -3,37 +3,46 @@ import { _v } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
 import { map, switchMap } from 'rxjs/operators';
 
+import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
+import { $stateService, setStates } from '../state/state-service';
+
 import { PickAction } from './pick-action';
-import { $pickService } from './pick-service';
 
 
 test('@protoboard2/action/pick-action', init => {
+  const OBJECT_ID = 'objectId';
+
   const _ = init(() => {
-    const vine = _v.build('test');
     const el = document.createElement('div');
+    el.setAttribute('object-id', OBJECT_ID);
+
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const action = new PickAction(vine);
-    action.setActionContext(createFakeContext({shadowRoot}));
+    const context = createFakeContext({shadowRoot});
+    const action = new PickAction(context);
+
+    const activeState = createActiveState([]);
+    setStates([activeState], context.vine);
     run(action.run());
 
-    return {action, el, vine};
+    return {action, context, el};
   });
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const elements$ = createSpySubject(
-          $pickService.get(_.vine)
+      const activeIds$ = createSpySubject(
+          $stateService.get(_.context.vine)
               .pipe(
-                  switchMap(service => service.getComponents()),
-                  map(set => [...set]),
+                  switchMap(service => {
+                    return service.getState<ActivePayload>(ACTIVE_ID)!.payload.objectIds;
+                  }),
               ),
       );
 
       _.action.trigger();
 
-      assert(elements$).to.emitSequence([
-        arrayThat<Element>().beEmpty(),
-        arrayThat<Element>().haveExactElements([_.el]),
+      assert(activeIds$).to.emitSequence([
+        arrayThat<string>().beEmpty(),
+        arrayThat<string>().haveExactElements([OBJECT_ID]),
       ]);
     });
   });

@@ -11,17 +11,35 @@ import template from './d1.html';
 
 // import { RotateAction } from '../action/rotate-action';
 
+/**
+ * The D1's API.
+ *
+ * @thModule piece
+ */
 export const $d1 = {
   tag: 'pb-d1',
   api: {...$baseActionApi},
 };
 
+/**
+ * Represents an object with one face.
+ *
+ * @remarks
+ * D1 supports {@link PickAction} and {@link RotateAction}.
+ *
+ * @thSlot - Face to display for the object.
+ * @thWebComponent
+ * @thModule piece
+ */
 @_p.customElement({
   tag: 'pb-d1',
   template,
   api: {},
 })
 export class D1 extends BaseComponent {
+  /**
+   * @internal
+   */
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseAction>([

@@ -37,10 +37,10 @@ const $ = {
   api: {},
   configure: vine => {
     setStates(
-        new Map([
-          [ACTIVE_ID, {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {itemIds: []}}],
-          [SUPPLY_ID, {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {supplyIds: []}}],
-        ]),
+        [
+          {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {objectIds: []}},
+          {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {objectIds: []}},
+        ],
         vine,
     );
   },

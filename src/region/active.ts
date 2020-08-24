@@ -1,6 +1,5 @@
 import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, classToggle, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser, style, textContent } from 'persona';
@@ -8,21 +7,39 @@ import { combineLatest, fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { registerStateHandler } from '../state/register-state-handler';
+import { SavedState } from '../state/saved-state';
 import { $stateService } from '../state/state-service';
 
 import template from './active.html';
 
-export const ACTIVE_ID = 'pb.active';
+
+/**
+ * Type of the active region.
+ *
+ * @thModule region
+ */
 export const ACTIVE_TYPE = 'pb.active';
 
+/**
+ * ID of the object representing the active region.
+ *
+ * @thModule region
+ */
+export const ACTIVE_ID = 'pb.active';
+
+/**
+ * The active object API.
+ *
+ * @thModule region
+ */
 export const $active = {
   tag: 'pb-active',
   api: {
-    itemIds: attributeIn('item-ids', listParser(stringParser()), []),
+    objectIds: attributeIn('object-ids', listParser(stringParser()), []),
   },
 };
 
-const $ = {
+export const $ = {
   host: host($active.api),
   count: element('count', instanceofType(HTMLDivElement), {
     text: textContent(),
@@ -35,10 +52,36 @@ const $ = {
   }),
 };
 
+/**
+ * Payload of the active region.
+ *
+ * @thModule region
+ */
 export interface ActivePayload {
-  readonly itemIds: readonly string[];
+  /**
+   * ID of objects that are active.
+   */
+  readonly objectIds: readonly string[];
 }
 
+/**
+ * Creates active state with the given objectIds active.
+ * @param objectIds - IDs in the active region.
+ *
+ * @thModule region
+ */
+export function createActiveState(objectIds: readonly string[]): SavedState {
+  return {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {objectIds}};
+}
+
+/**
+ * Represents a region containing objects that are actively manipulated.
+ *
+ * @remarks
+ * The closest real world analogy is the player's hand while they're manipulating an object.
+ *
+ * @thModule region
+ */
 @_p.customElement({
   ...$active,
   template,
@@ -48,7 +91,7 @@ export interface ActivePayload {
         (state, context) => {
           return renderCustomElement(
               $active,
-              {inputs: {itemIds: state.payload.itemIds}},
+              {inputs: {objectIds: state.payload.objectIds}},
               context,
           );
         },
@@ -79,7 +122,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get content$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.itemIds).pipe(
+    return this.declareInput($.host._.objectIds).pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([itemIds, stateService]) => {
           const node$list = $pipe(
@@ -91,14 +134,13 @@ export class Active extends ThemedCustomElementCtrl {
 
           return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
         }),
-        debug('content'),
     );
   }
 
   @cache()
   private get itemCount$(): Observable<string> {
-    return this.declareInput($.host._.itemIds).pipe(
-      map(ids => ids.length > 1 ? `${ids.length}` : ''),
+    return this.declareInput($.host._.objectIds).pipe(
+        map(ids => ids.length > 1 ? `${ids.length}` : ''),
     );
   }
 
@@ -109,7 +151,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get multipleItems$(): Observable<boolean> {
-    return this.declareInput($.host._.itemIds).pipe(map(ids => ids.length > 1));
+    return this.declareInput($.host._.objectIds).pipe(map(ids => ids.length > 1));
   }
 
   @cache()

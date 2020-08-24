@@ -115,9 +115,9 @@ export class D1 extends ThemedCustomElementCtrl {
         tap(([, icon, currentState, generateObjectId]) => {
           const id = generateObjectId();
           const supplyState = currentState.get(SUPPLY_ID);
-          const supplyIds = supplyState?.payload.supplyIds;
+          const supplyIds = supplyState?.payload.objectIds;
           const activeState = currentState.get(ACTIVE_ID);
-          const activeIds = activeState?.payload.itemIds;
+          const activeIds = activeState?.payload.objectIds;
           if (!(supplyIds instanceof Array) ||
               !supplyState ||
               !activeState ||
@@ -125,14 +125,15 @@ export class D1 extends ThemedCustomElementCtrl {
             throw new Error('supplyIds or activeIds cannot be found');
           }
 
-          const newState = new Map([
-            ...currentState,
-            // Clear the active IDs
-            [ACTIVE_ID, {...activeState, payload: {itemIds: []}}],
-            [D1_PREVIEW_TYPE, {type: D1_PREVIEW_TYPE, id, payload: {icon}}],
-            [SUPPLY_ID, {...supplyState, payload: {supplyIds: [...supplyIds, id]}}],
-          ]);
-          setStates(newState, this.vine);
+          setStates(
+              [
+                ...currentState.values(),
+                {...activeState, payload: {objectIds: []}},
+                {type: D1_PREVIEW_TYPE, id, payload: {icon}},
+                {...supplyState, payload: {objectIds: [...supplyIds, id]}},
+              ],
+              this.vine,
+          );
         }),
     );
   }

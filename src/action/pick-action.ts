@@ -8,7 +8,15 @@ import { ACTIVE_ID, ActivePayload } from '../region/active';
 import { $stateService } from '../state/state-service';
 
 
+/**
+ * Lets the user pick up the object.
+ *
+ * @thModule action
+ */
 export class PickAction extends BaseAction {
+  /**
+   * @internal
+   */
   constructor(context: PersonaContext) {
     super(
         'pick',
@@ -28,13 +36,13 @@ export class PickAction extends BaseAction {
     return this.onTrigger$
         .pipe(
             withLatestFrom(this.objectId$, activeState$),
-            tap(([, itemId, activeState$]) => {
-              if (!activeState$) {
+            tap(([, itemId, activeState]) => {
+              if (!activeState) {
                 return;
               }
 
-              const existingItemIds = activeState$.payload.itemIds.getValue();
-              activeState$.payload.itemIds.next([...existingItemIds, itemId]);
+              const existingObjectIds = activeState.payload.objectIds.getValue();
+              activeState.payload.objectIds.next([...existingObjectIds, itemId]);
             }),
         );
   }

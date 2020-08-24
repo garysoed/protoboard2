@@ -1,15 +1,27 @@
 import { cache } from 'gs-tools/export/data';
-import { assertDefined, mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
+import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { attributeIn, host, mutationObservable, onMutation, PersonaContext, stringParser } from 'persona';
-import { Observable, of as observableOf, Subject, throwError } from 'rxjs';
+import { EMPTY, Observable, of as observableOf, Subject } from 'rxjs';
 import { map, mapTo, startWith, switchMap } from 'rxjs/operators';
+import { Logger } from 'santa';
 
+const LOG = new Logger('protoboard.core.BaseAction');
 
-type ConverterOf<O> = {
+/**
+ * Converters of the action's configuration object.
+ *
+ * @thHidden
+ */
+export type ConverterOf<O> = {
   readonly [K in keyof O]: Converter<O[K], string>;
 };
 
+/**
+ * API of the BaseAction.
+ *
+ * @thModule action
+ */
 export const $baseActionApi = {
   objectId: attributeIn('object-id', stringParser()),
 };
@@ -21,9 +33,24 @@ const $ = {
   }),
 };
 
+/**
+ * Base class of all actions.
+ *
+ * @typeParam C - The configuration object.
+ * @thModule action
+ */
 export abstract class BaseAction<C = {}> extends Runnable {
   readonly #onTrigger$ = new Subject<void>();
 
+  /**
+   * Instantiates a new BaseAction.
+   *
+   * @param key - Key to identtify the action. This has to be globally unique.
+   * @param actionName - Name of the action. This is used in the help dialog.
+   * @param actionConfigConverters - Converters for the configuration object. Every field in the
+   *     configuration object must have a converter to string.
+   * @param context - The Persona context.
+   */
   constructor(
       readonly key: string,
       readonly actionName: string,
@@ -33,10 +60,16 @@ export abstract class BaseAction<C = {}> extends Runnable {
     super();
   }
 
+  /**
+   * Triggers the action.
+   */
   trigger(): void {
     this.#onTrigger$.next();
   }
 
+  /**
+   * Emits the current configuration state for the action.
+   */
   @cache()
   get config$(): Observable<Partial<C>> {
     const shadowRoot = this.context.shadowRoot;
@@ -73,12 +106,16 @@ export abstract class BaseAction<C = {}> extends Runnable {
     );
   }
 
+  /**
+   * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
+   */
   @cache()
   get objectId$(): Observable<string> {
     return $.host._.objectId.getValue(this.context).pipe(
         switchMap(objectId => {
           if (!objectId) {
-            return throwError('No object-id found');
+            LOG.warning('No object-id found');
+            return EMPTY;
           }
 
           return observableOf(objectId);
@@ -86,6 +123,9 @@ export abstract class BaseAction<C = {}> extends Runnable {
     );
   }
 
+  /**
+   * Emits whenever the action is triggered.
+   */
   get onTrigger$(): Observable<unknown> {
     return this.#onTrigger$;
   }

@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
 import { _v } from 'mask';
-import { integerParser } from 'persona';
+import { integerParser, PersonaContext } from 'persona';
 import { createFakeContext, PersonaTester, PersonaTesterEnvironment } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -14,8 +14,8 @@ const ACTION_KEY = 'test';
 class TestAction extends BaseAction<{value: number}> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(vine: Vine) {
-    super(ACTION_KEY, 'Test', {value: integerParser()}, vine);
+  constructor(context: PersonaContext) {
+    super(ACTION_KEY, 'Test', {value: integerParser()}, context);
 
     this.addSetup(this.setupConfig());
   }
@@ -39,20 +39,23 @@ class TestAction extends BaseAction<{value: number}> {
 test('@protoboard2/core/base-action', init => {
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
-    const vine = _v.build('test');
 
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
+    const context = createFakeContext({shadowRoot});
 
-    const action = new TestAction(vine);
-    action.setContext(createFakeContext({shadowRoot}));
-    run(action.run());
+    const action = new TestAction(context);
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 
-    return {action, element, onTrigger$, vine};
+    return {action, context, element, onTrigger$};
   });
 
-  test('config$', () => {
+  test('config$', _, init => {
+    const _ = init(_ => {
+      run(_.action.run());
+      return _;
+    });
+
     should(`update the configuration when element is added`, () => {
       const configEl = document.createElement('pb-action-config');
       configEl.setAttribute('action', 'test');
@@ -84,6 +87,25 @@ test('@protoboard2/core/base-action', init => {
       configEl.setAttribute('value', '345');
 
       assert(_.action.value$).to.emitSequence([345]);
+    });
+  });
+
+  test('objectId$', () => {
+    should(`emit the object ID if exists`, () => {
+      const objectId = 'objectId';
+      _.element.setAttribute('object-id', objectId);
+
+      run(_.action.run());
+
+      const objectId$ = createSpySubject(_.action.objectId$);
+      assert(objectId$).to.emitSequence([objectId]);
+    });
+
+    should(`emit nothing if the object ID does not exist`, () => {
+      run(_.action.run());
+
+      const objectId$ = createSpySubject(_.action.objectId$);
+      assert(objectId$).to.emitSequence([]);
     });
   });
 });

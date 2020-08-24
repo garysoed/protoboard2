@@ -134,10 +134,15 @@ export const $stateService = stream(
 );
 
 export function setStates(
-    states: ReadonlyMap<string, SavedState>,
+    states: readonly SavedState[],
     vine: Vine,
 ): void {
-  $statesRaw.set(vine, () => states);
+  const statesMap = $pipe(
+      states,
+      $map(state => [state.id, state] as [string, SavedState]),
+      $asMap(),
+  );
+  $statesRaw.set(vine, () => statesMap);
 }
 
 function resolveMap(

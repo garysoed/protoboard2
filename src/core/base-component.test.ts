@@ -1,8 +1,7 @@
-import { Vine } from 'grapevine';
 import { assert, createSpySubject, run, should, test } from 'gs-testing';
-import { _v } from 'mask';
-import { AttributeChangedEvent, PersonaContext } from 'persona';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { PersonaContext } from 'persona';
+import { createFakeContext } from 'persona/export/testing';
+import { Observable, ReplaySubject } from 'rxjs';
 
 import { BaseAction } from './base-action';
 import { BaseComponent } from './base-component';
@@ -14,8 +13,8 @@ const ACTION_KEY = 'test';
 class TestAction extends BaseAction {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(vine: Vine) {
-    super(ACTION_KEY, 'Test', {}, vine);
+  constructor(context: PersonaContext) {
+    super(ACTION_KEY, 'Test', {}, context);
   }
 
   get onTriggerOut$(): Observable<unknown> {
@@ -42,20 +41,16 @@ test('@protoboard2/core/base-component', init => {
     const shadowRoot = element.attachShadow({mode: 'open'});
     shadowRoot.appendChild(styleEl);
 
-    const vine = _v.build('test');
-    const clickAction = new TestAction(vine);
-    const keyAction = new TestAction(vine);
+    const context = createFakeContext({shadowRoot});
+    const clickAction = new TestAction(context);
+    const keyAction = new TestAction(context);
 
     const component = new TestComponent(
         new Map<UnreservedTriggerSpec, BaseAction>([
           [TriggerSpec.CLICK, clickAction],
           [KEY, keyAction],
         ]),
-        {
-          shadowRoot,
-          vine,
-          onAttributeChanged$: new Subject<AttributeChangedEvent>(),
-        },
+        context,
     );
     run(component.run());
 

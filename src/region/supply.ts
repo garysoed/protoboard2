@@ -12,23 +12,59 @@ import { $stateService } from '../state/state-service';
 import template from './supply.html';
 
 
+/**
+ * Type of the supply region.
+ *
+ * @thModule region
+ */
 export const SUPPLY_TYPE = 'pb.supply';
+
+/**
+ * ID of the object representing the supply region.
+ *
+ * @thModule region
+ */
 export const SUPPLY_ID = 'pb.supply';
 
-const $supply = {
+
+/**
+ * The supply object API.
+ *
+ * @thModule region
+ */
+export const $supply = {
   tag: 'pb-supply',
   api: {
-    supplyIds: attributeIn('supply-ids', listParser(stringParser())),
+    objectIds: attributeIn('object-ids', listParser(stringParser())),
   },
 };
 
-const $ = {
+
+export const $ = {
   host: host($supply.api),
   root: element('root', instanceofType(HTMLDivElement), {
     content: multi('#content'),
   }),
 };
 
+/**
+ * Payload of the supply region.
+ *
+ * @thModule region
+ */
+export interface SupplyPayload {
+  /**
+   * ID of objects that are in the supply.
+   */
+  readonly objectIds: readonly string[];
+}
+
+
+/**
+ * Represents a region containing the supply.
+ *
+ * @thModule region
+ */
 @_p.customElement({
   ...$supply,
   template,
@@ -38,7 +74,7 @@ const $ = {
         (state, context) => {
           return renderCustomElement(
               $supply,
-              {inputs: {supplyIds: state.payload.supplyIds}},
+              {inputs: {objectIds: state.payload.objectIds}},
               context,
           );
         },
@@ -55,7 +91,7 @@ export class Supply extends ThemedCustomElementCtrl {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.supplyIds).pipe(
+    return this.declareInput($.host._.objectIds).pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([ids, service]) => {
           const node$List = $pipe(
@@ -69,8 +105,4 @@ export class Supply extends ThemedCustomElementCtrl {
         }),
     );
   }
-}
-
-export interface SupplyPayload {
-  readonly supplyIds: readonly string[];
 }
