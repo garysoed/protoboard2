@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * State of a game during its runtime.
@@ -20,5 +20,5 @@ export interface State {
    * Used to generate the object.
    * TODO: Remove the any
    */
-  readonly payload: ReadonlyMap<string, Observable<any>>;
+  readonly payload: ReadonlyMap<string, BehaviorSubject<any>>;
 }

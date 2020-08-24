@@ -65,7 +65,8 @@ playtesting the game easier. Some example regions:
 
 -   **Active**: Refers to the player's cursor.
 -   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
--   **Area**: Area on the desk that is available for all players.
+-   **Desk**: Area on the desk that is available for all players.
+-   **Supply**: Default area to put items in.
 
 ### Layout
 

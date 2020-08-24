@@ -3,6 +3,7 @@ import { $drawer, _p, Drawer, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, textContent } from 'persona';
 import { of as observableOf } from 'rxjs';
 
+import { Supply } from '../../src/region/supply';
 import { $render, Render } from '../../src/state/render';
 
 import template from './play-area.html';
@@ -13,7 +14,7 @@ const $ = {
   layoutInfo: element('layoutInfo', instanceofType(HTMLPreElement), {
     text: textContent(),
   }),
-  main: element('main', $render, {}),
+  // main: element('main', $render, {}),
   root: element('root', instanceofType(HTMLDivElement), {
     onMouseOut: onDom('mouseout'),
     onMouseOver: onDom('mouseover'),
@@ -25,6 +26,7 @@ const $ = {
 @_p.customElement({
   dependencies: [
     Render,
+    Supply,
   ],
   tag: 'pbd-play-area',
   template,
@@ -34,12 +36,10 @@ export class PlayArea extends ThemedCustomElementCtrl {
   private readonly onRootMouseOut$ = this.declareInput($.root._.onMouseOut);
   private readonly onRootMouseOver$ = this.declareInput($.root._.onMouseOver);
   // private readonly playAreaService$ = $playAreaService.get(this.vine);
-  private readonly mainEl$ = this.declareInput($.main);
+  // private readonly mainEl$ = this.declareInput($.main);
 
   constructor(context: PersonaContext) {
     super(context);
-
-    this.render($.main._.objectId, observableOf('1'));
 
     // this.addSetup(this.setupHandleZones());
     // this.render($.main._.content, this.renderContent());

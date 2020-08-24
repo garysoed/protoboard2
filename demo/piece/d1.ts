@@ -4,11 +4,12 @@ import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
+import { SUPPLY_ID } from '../../src/region/supply';
 import { registerStateHandler } from '../../src/state/register-state-handler';
-import { addObject } from '../../src/state/state-service';
+import { $stateService, setStates } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
@@ -97,10 +98,24 @@ export class D1 extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleOnPieceAdd$(): Observable<unknown> {
+    const currentState$ = $stateService.get(this.vine).pipe(
+        switchMap(service => service.currentState$),
+    );
     return this.declareInput($.template._.onAdd).pipe(
-        withLatestFrom(this.selectedIcon$),
-        tap(([, icon]) => {
-          addObject({type: D1_PREVIEW_TYPE, id: '1', payload: {icon}}, this.vine);
+        withLatestFrom(this.selectedIcon$, currentState$),
+        tap(([, icon, currentState]) => {
+          const supplyState = currentState.get(SUPPLY_ID);
+          const supplyIds = supplyState?.payload.supplyIds;
+          if (!(supplyIds instanceof Array) || !supplyState) {
+            return;
+          }
+
+          const newState = new Map([
+            ...currentState,
+            [D1_PREVIEW_TYPE, {type: D1_PREVIEW_TYPE, id: '1', payload: {icon}}],
+            [SUPPLY_ID, {...supplyState, payload: {supplyIds: [...supplyIds, '1']}}],
+          ]);
+          setStates(newState, this.vine);
         }),
     );
   }
