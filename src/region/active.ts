@@ -3,7 +3,7 @@ import { cache } from 'gs-tools/export/data';
 import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser, style, textContent } from 'persona';
+import { attributeIn, classToggle, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser, style, textContent } from 'persona';
 import { combineLatest, fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
@@ -28,6 +28,7 @@ const $ = {
     text: textContent(),
   }),
   root: element('root', instanceofType(HTMLDivElement), {
+    classMultiple: classToggle('multiple'),
     content: multi('#content'),
     left: style('left'),
     top: style('top'),
@@ -70,6 +71,7 @@ export class Active extends ThemedCustomElementCtrl {
     super(context);
 
     this.render($.count._.text, this.itemCount$);
+    this.render($.root._.classMultiple, this.multipleItems$);
     this.render($.root._.content, this.content$);
     this.render($.root._.left, this.left$);
     this.render($.root._.top, this.top$);
@@ -96,13 +98,18 @@ export class Active extends ThemedCustomElementCtrl {
   @cache()
   private get itemCount$(): Observable<string> {
     return this.declareInput($.host._.itemIds).pipe(
-      map(ids => ids.length > 0 ? `${ids.length}` : ''),
+      map(ids => ids.length > 1 ? `${ids.length}` : ''),
     );
   }
 
   @cache()
   private get left$(): Observable<string> {
     return this.mouseEvent$.pipe(map(({event, rect}) => `${event.x - rect.width / 2}px`));
+  }
+
+  @cache()
+  private get multipleItems$(): Observable<boolean> {
+    return this.declareInput($.host._.itemIds).pipe(map(ids => ids.length > 1));
   }
 
   @cache()

@@ -1,5 +1,5 @@
 import { source, stream, Vine } from 'grapevine';
-import { $asArray, $asMap, $asRecord, $filterNonNull, $map, $pipe, $recordToMap } from 'gs-tools/export/collect';
+import { $asArray, $asMap, $asRecord, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
@@ -70,6 +70,11 @@ export class StateService {
 
   getState<P extends object>(id: string): State<P>|null {
     return this.statesMap.get(id) as State<P> || null;
+  }
+
+  @cache()
+  get objectIds(): ReadonlySet<string> {
+    return $pipe(this.objectCachesMap, $map(([id]) => id), $asSet());
   }
 
   @cache()

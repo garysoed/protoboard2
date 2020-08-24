@@ -5,8 +5,16 @@
     z-index: 9999;
   }
 
+  #root.multiple > *:not(#count) {
+    opacity: 0;
+  }
+
+  #root.multiple > *:not(#count):nth-child(-n+3) {
+    opacity: .1;
+  }
+
   #root > * {
-    position: relative;
+    position: absolute;
     top: 2rem;
     left: 2rem;
   }
