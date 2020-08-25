@@ -36,13 +36,13 @@ export class PickAction extends BaseAction {
     return this.onTrigger$
         .pipe(
             withLatestFrom(this.objectId$, activeState$),
-            tap(([, itemId, activeState]) => {
+            tap(([, objectId, activeState]) => {
               if (!activeState) {
                 return;
               }
 
               const existingContentIds = activeState.payload.contentIds.getValue();
-              activeState.payload.contentIds.next([...existingContentIds, itemId]);
+              activeState.payload.contentIds.next([...existingContentIds, objectId]);
             }),
         );
   }

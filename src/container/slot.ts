@@ -4,17 +4,15 @@ import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, multi, PersonaContext } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
+import { DropAction } from '../action/drop-action';
 import { $baseActionApi, BaseAction } from '../core/base-action';
 import { BaseComponent } from '../core/base-component';
-import { UnreservedTriggerSpec } from '../core/trigger-spec';
+import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { $stateService } from '../state/state-service';
 
 import template from './slot.html';
-
-
-// import { DropAction } from '../action/drop-action';
 
 
 export const $slot = {
@@ -24,7 +22,7 @@ export const $slot = {
   },
 };
 
-const $ = {
+export const $ = {
   host: host($slot.api),
   root: element('root', instanceofType(HTMLDivElement), {
     content: multi('#content'),
@@ -43,7 +41,7 @@ export class Slot extends BaseComponent {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseAction>([
-          // [TriggerSpec.D, new DropAction($.host.getValue(context), context.vine)],
+          [TriggerSpec.D, new DropAction(context)],
         ]),
         context,
     );
@@ -53,8 +51,7 @@ export class Slot extends BaseComponent {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.objectId).pipe(
-        withLatestFrom($stateService.get(this.vine)),
+    return combineLatest([this.declareInput($.host._.objectId), $stateService.get(this.vine)]).pipe(
         switchMap(([objectId, service]) => {
           if (!objectId) {
             return observableOf([]);

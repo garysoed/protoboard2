@@ -43,6 +43,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
+          [],
           _.tester.vine,
       );
 
@@ -82,6 +83,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
+          [],
           _.tester.vine,
       );
 
@@ -119,6 +121,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id, content]]),
+          [],
           _.tester.vine,
       );
 
@@ -142,6 +145,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
+          [],
           _.tester.vine,
       );
 
@@ -181,6 +185,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id, content]]),
+          [],
           _.tester.vine,
       );
 
@@ -211,6 +216,7 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, content1], [id2, content2]]),
+          [],
           _.tester.vine,
       );
 

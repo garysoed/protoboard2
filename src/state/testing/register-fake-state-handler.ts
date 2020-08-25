@@ -3,10 +3,12 @@ import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { of as observableOf, throwError } from 'rxjs';
 
 import { registerStateHandler } from '../register-state-handler';
+import { SavedState } from '../saved-state';
 import { setStates } from '../state-service';
 
 export function registerFakeStateHandler(
     nodeMap: ReadonlyMap<string, Node>,
+    additionalStates: readonly SavedState[],
     vine: Vine,
 ): void {
   const objectType = 'test';
@@ -28,5 +30,5 @@ export function registerFakeStateHandler(
       $map(([id]) => ({type: objectType, id, payload: {}})),
       $asArray(),
   );
-  setStates(states, vine);
+  setStates([...states, ...additionalStates], vine);
 }
