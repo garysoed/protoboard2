@@ -13,6 +13,7 @@ import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';
 import { $locationService, Views } from './core/location-service';
 import { PlayArea } from './core/play-area';
+import { ROOT_LAYOUT_ID, ROOT_LAYOUT_TYPE } from './layout/root-layout';
 import template from './root.html';
 
 // import { HelpOverlay } from '../src-old/action/help-overlay';
@@ -40,6 +41,7 @@ const $ = {
         [
           {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {objectIds: []}},
           {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {objectIds: []}},
+          {id: ROOT_LAYOUT_ID, type: ROOT_LAYOUT_TYPE, payload: {layoutTag: 'TODO'}},
         ],
         vine,
     );

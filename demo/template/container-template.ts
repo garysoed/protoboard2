@@ -7,8 +7,8 @@ import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 // import { $playAreaService, LayoutSpec, ZoneSpec } from '../play/play-area-service';
 
+import template from './container-template.html';
 import { $documentationTemplate, DocumentationTemplate } from './documentation-template';
-import template from './zone-template.html';
 
 
 // type AddZoneFn = (spec: ZoneSpec) => void;

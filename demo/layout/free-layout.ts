@@ -4,15 +4,16 @@ import { api, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { $$ as $freeLayout, FreeLayout as FreeLayoutImpl } from '../../src-old/layout/free-layout';
+import { $$ as $freeLayoutImpl, FreeLayout as FreeLayoutImpl } from '../../src-old/layout/free-layout';
 import { $$ as $layoutTemplate, LayoutTemplate } from '../template/layout-template';
 
 import { FreeLayoutAddZone, getZoneAttr } from './free-layout-add-zone';
 import template from './free-layout.html';
 
 
-const $$ = {
+export const $freeLayout = {
   tag: 'pbd-free-layout',
+  api: {},
 };
 
 const $ = {
@@ -28,7 +29,7 @@ const $ = {
 };
 
 @_p.customElement({
-  ...$$,
+  ...$freeLayout,
   dependencies: [
     FreeLayoutImpl,
     FreeLayoutAddZone,
@@ -36,25 +37,24 @@ const $ = {
     TextInput,
   ],
   template,
-  api: {},
 })
 export class FreeLayout extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
-    this.addSetup(this.setupHandleSetLayout());
+    // this.addSetup(this.setupHandleSetLayout());
   }
 
-  private setupHandleSetLayout(): Observable<unknown> {
-    return this.declareInput($.template._.onSetLayout)
-        .pipe(
-            tap(event => {
-              event.setLayout({
-                addZoneTag: 'pbd-free-layout-add-zone',
-                attr: new Map<string, string>(),
-                tag: $freeLayout.tag,
-                getZoneAttr,
-              });
-            }),
-        );
-  }
+  // private setupHandleSetLayout(): Observable<unknown> {
+  //   return this.declareInput($.template._.onSetLayout)
+  //       .pipe(
+  //           tap(event => {
+  //             event.setLayout({
+  //               addZoneTag: 'pbd-free-layout-add-zone',
+  //               attr: new Map<string, string>(),
+  //               tag: $freeLayoutImpl.tag,
+  //               getZoneAttr,
+  //             });
+  //           }),
+  //       );
+  // }
 }
