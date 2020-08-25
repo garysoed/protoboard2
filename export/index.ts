@@ -7,7 +7,7 @@
 export { PickAction } from '../src/action/pick-action';
 
 // core
-export { ConverterOf, $baseActionApi, BaseAction } from '../src/core/base-action';
+export { ConverterOf, BaseAction } from '../src/core/base-action';
 
 // piece
 export { $d1, D1 } from '../src/piece/d1';

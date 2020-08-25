@@ -7,9 +7,8 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { DropAction } from '../action/drop-action';
-import { $baseActionApi, BaseAction } from '../core/base-action';
-import { BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { $baseComponent, BaseComponent } from '../core/base-component';
+import { TriggerSpec } from '../core/trigger-spec';
 import { $stateService } from '../state/state-service';
 
 import template from './slot.html';
@@ -18,7 +17,7 @@ import template from './slot.html';
 export const $slot = {
   tag: 'pb-slot',
   api: {
-    ...$baseActionApi,
+    ...$baseComponent.api,
   },
 };
 
@@ -37,11 +36,11 @@ export interface SlotPayload {
   ...$slot,
   template,
 })
-export class Slot extends BaseComponent {
+export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseAction>([
-          [TriggerSpec.D, new DropAction(context)],
+        new Map([
+          [TriggerSpec.D, DropAction],
         ]),
         context,
     );

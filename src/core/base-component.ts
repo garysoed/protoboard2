@@ -1,35 +1,99 @@
+import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
+import { cache } from 'gs-tools/export/data';
+import { filterNonNull } from 'gs-tools/export/rxjs';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, host, onDom, PersonaContext } from 'persona';
-import { EMPTY, fromEvent, merge, Observable } from 'rxjs';
+import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
+import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { Logger } from 'santa';
+
+import { $stateService } from '../state/state-service';
+
+import { ActionContext, BaseAction } from './base-action';
+import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
+
 
 // import { HelpAction } from '../action/help-action';
 
-import { BaseAction } from './base-action';
-import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
 
-const $$ = {
+const LOG = new Logger('protoboard.core.BaseComponent');
+
+
+export type BaseActionCtor<P extends object> = new (context: ActionContext<P>) => BaseAction<P>;
+
+// TODO: DELETE
+export const $baseComponent = {
   api: {
     click: onDom('click'),
     mouseout: onDom('mouseout'),
     mouseover: onDom('mouseover'),
+    objectId: attributeIn('object-id', stringParser()),
   },
 };
 
 const $ = {
-  host: host($$.api),
+  host: host($baseComponent.api),
 };
 
 // TODO: Rename?
 @_p.baseCustomElement({})
-export abstract class BaseComponent extends ThemedCustomElementCtrl {
+export abstract class BaseComponent<P extends object> extends ThemedCustomElementCtrl {
   constructor(
-      private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseAction>,
+      private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P>>,
       context: PersonaContext,
   ) {
     super(context);
 
     this.setupActions();
+  }
+
+  @cache()
+  get actionsMap(): ReadonlyMap<TriggerSpec, BaseAction<object>> {
+    const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
+        this.triggerActionMap,
+        $map(([triggerSpec, actionCtor]) => {
+          const state$ = combineLatest([
+            this.objectId$,
+            $stateService.get(this.context.vine),
+          ])
+          .pipe(
+              map(([objectId, stateService]) => {
+                return stateService.getState<P>(objectId) || null;
+              }),
+              filterNonNull(),
+          );
+
+          const action = new actionCtor({
+            personaContext: this.context,
+            objectId$: this.objectId$,
+            state$,
+          });
+          return [triggerSpec, action] as [TriggerSpec, BaseAction<object>];
+        }),
+        $asMap(),
+    );
+    // TODO
+    // const helpAction = new HelpAction(this.triggerActionMap, this.vine);
+    // allActions.set(TriggerSpec.QUESTION, helpAction);
+
+    return allActions;
+  }
+
+  /**
+   * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
+   */
+  @cache()
+  get objectId$(): Observable<string> {
+    return $.host._.objectId.getValue(this.context).pipe(
+        switchMap(objectId => {
+          if (!objectId) {
+            LOG.warning('No object-id found');
+            return EMPTY;
+          }
+
+          return observableOf(objectId);
+        }),
+    );
   }
 
   private createTriggerClick(): Observable<unknown> {
@@ -51,19 +115,14 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
   }
 
   private setupActions(): void {
-    const allActions: Map<TriggerSpec, BaseAction> = new Map(this.triggerActionMap);
-    // TODO
-    // const helpAction = new HelpAction(this.triggerActionMap, this.vine);
-    // allActions.set(TriggerSpec.QUESTION, helpAction);
-
-    for (const [trigger, action] of allActions) {
+    for (const [trigger, action] of this.actionsMap) {
       this.addSetup(this.setupTriggerFunction(action));
       this.addSetup(this.setupTrigger(trigger, action));
       this.addSetup(action.run());
     }
   }
 
-  private setupTrigger(trigger: TriggerSpec, action: BaseAction): Observable<unknown> {
+  private setupTrigger(trigger: TriggerSpec, action: BaseAction<object>): Observable<unknown> {
     const trigger$ = TRIGGER_KEYS.has(trigger) ?
         this.createTriggerKey(trigger) :
         this.createTriggerClick();
@@ -75,7 +134,7 @@ export abstract class BaseComponent extends ThemedCustomElementCtrl {
         );
   }
 
-  private setupTriggerFunction(action: BaseAction): Observable<unknown> {
+  private setupTriggerFunction(action: BaseAction<object>): Observable<unknown> {
     return this.declareInput($.host)
         .pipe(
             tap(hostEl => {

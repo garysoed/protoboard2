@@ -4,7 +4,7 @@ import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
 import { registerStateHandler } from '../../src/state/register-state-handler';
@@ -105,10 +105,9 @@ export class D1 extends ThemedCustomElementCtrl {
   @cache()
   private get handleOnPieceAdd$(): Observable<unknown> {
     return this.declareInput($.template._.onAdd).pipe(
-        debug('onAdd'),
         withLatestFrom(this.selectedIcon$, $stagingService.get(this.vine)),
-        tap(([, icon, stagingService]) => {
-          stagingService.addState(D1_PREVIEW_TYPE, {icon});
+        switchMap(([, icon, stagingService]) => {
+          return stagingService.addState(D1_PREVIEW_TYPE, {icon});
         }),
     );
   }

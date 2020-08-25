@@ -6,15 +6,21 @@ import { createFakeContext, PersonaTester, PersonaTesterEnvironment } from 'pers
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { BaseAction } from './base-action';
+import { State } from '../state/state';
+
+import { ActionContext, BaseAction } from './base-action';
 
 
 const ACTION_KEY = 'test';
 
-class TestAction extends BaseAction<{value: number}> {
+interface ActionConfig {
+  readonly value: number;
+}
+
+class TestAction extends BaseAction<{}, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: PersonaContext) {
+  constructor(context: ActionContext<{}>) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, context);
 
     this.addSetup(this.setupConfig());
@@ -42,12 +48,18 @@ test('@protoboard2/core/base-action', init => {
 
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
-    const context = createFakeContext({shadowRoot});
+    const personaContext = createFakeContext({shadowRoot});
+    const objectId$ = new ReplaySubject<string>(1);
+    const state$ = new ReplaySubject<State<{}>>(1);
 
-    const action = new TestAction(context);
+    const action = new TestAction({
+      personaContext,
+      objectId$,
+      state$,
+    });
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 
-    return {action, context, element, onTrigger$};
+    return {action, personaContext, element, objectId$, onTrigger$};
   });
 
   test('config$', _, init => {
@@ -87,25 +99,6 @@ test('@protoboard2/core/base-action', init => {
       configEl.setAttribute('value', '345');
 
       assert(_.action.value$).to.emitSequence([345]);
-    });
-  });
-
-  test('objectId$', () => {
-    should(`emit the object ID if exists`, () => {
-      const objectId = 'objectId';
-      _.element.setAttribute('object-id', objectId);
-
-      run(_.action.run());
-
-      const objectId$ = createSpySubject(_.action.objectId$);
-      assert(objectId$).to.emitSequence([objectId]);
-    });
-
-    should(`emit nothing if the object ID does not exist`, () => {
-      run(_.action.run());
-
-      const objectId$ = createSpySubject(_.action.objectId$);
-      assert(objectId$).to.emitSequence([]);
     });
   });
 });

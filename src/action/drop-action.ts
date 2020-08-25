@@ -1,18 +1,17 @@
-import { Vine } from 'grapevine';
-import { PersonaContext } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
-import { BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
 import { $stateService } from '../state/state-service';
+
 
 export interface DroppablePayload {
   readonly contentIds: readonly string[];
 }
 
-export class DropAction extends BaseAction {
-  constructor(context: PersonaContext) {
+export class DropAction extends BaseAction<DroppablePayload> {
+  constructor(context: ActionContext<DroppablePayload>) {
     super(
         'Drop',
         'drop',
@@ -24,25 +23,16 @@ export class DropAction extends BaseAction {
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    const stateService$ = $stateService.get(this.context.vine);
+    const stateService$ = $stateService.get(this.context.personaContext.vine);
     const activeState$ = stateService$.pipe(
         map(service => service.getState<ActivePayload>(ACTIVE_ID)),
-    );
-    const targetState$ = combineLatest([
-      this.objectId$,
-      stateService$,
-    ])
-    .pipe(
-        map(([objectId, stateService]) => {
-          return stateService.getState<DroppablePayload>(objectId) || null;
-        }),
     );
 
     return this.onTrigger$
         .pipe(
-            withLatestFrom(targetState$, activeState$),
-            tap(([, targetState, activeState]) => {
-              if (!activeState || !targetState) {
+            withLatestFrom(this.context.state$, activeState$),
+            tap(([, state, activeState]) => {
+              if (!activeState || !state) {
                 return;
               }
 
@@ -55,9 +45,9 @@ export class DropAction extends BaseAction {
 
               activeContentIds$.next([...oldActiveIds]);
 
-              const targetContentIds$ = targetState.payload.contentIds;
+              const targetContentIds$ = state.payload.contentIds;
               const newTargetIds = [...targetContentIds$.getValue(), movedId];
-              targetState.payload.contentIds.next(newTargetIds);
+              state.payload.contentIds.next(newTargetIds);
             }),
         );
   }

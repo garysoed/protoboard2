@@ -1,12 +1,18 @@
 import { cache } from 'gs-tools/export/data';
 import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
-import { attributeIn, host, mutationObservable, onMutation, PersonaContext, stringParser } from 'persona';
-import { EMPTY, Observable, of as observableOf, Subject } from 'rxjs';
-import { map, mapTo, startWith, switchMap } from 'rxjs/operators';
-import { Logger } from 'santa';
+import { host, mutationObservable, onMutation, PersonaContext } from 'persona';
+import { Observable, Subject } from 'rxjs';
+import { map, mapTo, startWith } from 'rxjs/operators';
 
-const LOG = new Logger('protoboard.core.BaseAction');
+import { State } from '../state/state';
+
+
+export interface ActionContext<P extends object> {
+  readonly personaContext: PersonaContext;
+  readonly objectId$: Observable<string>;
+  readonly state$: Observable<State<P>>;
+}
 
 /**
  * Converters of the action's configuration object.
@@ -17,18 +23,8 @@ export type ConverterOf<O> = {
   readonly [K in keyof O]: Converter<O[K], string>;
 };
 
-/**
- * API of the BaseAction.
- *
- * @thModule action
- */
-export const $baseActionApi = {
-  objectId: attributeIn('object-id', stringParser()),
-};
-
 const $ = {
   host: host({
-    ...$baseActionApi,
     onMutation: onMutation({childList: true, subtree: true}),
   }),
 };
@@ -39,7 +35,7 @@ const $ = {
  * @typeParam C - The configuration object.
  * @thModule action
  */
-export abstract class BaseAction<C = {}> extends Runnable {
+export abstract class BaseAction<P extends object, C = {}> extends Runnable {
   readonly #onTrigger$ = new Subject<void>();
 
   /**
@@ -55,7 +51,7 @@ export abstract class BaseAction<C = {}> extends Runnable {
       readonly key: string,
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly context: PersonaContext,
+      protected readonly context: ActionContext<P>,
   ) {
     super();
   }
@@ -72,8 +68,8 @@ export abstract class BaseAction<C = {}> extends Runnable {
    */
   @cache()
   get config$(): Observable<Partial<C>> {
-    const shadowRoot = this.context.shadowRoot;
-    return $.host._.onMutation.getValue(this.context).pipe(
+    const shadowRoot = this.context.personaContext.shadowRoot;
+    return $.host._.onMutation.getValue(this.context.personaContext).pipe(
         startWith({}),
         map(() => {
           return shadowRoot.host.querySelector(`pb-action-config[action="${this.key}"]`);
@@ -103,23 +99,6 @@ export abstract class BaseAction<C = {}> extends Runnable {
           return config;
         }),
         map(config => config || {}),
-    );
-  }
-
-  /**
-   * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
-   */
-  @cache()
-  get objectId$(): Observable<string> {
-    return $.host._.objectId.getValue(this.context).pipe(
-        switchMap(objectId => {
-          if (!objectId) {
-            LOG.warning('No object-id found');
-            return EMPTY;
-          }
-
-          return observableOf(objectId);
-        }),
     );
   }
 

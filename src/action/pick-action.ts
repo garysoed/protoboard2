@@ -3,7 +3,7 @@ import { PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
-import { BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
 import { $stateService } from '../state/state-service';
 
@@ -13,11 +13,11 @@ import { $stateService } from '../state/state-service';
  *
  * @thModule action
  */
-export class PickAction extends BaseAction {
+export class PickAction extends BaseAction<{}> {
   /**
    * @internal
    */
-  constructor(context: PersonaContext) {
+  constructor(context: ActionContext<{}>) {
     super(
         'pick',
         'Pick',
@@ -30,12 +30,12 @@ export class PickAction extends BaseAction {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const activeState$ = $stateService.get(this.context.vine).pipe(
+    const activeState$ = $stateService.get(this.context.personaContext.vine).pipe(
         map(service => service.getState<ActivePayload>(ACTIVE_ID)),
     );
     return this.onTrigger$
         .pipe(
-            withLatestFrom(this.objectId$, activeState$),
+            withLatestFrom(this.context.objectId$, activeState$),
             tap(([, objectId, activeState]) => {
               if (!activeState) {
                 return;

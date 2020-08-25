@@ -3,28 +3,32 @@ import { PersonaContext } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
-import { BaseAction } from './base-action';
-import { BaseComponent } from './base-component';
+import { ActionContext, BaseAction } from './base-action';
+import { BaseActionCtor, BaseComponent } from './base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
 
 
 const ACTION_KEY = 'test';
 
-class TestAction extends BaseAction {
+class TestAction extends BaseAction<{}> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: PersonaContext) {
+  constructor(context: ActionContext<{}>) {
     super(ACTION_KEY, 'Test', {}, context);
   }
 
   get onTriggerOut$(): Observable<unknown> {
     return this.onTrigger$;
   }
+
+  get objectId$(): Observable<string> {
+    return this.context.objectId$;
+  }
 }
 
-class TestComponent extends BaseComponent {
+class TestComponent extends BaseComponent<{}> {
   constructor(
-      triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseAction>,
+      triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<{}>>,
       context: PersonaContext,
   ) {
     super(triggerActionMap, context);
@@ -41,30 +45,24 @@ test('@protoboard2/core/base-component', init => {
     const shadowRoot = element.attachShadow({mode: 'open'});
     shadowRoot.appendChild(styleEl);
 
-    const context = createFakeContext({shadowRoot});
-    const clickAction = new TestAction(context);
-    const keyAction = new TestAction(context);
-
+    const personaContext = createFakeContext({shadowRoot});
     const component = new TestComponent(
-        new Map<UnreservedTriggerSpec, BaseAction>([
-          [TriggerSpec.CLICK, clickAction],
-          [KEY, keyAction],
+        new Map([
+          [TriggerSpec.CLICK, TestAction],
+          [KEY, TestAction],
         ]),
-        context,
+        personaContext,
     );
     run(component.run());
 
-    return {
-      clickAction,
-      component,
-      element,
-      keyAction,
-    };
+    return {component, element};
   });
 
   test('createTriggerClick', () => {
     should(`trigger click based actions`, () => {
-      const onTrigger$ = createSpySubject(_.clickAction.onTrigger$);
+      const onTrigger$ = createSpySubject(
+          _.component.actionsMap.get(TriggerSpec.CLICK)!.onTrigger$,
+      );
       _.element.dispatchEvent(new CustomEvent('click'));
 
       assert(onTrigger$).to.emit();
@@ -73,7 +71,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerKey', _, init => {
     const _ = init(_ => {
-      const onTrigger$ = createSpySubject(_.keyAction.onTrigger$);
+      const onTrigger$ = createSpySubject(_.component.actionsMap.get(KEY)!.onTrigger$);
 
       return {
         ..._,
@@ -113,9 +111,24 @@ test('@protoboard2/core/base-component', init => {
     });
   });
 
+  test('objectId$', () => {
+    should(`emit the object ID if exists`, () => {
+      const objectId = 'objectId';
+      _.element.setAttribute('object-id', objectId);
+
+      const objectId$ = createSpySubject((_.component.actionsMap.get(KEY) as TestAction).objectId$);
+      assert(objectId$).to.emitSequence([objectId]);
+    });
+
+    should(`emit nothing if the object ID does not exist`, () => {
+      const objectId$ = createSpySubject((_.component.actionsMap.get(KEY) as TestAction).objectId$);
+      assert(objectId$).to.emitSequence([]);
+    });
+  });
+
   test('setupTriggerFunction', () => {
     should(`create a function that triggers`, () => {
-      const onTrigger$ = createSpySubject(_.keyAction.onTrigger$);
+      const onTrigger$ = createSpySubject(_.component.actionsMap.get(KEY)!.onTrigger$);
 
       (_.element as any)[ACTION_KEY]();
 
