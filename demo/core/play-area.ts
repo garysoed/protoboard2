@@ -3,6 +3,7 @@ import { $drawer, _p, Drawer, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, textContent } from 'persona';
 import { of as observableOf } from 'rxjs';
 
+import { Slot } from '../../src/container/slot';
 import { Supply } from '../../src/region/supply';
 import { $render, Render } from '../../src/state/render';
 
@@ -26,6 +27,7 @@ const $ = {
 @_p.customElement({
   dependencies: [
     Render,
+    Slot,
     Supply,
   ],
   tag: 'pbd-play-area',

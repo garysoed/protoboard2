@@ -6,7 +6,6 @@ import { element, PersonaContext, renderCustomElement, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { $slot, Slot } from '../container/slot';
 import { $d1, D1 } from '../piece/d1';
 
 import template from './documentation.html';
@@ -39,7 +38,6 @@ const $ = {
     // Deck,
     // GridLayout,
     Instruction,
-    Slot,
   ],
   template,
 })
@@ -62,14 +60,10 @@ export class Documentation extends ThemedCustomElementCtrl {
                 //   return 'pbd-d2';
                 // case Views.DECK:
                 //   return 'pbd-deck';
-                // case Views.FREE_LAYOUT:
-                //   return 'pbd-free-layout';
                 // case Views.GRID_LAYOUT:
                 //   return 'pbd-grid-layout';
                 case Views.INSTRUCTION:
                   return $instruction;
-                case Views.SLOT:
-                  return $slot;
                 default:
                   return null;
               }
