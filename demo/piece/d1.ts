@@ -7,14 +7,11 @@ import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
-import { ACTIVE_ID } from '../../src/region/active';
-import { SUPPLY_ID } from '../../src/region/supply';
 import { registerStateHandler } from '../../src/state/register-state-handler';
-import { $stateService, setStates } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { $generateObjectId } from '../core/generate-object-id';
+import { addObjectToSupply } from '../core/state';
 import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
@@ -107,34 +104,9 @@ export class D1 extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleOnPieceAdd$(): Observable<unknown> {
-    const currentState$ = $stateService.get(this.vine).pipe(
-        switchMap(service => service.currentState$),
-    );
     return this.declareInput($.template._.onAdd).pipe(
-        withLatestFrom(this.selectedIcon$, currentState$, $generateObjectId.get(this.vine)),
-        tap(([, icon, currentState, generateObjectId]) => {
-          const id = generateObjectId();
-          const supplyState = currentState.get(SUPPLY_ID);
-          const supplyIds = supplyState?.payload.objectIds;
-          const activeState = currentState.get(ACTIVE_ID);
-          const activeIds = activeState?.payload.objectIds;
-          if (!(supplyIds instanceof Array) ||
-              !supplyState ||
-              !activeState ||
-              !(activeIds instanceof Array)) {
-            throw new Error('supplyIds or activeIds cannot be found');
-          }
-
-          setStates(
-              [
-                ...currentState.values(),
-                {...activeState, payload: {objectIds: []}},
-                {type: D1_PREVIEW_TYPE, id, payload: {icon}},
-                {...supplyState, payload: {objectIds: [...supplyIds, id]}},
-              ],
-              this.vine,
-          );
-        }),
+        withLatestFrom(this.selectedIcon$),
+        switchMap(([, icon]) => addObjectToSupply(D1_PREVIEW_TYPE, {icon}, this.vine)),
     );
   }
 }
