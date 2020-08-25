@@ -8,9 +8,9 @@ import { $stateService, setStates } from '../../src/state/state-service';
 
 import { $generateObjectId } from './generate-object-id';
 
-export const ROOT_LAYOUT_ID = 'pbd.rootLayout';
 
-export const ROOT_LAYOUT_TYPE = 'pbd.rootLayout';
+export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
+export const ROOT_SLOT_TYPE = 'pbd.root-slot';
 
 export function addObjectToSupply(
     objectType: string,
@@ -54,11 +54,20 @@ export function addObjectToSupply(
 }
 
 export function initializeState(vine: Vine): void {
+  const rootSlots = [];
+  for (let i = 0; i < 9; i++) {
+    rootSlots.push({
+      id: `${ROOT_SLOT_PREFIX}${i}`,
+      type: ROOT_SLOT_TYPE,
+      payload: {contentIds: []},
+    });
+  }
+
   setStates(
       [
+        ...rootSlots,
         {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
         {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: []}},
-        {id: ROOT_LAYOUT_ID, type: ROOT_LAYOUT_TYPE, payload: {layoutTag: 'TODO'}},
       ],
       vine,
   );

@@ -2,36 +2,41 @@ import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { attributeIn, element, host, listParser, multi, PersonaContext, stringParser } from 'persona';
+import { element, host, multi, PersonaContext } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { BaseAction } from '../core/base-action';
+import { $baseActionApi, BaseAction } from '../core/base-action';
 import { BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { UnreservedTriggerSpec } from '../core/trigger-spec';
 import { $stateService } from '../state/state-service';
 
 import template from './slot.html';
 
+
 // import { DropAction } from '../action/drop-action';
 
 
-const $$ = {
+export const $slot = {
   tag: 'pb-slot',
   api: {
-    contentIds: attributeIn('content-ids', listParser(stringParser())),
+    ...$baseActionApi,
   },
 };
 
 const $ = {
-  host: host($$.api),
+  host: host($slot.api),
   root: element('root', instanceofType(HTMLDivElement), {
     content: multi('#content'),
   }),
 };
 
+export interface SlotPayload {
+  readonly contentIds: readonly string[];
+}
+
 @_p.customElement({
-  ...$$,
+  ...$slot,
   template,
 })
 export class Slot extends BaseComponent {
@@ -48,17 +53,28 @@ export class Slot extends BaseComponent {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.contentIds).pipe(
+    return this.declareInput($.host._.objectId).pipe(
         withLatestFrom($stateService.get(this.vine)),
-        switchMap(([ids, service]) => {
-          const node$List = $pipe(
-              new Set(ids),
-              $map(id => service.getObject(id, this.context)),
-              $filterNonNull(),
-              $asArray(),
-          );
+        switchMap(([objectId, service]) => {
+          if (!objectId) {
+            return observableOf([]);
+          }
+          const state = service.getState<SlotPayload>(objectId);
+          if (!state) {
+            return observableOf([]);
+          }
 
-          return node$List.length <= 0 ? observableOf([]) : combineLatest(node$List);
+          return state.payload.contentIds.pipe(
+              switchMap(contentIds => {
+                const node$list = $pipe(
+                    contentIds,
+                    $map(id => service.getObject(id, this.context)),
+                    $filterNonNull(),
+                    $asArray(),
+                );
+                return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+              }),
+          );
         }),
     );
   }
