@@ -30,5 +30,5 @@ export function registerFakeStateHandler(
       $map(([id]) => ({type: objectType, id, payload: {}})),
       $asArray(),
   );
-  setStates([...states, ...additionalStates], vine);
+  setStates(new Set([...states, ...additionalStates]), vine);
 }

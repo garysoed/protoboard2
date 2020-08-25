@@ -1,9 +1,9 @@
 import { cache } from 'gs-tools/export/data';
-import { elementWithTagType } from 'gs-types';
+import { elementWithTagType, instanceofType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
-import { api, element, PersonaContext } from 'persona';
+import { api, classToggle, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { Active } from '../src/region/active';
 
@@ -11,6 +11,8 @@ import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';
 import { $locationService, Views } from './core/location-service';
 import { PlayArea } from './core/play-area';
+import { StagingArea } from './core/staging-area';
+import { $stagingService } from './core/staging-service';
 import { initializeState } from './core/state';
 import template from './root.html';
 
@@ -20,6 +22,9 @@ import template from './root.html';
 
 const $ = {
   drawer: element('drawer', $drawer, {}),
+  main: element('main', instanceofType(HTMLDivElement), {
+    isPlaying: classToggle('isPlaying'),
+  }),
   root: element('root', elementWithTagType('mk-root-layout'), api($rootLayout.api)),
 };
 
@@ -31,6 +36,7 @@ const $ = {
     // HelpOverlay,
     PlayArea,
     RootLayout,
+    StagingArea,
   ],
   tag: 'pbd-root',
   template,
@@ -44,6 +50,7 @@ export class Root extends ThemedCustomElementCtrl {
     super(context);
     this.addSetup(this.handleOnRootActive$);
     this.render($.drawer._.drawerExpanded, this.declareInput($.root._.drawerExpanded));
+    this.render($.main._.isPlaying, this.isPlaying$);
   }
 
   @cache()
@@ -55,5 +62,13 @@ export class Root extends ThemedCustomElementCtrl {
               service.goToPath(Views.INSTRUCTION, {});
             }),
         );
+  }
+
+  @cache()
+  private get isPlaying$(): Observable<boolean> {
+    return $stagingService.get(this.vine).pipe(
+        switchMap(service => service.isStaging$),
+        map(isStaging => !isStaging),
+    );
   }
 }

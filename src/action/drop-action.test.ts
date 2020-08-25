@@ -29,7 +29,7 @@ test('@protoboard2/action/drop-action', init => {
       type: TARGET_TYPE,
       payload: {contentIds: [OTHER_TARGET_ID]},
     };
-    setStates([activeState, targetState], context.vine);
+    setStates(new Set([activeState, targetState]), context.vine);
 
     run(action.run());
 

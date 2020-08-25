@@ -22,7 +22,7 @@ test('@protoboard2/container/slot', init => {
 
     const onContentIds$ = new Subject<readonly string[]>();
     setStates(
-        [],
+        new Set([]),
         tester.vine,
     );
 

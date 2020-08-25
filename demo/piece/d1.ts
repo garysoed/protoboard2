@@ -1,17 +1,17 @@
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
+import { debug, filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
 import { registerStateHandler } from '../../src/state/register-state-handler';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { addObjectToSupply } from '../core/state';
+import { $stagingService } from '../core/staging-service';
 import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
@@ -105,8 +105,11 @@ export class D1 extends ThemedCustomElementCtrl {
   @cache()
   private get handleOnPieceAdd$(): Observable<unknown> {
     return this.declareInput($.template._.onAdd).pipe(
-        withLatestFrom(this.selectedIcon$),
-        switchMap(([, icon]) => addObjectToSupply(D1_PREVIEW_TYPE, {icon}, this.vine)),
+        debug('onAdd'),
+        withLatestFrom(this.selectedIcon$, $stagingService.get(this.vine)),
+        tap(([, icon, stagingService]) => {
+          stagingService.addState(D1_PREVIEW_TYPE, {icon});
+        }),
     );
   }
 }

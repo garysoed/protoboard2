@@ -2,6 +2,18 @@
   pbd-documentation, pbd-play-area {
     position: relative;
   }
+
+  #main #playArea {
+    display: none;
+  }
+
+  #main.isPlaying #playArea {
+    display: block;
+  }
+
+  #main.isPlaying #stagingArea {
+    display: none;
+  }
 </style>
 
 <mk-root-layout
@@ -11,9 +23,10 @@
     mk-theme="dark"
     label="Protoboard"
 >
-  <div layout="row" slot="main">
+  <div id="main" layout="row" slot="main">
     <pbd-documentation flex></pbd-documentation>
-    <pbd-play-area flex></pbd-play-area>
+    <pbd-play-area id="playArea" flex></pbd-play-area>
+    <pbd-staging-area id="stagingArea" flex></pbd-staging-area>
   </div>
   <pbd-drawer id="drawer" slot="drawer"></pbd-drawer>
   <pb-render object-id="pb.active" slot="post"></pb-render>

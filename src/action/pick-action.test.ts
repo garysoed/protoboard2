@@ -21,7 +21,7 @@ test('@protoboard2/action/pick-action', init => {
     const action = new PickAction(context);
 
     const activeState = createActiveState([]);
-    setStates([activeState], context.vine);
+    setStates(new Set([activeState]), context.vine);
     run(action.run());
 
     return {action, context, el};

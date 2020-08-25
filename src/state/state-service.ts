@@ -134,7 +134,7 @@ export const $stateService = stream(
 );
 
 export function setStates(
-    states: readonly SavedState[],
+    states: ReadonlySet<SavedState>,
     vine: Vine,
 ): void {
   const statesMap = $pipe(
