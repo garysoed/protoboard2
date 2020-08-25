@@ -6,17 +6,18 @@ import { element, PersonaContext, renderCustomElement, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+import { $slot, Slot } from '../container/slot';
 import { $d1, D1 } from '../piece/d1';
+
+import template from './documentation.html';
+import { $instruction, Instruction } from './instruction';
+import { $locationService, Views } from './location-service';
 
 // import { D2 } from '../component/d2';
 // import { FreeLayout } from '../layout/free-layout';
 // import { GridLayout } from '../layout/grid-layout';
 // import { $locationService, Views } from '../location-service';
 // import { Deck } from '../zone/deck';
-// import { Slot } from '../zone/slot';
-import template from './documentation.html';
-import { $instruction, Instruction } from './instruction';
-import { $locationService, Views } from './location-service';
 
 
 const $documentation = {
@@ -39,7 +40,7 @@ const $ = {
     // FreeLayout,
     // GridLayout,
     Instruction,
-    // Slot,
+    Slot,
   ],
   template,
 })
@@ -68,8 +69,8 @@ export class Documentation extends ThemedCustomElementCtrl {
                 //   return 'pbd-grid-layout';
                 case Views.INSTRUCTION:
                   return $instruction;
-                // case Views.SLOT:
-                //   return 'pbd-slot';
+                case Views.SLOT:
+                  return $slot;
                 default:
                   return null;
               }

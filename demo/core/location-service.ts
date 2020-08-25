@@ -9,7 +9,7 @@ export enum Views {
 //   FREE_LAYOUT = 'fl',
 //   GRID_LAYOUT = 'gl',
   INSTRUCTION = 'in',
-//   SLOT = 'sl',
+  SLOT = 'sl',
 }
 
 const ROUTE_SPEC = {
@@ -19,7 +19,7 @@ const ROUTE_SPEC = {
   [Views.D1]: fromPattern('/d1', {}),
   // [Views.D2]: fromPattern('/d2', {}),
   // [Views.DECK]: fromPattern('/deck', {}),
-  // [Views.SLOT]: fromPattern('/slot', {}),
+  [Views.SLOT]: fromPattern('/slot', {}),
 };
 
 const DEFAULT_ROUTE = {payload: {}, type: Views.INSTRUCTION};

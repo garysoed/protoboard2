@@ -21,6 +21,9 @@ export const $drawer = {
 
 const $ = {
   host: host($drawer.api),
+  containers: element('containers', instanceofType(HTMLDivElement), {
+    contents: multi('#contents'),
+  }),
   layouts: element('layouts', instanceofType(HTMLDivElement), {
     contents: multi('#contents'),
   }),
@@ -30,15 +33,17 @@ const $ = {
   root: element('root', instanceofType(HTMLDivElement), {
     onClick: onDom('click'),
   }),
-  zones: element('zones', instanceofType(HTMLDivElement), {
-    contents: multi('#contents'),
-  }),
 };
 
 interface LinkConfig {
   label: string;
   path: Views;
 }
+
+const CONTAINER_LINK_CONFIGS: LinkConfig[] = [
+  // {label: 'Deck', path: Views.DECK},
+  {label: 'Slot', path: Views.SLOT},
+];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
   // {label: 'Free', path: Views.FREE_LAYOUT},
@@ -48,11 +53,6 @@ const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
 const PIECE_LINK_CONFIGS: LinkConfig[] = [
   {label: 'D1', path: Views.D1},
   // {label: 'D2', path: Views.D2},
-];
-
-const ZONE_LINK_CONFIGS: LinkConfig[] = [
-  // {label: 'Deck', path: Views.DECK},
-  // {label: 'Slot', path: Views.SLOT},
 ];
 
 @_p.customElement({
@@ -74,7 +74,7 @@ export class Drawer extends ThemedCustomElementCtrl {
 
     this.render($.layouts._.contents, this.createNodes(LAYOUT_LINK_CONFIGS));
     this.render($.pieces._.contents, this.createNodes(PIECE_LINK_CONFIGS));
-    this.render($.zones._.contents, this.createNodes(ZONE_LINK_CONFIGS));
+    this.render($.containers._.contents, this.createNodes(CONTAINER_LINK_CONFIGS));
     this.addSetup(this.setupRootOnClick());
   }
 

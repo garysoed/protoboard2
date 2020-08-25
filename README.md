@@ -61,7 +61,8 @@ There are 4 classes of objects:
 ### Region
 
 Regions are used to group several objects together. This is used for custom layouts to make
-playtesting the game easier. Some example regions:
+playtesting the game easier. Unlike `Containers`, regions cannot be interacted with.
+Some example regions:
 
 -   **Active**: Refers to the player's cursor. Only visible to the local player.
 -   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
@@ -98,3 +99,4 @@ together. Some example containers:
     at any time.
 -   **Chute**: Mimics a cube tower. Put in pieces and they may randomly come out.
 -   **Bag**: Puts in pieces, and you can only take out random items from the bag.
+-   **Slot**: A place where objects can be placed on it.
