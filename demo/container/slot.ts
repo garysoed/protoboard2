@@ -1,7 +1,7 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
 import { Slot as SlotImpl } from '../../src/container/slot';
-// import { ZoneTemplate } from '../template/zone-template';
+import { ContainerTemplate } from '../template/container-template';
 
 import template from './slot.html';
 
@@ -14,8 +14,8 @@ export const $slot = {
   ...$slot,
   template,
   dependencies: [
+    ContainerTemplate,
     SlotImpl,
-    // ZoneTemplate,
   ],
 })
 export class Slot extends ThemedCustomElementCtrl {
