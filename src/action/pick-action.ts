@@ -41,8 +41,8 @@ export class PickAction extends BaseAction {
                 return;
               }
 
-              const existingObjectIds = activeState.payload.objectIds.getValue();
-              activeState.payload.objectIds.next([...existingObjectIds, itemId]);
+              const existingContentIds = activeState.payload.contentIds.getValue();
+              activeState.payload.contentIds.next([...existingContentIds, itemId]);
             }),
         );
   }

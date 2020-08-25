@@ -44,13 +44,13 @@ test('@protoboard2/region/supply', init => {
           _.tester.vine,
       );
 
-      run(_.el.setAttribute($.host._.objectIds, []));
-      run(_.el.setAttribute($.host._.objectIds, [id1]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id2]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id2, id3]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id3]));
-      run(_.el.setAttribute($.host._.objectIds, [id3]));
-      run(_.el.setAttribute($.host._.objectIds, []));
+      run(_.el.setAttribute($.host._.contentIds, []));
+      run(_.el.setAttribute($.host._.contentIds, [id1]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id2, id3]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id3]));
+      run(_.el.setAttribute($.host._.contentIds, [id3]));
+      run(_.el.setAttribute($.host._.contentIds, []));
 
       assert(contents$).to.emitSequence([
         arrayThat<Element>().haveExactElements([]),

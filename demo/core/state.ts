@@ -2,8 +2,8 @@ import { Vine } from 'grapevine';
 import { combineLatest, Observable } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
-import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
-import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
+import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../../src/region/active';
+import { SUPPLY_ID, SUPPLY_TYPE, SupplyPayload } from '../../src/region/supply';
 import { $stateService, setStates } from '../../src/state/state-service';
 
 import { $generateObjectId } from './generate-object-id';
@@ -30,9 +30,9 @@ export function addObjectToSupply(
       tap(([currentState, generateObjectId]) => {
         const id = generateObjectId();
         const supplyState = currentState.get(SUPPLY_ID);
-        const supplyIds = supplyState?.payload.objectIds;
+        const supplyIds = (supplyState?.payload as SupplyPayload|undefined)?.contentIds;
         const activeState = currentState.get(ACTIVE_ID);
-        const activeIds = activeState?.payload.objectIds;
+        const activeIds = (activeState?.payload as ActivePayload|undefined)?.contentIds;
         if (!(supplyIds instanceof Array) ||
             !supplyState ||
             !activeState ||
@@ -43,9 +43,9 @@ export function addObjectToSupply(
         setStates(
             [
               ...currentState.values(),
-              {...activeState, payload: {objectIds: []}},
+              {...activeState, payload: {contentIds: []}},
               {type: objectType, id, payload},
-              {...supplyState, payload: {objectIds: [...supplyIds, id]}},
+              {...supplyState, payload: {contentIds: [...supplyIds, id]}},
             ],
             vine,
         );
@@ -56,8 +56,8 @@ export function addObjectToSupply(
 export function initializeState(vine: Vine): void {
   setStates(
       [
-        {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {objectIds: []}},
-        {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {objectIds: []}},
+        {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
+        {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: []}},
         {id: ROOT_LAYOUT_ID, type: ROOT_LAYOUT_TYPE, payload: {layoutTag: 'TODO'}},
       ],
       vine,

@@ -35,7 +35,7 @@ export const ACTIVE_ID = 'pb.active';
 export const $active = {
   tag: 'pb-active',
   api: {
-    objectIds: attributeIn('object-ids', listParser(stringParser()), []),
+    contentIds: attributeIn('content-ids', listParser(stringParser()), []),
   },
 };
 
@@ -61,17 +61,17 @@ export interface ActivePayload {
   /**
    * ID of objects that are active.
    */
-  readonly objectIds: readonly string[];
+  readonly contentIds: readonly string[];
 }
 
 /**
- * Creates active state with the given objectIds active.
- * @param objectIds - IDs in the active region.
+ * Creates active state with the given `contentIds`` active.
+ * @param contentIds - IDs in the active region.
  *
  * @thModule region
  */
-export function createActiveState(objectIds: readonly string[]): SavedState {
-  return {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {objectIds}};
+export function createActiveState(contentIds: readonly string[]): SavedState {
+  return {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds}};
 }
 
 /**
@@ -91,7 +91,7 @@ export function createActiveState(objectIds: readonly string[]): SavedState {
         (state, context) => {
           return renderCustomElement(
               $active,
-              {inputs: {objectIds: state.payload.objectIds}},
+              {inputs: {contentIds: state.payload.contentIds}},
               context,
           );
         },
@@ -122,7 +122,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get content$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.objectIds).pipe(
+    return this.declareInput($.host._.contentIds).pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([itemIds, stateService]) => {
           const node$list = $pipe(
@@ -139,7 +139,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get itemCount$(): Observable<string> {
-    return this.declareInput($.host._.objectIds).pipe(
+    return this.declareInput($.host._.contentIds).pipe(
         map(ids => ids.length > 1 ? `${ids.length}` : ''),
     );
   }
@@ -151,7 +151,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get multipleItems$(): Observable<boolean> {
-    return this.declareInput($.host._.objectIds).pipe(map(ids => ids.length > 1));
+    return this.declareInput($.host._.contentIds).pipe(map(ids => ids.length > 1));
   }
 
   @cache()

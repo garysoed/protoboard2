@@ -33,7 +33,7 @@ test('@protoboard2/action/pick-action', init => {
           $stateService.get(_.context.vine)
               .pipe(
                   switchMap(service => {
-                    return service.getState<ActivePayload>(ACTIVE_ID)!.payload.objectIds;
+                    return service.getState<ActivePayload>(ACTIVE_ID)!.payload.contentIds;
                   }),
               ),
       );

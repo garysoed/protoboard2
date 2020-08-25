@@ -46,13 +46,13 @@ test('@protoboard2/region/active', init => {
           _.tester.vine,
       );
 
-      run(_.el.setAttribute($.host._.objectIds, []));
-      run(_.el.setAttribute($.host._.objectIds, [id1]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id2]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id2, id3]));
-      run(_.el.setAttribute($.host._.objectIds, [id1, id3]));
-      run(_.el.setAttribute($.host._.objectIds, [id3]));
-      run(_.el.setAttribute($.host._.objectIds, []));
+      run(_.el.setAttribute($.host._.contentIds, []));
+      run(_.el.setAttribute($.host._.contentIds, [id1]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id2, id3]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id3]));
+      run(_.el.setAttribute($.host._.contentIds, [id3]));
+      run(_.el.setAttribute($.host._.contentIds, []));
 
       assert(contents$).to.emitSequence([
         arrayThat<Element>().haveExactElements([]),
@@ -89,19 +89,19 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`render the 0 item count correctly`, () => {
-      run(_.el.setAttribute($.host._.objectIds, []));
+      run(_.el.setAttribute($.host._.contentIds, []));
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
 
     should(`render the 1 item count correctly`, () => {
-      run(_.el.setAttribute($.host._.objectIds, [_.id1]));
+      run(_.el.setAttribute($.host._.contentIds, [_.id1]));
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
 
     should(`render the 3 items count correctly`, () => {
-      run(_.el.setAttribute($.host._.objectIds, [_.id1, _.id2, _.id3]));
+      run(_.el.setAttribute($.host._.contentIds, [_.id1, _.id2, _.id3]));
 
       assert(_.el.getTextContent($.count)).to.emitWith('3');
     });
@@ -122,7 +122,7 @@ test('@protoboard2/region/active', init => {
           _.tester.vine,
       );
 
-      run(_.el.setAttribute($.host._.objectIds, [id]));
+      run(_.el.setAttribute($.host._.contentIds, [id]));
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
@@ -149,19 +149,19 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`remove the multiple classname if there are 0 items`, () => {
-      run(_.el.setAttribute($.host._.objectIds, []));
+      run(_.el.setAttribute($.host._.contentIds, []));
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
 
     should(`remove the multiple classname if there is 1 item`, () => {
-      run(_.el.setAttribute($.host._.objectIds, [_.id1]));
+      run(_.el.setAttribute($.host._.contentIds, [_.id1]));
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
 
     should(`add the multiple classname if there are 3 items`, () => {
-      run(_.el.setAttribute($.host._.objectIds, [_.id1, _.id2, _.id3]));
+      run(_.el.setAttribute($.host._.contentIds, [_.id1, _.id2, _.id3]));
 
       assert(_.el.getClassList($.root)).to.emitWith(
           setThat<string>().haveExactElements(new Set(['multiple'])),
@@ -184,7 +184,7 @@ test('@protoboard2/region/active', init => {
           _.tester.vine,
       );
 
-      run(_.el.setAttribute($.host._.objectIds, [id]));
+      run(_.el.setAttribute($.host._.contentIds, [id]));
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
@@ -214,7 +214,7 @@ test('@protoboard2/region/active', init => {
           _.tester.vine,
       );
 
-      run(_.el.setAttribute($.host._.objectIds, [id1, id2]));
+      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 

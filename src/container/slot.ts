@@ -19,7 +19,7 @@ import template from './slot.html';
 const $$ = {
   tag: 'pb-slot',
   api: {
-    objectIds: attributeIn('object-ids', listParser(stringParser())),
+    contentIds: attributeIn('content-ids', listParser(stringParser())),
   },
 };
 
@@ -48,7 +48,7 @@ export class Slot extends BaseComponent {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.objectIds).pipe(
+    return this.declareInput($.host._.contentIds).pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([ids, service]) => {
           const node$List = $pipe(

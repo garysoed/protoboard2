@@ -35,7 +35,7 @@ export const SUPPLY_ID = 'pb.supply';
 export const $supply = {
   tag: 'pb-supply',
   api: {
-    objectIds: attributeIn('object-ids', listParser(stringParser())),
+    contentIds: attributeIn('content-ids', listParser(stringParser())),
   },
 };
 
@@ -56,7 +56,7 @@ export interface SupplyPayload {
   /**
    * ID of objects that are in the supply.
    */
-  readonly objectIds: readonly string[];
+  readonly contentIds: readonly string[];
 }
 
 
@@ -74,7 +74,7 @@ export interface SupplyPayload {
         (state, context) => {
           return renderCustomElement(
               $supply,
-              {inputs: {objectIds: state.payload.objectIds}},
+              {inputs: {contentIds: state.payload.contentIds}},
               context,
           );
         },
@@ -91,7 +91,7 @@ export class Supply extends ThemedCustomElementCtrl {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.objectIds).pipe(
+    return this.declareInput($.host._.contentIds).pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([ids, service]) => {
           const node$List = $pipe(

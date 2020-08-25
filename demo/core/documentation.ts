@@ -7,12 +7,12 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { $slot, Slot } from '../container/slot';
-import { FreeLayout } from '../layout/free-layout';
 import { $d1, D1 } from '../piece/d1';
 
 import template from './documentation.html';
 import { $instruction, Instruction } from './instruction';
 import { $locationService, Views } from './location-service';
+
 
 // import { D2 } from '../component/d2';
 // import { GridLayout } from '../layout/grid-layout';
@@ -37,7 +37,6 @@ const $ = {
     D1,
     // D2,
     // Deck,
-    FreeLayout,
     // GridLayout,
     Instruction,
     Slot,
