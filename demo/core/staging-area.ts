@@ -1,11 +1,10 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
-import { $iconWithText, _p, IconWithText, ThemedCustomElementCtrl } from 'mask';
+import { $iconWithText, $textIconButton, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
@@ -20,11 +19,15 @@ const $ = {
   list: element('list', instanceofType(HTMLDivElement), {
     content: multi('#content'),
   }),
+  startButton: element('startButton', $textIconButton, {}),
 };
 
 @_p.customElement({
   ...$stagingArea,
-  dependencies: [IconWithText],
+  dependencies: [
+    IconWithText,
+    TextIconButton,
+  ],
   template,
 })
 export class StagingArea extends ThemedCustomElementCtrl {
@@ -32,14 +35,13 @@ export class StagingArea extends ThemedCustomElementCtrl {
     super(context);
 
     this.render($.list._.content, this.contentNodes$);
+    this.addSetup(this.handleStartAction$);
   }
 
   @cache()
   private get contentNodes$(): Observable<readonly Node[]> {
     return $stagingService.get(this.vine).pipe(
-        debug('service'),
         switchMap(service => service.states$),
-        debug('states'),
         switchMap(states => {
           const node$List = $pipe(
               states,
@@ -52,6 +54,16 @@ export class StagingArea extends ThemedCustomElementCtrl {
           );
 
           return node$List.length <= 0 ? observableOf([]) : combineLatest(node$List);
+        }),
+    );
+  }
+
+  @cache()
+  private get handleStartAction$(): Observable<unknown> {
+    return this.declareInput($.startButton._.actionEvent).pipe(
+        withLatestFrom($stagingService.get(this.vine)),
+        tap(([, service]) => {
+          service.setStaging(false);
         }),
     );
   }

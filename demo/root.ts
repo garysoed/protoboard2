@@ -1,4 +1,5 @@
 import { cache } from 'gs-tools/export/data';
+import { debug } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, classToggle, element, PersonaContext } from 'persona';
@@ -13,7 +14,6 @@ import { $locationService, Views } from './core/location-service';
 import { PlayArea } from './core/play-area';
 import { StagingArea } from './core/staging-area';
 import { $stagingService } from './core/staging-service';
-import { initializeState } from './core/state';
 import template from './root.html';
 
 
@@ -41,9 +41,6 @@ const $ = {
   tag: 'pbd-root',
   template,
   api: {},
-  configure: vine => {
-    initializeState(vine);
-  },
 })
 export class Root extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
@@ -68,6 +65,7 @@ export class Root extends ThemedCustomElementCtrl {
   private get isPlaying$(): Observable<boolean> {
     return $stagingService.get(this.vine).pipe(
         switchMap(service => service.isStaging$),
+        debug('isStaging'),
         map(isStaging => !isStaging),
     );
   }

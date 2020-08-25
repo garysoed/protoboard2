@@ -8,7 +8,7 @@ import { registerStateHandler } from '../../src/state/register-state-handler';
 import { Render } from '../../src/state/render';
 
 import template from './play-area.html';
-import { ROOT_SLOT_TYPE } from './state';
+import { ROOT_SLOT_TYPE } from './staging-service';
 
 
 @_p.customElement({
