@@ -7,6 +7,7 @@ import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf 
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
+import { State } from '../state/state';
 import { $stateService } from '../state/state-service';
 
 import { ActionContext, BaseAction } from './base-action';
@@ -52,21 +53,10 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
     const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
         this.triggerActionMap,
         $map(([triggerSpec, actionCtor]) => {
-          const state$ = combineLatest([
-            this.objectId$,
-            $stateService.get(this.context.vine),
-          ])
-          .pipe(
-              switchMap(([objectId, stateService]) => {
-                return stateService.getState<P>(objectId);
-              }),
-              filterNonNull(),
-          );
-
           const action = new actionCtor({
             personaContext: this.context,
             objectId$: this.objectId$,
-            state$,
+            state$: this.state$.pipe(filterNonNull()),
           });
           return [triggerSpec, action] as [TriggerSpec, BaseAction<object>];
         }),
@@ -92,6 +82,19 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
           }
 
           return observableOf(objectId);
+        }),
+    );
+  }
+
+  @cache()
+  get state$(): Observable<State<P>|null> {
+    return combineLatest([
+      this.objectId$,
+      $stateService.get(this.context.vine),
+    ])
+    .pipe(
+        switchMap(([objectId, stateService]) => {
+          return stateService.getState<P>(objectId);
         }),
     );
   }

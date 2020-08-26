@@ -2,12 +2,13 @@ import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testi
 import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
-import { $, $supply, Supply } from './supply';
+import { $, $supply, Supply, SUPPLY_ID, SUPPLY_TYPE, SupplyPayload } from './supply';
 
 test('@protoboard2/region/supply', init => {
   const factory = new PersonaTesterFactory(_p);
@@ -15,11 +16,22 @@ test('@protoboard2/region/supply', init => {
   const _ = init(() => {
     const tester = factory.build([Supply], document);
     const el = tester.createElement($supply.tag);
+    run(el.setAttribute($.host._.objectId, SUPPLY_ID));
+
     const fakeStateService = createFakeStateService(tester.vine);
+    const contentIds$ = new Subject<readonly string[]>();
+    run(fakeStateService.subscribeValuesFor<SupplyPayload>(SUPPLY_ID, {contentIds: contentIds$}));
+
+    fakeStateService.addState({type: SUPPLY_TYPE, id: SUPPLY_ID, payload: {contentIds: []}});
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
-    return {el, fakeStateService, tester};
+    return {
+      contentIds$,
+      el,
+      fakeStateService,
+      tester,
+    };
   });
 
   test('contents$', () => {
@@ -46,19 +58,17 @@ test('@protoboard2/region/supply', init => {
           _.tester.vine,
       );
 
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id: id1, payload: {}},
-        {type: 'test', id: id2, payload: {}},
-        {type: 'test', id: id3, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
 
-      run(_.el.setAttribute($.host._.contentIds, []));
-      run(_.el.setAttribute($.host._.contentIds, [id1]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id2, id3]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id3]));
-      run(_.el.setAttribute($.host._.contentIds, [id3]));
-      run(_.el.setAttribute($.host._.contentIds, []));
+      _.contentIds$.next([]);
+      _.contentIds$.next([id1]);
+      _.contentIds$.next([id1, id2]);
+      _.contentIds$.next([id1, id2, id3]);
+      _.contentIds$.next([id1, id3]);
+      _.contentIds$.next([id3]);
+      _.contentIds$.next([]);
 
       assert(contents$).to.emitSequence([
         arrayThat<Element>().haveExactElements([]),

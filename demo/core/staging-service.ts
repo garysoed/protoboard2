@@ -1,6 +1,7 @@
 import { source, Vine } from 'grapevine';
+import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { SimpleIdGenerator } from 'gs-tools/export/random';
-import { BehaviorSubject, Observable, defer, of as observableOf } from 'rxjs';
+import { BehaviorSubject, defer, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
@@ -46,6 +47,7 @@ export class StagingService {
         return observableOf({});
       }
 
+      const addedStates = this.#states$.getValue();
       this.#states$.next(new Set());
 
       return $stateService.get(this.vine).pipe(
@@ -59,10 +61,17 @@ export class StagingService {
               });
             }
 
+            const supplyContentIds = $pipe(
+                addedStates,
+                $map(({id}) => id),
+                $asArray(),
+            );
+
             service.setStates(new Set([
               ...rootSlots,
+              ...addedStates,
               {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
-              {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: []}},
+              {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
             ]));
           }),
       );

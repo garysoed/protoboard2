@@ -38,7 +38,7 @@ class ObjectCache {
 }
 
 export class StateService {
-  private readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState>>(new Set());
+  protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState>>(new Set());
 
   constructor(private readonly vine: Vine) { }
 

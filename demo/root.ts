@@ -1,5 +1,4 @@
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { elementWithTagType, instanceofType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, classToggle, element, PersonaContext } from 'persona';
@@ -65,7 +64,6 @@ export class Root extends ThemedCustomElementCtrl {
   private get isPlaying$(): Observable<boolean> {
     return $stagingService.get(this.vine).pipe(
         switchMap(service => service.isStaging$),
-        debug('isStaging'),
         map(isStaging => !isStaging),
     );
   }

@@ -53,12 +53,7 @@ test('@protoboard2/action/drop-action', init => {
 
       const activeIds$ = createSpySubject(
           _.fakeStateService.getState<ActivePayload>(ACTIVE_ID).pipe(
-              debug('state'),
-              switchMap(state => {
-                console.log((state!.payload.contentIds as any).id);
-                return state!.payload.contentIds;
-              }),
-              debug('contentIds'),
+              switchMap(state => state!.payload.contentIds),
           ),
       );
       const targetIds$ = createSpySubject(

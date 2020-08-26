@@ -2,11 +2,12 @@ import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser } from 'persona';
+import { _p } from 'mask';
+import { element, host, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { $baseComponent, BaseComponent } from '../core/base-component';
 import { $stateService, registerStateHandler } from '../state/state-service';
 
 import template from './supply.html';
@@ -35,7 +36,7 @@ export const SUPPLY_ID = 'pb.supply';
 export const $supply = {
   tag: 'pb-supply',
   api: {
-    contentIds: attributeIn('content-ids', listParser(stringParser())),
+    ...$baseComponent.api,
   },
 };
 
@@ -74,7 +75,7 @@ export interface SupplyPayload {
         (state, context) => {
           return renderCustomElement(
               $supply,
-              {inputs: {contentIds: state.payload.contentIds}},
+              {inputs: {objectId: observableOf(state.id)}},
               context,
           );
         },
@@ -82,26 +83,34 @@ export interface SupplyPayload {
     );
   },
 })
-export class Supply extends ThemedCustomElementCtrl {
+export class Supply extends BaseComponent<SupplyPayload> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(new Map(), context);
 
     this.render($.root._.content, this.contents$);
   }
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.contentIds).pipe(
-        withLatestFrom($stateService.get(this.vine)),
-        switchMap(([ids, service]) => {
-          const node$List = $pipe(
-              new Set(ids),
-              $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
-              $asArray(),
-          );
+    return this.state$.pipe(
+      withLatestFrom($stateService.get(this.vine)),
+      switchMap(([state, service]) => {
+        if (!state) {
+          return observableOf([]);
+        }
 
-          return node$List.length <= 0 ? observableOf([]) : combineLatest(node$List);
-        }),
+        return state.payload.contentIds.pipe(
+            switchMap(contentIds => {
+              const node$list = $pipe(
+                  new Set<string>(contentIds),
+                  $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
+                  $asArray(),
+              );
+
+              return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+            }),
+        );
+      }),
     );
   }
 }

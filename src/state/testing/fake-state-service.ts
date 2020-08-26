@@ -2,6 +2,7 @@ import { Vine } from 'grapevine';
 import { EMPTY, merge, Observable, Subject } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
+import { SavedState } from '../saved-state';
 import { $stateService, StateService } from '../state-service';
 
 
@@ -9,6 +10,11 @@ type ObservablePayload<P extends object> = {readonly [K in keyof P]: Observable<
 
 class FakeStateService extends StateService {
   readonly [Symbol.toStringTag] = 'FakeStateService';
+
+  addState(state: SavedState): void {
+    const existingStates = this.statesRaw$.getValue();
+    this.setStates(new Set([...existingStates, state]));
+  }
 
   subscribeValuesFor<P extends object>(
       objectId: string,
