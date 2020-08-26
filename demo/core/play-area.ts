@@ -4,8 +4,8 @@ import { of as observableOf } from 'rxjs';
 
 import { $slot, Slot } from '../../src/container/slot';
 import { Supply } from '../../src/region/supply';
-import { registerStateHandler } from '../../src/state/register-state-handler';
 import { Render } from '../../src/state/render';
+import { registerStateHandler } from '../../src/state/state-service';
 
 import template from './play-area.html';
 import { ROOT_SLOT_TYPE } from './staging-service';

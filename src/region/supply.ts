@@ -1,13 +1,13 @@
-import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
+import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
+import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { registerStateHandler } from '../state/register-state-handler';
-import { $stateService } from '../state/state-service';
+import { $stateService, registerStateHandler } from '../state/state-service';
 
 import template from './supply.html';
 
@@ -96,8 +96,7 @@ export class Supply extends ThemedCustomElementCtrl {
         switchMap(([ids, service]) => {
           const node$List = $pipe(
               new Set(ids),
-              $map(id => service.getObject(id, this.context)),
-              $filterNonNull(),
+              $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
               $asArray(),
           );
 

@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
-import { registerStateHandler } from '../../src/state/register-state-handler';
+import { registerStateHandler } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';

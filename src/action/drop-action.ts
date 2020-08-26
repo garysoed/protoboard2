@@ -1,5 +1,6 @@
+import { debug } from 'gs-tools/export/rxjs';
 import { Observable } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
@@ -25,7 +26,8 @@ export class DropAction extends BaseAction<DroppablePayload> {
   private get handleTrigger$(): Observable<unknown> {
     const stateService$ = $stateService.get(this.context.personaContext.vine);
     const activeState$ = stateService$.pipe(
-        map(service => service.getState<ActivePayload>(ACTIVE_ID)),
+        debug('drop - service'),
+        switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
     );
 
     return this.onTrigger$
@@ -43,6 +45,7 @@ export class DropAction extends BaseAction<DroppablePayload> {
                 return;
               }
 
+              console.log(`drop ${(activeContentIds$ as any).id}`);
               activeContentIds$.next([...oldActiveIds]);
 
               const targetContentIds$ = state.payload.contentIds;

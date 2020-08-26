@@ -4,6 +4,7 @@ import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map } from 'rxjs/operators';
 
+import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
 import { $, $active, Active } from './active';
@@ -15,10 +16,11 @@ test('@protoboard2/region/active', init => {
   const _ = init(() => {
     const tester = factory.build([Active], document);
     const el = tester.createElement($active.tag);
+    const fakeStateService = createFakeStateService(tester.vine);
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
-    return {el, tester};
+    return {el, fakeStateService, tester};
   });
 
   test('content$', () => {
@@ -43,9 +45,13 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+        {type: 'test', id: id3, payload: {}},
+      ]));
 
       run(_.el.setAttribute($.host._.contentIds, []));
       run(_.el.setAttribute($.host._.contentIds, [id1]));
@@ -83,9 +89,13 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+        {type: 'test', id: id3, payload: {}},
+      ]));
 
       return {..._, id1, id2, id3, el1, el2, el3};
     });
@@ -121,9 +131,11 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id, content]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id, payload: {}},
+      ]));
 
       run(_.el.setAttribute($.host._.contentIds, [id]));
 
@@ -145,9 +157,13 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+        {type: 'test', id: id3, payload: {}},
+      ]));
 
       return {..._, id1, id2, id3, el1, el2, el3};
     });
@@ -185,9 +201,11 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id, content]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id, payload: {}},
+      ]));
 
       run(_.el.setAttribute($.host._.contentIds, [id]));
 
@@ -216,9 +234,12 @@ test('@protoboard2/region/active', init => {
 
       registerFakeStateHandler(
           new Map([[id1, content1], [id2, content2]]),
-          [],
           _.tester.vine,
       );
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+      ]));
 
       run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
 

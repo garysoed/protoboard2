@@ -4,7 +4,7 @@ import { instanceofType } from 'gs-types';
 import { $iconWithText, $textIconButton, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
@@ -62,9 +62,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
   private get handleStartAction$(): Observable<unknown> {
     return this.declareInput($.startButton._.actionEvent).pipe(
         withLatestFrom($stagingService.get(this.vine)),
-        tap(([, service]) => {
-          service.setStaging(false);
-        }),
+        switchMap(([, service]) => service.setStaging(false)),
     );
   }
 }

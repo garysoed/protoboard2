@@ -1,17 +1,13 @@
 import { Vine } from 'grapevine';
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { of as observableOf, throwError } from 'rxjs';
 
-import { registerStateHandler } from '../register-state-handler';
-import { SavedState } from '../saved-state';
-import { setStates } from '../state-service';
+import { registerStateHandler } from '../state-service';
+
 
 export function registerFakeStateHandler(
     nodeMap: ReadonlyMap<string, Node>,
-    additionalStates: readonly SavedState[],
     vine: Vine,
 ): void {
-  const objectType = 'test';
   registerStateHandler(
       'test',
       state => {
@@ -24,11 +20,4 @@ export function registerFakeStateHandler(
       },
       vine,
   );
-
-  const states = $pipe(
-      nodeMap,
-      $map(([id]) => ({type: objectType, id, payload: {}})),
-      $asArray(),
-  );
-  setStates(new Set([...states, ...additionalStates]), vine);
 }

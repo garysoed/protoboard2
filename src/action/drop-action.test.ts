@@ -1,11 +1,13 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
+import { debug } from 'gs-tools/export/rxjs';
 import { createFakeContext } from 'persona/export/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
 import { State } from '../state/state';
-import { $stateService, setStates } from '../state/state-service';
+import { $stateService } from '../state/state-service';
+import { createFakeStateService } from '../state/testing/fake-state-service';
 
 import { DropAction, DroppablePayload } from './drop-action';
 
@@ -28,12 +30,13 @@ test('@protoboard2/action/drop-action', init => {
       state$,
     });
 
+    const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = createActiveState([OTHER_ACTIVE_ID, MOVED_ID]);
-    setStates(new Set([activeState]), personaContext.vine);
+    fakeStateService.setStates(new Set([activeState]));
 
     run(action.run());
 
-    return {action, el, personaContext, objectId$, state$};
+    return {action, el, fakeStateService, personaContext, objectId$, state$};
   });
 
   test('onTrigger', () => {
@@ -49,10 +52,13 @@ test('@protoboard2/action/drop-action', init => {
       _.state$.next(state);
 
       const activeIds$ = createSpySubject(
-          $stateService.get(_.personaContext.vine).pipe(
-              switchMap(service => {
-                return service.getState<ActivePayload>(ACTIVE_ID)!.payload.contentIds;
+          _.fakeStateService.getState<ActivePayload>(ACTIVE_ID).pipe(
+              debug('state'),
+              switchMap(state => {
+                console.log((state!.payload.contentIds as any).id);
+                return state!.payload.contentIds;
               }),
+              debug('contentIds'),
           ),
       );
       const targetIds$ = createSpySubject(

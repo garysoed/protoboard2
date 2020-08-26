@@ -1,12 +1,12 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
-import { _v } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
 import { State } from '../state/state';
-import { $stateService, setStates } from '../state/state-service';
+import { $stateService } from '../state/state-service';
+import { createFakeStateService } from '../state/testing/fake-state-service';
 
 import { PickAction } from './pick-action';
 
@@ -24,8 +24,9 @@ test('@protoboard2/action/pick-action', init => {
       state$,
     });
 
+    const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = createActiveState([]);
-    setStates(new Set([activeState]), personaContext.vine);
+    fakeStateService.setStates(new Set([activeState]));
     run(action.run());
 
     return {action, objectId$, personaContext, el};
@@ -38,9 +39,8 @@ test('@protoboard2/action/pick-action', init => {
       const activeIds$ = createSpySubject(
           $stateService.get(_.personaContext.vine)
               .pipe(
-                  switchMap(service => {
-                    return service.getState<ActivePayload>(ACTIVE_ID)!.payload.contentIds;
-                  }),
+                  switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
+                  switchMap(state => state!.payload.contentIds),
               ),
       );
 

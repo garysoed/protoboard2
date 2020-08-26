@@ -1,7 +1,6 @@
 import { cache } from 'gs-tools/export/data';
-import { PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
@@ -31,7 +30,7 @@ export class PickAction extends BaseAction<{}> {
   @cache()
   private get handleTrigger$(): Observable<unknown> {
     const activeState$ = $stateService.get(this.context.personaContext.vine).pipe(
-        map(service => service.getState<ActivePayload>(ACTIVE_ID)),
+        switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
     );
     return this.onTrigger$
         .pipe(

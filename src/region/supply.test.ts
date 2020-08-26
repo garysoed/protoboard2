@@ -4,6 +4,7 @@ import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map } from 'rxjs/operators';
 
+import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
 import { $, $supply, Supply } from './supply';
@@ -14,10 +15,11 @@ test('@protoboard2/region/supply', init => {
   const _ = init(() => {
     const tester = factory.build([Supply], document);
     const el = tester.createElement($supply.tag);
+    const fakeStateService = createFakeStateService(tester.vine);
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
-    return {el, tester};
+    return {el, fakeStateService, tester};
   });
 
   test('contents$', () => {
@@ -41,9 +43,14 @@ test('@protoboard2/region/supply', init => {
 
       registerFakeStateHandler(
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-          [],
           _.tester.vine,
       );
+
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+        {type: 'test', id: id3, payload: {}},
+      ]));
 
       run(_.el.setAttribute($.host._.contentIds, []));
       run(_.el.setAttribute($.host._.contentIds, [id1]));

@@ -57,8 +57,8 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
             $stateService.get(this.context.vine),
           ])
           .pipe(
-              map(([objectId, stateService]) => {
-                return stateService.getState<P>(objectId) || null;
+              switchMap(([objectId, stateService]) => {
+                return stateService.getState<P>(objectId);
               }),
               filterNonNull(),
           );

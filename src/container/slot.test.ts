@@ -3,9 +3,10 @@ import { $asArray, $pipe } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { Subject } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { $stateService, setStates } from '../state/state-service';
+import { $stateService } from '../state/state-service';
+import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
 import { $, $slot, Slot, SlotPayload } from './slot';
@@ -20,22 +21,17 @@ test('@protoboard2/container/slot', init => {
     const el = tester.createElement($slot.tag);
     run(el.setAttribute($.host._.objectId, OBJECT_ID));
 
-    const onContentIds$ = new Subject<readonly string[]>();
-    setStates(
-        new Set([]),
-        tester.vine,
-    );
+    const fakeStateService = createFakeStateService(tester.vine);
+    $stateService.set(tester.vine, () => fakeStateService);
 
-    run(onContentIds$.pipe(
-        withLatestFrom($stateService.get(tester.vine)),
-        tap(([contentIds, service]) => {
-          service.getState<SlotPayload>(OBJECT_ID)!.payload.contentIds.next(contentIds);
-        }),
-    ));
+    const onContentIds$ = new Subject<readonly string[]>();
+    fakeStateService.setStates(new Set([]));
+
+    run(fakeStateService.subscribeValuesFor<SlotPayload>(OBJECT_ID, {contentIds: onContentIds$}));
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
-    return {el, onContentIds$, tester};
+    return {el, fakeStateService, onContentIds$, tester};
   });
 
   test('contents$', () => {
@@ -58,9 +54,15 @@ test('@protoboard2/container/slot', init => {
             [id2, el2],
             [id3, el3],
           ]),
-          [{id: OBJECT_ID, type: 'test', payload: {contentIds: []}}],
           _.tester.vine,
       );
+
+      _.fakeStateService.setStates(new Set([
+        {type: 'test', id: id1, payload: {}},
+        {type: 'test', id: id2, payload: {}},
+        {type: 'test', id: id3, payload: {}},
+        {id: OBJECT_ID, type: 'test', payload: {contentIds: []}},
+      ]));
 
       _.onContentIds$.next([]);
       _.onContentIds$.next([id1]);

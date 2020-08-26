@@ -1,11 +1,11 @@
 import { _p } from 'mask';
 import { PersonaContext } from 'persona';
+
 import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
+
 import template from './d1.html';
-
-
 
 
 // import { RotateAction } from '../action/rotate-action';

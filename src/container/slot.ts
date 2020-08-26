@@ -1,5 +1,6 @@
 import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
+import { debug, filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, multi, PersonaContext } from 'persona';
@@ -55,16 +56,15 @@ export class Slot extends BaseComponent<SlotPayload> {
           if (!objectId) {
             return observableOf([]);
           }
-          const state = service.getState<SlotPayload>(objectId);
-          if (!state) {
-            return observableOf([]);
-          }
 
-          return state.payload.contentIds.pipe(
+          return service.getState<SlotPayload>(objectId).pipe(
+              debug('state'),
+              switchMap(state => state?.payload.contentIds || observableOf<readonly string[]>([])),
+              debug('contentIds'),
               switchMap(contentIds => {
                 const node$list = $pipe(
                     contentIds,
-                    $map(id => service.getObject(id, this.context)),
+                    $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
                     $filterNonNull(),
                     $asArray(),
                 );

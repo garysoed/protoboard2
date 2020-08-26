@@ -1,22 +1,28 @@
-import { source, stream, Vine } from 'grapevine';
+import { source, Vine } from 'grapevine';
 import { $asArray, $asMap, $asRecord, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
 
-import { $stateHandlers, OnCreateFn } from './register-state-handler';
 import { SavedState } from './saved-state';
 import { State } from './state';
 
 
-const $statesRaw = source<ReadonlyMap<string, SavedState>>(() => new Map());
+/**
+ * Function called when creating the object corresponding to the state.
+ *
+ * @thHidden
+ */
+export type StateHandler<P extends object> =
+    (state: State<P>, context: PersonaContext) => Observable<Node>;
+
 
 class ObjectCache {
   private object: Observable<Node>|null = null;
 
   constructor(
-      private readonly fn: OnCreateFn<object>,
+      private readonly fn: StateHandler<object>,
       private readonly state: State<object>,
   ) { }
 
@@ -32,118 +38,133 @@ class ObjectCache {
 }
 
 export class StateService {
-  constructor(
-      private readonly stateHandlers: ReadonlyMap<string, OnCreateFn<object>>,
-      private readonly statesRaw: ReadonlyMap<string, SavedState>,
-  ) { }
+  private readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState>>(new Set());
+
+  constructor(private readonly vine: Vine) { }
 
   @cache()
   get currentState$(): Observable<ReadonlyMap<string, SavedState>> {
-    const states$List = $pipe(
-        this.statesMap,
-        $map(([key, state]) => {
-          const payloads$ = resolveMap(state.payload);
-          return payloads$.pipe(
-              map(payload => {
-                return [key, {...state, payload}] as [string, SavedState];
+    return this.statesMap$.pipe(
+        switchMap(statesMap => {
+          const states$List = $pipe(
+              statesMap,
+              $map(([key, state]) => {
+                const payloads$ = resolveMap(state.payload);
+                return payloads$.pipe(
+                    map(payload => {
+                      return [key, {...state, payload}] as [string, SavedState];
+                    }),
+                );
               }),
+              $asArray(),
           );
-        }),
-        $asArray(),
-    );
 
-    if (states$List.length <= 0) {
-      return observableOf(new Map());
-    }
-
-    return combineLatest(states$List).pipe(map(pairs => new Map(pairs)));
-  }
-
-  getObject(id: string, context: PersonaContext): Observable<Node>|null {
-    const cache = this.objectCachesMap.get(id);
-    if (!cache) {
-      return null;
-    }
-
-    return cache.getOrCreate(context);
-  }
-
-  getState<P extends object>(id: string): State<P>|null {
-    return this.statesMap.get(id) as State<P> || null;
-  }
-
-  @cache()
-  get objectIds(): ReadonlySet<string> {
-    return $pipe(this.objectCachesMap, $map(([id]) => id), $asSet());
-  }
-
-  @cache()
-  private get objectCachesMap(): ReadonlyMap<string, ObjectCache> {
-    return $pipe(
-        this.statesMap,
-        $map(([id, state]) => {
-          const handler = this.stateHandlers.get(state.type);
-          if (!handler) {
-            return null;
+          if (states$List.length <= 0) {
+            return observableOf(new Map());
           }
 
-          return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
+          return combineLatest(states$List).pipe(map(pairs => new Map(pairs)));
         }),
-        $filterNonNull(),
-        $asMap(),
+    );
+  }
+
+  getObject(id: string, context: PersonaContext): Observable<Node|null> {
+    return this.objectCachesMap$.pipe(
+        switchMap(objectCachesMap => {
+          const cache = objectCachesMap.get(id);
+          if (!cache) {
+            return observableOf(null);
+          }
+
+          return cache.getOrCreate(context);
+        }),
+    );
+  }
+
+  getState<P extends object>(id: string): Observable<State<P>|null> {
+    return this.statesMap$.pipe(map(statesMap => statesMap.get(id) as State<P> || null));
+  }
+
+  setStates(statesRaw: ReadonlySet<SavedState>): void {
+    this.statesRaw$.next(statesRaw);
+  }
+
+  @cache()
+  get objectIds$(): Observable<ReadonlySet<string>> {
+    return this.objectCachesMap$.pipe(
+        map(objectCachesMap => $pipe(objectCachesMap, $map(([id]) => id), $asSet())),
     );
   }
 
   @cache()
-  private get statesMap(): ReadonlyMap<string, State<object>> {
-    const statesMap = new Map<string, State<object>>();
-    for (const [, state] of this.statesRaw) {
-      const runtimePayload: Record<string, BehaviorSubject<unknown>> = {};
+  private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
+    return combineLatest([$stateHandlers.get(this.vine), this.statesMap$]).pipe(
+        map(([stateHandlers, statesMap]) => {
+          return $pipe(
+              statesMap,
+              $map(([id, state]) => {
+                const handler = stateHandlers.get(state.type);
+                if (!handler) {
+                  return null;
+                }
 
-      for (const key in state.payload) {
-        if (!state.payload.hasOwnProperty(key)) {
-          continue;
-        }
+                return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
+              }),
+              $filterNonNull(),
+              $asMap(),
+          );
+        }),
+    );
+  }
 
-        runtimePayload[key] = new BehaviorSubject(state.payload[key]);
-      }
-      statesMap.set(
-          state.id,
-          {
-            ...state,
-            payload: runtimePayload,
-          });
-    }
+  @cache()
+  private get statesMap$(): Observable<ReadonlyMap<string, State<object>>> {
+    return this.statesRaw$.pipe(
+        map(statesRaw => {
+          const statesMap = new Map<string, State<object>>();
+          for (const state of statesRaw) {
+            const runtimePayload: Record<string, BehaviorSubject<unknown>> = {};
 
-    return statesMap;
+            for (const key in state.payload) {
+              if (!state.payload.hasOwnProperty(key)) {
+                continue;
+              }
+
+              runtimePayload[key] = new BehaviorSubject(state.payload[key]);
+              (runtimePayload[key] as any).id = Date.now();
+              console.log(`${key} ${(runtimePayload[key] as any).id}`);
+            }
+            statesMap.set(
+                state.id,
+                {
+                  ...state,
+                  payload: runtimePayload,
+                });
+          }
+
+          return statesMap;
+        }),
+        shareReplay({bufferSize: 1, refCount: true}),
+    );
   }
 }
 
-export const $stateService = stream(
-    vine => {
-      return combineLatest([
-        $statesRaw.get(vine),
-        $stateHandlers.get(vine),
-      ])
-      .pipe(
-          map(([states, handlers]) => new StateService(handlers, states)),
-          shareReplay({refCount: true, bufferSize: 1}),
-      );
-    },
-    globalThis,
-);
-
-export function setStates(
-    states: ReadonlySet<SavedState>,
+export const $stateHandlers = source(() => new Map<string, StateHandler<object>>());
+export function registerStateHandler<P extends object>(
+    type: string,
+    handler: StateHandler<P>,
     vine: Vine,
 ): void {
-  const statesMap = $pipe(
-      states,
-      $map(state => [state.id, state] as [string, SavedState]),
-      $asMap(),
+  $stateHandlers.set(
+      vine,
+      existingHandlers => new Map([
+        ...existingHandlers,
+        [type, handler as StateHandler<object>],
+      ]),
   );
-  $statesRaw.set(vine, () => statesMap);
 }
+
+export const $stateService = source(vine => new StateService(vine));
 
 function resolveMap(
     subjectObject: object,
