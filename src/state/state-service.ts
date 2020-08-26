@@ -114,6 +114,7 @@ export class StateService {
               $asMap(),
           );
         }),
+        shareReplay({bufferSize: 1, refCount: true}),
     );
   }
 

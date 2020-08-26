@@ -7,6 +7,7 @@ import { attributeIn, classToggle, element, host, listParser, multi, PersonaCont
 import { combineLatest, fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { $baseComponent, BaseComponent } from '../core/base-component';
 import { SavedState } from '../state/saved-state';
 import { $stateService, registerStateHandler } from '../state/state-service';
 
@@ -35,7 +36,7 @@ export const ACTIVE_ID = 'pb.active';
 export const $active = {
   tag: 'pb-active',
   api: {
-    contentIds: attributeIn('content-ids', listParser(stringParser()), []),
+    ...$baseComponent.api,
   },
 };
 
@@ -91,7 +92,7 @@ export function createActiveState(contentIds: readonly string[]): SavedState {
         (state, context) => {
           return renderCustomElement(
               $active,
-              {inputs: {contentIds: state.payload.contentIds}},
+              {inputs: {objectId: observableOf(state.id)}},
               context,
           );
         },
@@ -99,7 +100,7 @@ export function createActiveState(contentIds: readonly string[]): SavedState {
     );
   },
 })
-export class Active extends ThemedCustomElementCtrl {
+export class Active extends BaseComponent<ActivePayload> {
   private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
       .pipe(
           withLatestFrom(this.declareInput($.root)),
@@ -111,7 +112,7 @@ export class Active extends ThemedCustomElementCtrl {
       );
 
   constructor(context: PersonaContext) {
-    super(context);
+    super(new Map(), context);
 
     this.render($.count._.text, this.itemCount$);
     this.render($.root._.classMultiple, this.multipleItems$);
@@ -121,12 +122,25 @@ export class Active extends ThemedCustomElementCtrl {
   }
 
   @cache()
+  private get contentIds$(): Observable<readonly string[]> {
+    return this.state$.pipe(
+        switchMap(state => {
+          if (!state) {
+            return observableOf([]);
+          }
+
+          return state.payload.contentIds;
+        }),
+    );
+  }
+
+  @cache()
   private get content$(): Observable<readonly Node[]> {
-    return this.declareInput($.host._.contentIds).pipe(
+    return this.contentIds$.pipe(
         withLatestFrom($stateService.get(this.vine)),
-        switchMap(([itemIds, stateService]) => {
+        switchMap(([contentIds, stateService]) => {
           const node$list = $pipe(
-              itemIds,
+              contentIds,
               $map(id => stateService.getObject(id, this.context).pipe(filterNonNull())),
               $filterNonNull(),
               $asArray(),
@@ -139,7 +153,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get itemCount$(): Observable<string> {
-    return this.declareInput($.host._.contentIds).pipe(
+    return this.contentIds$.pipe(
         map(ids => ids.length > 1 ? `${ids.length}` : ''),
     );
   }
@@ -151,7 +165,7 @@ export class Active extends ThemedCustomElementCtrl {
 
   @cache()
   private get multipleItems$(): Observable<boolean> {
-    return this.declareInput($.host._.contentIds).pipe(map(ids => ids.length > 1));
+    return this.contentIds$.pipe(map(ids => ids.length > 1));
   }
 
   @cache()

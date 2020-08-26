@@ -1,6 +1,7 @@
 import { _p } from 'mask';
 import { PersonaContext } from 'persona';
 
+import { MovablePayload } from '../action/payload/movable-payload';
 import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
@@ -20,6 +21,9 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
+// tslint:disable-next-line: no-empty-interface
+export interface D1Payload extends MovablePayload { }
+
 /**
  * Represents an object with one face.
  *
@@ -35,7 +39,7 @@ export const $d1 = {
   template,
   api: {},
 })
-export class D1 extends BaseComponent<{}> {
+export class D1 extends BaseComponent<MovablePayload> {
   /**
    * @internal
    */

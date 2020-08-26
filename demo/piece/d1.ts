@@ -6,7 +6,7 @@ import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { $d1 as $d1Impl, D1 as D1Impl } from '../../src/piece/d1';
+import { $d1 as $d1Impl, D1 as D1Impl, D1Payload } from '../../src/piece/d1';
 import { registerStateHandler } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
@@ -15,6 +15,7 @@ import { $stagingService } from '../core/staging-service';
 import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
+import { SUPPLY_ID } from '../../src/region/supply';
 
 
 export const $d1 = {
@@ -33,7 +34,7 @@ const $ = {
 
 const D1_PREVIEW_TYPE = 'preview-d1';
 
-interface D1PreviewPayload {
+interface D1PreviewPayload extends D1Payload {
   readonly icon: string;
 }
 
@@ -107,7 +108,13 @@ export class D1 extends ThemedCustomElementCtrl {
     return this.declareInput($.template._.onAdd).pipe(
         withLatestFrom(this.selectedIcon$, $stagingService.get(this.vine)),
         switchMap(([, icon, stagingService]) => {
-          return stagingService.addState(D1_PREVIEW_TYPE, {icon});
+          return stagingService.addState(
+              D1_PREVIEW_TYPE,
+              {
+                icon,
+                parentId: SUPPLY_ID,
+              },
+          );
         }),
     );
   }

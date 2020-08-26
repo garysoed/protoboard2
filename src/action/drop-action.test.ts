@@ -1,15 +1,14 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
-import { debug } from 'gs-tools/export/rxjs';
 import { createFakeContext } from 'persona/export/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
 import { State } from '../state/state';
-import { $stateService } from '../state/state-service';
 import { createFakeStateService } from '../state/testing/fake-state-service';
 
-import { DropAction, DroppablePayload } from './drop-action';
+import { DropAction } from './drop-action';
+import { DroppablePayload } from './payload/droppable-payload';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -32,7 +31,10 @@ test('@protoboard2/action/drop-action', init => {
 
     const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = createActiveState([OTHER_ACTIVE_ID, MOVED_ID]);
-    fakeStateService.setStates(new Set([activeState]));
+    fakeStateService.setStates(new Set([
+      activeState,
+      {id: MOVED_ID, type: 'movedType', payload: {parentId: ACTIVE_ID}},
+    ]));
 
     run(action.run());
 

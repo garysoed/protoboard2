@@ -18,6 +18,7 @@ export interface State<P extends object> {
 
   /**
    * Used to generate the object.
+   * TODO: Instead of BehaviorSubject, this should be split into Observable and Subject/
    */
   readonly payload: {readonly [K in keyof P]: BehaviorSubject<P[K]>};
 }

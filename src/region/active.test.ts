@@ -2,12 +2,13 @@ import { arrayThat, assert, createSpySubject, run, setThat, should, test } from 
 import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
-import { $, $active, Active } from './active';
+import { $, $active, Active, ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from './active';
 
 
 test('@protoboard2/region/active', init => {
@@ -16,11 +17,16 @@ test('@protoboard2/region/active', init => {
   const _ = init(() => {
     const tester = factory.build([Active], document);
     const el = tester.createElement($active.tag);
+    run(el.setAttribute($.host._.objectId, ACTIVE_ID));
+
     const fakeStateService = createFakeStateService(tester.vine);
+    const contentIds$ = new Subject<readonly string[]>();
+    run(fakeStateService.subscribeValuesFor<ActivePayload>(ACTIVE_ID, {contentIds: contentIds$}));
+    fakeStateService.addState({id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}});
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
-    return {el, fakeStateService, tester};
+    return {contentIds$, el, fakeStateService, tester};
   });
 
   test('content$', () => {
@@ -47,19 +53,18 @@ test('@protoboard2/region/active', init => {
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id: id1, payload: {}},
-        {type: 'test', id: id2, payload: {}},
-        {type: 'test', id: id3, payload: {}},
-      ]));
 
-      run(_.el.setAttribute($.host._.contentIds, []));
-      run(_.el.setAttribute($.host._.contentIds, [id1]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id2, id3]));
-      run(_.el.setAttribute($.host._.contentIds, [id1, id3]));
-      run(_.el.setAttribute($.host._.contentIds, [id3]));
-      run(_.el.setAttribute($.host._.contentIds, []));
+      _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
+
+      _.contentIds$.next([]);
+      _.contentIds$.next([id1]);
+      _.contentIds$.next([id1, id2]);
+      _.contentIds$.next([id1, id2, id3]);
+      _.contentIds$.next([id1, id3]);
+      _.contentIds$.next([id3]);
+      _.contentIds$.next([]);
 
       assert(contents$).to.emitSequence([
         arrayThat<Element>().haveExactElements([]),
@@ -91,29 +96,27 @@ test('@protoboard2/region/active', init => {
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id: id1, payload: {}},
-        {type: 'test', id: id2, payload: {}},
-        {type: 'test', id: id3, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
 
       return {..._, id1, id2, id3, el1, el2, el3};
     });
 
     should(`render the 0 item count correctly`, () => {
-      run(_.el.setAttribute($.host._.contentIds, []));
+      _.contentIds$.next([]);
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
 
     should(`render the 1 item count correctly`, () => {
-      run(_.el.setAttribute($.host._.contentIds, [_.id1]));
+      _.contentIds$.next([_.id1]);
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
 
     should(`render the 3 items count correctly`, () => {
-      run(_.el.setAttribute($.host._.contentIds, [_.id1, _.id2, _.id3]));
+      _.contentIds$.next([_.id1, _.id2, _.id3]);
 
       assert(_.el.getTextContent($.count)).to.emitWith('3');
     });
@@ -133,11 +136,9 @@ test('@protoboard2/region/active', init => {
           new Map([[id, content]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id, payload: {}});
 
-      run(_.el.setAttribute($.host._.contentIds, [id]));
+      _.contentIds$.next([id]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
@@ -159,29 +160,27 @@ test('@protoboard2/region/active', init => {
           new Map([[id1, el1], [id2, el2], [id3, el3]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id: id1, payload: {}},
-        {type: 'test', id: id2, payload: {}},
-        {type: 'test', id: id3, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
 
       return {..._, id1, id2, id3, el1, el2, el3};
     });
 
     should(`remove the multiple classname if there are 0 items`, () => {
-      run(_.el.setAttribute($.host._.contentIds, []));
+      _.contentIds$.next([]);
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
 
     should(`remove the multiple classname if there is 1 item`, () => {
-      run(_.el.setAttribute($.host._.contentIds, [_.id1]));
+      _.contentIds$.next([_.id1]);
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
 
     should(`add the multiple classname if there are 3 items`, () => {
-      run(_.el.setAttribute($.host._.contentIds, [_.id1, _.id2, _.id3]));
+      _.contentIds$.next([_.id1, _.id2, _.id3]);
 
       assert(_.el.getClassList($.root)).to.emitWith(
           setThat<string>().haveExactElements(new Set(['multiple'])),
@@ -203,11 +202,9 @@ test('@protoboard2/region/active', init => {
           new Map([[id, content]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id, payload: {}});
 
-      run(_.el.setAttribute($.host._.contentIds, [id]));
+      _.contentIds$.next([id]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
@@ -236,12 +233,10 @@ test('@protoboard2/region/active', init => {
           new Map([[id1, content1], [id2, content2]]),
           _.tester.vine,
       );
-      _.fakeStateService.setStates(new Set([
-        {type: 'test', id: id1, payload: {}},
-        {type: 'test', id: id2, payload: {}},
-      ]));
+      _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
+      _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
 
-      run(_.el.setAttribute($.host._.contentIds, [id1, id2]));
+      _.contentIds$.next([id1, id2]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 

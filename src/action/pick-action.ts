@@ -1,10 +1,13 @@
 import { cache } from 'gs-tools/export/data';
-import { Observable } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
 import { $stateService } from '../state/state-service';
+
+import { MovablePayload } from './payload/movable-payload';
+import { moveObject } from './util/move-object';
 
 
 /**
@@ -12,11 +15,11 @@ import { $stateService } from '../state/state-service';
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<{}> {
+export class PickAction extends BaseAction<MovablePayload> {
   /**
    * @internal
    */
-  constructor(context: ActionContext<{}>) {
+  constructor(context: ActionContext<MovablePayload>) {
     super(
         'pick',
         'Pick',
@@ -34,14 +37,17 @@ export class PickAction extends BaseAction<{}> {
     );
     return this.onTrigger$
         .pipe(
-            withLatestFrom(this.context.objectId$, activeState$),
-            tap(([, objectId, activeState]) => {
+            withLatestFrom(this.context.state$, activeState$),
+            switchMap(([, state, activeState]) => {
               if (!activeState) {
-                return;
+                return EMPTY;
               }
 
-              const existingContentIds = activeState.payload.contentIds.getValue();
-              activeState.payload.contentIds.next([...existingContentIds, objectId]);
+              return moveObject(
+                  state,
+                  activeState,
+                  this.context.personaContext.vine,
+              );
             }),
         );
   }
