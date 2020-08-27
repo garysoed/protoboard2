@@ -3,7 +3,7 @@ import { createFakeContext } from 'persona/export/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
+import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../region/active';
 import { State } from '../state/state';
 import { createFakeStateService } from '../state/testing/fake-state-service';
 
@@ -30,7 +30,11 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const fakeStateService = createFakeStateService(personaContext.vine);
-    const activeState = createActiveState([OTHER_ACTIVE_ID, MOVED_ID]);
+    const activeState = {
+      id: ACTIVE_ID,
+      type: ACTIVE_TYPE,
+      payload: {contentIds: [OTHER_ACTIVE_ID, MOVED_ID]},
+    };
     fakeStateService.setStates(new Set([
       activeState,
       {id: MOVED_ID, type: 'movedType', payload: {parentId: ACTIVE_ID}},

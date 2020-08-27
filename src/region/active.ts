@@ -66,16 +66,6 @@ export interface ActivePayload {
 }
 
 /**
- * Creates active state with the given `contentIds`` active.
- * @param contentIds - IDs in the active region.
- *
- * @thModule region
- */
-export function createActiveState(contentIds: readonly string[]): SavedState {
-  return {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds}};
-}
-
-/**
  * Represents a region containing objects that are actively manipulated.
  *
  * @remarks

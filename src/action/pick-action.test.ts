@@ -1,9 +1,9 @@
 import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
 import { createFakeContext } from 'persona/export/testing';
-import { BehaviorSubject, of as observableOf, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { ACTIVE_ID, ActivePayload, createActiveState } from '../region/active';
+import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../region/active';
 import { State } from '../state/state';
 import { $stateService } from '../state/state-service';
 import { createFakeStateService } from '../state/testing/fake-state-service';
@@ -26,7 +26,7 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const fakeStateService = createFakeStateService(personaContext.vine);
-    const activeState = createActiveState([]);
+    const activeState = {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}};
     fakeStateService.setStates(new Set([activeState]));
     run(action.run());
 

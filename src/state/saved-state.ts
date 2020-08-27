@@ -3,7 +3,7 @@
  *
  * @thModule core
  */
-export interface SavedState {
+export interface SavedState<P extends object> {
   /**
    * Identifies the object. Must be globally unique.
    */
@@ -15,7 +15,7 @@ export interface SavedState {
   readonly type: string;
 
   /**
-   * Used to initialize the state during the game..
+   * Used to initialize the state during the game.
    */
-  readonly payload: Record<string, unknown>;
+  readonly payload: P;
 }

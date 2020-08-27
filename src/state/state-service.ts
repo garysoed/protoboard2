@@ -38,12 +38,12 @@ class ObjectCache {
 }
 
 export class StateService {
-  protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState>>(new Set());
+  protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
 
   constructor(private readonly vine: Vine) { }
 
   @cache()
-  get currentState$(): Observable<ReadonlyMap<string, SavedState>> {
+  get currentState$(): Observable<ReadonlyMap<string, SavedState<object>>> {
     return this.statesMap$.pipe(
         switchMap(statesMap => {
           const states$List = $pipe(
@@ -52,7 +52,7 @@ export class StateService {
                 const payloads$ = resolveMap(state.payload);
                 return payloads$.pipe(
                     map(payload => {
-                      return [key, {...state, payload}] as [string, SavedState];
+                      return [key, {...state, payload}] as [string, SavedState<object>];
                     }),
                 );
               }),
@@ -85,7 +85,7 @@ export class StateService {
     return this.statesMap$.pipe(map(statesMap => statesMap.get(id) as State<P> || null));
   }
 
-  setStates(statesRaw: ReadonlySet<SavedState>): void {
+  setStates(statesRaw: ReadonlySet<SavedState<object>>): void {
     this.statesRaw$.next(statesRaw);
   }
 
@@ -131,9 +131,8 @@ export class StateService {
                 continue;
               }
 
-              runtimePayload[key] = new BehaviorSubject(state.payload[key]);
+              runtimePayload[key] = new BehaviorSubject((state.payload as any)[key]);
               (runtimePayload[key] as any).id = Date.now();
-              console.log(`${key} ${(runtimePayload[key] as any).id}`);
             }
             statesMap.set(
                 state.id,

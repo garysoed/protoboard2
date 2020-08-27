@@ -16,7 +16,7 @@ export const ROOT_SLOT_TYPE = 'pbd.root-slot';
 export class StagingService {
   private readonly idGenerator = new SimpleIdGenerator();
   readonly #isStaging$ = new BehaviorSubject(true);
-  readonly #states$ = new BehaviorSubject<ReadonlySet<SavedState>>(new Set());
+  readonly #states$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
 
   constructor(private readonly vine: Vine) { }
 
@@ -24,7 +24,7 @@ export class StagingService {
     return this.#isStaging$;
   }
 
-  get states$(): Observable<ReadonlySet<SavedState>> {
+  get states$(): Observable<ReadonlySet<SavedState<object>>> {
     return this.#states$;
   }
 

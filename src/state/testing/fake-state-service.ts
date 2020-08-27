@@ -11,7 +11,7 @@ type ObservablePayload<P extends object> = {readonly [K in keyof P]: Observable<
 class FakeStateService extends StateService {
   readonly [Symbol.toStringTag] = 'FakeStateService';
 
-  addState(state: SavedState): void {
+  addState<P extends object>(state: SavedState<P>): void {
     const existingStates = this.statesRaw$.getValue();
     this.setStates(new Set([...existingStates, state]));
   }
