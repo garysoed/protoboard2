@@ -1,4 +1,5 @@
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
+
 
 /**
  * State of a game during its runtime.
@@ -18,7 +19,6 @@ export interface State<P extends object> {
 
   /**
    * Used to generate the object.
-   * TODO: Instead of BehaviorSubject, this should be split into Observable and Subject/
    */
-  readonly payload: {readonly [K in keyof P]: BehaviorSubject<P[K]>};
+  readonly payload: {readonly [K in keyof P]: Subject<P[K]>};
 }
