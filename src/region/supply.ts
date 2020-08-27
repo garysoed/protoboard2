@@ -1,14 +1,14 @@
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, multi, PersonaContext, renderCustomElement } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of as observableOf } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
+import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { $stateService, registerStateHandler } from '../state/state-service';
+import { renderContents } from '../render/render-contents';
+import { registerStateHandler } from '../state/state-service';
 
 import template from './supply.html';
 
@@ -53,12 +53,8 @@ export const $ = {
  *
  * @thModule region
  */
-export interface SupplyPayload {
-  /**
-   * ID of objects that are in the supply.
-   */
-  readonly contentIds: readonly string[];
-}
+// tslint:disable-next-line: no-empty-interface
+export interface SupplyPayload extends DroppablePayload { }
 
 
 /**
@@ -93,23 +89,12 @@ export class Supply extends BaseComponent<SupplyPayload> {
   @cache()
   private get contents$(): Observable<readonly Node[]> {
     return this.state$.pipe(
-      withLatestFrom($stateService.get(this.vine)),
-      switchMap(([state, service]) => {
+      switchMap(state => {
         if (!state) {
           return observableOf([]);
         }
 
-        return state.payload.contentIds.pipe(
-            switchMap(contentIds => {
-              const node$list = $pipe(
-                  new Set<string>(contentIds),
-                  $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
-                  $asArray(),
-              );
-
-              return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
-            }),
-        );
+        return renderContents(state, this.context);
       }),
     );
   }

@@ -1,16 +1,15 @@
-import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, multi, PersonaContext } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { DropAction } from '../action/drop-action';
+import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
-import { $stateService } from '../state/state-service';
+import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';
 
@@ -29,9 +28,8 @@ export const $ = {
   }),
 };
 
-export interface SlotPayload {
-  readonly contentIds: readonly string[];
-}
+// tslint:disable-next-line: no-empty-interface
+export interface SlotPayload extends DroppablePayload { }
 
 @_p.customElement({
   ...$slot,
@@ -51,24 +49,13 @@ export class Slot extends BaseComponent<SlotPayload> {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return combineLatest([this.declareInput($.host._.objectId), $stateService.get(this.vine)]).pipe(
-        switchMap(([objectId, service]) => {
-          if (!objectId) {
+    return this.state$.pipe(
+        switchMap(state => {
+          if (!state) {
             return observableOf([]);
           }
 
-          return service.getState<SlotPayload>(objectId).pipe(
-              switchMap(state => state?.payload.contentIds || observableOf<readonly string[]>([])),
-              switchMap(contentIds => {
-                const node$list = $pipe(
-                    contentIds,
-                    $map(id => service.getObject(id, this.context).pipe(filterNonNull())),
-                    $filterNonNull(),
-                    $asArray(),
-                );
-                return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
-              }),
-          );
+          return renderContents(state, this.context);
         }),
     );
   }

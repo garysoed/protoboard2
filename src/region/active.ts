@@ -1,15 +1,14 @@
-import { $asArray, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, classToggle, element, host, listParser, multi, PersonaContext, renderCustomElement, stringParser, style, textContent } from 'persona';
-import { combineLatest, fromEvent, Observable, of as observableOf } from 'rxjs';
+import { _p } from 'mask';
+import { classToggle, element, host, multi, PersonaContext, renderCustomElement, style, textContent } from 'persona';
+import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { SavedState } from '../state/saved-state';
-import { $stateService, registerStateHandler } from '../state/state-service';
+import { renderContents } from '../render/render-contents';
+import { registerStateHandler } from '../state/state-service';
 
 import template from './active.html';
 
@@ -58,12 +57,8 @@ export const $ = {
  *
  * @thModule region
  */
-export interface ActivePayload {
-  /**
-   * ID of objects that are active.
-   */
-  readonly contentIds: readonly string[];
-}
+// tslint:disable-next-line: no-empty-interface
+export interface ActivePayload extends DroppablePayload { }
 
 /**
  * Represents a region containing objects that are actively manipulated.
@@ -126,17 +121,13 @@ export class Active extends BaseComponent<ActivePayload> {
 
   @cache()
   private get content$(): Observable<readonly Node[]> {
-    return this.contentIds$.pipe(
-        withLatestFrom($stateService.get(this.vine)),
-        switchMap(([contentIds, stateService]) => {
-          const node$list = $pipe(
-              contentIds,
-              $map(id => stateService.getObject(id, this.context).pipe(filterNonNull())),
-              $filterNonNull(),
-              $asArray(),
-          );
+    return this.state$.pipe(
+        switchMap(state => {
+          if (!state) {
+            return observableOf([]);
+          }
 
-          return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+          return renderContents(state, this.context);
         }),
     );
   }
