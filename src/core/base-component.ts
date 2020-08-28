@@ -20,7 +20,8 @@ import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec
 const LOG = new Logger('protoboard.core.BaseComponent');
 
 
-export type BaseActionCtor<P extends object> = new (context: ActionContext<P>) => BaseAction<P>;
+export type BaseActionCtor<P extends object, Q extends P> =
+    (context: ActionContext<P>) => BaseAction<Q>;
 
 // TODO: DELETE
 export const $baseComponent = {
@@ -40,7 +41,7 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<P extends object> extends ThemedCustomElementCtrl {
   constructor(
-      private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P>>,
+      private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P, P>>,
       context: PersonaContext,
   ) {
     super(context);
@@ -52,8 +53,8 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   get actionsMap(): ReadonlyMap<TriggerSpec, BaseAction<object>> {
     const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
         this.triggerActionMap,
-        $map(([triggerSpec, actionCtor]) => {
-          const action = new actionCtor({
+        $map(([triggerSpec, actionProvider]) => {
+          const action = actionProvider({
             personaContext: this.context,
             objectId$: this.objectId$,
             state$: this.state$.pipe(filterNonNull()),

@@ -1,7 +1,11 @@
 import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { _v } from 'mask';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { ReplaySubject } from 'rxjs';
 
+import { State } from '../state/state';
+
+import { RotatablePayload } from './payload/rotatable-payload';
 import { RotateAction } from './rotate-action';
 
 
@@ -13,10 +17,14 @@ interface TestState {
 test('@protoboard2/action/rotate-action', init => {
   function setupTest(index: number, stops: readonly number[]): TestState {
     const el = document.createElement('div');
-    const vine = _v.build('test');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const action = new RotateAction(index, stops, vine);
-    action.setActionContext(createFakeContext({shadowRoot}));
+    const personaContext = createFakeContext({shadowRoot});
+    const objectId$ = new ReplaySubject<string>(1);
+    const state$ = new ReplaySubject<State<RotatablePayload>>(1);
+    const action = new RotateAction(
+        {personaContext, objectId$, state$},
+        {index, stops},
+    );
     run(action.run());
 
     return {action, el};
@@ -39,7 +47,7 @@ test('@protoboard2/action/rotate-action', init => {
       assert(_.el.style.transform).to.equal('rotateZ(3deg)');
     });
 
-    should(`change the stops when updated`, () => {
+    should(`change the stops and resets the index when updated`, () => {
       const _ = setupTest(1, []);
 
       const configEl = document.createElement('pb-action-config');

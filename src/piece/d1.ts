@@ -2,14 +2,14 @@ import { _p } from 'mask';
 import { PersonaContext } from 'persona';
 
 import { MovablePayload } from '../action/payload/movable-payload';
+import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { PickAction } from '../action/pick-action';
-import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerSpec } from '../core/trigger-spec';
+import { RotateAction } from '../action/rotate-action';
+import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
+import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
 import template from './d1.html';
 
-
-// import { RotateAction } from '../action/rotate-action';
 
 /**
  * The D1's API.
@@ -21,8 +21,7 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-// tslint:disable-next-line: no-empty-interface
-export interface D1Payload extends MovablePayload { }
+export interface D1Payload extends MovablePayload, RotatablePayload { }
 
 /**
  * Represents an object with one face.
@@ -39,15 +38,21 @@ export interface D1Payload extends MovablePayload { }
   template,
   api: {},
 })
-export class D1 extends BaseComponent<MovablePayload> {
+export class D1Payload extends BaseComponent<D1Payload> {
   /**
    * @internal
    */
   constructor(context: PersonaContext) {
     super(
-        new Map([
-          [TriggerSpec.CLICK, PickAction],
-          // [TriggerSpec.R, new RotateAction(0, [0, 90, 180, 270], context.vine)],
+        new Map<UnreservedTriggerSpec, BaseActionCtor<D1Payload, any>>([
+          [TriggerSpec.CLICK, context => new PickAction(context)],
+          [
+            TriggerSpec.R,
+            context => new RotateAction(
+                context,
+                {index: 0, stops: [0, 90, 180, 270]},
+            ),
+          ],
         ]),
         context,
     );

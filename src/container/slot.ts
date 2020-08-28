@@ -39,7 +39,7 @@ export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
         new Map([
-          [TriggerSpec.D, DropAction],
+          [TriggerSpec.D, context => new DropAction(context)],
         ]),
         context,
     );

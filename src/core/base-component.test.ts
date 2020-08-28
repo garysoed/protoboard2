@@ -28,7 +28,7 @@ class TestAction extends BaseAction<{}> {
 
 class TestComponent extends BaseComponent<{}> {
   constructor(
-      triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<{}>>,
+      triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<{}, {}>>,
       context: PersonaContext,
   ) {
     super(triggerActionMap, context);
@@ -48,8 +48,8 @@ test('@protoboard2/core/base-component', init => {
     const personaContext = createFakeContext({shadowRoot});
     const component = new TestComponent(
         new Map([
-          [TriggerSpec.CLICK, TestAction],
-          [KEY, TestAction],
+          [TriggerSpec.CLICK, context => new TestAction(context)],
+          [KEY, context => new TestAction(context)],
         ]),
         personaContext,
     );
