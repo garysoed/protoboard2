@@ -1,12 +1,13 @@
 import { cache } from 'gs-tools/export/data';
-import { debug, filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
+import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
 import { $icon, _p, Icon, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { element, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { $d1 as $d1Impl, D1Payload as D1Impl, D1Payload } from '../../src/piece/d1';
+import { $d1 as $d1Impl, D1Payload, D1Payload as D1Impl } from '../../src/piece/d1';
+import { SUPPLY_ID } from '../../src/region/supply';
 import { registerStateHandler } from '../../src/state/state-service';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
@@ -15,7 +16,6 @@ import { $stagingService } from '../core/staging-service';
 import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
 
 import template from './d1.html';
-import { SUPPLY_ID } from '../../src/region/supply';
 
 
 export const $d1 = {

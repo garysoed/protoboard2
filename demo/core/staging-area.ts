@@ -4,11 +4,18 @@ import { instanceofType } from 'gs-types';
 import { $iconWithText, $textIconButton, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, switchMapTo, take, tap, withLatestFrom } from 'rxjs/operators';
+
+import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
+import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
+import { $stateService } from '../../src/state/state-service';
 
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
 
+
+export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
+export const ROOT_SLOT_TYPE = 'pbd.root-slot';
 
 export const $stagingArea = {
   tag: 'pbd-staging-area',
@@ -62,7 +69,36 @@ export class StagingArea extends ThemedCustomElementCtrl {
   private get handleStartAction$(): Observable<unknown> {
     return this.declareInput($.startButton._.actionEvent).pipe(
         withLatestFrom($stagingService.get(this.vine)),
-        switchMap(([, service]) => service.setStaging(false)),
+        switchMap(([, service]) => {
+          return service.states$.pipe(
+              take(1),
+              withLatestFrom($stateService.get(this.vine)),
+              tap(([states, stateService]) => {
+                const rootSlots = [];
+                for (let i = 0; i < 9; i++) {
+                  rootSlots.push({
+                    id: `${ROOT_SLOT_PREFIX}${i}`,
+                    type: ROOT_SLOT_TYPE,
+                    payload: {contentIds: []},
+                  });
+                }
+
+                const supplyContentIds = $pipe(
+                    states,
+                    $map(({id}) => id),
+                    $asArray(),
+                );
+
+                stateService.setStates(new Set([
+                  ...rootSlots,
+                  ...states,
+                  {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
+                  {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
+                ]));
+              }),
+              switchMapTo(service.setStaging(false)),
+          );
+        }),
     );
   }
 }
