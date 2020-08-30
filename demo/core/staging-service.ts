@@ -6,6 +6,9 @@ import { renderCustomElement, renderElement } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
+import { MovablePayload } from '../../src/action/payload/movable-payload';
+import { OrientablePayload } from '../../src/action/payload/orientable-payload';
+import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
 import { SUPPLY_ID } from '../../src/region/supply';
 import { SavedState } from '../../src/state/saved-state';
@@ -16,6 +19,10 @@ import { $saveService, SaveService } from './save-service';
 
 
 const DEMO_PREVIEW_TYPE = 'pbd-demo';
+
+interface GenericPiecePayload extends MovablePayload, OrientablePayload, RotatablePayload {
+
+}
 
 export class StagingService {
   readonly #isStaging$ = new BehaviorSubject(true);
@@ -51,19 +58,21 @@ export class StagingService {
     this.saveService.setSaving(!staging);
   }
 
-  private addObject(objectType: string, payload: PieceSpec): Observable<unknown> {
+  private addObject(objectType: string, pieceSpec: PieceSpec): Observable<unknown> {
     return $stateService.get(this.vine).pipe(
         switchMap(stateService => stateService.objectIds$),
         tap(objectIds => {
           const id = this.idGenerator.generate(objectIds);
+          const payload: GenericPiecePayload = {
+            ...pieceSpec,
+            faceIndex: 0,
+            parentId: SUPPLY_ID,
+            rotationIndex: 0,
+          };
           const state = {
             type: objectType,
             id,
-            payload: {
-              ...payload,
-              faceIndex: 0,
-              parentId: SUPPLY_ID,
-            },
+            payload,
           };
           const states = this.#states$.getValue();
           this.#states$.next(new Set([...states, state]));

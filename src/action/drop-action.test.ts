@@ -9,6 +9,7 @@ import { createFakeStateService } from '../state/testing/fake-state-service';
 
 import { DropAction } from './drop-action';
 import { DroppablePayload } from './payload/droppable-payload';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -23,11 +24,11 @@ test('@protoboard2/action/drop-action', init => {
     const personaContext = createFakeContext({shadowRoot});
     const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<DroppablePayload>>(1);
-    const action = new DropAction({
+    const action = new DropAction(createFakeActionContext({
       personaContext,
       objectId$,
       state$,
-    });
+    }));
 
     const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = {

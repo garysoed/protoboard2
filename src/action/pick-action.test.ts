@@ -10,6 +10,7 @@ import { createFakeStateService } from '../state/testing/fake-state-service';
 
 import { MovablePayload } from './payload/movable-payload';
 import { PickAction } from './pick-action';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -19,11 +20,11 @@ test('@protoboard2/action/pick-action', init => {
     const personaContext = createFakeContext({shadowRoot});
     const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<MovablePayload>>(1);
-    const action = new PickAction({
-      personaContext,
+    const action = new PickAction(createFakeActionContext({
       objectId$,
+      personaContext,
       state$,
-    });
+    }));
 
     const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}};

@@ -55,6 +55,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
         this.triggerActionMap,
         $map(([triggerSpec, actionProvider]) => {
           const action = actionProvider({
+            host$: host({}).getValue(this.context),
             personaContext: this.context,
             objectId$: this.objectId$,
             state$: this.state$.pipe(filterNonNull()),

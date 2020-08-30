@@ -6,7 +6,7 @@ import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { BaseAction } from '../core/base-action';
 
-import { $face } from './face';
+import { $face } from '../../src-old/action/face';
 
 
 const $ = {

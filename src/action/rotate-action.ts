@@ -1,16 +1,18 @@
 import { cache } from 'gs-tools/export/data';
 import { identity } from 'nabu';
-import { host, integerParser, listParser } from 'persona';
+import { listParser } from 'persona';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, map, mapTo, scan, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
 import { RotatablePayload } from './payload/rotatable-payload';
 
+const LOGGER = new Logger('pb.RotateAction');
+
 
 interface Config {
-  readonly index: number;
   readonly stops: readonly number[];
 }
 
@@ -23,46 +25,47 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
         'rotate',
         'Rotate',
         {
-          index: integerParser(),
           stops: listParser(identity<number>()),
         },
         context,
     );
 
     this.addSetup(this.handleTrigger$);
+    this.addSetup(this.renderIndex$);
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    const host$ = host({}).getValue(this.context.personaContext).pipe(
-        filter((el): el is HTMLElement => el instanceof HTMLElement),
+    return this.onTrigger$.pipe(
+        withLatestFrom(this.context.state$),
+        map(([, state]) => state.payload.rotationIndex),
+        withLatestFrom(this.rotationIndex$, this.stops$),
+        tap(([rotationIndex$, rotationIndex, stops]) => {
+          rotationIndex$.next((rotationIndex + 1) % stops.length);
+        }),
     );
-
-    return combineLatest([this.index$, this.stops$])
-        .pipe(
-            withLatestFrom(host$),
-            tap(([[index, stops], hostEl]) => {
-              hostEl.style.transform = `rotateZ(${stops[index]}deg)`;
-            }),
-        );
   }
 
   @cache()
-  private get index$(): Observable<number> {
-    return this.config$.pipe(
-        switchMap(config => {
-          const startIndex = config.index ?? this.defaultConfig.index;
-          const stops = config.stops ?? this.defaultConfig.stops;
-          return this.onTrigger$.pipe(
-              mapTo(1),
-              scan(
-                  (acc, value) => {
-                    return (acc + value) % (stops.length || 1);
-                  },
-                  startIndex,
-              ),
-              startWith(startIndex),
-          );
+  private get renderIndex$(): Observable<unknown> {
+    return combineLatest([
+        this.rotationIndex$,
+        this.stops$,
+        this.context.host$,
+    ]).pipe(
+        tap(([index, stops, hostEl]) => {
+          if (!(hostEl instanceof HTMLElement)) {
+            return;
+          }
+
+          hostEl.style.transform = `rotateZ(${stops[index % stops.length]}deg)`;
         }),
+    );
+  }
+
+  @cache()
+  private get rotationIndex$(): Observable<number> {
+    return this.context.state$.pipe(
+        switchMap(state => state.payload.rotationIndex),
     );
   }
 

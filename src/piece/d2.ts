@@ -5,6 +5,7 @@ import { api, attributeOut, element, host, PersonaContext, stringParser } from '
 import { Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+// import { FlipAction } from '../action/flip-action';
 import { MovablePayload } from '../action/payload/movable-payload';
 import { OrientablePayload } from '../action/payload/orientable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
@@ -61,9 +62,9 @@ export class D2 extends BaseComponent<D2Payload> {
           [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
-            context => new RotateAction(context, {index: 0, stops: [0, 90, 180, 270]}),
+            context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           ],
-          // [TriggerSpec.F, new FlipAction(2, 0, context.vine)],
+          // [TriggerSpec.F, context => new FlipAction(context, {count: 2})],
           // [TriggerSpec.L, new RollAction({count: 2}, context.vine)],
         ]),
         context,

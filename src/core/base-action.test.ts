@@ -6,6 +6,7 @@ import { createFakeContext, PersonaTester, PersonaTesterEnvironment } from 'pers
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+import { createFakeActionContext } from '../action/testing/fake-action-context';
 import { State } from '../state/state';
 
 import { ActionContext, BaseAction } from './base-action';
@@ -52,11 +53,11 @@ test('@protoboard2/core/base-action', init => {
     const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<{}>>(1);
 
-    const action = new TestAction({
+    const action = new TestAction(createFakeActionContext({
       personaContext,
       objectId$,
       state$,
-    });
+    }));
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 
     return {action, personaContext, element, objectId$, onTrigger$};
