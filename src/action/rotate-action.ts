@@ -24,9 +24,7 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
     super(
         'rotate',
         'Rotate',
-        {
-          stops: listParser(identity<number>()),
-        },
+        {stops: listParser(identity<number>())},
         context,
     );
 

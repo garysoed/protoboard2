@@ -1,11 +1,7 @@
 import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
 
-import { State } from '../state/state';
-
-import { RotatablePayload } from './payload/rotatable-payload';
 import { RotateAction } from './rotate-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 

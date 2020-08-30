@@ -1,83 +1,57 @@
-import { Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
-import { host, integerParser } from 'persona';
-import { combineLatest, concat, Observable } from 'rxjs';
-import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { integerParser } from 'persona';
+import { Observable } from 'rxjs';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Logger } from 'santa';
 
-import { BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction } from '../core/base-action';
 
-import { $face } from '../../src-old/action/face';
+import { OrientablePayload } from './payload/orientable-payload';
 
+const LOGGER = new Logger('pb.FlipAction');
 
-const $ = {
-  host: host($face),
-};
 
 interface Config {
   readonly count: number;
-  readonly index: number;
 }
 
 export const KEY = 'flip';
 
-export class FlipAction extends BaseAction<Config> {
+export class FlipAction extends BaseAction<OrientablePayload, Config> {
   constructor(
-      private readonly count: number,
-      private readonly index: number,
-      vine: Vine,
+      context: ActionContext<OrientablePayload>,
+      private readonly defaultConfig: Config,
   ) {
     super(
         KEY,
         'Flip',
-        {
-          count: integerParser(),
-          index: integerParser(),
-        },
-        vine,
+        {count: integerParser()},
+        context,
     );
 
-    this.addSetup(this.setup());
-  }
-
-  private setup(): Observable<unknown> {
-    const indexAttr$ = this.actionContext$.pipe(
-        switchMap(shadowRoot => $.host._.currentFaceIn.getValue(shadowRoot)),
-    );
-
-    const currentIndex$ = combineLatest([indexAttr$, this.defaultIndex$])
-        .pipe(
-            map(([indexAttr, defaultIndex]) => indexAttr ?? defaultIndex),
-        );
-
-    const newIndex$ = this.onTrigger$.pipe(
-        withLatestFrom(currentIndex$),
-        map(([, currentIndex]) => currentIndex + 1),
-    );
-
-    const index$ = concat(currentIndex$.pipe(take(1)), newIndex$).pipe(
-        withLatestFrom(this.count$),
-        map(([value, count]) => value % count),
-    );
-
-    return this.actionContext$
-        .pipe(
-            switchMap(shadowRoot => {
-              return index$.pipe($.host._.currentFaceOut.output(shadowRoot));
-            }),
-        );
+    this.addSetup(this.handleTrigger$);
   }
 
   @cache()
-  private get count$(): Observable<number> {
-    return this.config$.pipe(
-        map(config => config.count ?? this.count),
+  private get handleTrigger$(): Observable<unknown> {
+    const faceIndex$$ = this.context.state$.pipe(
+        map(state => state.payload.faceIndex),
+    );
+
+    const faceIndex$ = faceIndex$$.pipe(switchMap(faceIndex$ => faceIndex$));
+
+    return this.onTrigger$.pipe(
+        withLatestFrom(faceIndex$$, faceIndex$, this.faceCount$),
+        tap(([, faceIndex$, faceIndex, faceCount]) => {
+          faceIndex$.next((faceIndex + 1) % faceCount);
+        }),
     );
   }
 
   @cache()
-  private get defaultIndex$(): Observable<number> {
+  private get faceCount$(): Observable<number> {
     return this.config$.pipe(
-        map(config => config.index ?? this.index),
+        map(config => config.count ?? this.defaultConfig.count),
     );
   }
 }
