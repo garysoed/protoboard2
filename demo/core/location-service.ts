@@ -4,7 +4,7 @@ import { fromPattern, LocationService } from 'persona';
 
 export enum Views {
   D1 = 'd1',
-//   D2 = 'd2',
+  D2 = 'd2',
 //   DECK = 'de',
 //   FREE_LAYOUT = 'fl',
 //   GRID_LAYOUT = 'gl',
@@ -16,7 +16,7 @@ const ROUTE_SPEC = {
   // [Views.FREE_LAYOUT]: fromPattern('/freelayout', {}),
   // [Views.GRID_LAYOUT]: fromPattern('/gridlayout', {}),
   [Views.D1]: fromPattern('/d1', {}),
-  // [Views.D2]: fromPattern('/d2', {}),
+  [Views.D2]: fromPattern('/d2', {}),
   // [Views.DECK]: fromPattern('/deck', {}),
 };
 

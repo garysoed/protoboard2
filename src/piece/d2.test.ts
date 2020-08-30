@@ -14,11 +14,11 @@ test('@protoboard2/component/d2', init => {
     return {el};
   });
 
-  test('renderFaceName', () => {
-    should(`render the face name correctly`, () => {
-      run(_.el.setAttribute($.host._.currentFaceOut, 2));
+  // test('renderFaceName', () => {
+  //   should(`render the face name correctly`, () => {
+      // run(_.el.setAttribute($.host._.currentFaceOut, 2));
 
-      assert(_.el.getAttribute($.face._.name)).to.emitSequence(['face-2']);
-    });
-  });
+    //   assert(_.el.getAttribute($.face._.name)).to.emitSequence(['face-2']);
+    // });
+  // });
 });

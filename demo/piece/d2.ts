@@ -6,12 +6,12 @@ import { api, element, mutationObservable, onDom, PersonaContext } from 'persona
 import { Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { D2 as D2Impl } from '../../src-old/component/d2';
+import { D2 as D2Impl } from '../../src/piece/d2';
 import cardBack from '../asset/card_back.svg';
 import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import coinHeadSvg from '../asset/coin_head.svg';
-import { ComponentTemplate } from '../template/component-template';
+import { PieceTemplate } from '../template/piece-template';
 
 import template from './d2.html';
 
@@ -31,7 +31,7 @@ const $ = {
     registerSvg(vine, 'card-1', {type: 'embed', content: cardFront});
   },
   dependencies: [
-    ComponentTemplate,
+    PieceTemplate,
     Icon,
     D2Impl,
   ],
