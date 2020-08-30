@@ -16,6 +16,11 @@ interface Config {
   readonly stops: readonly number[];
 }
 
+/**
+ * Lets the user rotate the object on the same face.
+ *
+ * @thModule action
+ */
 export class RotateAction extends BaseAction<RotatablePayload, Config> {
   constructor(
       context: ActionContext<RotatablePayload>,

@@ -1,35 +1,29 @@
 import { cache } from 'gs-tools/export/data';
 import { integerParser } from 'persona';
 import { Observable } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { Logger } from 'santa';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
 import { OrientablePayload } from './payload/orientable-payload';
-
-const LOGGER = new Logger('pb.FlipAction');
+import { $random } from './util/random';
 
 
 interface Config {
   readonly count: number;
 }
 
-export const KEY = 'flip';
-
 /**
- * Lets the user flip the object to reveal different faces.
- *
- * @thModule action
+ * Lets the user pick a random face of the object
  */
-export class FlipAction extends BaseAction<OrientablePayload, Config> {
+export class RollAction extends BaseAction<OrientablePayload, Config> {
   constructor(
       context: ActionContext<OrientablePayload>,
       private readonly defaultConfig: Config,
   ) {
     super(
-        KEY,
-        'Flip',
+        'roll',
+        'Roll',
         {count: integerParser()},
         context,
     );
@@ -43,12 +37,17 @@ export class FlipAction extends BaseAction<OrientablePayload, Config> {
         map(state => state.payload.faceIndex),
     );
 
-    const faceIndex$ = faceIndex$$.pipe(switchMap(faceIndex$ => faceIndex$));
-
     return this.onTrigger$.pipe(
-        withLatestFrom(faceIndex$$, faceIndex$, this.faceCount$),
-        tap(([, faceIndex$, faceIndex, faceCount]) => {
-          faceIndex$.next((faceIndex + 1) % faceCount);
+        withLatestFrom(this.faceCount$, faceIndex$$, $random.get(this.context.personaContext.vine)),
+        map(([, count, faceIndex$, random]) => {
+          return random.next(({random, rng}) => {
+            const nextIndex = Math.floor(random * count);
+            faceIndex$.next(nextIndex);
+            return rng.map(() => nextIndex);
+          });
+        }),
+        tap(nextRandom => {
+          $random.set(this.context.personaContext.vine, () => nextRandom);
         }),
     );
   }

@@ -10,8 +10,8 @@ import { MovablePayload } from '../action/payload/movable-payload';
 import { OrientablePayload } from '../action/payload/orientable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { PickAction } from '../action/pick-action';
+import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
-// import { RollAction } from '../action/roll-action';
 import { BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
@@ -63,7 +63,7 @@ export class D2 extends BaseComponent<D2Payload> {
             context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           ],
           [TriggerSpec.F, context => new FlipAction(context, {count: 2})],
-          // [TriggerSpec.L, new RollAction({count: 2}, context.vine)],
+          [TriggerSpec.L, context => new RollAction(context, {count: 2})],
         ]),
         context,
     );

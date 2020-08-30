@@ -10,6 +10,11 @@ import { MovablePayload } from './payload/movable-payload';
 import { moveObject } from './util/move-object';
 
 
+/**
+ * Lets the user drop an object onto this object.
+ *
+ * @thModule action
+ */
 export class DropAction extends BaseAction<DroppablePayload> {
   constructor(context: ActionContext<DroppablePayload>) {
     super(
