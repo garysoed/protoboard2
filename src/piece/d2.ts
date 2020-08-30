@@ -1,17 +1,18 @@
+import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
+import { Observable, of as observableOf } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { MovablePayload } from '../action/payload/movable-payload';
+import { OrientablePayload } from '../action/payload/orientable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { PickAction } from '../action/pick-action';
 import { RotateAction } from '../action/rotate-action';
 // import { $face } from '../action/face';
 // import { FlipAction } from '../action/flip-action';
-// import { PickAction } from '../../src/action/pick-action';
 // import { RollAction } from '../action/roll-action';
-// import { RotateAction } from '../action/rotate-action';
-// import { BaseAction } from '../core/base-action';
 import { BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
@@ -23,9 +24,7 @@ import template from './d2.html';
  * @thModule piece
  */
 export const $d2 = {
-  api: {
-    // ...$face
-  },
+  api: {},
   tag: 'pb-d2',
 };
 
@@ -36,7 +35,7 @@ export const $ = {
   }),
 };
 
-interface D2Payload extends MovablePayload, RotatablePayload {
+interface D2Payload extends MovablePayload, OrientablePayload, RotatablePayload {
 
 }
 
@@ -56,8 +55,6 @@ interface D2Payload extends MovablePayload, RotatablePayload {
   template,
 })
 export class D2 extends BaseComponent<D2Payload> {
-  // private readonly currentFace$ = this.declareInput($.host._.currentFaceOut);
-
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<D2Payload, any>>([
@@ -71,12 +68,20 @@ export class D2 extends BaseComponent<D2Payload> {
         ]),
         context,
     );
-    // this.render($.face._.name, this.renderFaceName());
+    this.render($.face._.name, this.faceName$);
   }
 
-  // private renderFaceName(): Observable<string> {
-  //   return this.currentFace$.pipe(
-  //       map(currentFace => `face-${currentFace}`),
-  //   );
-  // }
+  @cache()
+  private get faceName$(): Observable<string> {
+    return this.state$.pipe(
+        switchMap(state => {
+          if (!state) {
+            return observableOf(0);
+          }
+
+          return state.payload.faceIndex;
+        }),
+        map(index => `face-${index}`),
+    );
+  }
 }

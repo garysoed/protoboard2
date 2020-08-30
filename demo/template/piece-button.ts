@@ -8,7 +8,7 @@ import { map, withLatestFrom } from 'rxjs/operators';
 import template from './piece-button.html';
 
 
-type ClickEvent = ActionEvent<{readonly icon: string}>;
+export type ClickEvent = ActionEvent<{readonly icon: string}>;
 
 export const $pieceButton = {
   tag: 'pbd-piece-button',

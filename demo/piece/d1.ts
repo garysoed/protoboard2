@@ -1,5 +1,4 @@
 import { cache } from 'gs-tools/export/data';
-import { elementWithTagType } from 'gs-types';
 import { _p, Icon, ThemedCustomElementCtrl } from 'mask';
 import { element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
@@ -18,7 +17,6 @@ export const $d1Demo = {
 };
 
 const $ = {
-  create: element('create', elementWithTagType('section'), {}),
   template: element('template', $pieceTemplate, {}),
 };
 

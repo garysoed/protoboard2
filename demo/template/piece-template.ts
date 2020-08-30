@@ -6,14 +6,15 @@ import { BehaviorSubject, combineLatest, merge, Observable, of as observableOf }
 import { map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
+import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
 import { ADD_PIECE_EVENT, AddPieceEvent } from './add-piece-event';
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
-import { $pieceButton, PieceButton } from './piece-button';
-import { $piecePreview, ClickEvent, PiecePreview } from './piece-preview';
+import { $pieceButton, ClickEvent as ClickButtonEvent, PieceButton } from './piece-button';
+import { $piecePreview, ClickEvent as ClickPreviewEvent, PiecePreview } from './piece-preview';
 import template from './piece-template.html';
 
 
@@ -32,17 +33,18 @@ export const $pieceTemplate = {
 const $ = {
   host: host($pieceTemplate.api),
   addButton: element('addbutton', $textIconButton, {}),
-  meepleButton: element('meeple', $pieceButton, {}),
-  coinButton: element('coin', $pieceButton, {}),
-  gemButton: element('gem', $pieceButton, {}),
+  editors: element('editors', instanceofType(HTMLElement), {
+    content: multi('#content'),
+    onClick: onDom<ClickButtonEvent>(ACTION_EVENT),
+  }),
   previews: element('previews', instanceofType(HTMLElement), {
     content: multi('#content'),
-    onClick: onDom<ClickEvent>(ACTION_EVENT),
+    onClick: onDom<ClickPreviewEvent>(ACTION_EVENT),
   }),
   template: element('template', $documentationTemplate, {}),
 };
 
-const ICONS = ['meeple', 'coin', 'gen'];
+const ICONS = ['meeple', 'coin', 'gem', 'card'];
 
 @_p.customElement({
   ...$pieceTemplate,
@@ -50,6 +52,7 @@ const ICONS = ['meeple', 'coin', 'gen'];
     registerSvg(vine, 'meeple', {type: 'embed', content: meepleSvg});
     registerSvg(vine, 'coin', {type: 'embed', content: coinSvg});
     registerSvg(vine, 'gem', {type: 'embed', content: gemSvg});
+    registerSvg(vine, 'card', {type: 'embed', content: cardFront});
   },
   dependencies: [
     DocumentationTemplate,
@@ -69,6 +72,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
     this.addSetup(this.handlePreviewClick$);
     this.render($.template._.label, this.declareInput($.host._.label));
     this.render($.previews._.content, this.previewContents$);
+    this.render($.editors._.content, this.editorContents$);
     this.render($.host._.onAdd, this.onAdd$);
   }
 
@@ -80,12 +84,19 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
+  private get editorContents$(): Observable<readonly Node[]> {
+    const icon$List = ICONS.map(icon => renderCustomElement(
+        $pieceButton,
+        {inputs: {icon: observableOf(icon)}},
+        this.context,
+    ));
+
+    return icon$List.length <= 0 ? observableOf([]) : combineLatest(icon$List);
+  }
+
+  @cache()
   private get handleOnCustomizeClick$(): Observable<unknown> {
-    return merge(
-        this.declareInput($.coinButton._.onClick),
-        this.declareInput($.gemButton._.onClick),
-        this.declareInput($.meepleButton._.onClick),
-    )
+    return this.declareInput($.editors._.onClick)
     .pipe(
         withLatestFrom(this.previewIcons$, this.selectedIndex$),
         tap(([{payload}, previewIcons, selectedIcon]) => {

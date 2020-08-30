@@ -3,7 +3,7 @@ import { cache } from 'gs-tools/export/data';
 import { SimpleIdGenerator } from 'gs-tools/export/random';
 import { $icon } from 'mask';
 import { renderCustomElement, renderElement } from 'persona';
-import { BehaviorSubject, combineLatest, Observable, of as observableOf, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { $baseComponent } from '../../src/core/base-component';
@@ -56,7 +56,15 @@ export class StagingService {
         switchMap(stateService => stateService.objectIds$),
         tap(objectIds => {
           const id = this.idGenerator.generate(objectIds);
-          const state = {type: objectType, id, payload: {...payload, parentId: SUPPLY_ID}};
+          const state = {
+            type: objectType,
+            id,
+            payload: {
+              ...payload,
+              faceIndex: 0,
+              parentId: SUPPLY_ID,
+            },
+          };
           const states = this.#states$.getValue();
           this.#states$.next(new Set([...states, state]));
         }),
@@ -70,9 +78,14 @@ export class StagingService {
         (state, context) => {
           const icon$ = state.payload.icons.pipe(
               switchMap(icons => {
-                const icon$list = icons.map(icon => renderCustomElement(
+                const icon$list = icons.map((icon, index) => renderCustomElement(
                     $icon,
-                    {inputs: {icon: observableOf(icon)}},
+                    {
+                      inputs: {icon: observableOf(icon)},
+                      attrs: new Map([
+                        ['slot', observableOf(`face-${index}`)],
+                      ]),
+                    },
                     context,
                 ));
 
