@@ -1,6 +1,6 @@
-import { debug, filterNonNull } from 'gs-tools/export/rxjs';
+import { filterNonNull } from 'gs-tools/export/rxjs';
 import { Palette, registerSvg, start, Theme } from 'mask';
-import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { $stateService } from '../src/state/state-service';
 
@@ -34,15 +34,18 @@ window.addEventListener('load', () => {
       .subscribe();
 
   $saveService.get(vine)
+      .pipe(switchMap(saveService => saveService.run()))
+      .subscribe();
+
+  $saveService.get(vine)
       .pipe(
           switchMap(service => service.savedState$),
           take(1),
           filterNonNull(),
           withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
-          tap(([state, stateService]) => {
-            stateService.setStates(new Set(state));
-          }),
-          switchMap(([, , stagingService]) => stagingService.setStaging(false)),
       )
-      .subscribe();
+      .subscribe(([state, stateService, stagingService]) => {
+        stateService.setStates(new Set(state));
+        stagingService.setStaging(false);
+      });
 });

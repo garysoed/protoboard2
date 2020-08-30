@@ -11,14 +11,9 @@ import { $saveService, SaveService } from './save-service';
 
 
 export class StagingService {
-  private readonly idGenerator = new SimpleIdGenerator();
   readonly #isStaging$ = new BehaviorSubject(true);
   readonly #states$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
-
-  constructor(
-      private readonly saveService: SaveService,
-      private readonly vine: Vine,
-  ) { }
+  private readonly idGenerator = new SimpleIdGenerator();
 
   get isStaging$(): Observable<boolean> {
     return this.#isStaging$;
@@ -28,6 +23,11 @@ export class StagingService {
   get states$(): Observable<ReadonlySet<SavedState<object>>> {
     return this.#states$;
   }
+
+  constructor(
+      private readonly saveService: SaveService,
+      private readonly vine: Vine,
+  ) { }
 
   addState(objectType: string, payload: Record<string, unknown>): Observable<unknown> {
     return $stateService.get(this.vine).pipe(
@@ -42,20 +42,14 @@ export class StagingService {
     );
   }
 
+  clear(): void {
+    this.#states$.next(new Set());
+  }
 
-  setStaging(staging: boolean): Observable<unknown> {
-    return defer(() => {
-      if (staging) {
-        return observableOf({});
-      }
 
-      return this.saveService.run();
-    })
-    .pipe(
-        tap(() => {
-          this.#isStaging$.next(staging);
-        }),
-    );
+  setStaging(staging: boolean): void {
+    this.#isStaging$.next(staging);
+    this.saveService.setSaving(!staging);
   }
 }
 

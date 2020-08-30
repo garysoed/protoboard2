@@ -69,8 +69,8 @@ export class StagingArea extends ThemedCustomElementCtrl {
   private get handleStartAction$(): Observable<unknown> {
     return this.declareInput($.startButton._.actionEvent).pipe(
         withLatestFrom($stagingService.get(this.vine)),
-        switchMap(([, service]) => {
-          return service.states$.pipe(
+        switchMap(([, stagingService]) => {
+          return stagingService.states$.pipe(
               take(1),
               withLatestFrom($stateService.get(this.vine)),
               tap(([states, stateService]) => {
@@ -95,8 +95,8 @@ export class StagingArea extends ThemedCustomElementCtrl {
                   {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
                   {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
                 ]));
+                stagingService.setStaging(false);
               }),
-              switchMapTo(service.setStaging(false)),
           );
         }),
     );

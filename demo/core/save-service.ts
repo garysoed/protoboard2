@@ -1,10 +1,9 @@
 import { stream } from 'grapevine';
-import { debug } from 'gs-tools/export/rxjs';
-import { listConverter, mapConverter, objectConverter } from 'gs-tools/export/serializer';
+import { listConverter, objectConverter } from 'gs-tools/export/serializer';
 import { LocalStorage } from 'gs-tools/export/store';
 import { $window } from 'mask';
 import { Converter, identity, json, Result, Serializable } from 'nabu';
-import { combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { SavedState } from '../../src/state/saved-state';
@@ -44,6 +43,7 @@ class StateConverter implements Converter<object, Serializable> {
 }
 
 export class SaveService {
+  private readonly isSaving$ = new BehaviorSubject(false);
   private readonly storage = new LocalStorage<ReadonlyArray<SavedState<object>>>(
       this.window,
       'pbd',
@@ -60,17 +60,27 @@ export class SaveService {
   constructor(
       private readonly stateService: StateService,
       private readonly window: Window,
-  ) {
-  }
+  ) { }
 
   run(): Observable<unknown> {
-    return this.stateService.currentState$.pipe(
+    return this.isSaving$.pipe(
+        switchMap(isSaving => {
+          if (!isSaving) {
+            return EMPTY;
+          }
+
+          return this.stateService.currentState$;
+        }),
         switchMap(state => this.storage.update(ID, [...state.values()])),
     );
   }
 
   get savedState$(): Observable<ReadonlyArray<SavedState<object>>|null> {
     return this.storage.read(ID);
+  }
+
+  setSaving(isSaving: boolean): void {
+    this.isSaving$.next(isSaving);
   }
 }
 
