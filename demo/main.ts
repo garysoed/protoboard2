@@ -1,6 +1,7 @@
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { Palette, registerSvg, start, Theme } from 'mask';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
 import { $stateService } from '../src/state/state-service';
 
@@ -14,6 +15,11 @@ import { Root } from './root';
 const iconConfigs: Map<string, string> = new Map([
   ['protoboard', protoboardSvg],
 ]);
+
+const webConsoleDestination = new WebConsoleDestination({installTrigger: true});
+ON_LOG_$.subscribe(log => {
+  webConsoleDestination.log(log);
+});
 
 window.addEventListener('load', () => {
   const theme = new Theme(document, Palette.GREY, Palette.LIME);

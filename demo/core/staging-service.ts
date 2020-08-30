@@ -54,6 +54,7 @@ export class StagingService {
 }
 
 export const $stagingService = stream(
+    'StagingService',
     vine => $saveService.get(vine)
         .pipe(
             map(saveService => new StagingService(saveService, vine)),

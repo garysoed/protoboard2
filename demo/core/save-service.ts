@@ -85,6 +85,7 @@ export class SaveService {
 }
 
 export const $saveService = stream(
+    'SaveService',
     vine => combineLatest([
       $stateService.get(vine),
       $window.get(vine),

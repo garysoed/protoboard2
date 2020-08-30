@@ -1,17 +1,17 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $iconWithText, $textIconButton, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $iconWithText, $textIconButton, IconWithText, TextIconButton, ThemedCustomElementCtrl, _p } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, switchMapTo, take, tap, withLatestFrom } from 'rxjs/operators';
-
+import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
 import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
 import { $stateService } from '../../src/state/state-service';
-
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
+
+
 
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';

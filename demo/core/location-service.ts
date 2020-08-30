@@ -23,5 +23,6 @@ const ROUTE_SPEC = {
 const DEFAULT_ROUTE = {payload: {}, type: Views.INSTRUCTION};
 
 export const $locationService = source(
+    'LocationService',
     vine => new LocationService(ROUTE_SPEC, DEFAULT_ROUTE, $window.get(vine)),
 );

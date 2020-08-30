@@ -40,9 +40,7 @@ class ObjectCache {
 export class StateService {
   protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
 
-  constructor(private readonly vine: Vine) {
-    console.log('StateService');
-  }
+  constructor(private readonly vine: Vine) { }
 
   @cache()
   get currentState$(): Observable<ReadonlyMap<string, SavedState<object>>> {
@@ -151,13 +149,13 @@ export class StateService {
   }
 }
 
-export const $stateHandlers = source(() => new Map<string, StateHandler<object>>());
+export const $stateHandlers =
+    source('stateHandlers', () => new Map<string, StateHandler<object>>());
 export function registerStateHandler<P extends object>(
     type: string,
     handler: StateHandler<P>,
     vine: Vine,
 ): void {
-  console.log('register');
   $stateHandlers.set(
       vine,
       existingHandlers => new Map([
@@ -167,7 +165,7 @@ export function registerStateHandler<P extends object>(
   );
 }
 
-export const $stateService = source(vine => new StateService(vine));
+export const $stateService = source('StateService', vine => new StateService(vine));
 
 function resolveMap(
     subjectObject: object,
