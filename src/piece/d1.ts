@@ -48,10 +48,7 @@ export class D1Payload extends BaseComponent<D1Payload> {
           [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
-            context => new RotateAction(
-                context,
-                {index: 0, stops: [0, 90, 180, 270]},
-            ),
+            context => new RotateAction(context, {index: 0, stops: [0, 90, 180, 270]}),
           ],
         ]),
         context,
