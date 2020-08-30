@@ -1,0 +1,28 @@
+<style>
+  :host {
+    --pbdPreviewBackgroundColor: var(--mkThemeActionBG);
+    --pbdPreviewForegroundColor: var(--mkThemeActionFG1);
+  }
+
+  :host([selected="T"]) {
+    --pbdPreviewBackgroundColor: var(--mkThemeActionFocusBG);
+    --pbdPreviewForegroundColor: var(--mkThemeActionFocusFG1);
+  }
+
+  #root {
+    background-color: var(--pbdPreviewBackgroundColor);
+    color: var(--pbdPreviewForegroundColor);
+    cursor: pointer;
+    height: 8rem;
+    width: 8rem;
+  }
+</style>
+
+<div
+    flex-align="center"
+    flex-justify="center"
+    id="root"
+    layout="row"
+>
+  <mk-icon id="icon"></mk-icon>
+</div>

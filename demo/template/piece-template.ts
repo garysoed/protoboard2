@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $textIconButton, _p, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, host, integerParser, multi, PersonaContext, renderCustomElement, stringParser } from 'persona';
+import { $textIconButton, _p, ACTION_EVENT, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { attributeIn, dispatcher, element, host, integerParser, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
 import { BehaviorSubject, combineLatest, merge, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
@@ -13,6 +13,7 @@ import meepleSvg from '../asset/meeple.svg';
 import { ADD_PIECE_EVENT, AddPieceEvent } from './add-piece-event';
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
 import { $pieceButton, PieceButton } from './piece-button';
+import { $piecePreview, ClickEvent, PiecePreview } from './piece-preview';
 import template from './piece-template.html';
 
 
@@ -36,6 +37,7 @@ const $ = {
   gemButton: element('gem', $pieceButton, {}),
   previews: element('previews', instanceofType(HTMLElement), {
     content: multi('#content'),
+    onClick: onDom<ClickEvent>(ACTION_EVENT),
   }),
   template: element('template', $documentationTemplate, {}),
 };
@@ -52,6 +54,7 @@ const ICONS = ['meeple', 'coin', 'gen'];
   dependencies: [
     DocumentationTemplate,
     PieceButton,
+    PiecePreview,
     TextIconButton,
   ],
   template,
@@ -63,6 +66,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
     super(context);
 
     this.addSetup(this.handleOnCustomizeClick$);
+    this.addSetup(this.handlePreviewClick$);
     this.render($.template._.label, this.declareInput($.host._.label));
     this.render($.previews._.content, this.previewContents$);
     this.render($.host._.onAdd, this.onAdd$);
@@ -85,7 +89,16 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
     .pipe(
         withLatestFrom(this.previewIcons$, this.selectedIndex$),
         tap(([{payload}, previewIcons, selectedIcon]) => {
-          previewIcons[selectedIcon].next(payload.icon);
+          previewIcons[selectedIcon % previewIcons.length].next(payload.icon);
+        }),
+    );
+  }
+
+  @cache()
+  private get handlePreviewClick$(): Observable<unknown> {
+    return this.declareInput($.previews._.onClick).pipe(
+        tap(event => {
+          this.selectedIndex$.next(event.payload.index);
         }),
     );
   }
@@ -105,9 +118,17 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   private get previewContents$(): Observable<readonly Node[]> {
     return this.previewIcons$.pipe(
         switchMap(previewIcons => {
-          const node$List = previewIcons.map(icon$ => renderCustomElement(
-              $pieceButton,
-              {inputs: {icon: icon$}},
+          const node$List = previewIcons.map((icon$, index) => renderCustomElement(
+              $piecePreview,
+              {
+                inputs: {
+                  icon: icon$,
+                  index: observableOf(index),
+                  selected: this.selectedIndex$.pipe(
+                      map(selectedIndex => selectedIndex === index),
+                  ),
+                },
+              },
               this.context,
           ));
 

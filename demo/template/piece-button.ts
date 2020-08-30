@@ -1,5 +1,4 @@
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { $icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, dispatcher, element, host, onDom, PersonaContext, stringParser } from 'persona';
@@ -7,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import template from './piece-button.html';
+
 
 type ClickEvent = ActionEvent<{readonly icon: string}>;
 
