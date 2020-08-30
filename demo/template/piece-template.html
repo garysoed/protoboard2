@@ -3,16 +3,75 @@
     margin-top: 4rem;
   }
 
+  #create {
+    height: 16rem;
+  }
+
   #display {
     height: 16rem;
+  }
+
+  .bigButton {
+    background-color: var(--mkThemeActionBG);
+    color: var(--mkThemeActionFG1);
+    cursor: pointer;
+    height: 8rem;
+    width: 8rem;
+  }
+
+  .bigButton:hover,
+  .bigButton:focus {
+    background-color: var(--mkThemeActionFocusBG);
+    color: var(--mkThemeActionFocusFG1);
   }
 </style>
 
 <pbd-documentation-template id="template">
   <section slot="content">
-    <slot id="display" name="display"></slot>
+
+    <section
+        flex-align="center"
+        flex-justify="center"
+        id="create"
+        layout="row"
+        slot="display"
+    >
+      <mk-icon id="previewIcon"></mk-icon>
+    </section>
+
     <hr>
-    <slot name="customize"></slot>
+
+    <section flex-justify="center" id="customize" layout="row" slot="customize">
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="meeple"
+          layout="row"
+      >
+        <mk-icon icon="meeple"></mk-icon>
+      </div>
+
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="coin"
+          layout="row"
+      >
+        <mk-icon icon="coin"></mk-icon>
+      </div>
+
+      <div
+          class="bigButton"
+          flex-align="center"
+          flex-justify="center"
+          id="gem"
+          layout="row"
+      >
+        <mk-icon icon="gem"></mk-icon>
+      </div>
+    </section>
 
     <div id="addButtonContainer">
       <mk-text-icon-button id="addbutton" label="Add piece"></mk-text-icon-button>
