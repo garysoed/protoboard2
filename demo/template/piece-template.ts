@@ -1,9 +1,7 @@
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
-import { elementWithTagType } from 'gs-types';
 import { $icon, $textIconButton, _p, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, host, onDom, PersonaContext, stringParser } from 'persona';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { attributeIn, dispatcher, element, host, PersonaContext, stringParser } from 'persona';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import coinSvg from '../asset/coin.svg';
@@ -12,6 +10,7 @@ import meepleSvg from '../asset/meeple.svg';
 
 import { ADD_PIECE_EVENT, AddPieceEvent } from './add-piece-event';
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
+import { $pieceButton, PieceButton } from './piece-button';
 import template from './piece-template.html';
 
 
@@ -26,9 +25,9 @@ export const $pieceTemplate = {
 const $ = {
   host: host($pieceTemplate.api),
   addButton: element('addbutton', $textIconButton, {}),
-  customize: element('customize', elementWithTagType('section'), {
-    onClick: onDom('click'),
-  }),
+  meepleButton: element('meeple', $pieceButton, {}),
+  coinButton: element('coin', $pieceButton, {}),
+  gemButton: element('gem', $pieceButton, {}),
   previewIcon: element('previewIcon', $icon, {}),
   template: element('template', $documentationTemplate, {}),
 };
@@ -42,6 +41,7 @@ const $ = {
   },
   dependencies: [
     DocumentationTemplate,
+    PieceButton,
     TextIconButton,
   ],
   template,
@@ -60,23 +60,12 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleOnCustomizeClick$(): Observable<unknown> {
-    return this.declareInput($.customize._.onClick)
-        .pipe(
-            map(event => event.target),
-            mapNonNull(target => {
-              if (!(target instanceof Element)) {
-                return null;
-              }
-
-              if (!target.classList.contains('bigButton')) {
-                return null;
-              }
-
-              return target.id;
-            }),
-            filterNonNull(),
-            tap(icon => this.selectedIcon$.next(icon)),
-        );
+    return merge(
+        this.declareInput($.coinButton._.onClick),
+        this.declareInput($.gemButton._.onClick),
+        this.declareInput($.meepleButton._.onClick),
+    )
+    .pipe(tap(({payload}) => this.selectedIcon$.next(payload.icon)));
   }
 
   @cache()
