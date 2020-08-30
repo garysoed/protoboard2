@@ -1,14 +1,19 @@
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull, mapNonNull } from 'gs-tools/export/rxjs';
 import { elementWithTagType } from 'gs-types';
-import { $icon, $textIconButton, _p, ACTION_EVENT, ActionEvent, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $icon, $textIconButton, _p, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, dispatcher, element, host, onDom, PersonaContext, stringParser } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
+import coinSvg from '../asset/coin.svg';
+import gemSvg from '../asset/gem.svg';
+import meepleSvg from '../asset/meeple.svg';
+
 import { ADD_PIECE_EVENT, AddPieceEvent } from './add-piece-event';
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
 import template from './piece-template.html';
+
 
 export const $pieceTemplate = {
   tag: 'pbd-piece-template',
@@ -30,6 +35,11 @@ const $ = {
 
 @_p.customElement({
   ...$pieceTemplate,
+  configure: vine => {
+    registerSvg(vine, 'meeple', {type: 'embed', content: meepleSvg});
+    registerSvg(vine, 'coin', {type: 'embed', content: coinSvg});
+    registerSvg(vine, 'gem', {type: 'embed', content: gemSvg});
+  },
   dependencies: [
     DocumentationTemplate,
     TextIconButton,

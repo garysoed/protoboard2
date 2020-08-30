@@ -7,15 +7,12 @@ import { element, PersonaContext, renderCustomElement, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { $d2 } from '../../src/piece/d2';
-import { $d1, D1 } from '../piece/d1';
-import { D2 } from '../piece/d2';
+import { $d1Demo, D1Demo } from '../piece/d1';
+import { $d2Demo, D2Demo } from '../piece/d2';
 
 import template from './documentation.html';
 import { $instruction, Instruction } from './instruction';
 import { $locationService, Views } from './location-service';
-// import { GridLayout } from '../layout/grid-layout';
-// import { $locationService, Views } from '../location-service';
 // import { Deck } from '../zone/deck';
 
 
@@ -33,10 +30,9 @@ const $ = {
 @_p.customElement({
   ...$documentation,
   dependencies: [
-    D1,
-    D2,
+    D1Demo,
+    D2Demo,
     // Deck,
-    // GridLayout,
     Instruction,
   ],
   template,
@@ -55,9 +51,9 @@ export class Documentation extends ThemedCustomElementCtrl {
             map(location => {
               switch (location.type) {
                 case Views.D1:
-                  return $d1;
+                  return $d1Demo;
                 case Views.D2:
-                  return $d2;
+                  return $d2Demo;
                 // case Views.DECK:
                 //   return 'pbd-deck';
                 // case Views.GRID_LAYOUT:

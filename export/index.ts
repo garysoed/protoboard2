@@ -10,4 +10,4 @@ export { PickAction } from '../src/action/pick-action';
 export { ConverterOf, BaseAction } from '../src/core/base-action';
 
 // piece
-export { $d1, D1Payload } from '../src/piece/d1';
+export { $d1, D1 } from '../src/piece/d1';

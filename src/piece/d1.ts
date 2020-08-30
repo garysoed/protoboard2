@@ -38,7 +38,7 @@ export interface D1Payload extends MovablePayload, RotatablePayload { }
   template,
   api: {},
 })
-export class D1Payload extends BaseComponent<D1Payload> {
+export class D1 extends BaseComponent<D1Payload> {
   /**
    * @internal
    */

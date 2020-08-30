@@ -16,6 +16,11 @@ import { PieceTemplate } from '../template/piece-template';
 import template from './d2.html';
 
 
+export const $d2Demo = {
+  tag: 'pbd-d2',
+  api: {},
+};
+
 const $ = {
   create: element('create', elementWithTagType('section'), {}),
   customize: element('customize', elementWithTagType('section'), {
@@ -24,6 +29,7 @@ const $ = {
 };
 
 @_p.customElement({
+  ...$d2Demo,
   configure: vine => {
     registerSvg(vine, 'coin-0', {type: 'embed', content: coinHeadSvg});
     registerSvg(vine, 'coin-1', {type: 'embed', content: coinSvg});
@@ -35,11 +41,9 @@ const $ = {
     Icon,
     D2Impl,
   ],
-  tag: 'pbd-d2',
   template,
-  api: {},
 })
-export class D2 extends ThemedCustomElementCtrl {
+export class D2Demo extends ThemedCustomElementCtrl {
   private readonly createEl$ = this.declareInput($.create);
   private readonly onCustomizeClick$ = this.declareInput($.customize._.onClick);
   private readonly selectedIcon$ = this.createSelectedIcon();
