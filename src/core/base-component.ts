@@ -22,7 +22,6 @@ const LOG = new Logger('protoboard.core.BaseComponent');
 export type BaseActionCtor<P extends object, Q extends P> =
     (context: ActionContext<P>) => BaseAction<Q>;
 
-// TODO: DELETE
 export const $baseComponent = {
   api: {
     objectId: attributeIn('object-id', stringParser()),

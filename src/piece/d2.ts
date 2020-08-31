@@ -13,7 +13,7 @@ import { PickAction } from '../action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
-import { BaseActionCtor, BaseComponent } from '../core/base-component';
+import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
 import template from './d2.html';
@@ -24,7 +24,7 @@ import template from './d2.html';
  * @thModule piece
  */
 export const $d2 = {
-  api: {},
+  api: {...$baseComponent.api},
   tag: 'pb-d2',
 };
 
@@ -35,7 +35,7 @@ export const $ = {
   }),
 };
 
-interface D2Payload extends MovablePayload, OrientablePayload, RotatablePayload {
+export interface D2Payload extends MovablePayload, OrientablePayload, RotatablePayload {
 
 }
 

@@ -1,8 +1,11 @@
 import { assert, run, should, test } from 'gs-testing';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
+import { tap } from 'rxjs/operators';
 
-import { $, D2 } from './d2';
+import { $stateService } from '../state/state-service';
+
+import { $, D2, D2Payload } from './d2';
 
 
 test('@protoboard2/component/d2', init => {
@@ -11,14 +14,33 @@ test('@protoboard2/component/d2', init => {
   const _ = init(() => {
     const tester = factory.build([D2], document);
     const el = tester.createElement('pb-d2');
-    return {el};
+
+    return {el, tester};
   });
 
-  // test('renderFaceName', () => {
-  //   should(`render the face name correctly`, () => {
-      // run(_.el.setAttribute($.host._.currentFaceOut, 2));
+  test('faceName$', () => {
+    should(`render the face name correctly`, () => {
+      const objectId = 'objectId';
+      run(_.el.setAttribute($.host._.objectId, objectId));
 
-    //   assert(_.el.getAttribute($.face._.name)).to.emitSequence(['face-2']);
-    // });
-  // });
+      const payload: D2Payload = {
+        parentId: null,
+        faceIndex: 2,
+        rotationIndex: 0,
+      };
+      run($stateService.get(_.tester.vine).pipe(
+          tap(stateService => {
+            stateService.setStates(new Set([
+              {
+                id: objectId,
+                type: 'testType',
+                payload,
+              },
+            ]));
+          }),
+      ));
+
+      assert(_.el.getAttribute($.face._.name)).to.emitSequence(['face-2']);
+    });
+  });
 });
