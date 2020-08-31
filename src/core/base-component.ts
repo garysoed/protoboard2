@@ -3,6 +3,7 @@ import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
+import { Input } from 'persona/export/internal';
 import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
@@ -15,9 +16,6 @@ import { ActionContext, BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
 
 
-// import { HelpAction } from '../action/help-action';
-
-
 const LOG = new Logger('protoboard.core.BaseComponent');
 
 
@@ -27,9 +25,6 @@ export type BaseActionCtor<P extends object, Q extends P> =
 // TODO: DELETE
 export const $baseComponent = {
   api: {
-    click: onDom('click'),
-    mouseout: onDom('mouseout'),
-    mouseover: onDom('mouseover'),
     objectId: attributeIn('object-id', stringParser()),
   },
 };
@@ -44,6 +39,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   constructor(
       private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P, P>>,
       context: PersonaContext,
+      private readonly targetInput: Input<Element>,
   ) {
     super(context);
 
@@ -103,13 +99,21 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   }
 
   private createTriggerClick(): Observable<unknown> {
-    return $.host._.click.getValue(this.context);
+    return onDom('click')
+        .resolve(context => this.targetInput.getValue(context))
+        .getValue(this.context);
   }
 
   private createTriggerKey(specKey: string): Observable<unknown> {
     return merge(
-        this.declareInput($.host._.mouseout).pipe(mapTo(false)),
-        this.declareInput($.host._.mouseover).pipe(mapTo(true)),
+        onDom('mouseout')
+            .resolve(context => this.targetInput.getValue(context))
+            .getValue(this.context)
+            .pipe(mapTo(false)),
+        onDom('mouseover')
+            .resolve(context => this.targetInput.getValue(context))
+            .getValue(this.context)
+            .pipe(mapTo(true)),
     )
     .pipe(
         switchMap(hovered => {

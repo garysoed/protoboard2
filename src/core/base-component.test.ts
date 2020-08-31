@@ -1,5 +1,5 @@
 import { assert, createSpySubject, run, should, test } from 'gs-testing';
-import { PersonaContext } from 'persona';
+import { host, PersonaContext } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
@@ -31,7 +31,7 @@ class TestComponent extends BaseComponent<{}> {
       triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<{}, {}>>,
       context: PersonaContext,
   ) {
-    super(triggerActionMap, context);
+    super(triggerActionMap, context, host({}));
   }
 }
 

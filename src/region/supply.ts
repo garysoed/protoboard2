@@ -81,7 +81,7 @@ export interface SupplyPayload extends DroppablePayload { }
 })
 export class Supply extends BaseComponent<SupplyPayload> {
   constructor(context: PersonaContext) {
-    super(new Map(), context);
+    super(new Map(), context, $.host);
 
     this.render($.root._.content, this.contents$);
   }

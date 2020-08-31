@@ -66,6 +66,7 @@ export class D2 extends BaseComponent<D2Payload> {
           [TriggerSpec.L, context => new RollAction(context, {count: 2})],
         ]),
         context,
+        $.host,
     );
     this.render($.face._.name, this.faceName$);
   }

@@ -1,5 +1,5 @@
 import { _p } from 'mask';
-import { PersonaContext } from 'persona';
+import { host, PersonaContext } from 'persona';
 
 import { MovablePayload } from '../action/payload/movable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
@@ -52,6 +52,7 @@ export class D1 extends BaseComponent<D1Payload> {
           ],
         ]),
         context,
+        host({}),
     );
   }
 }

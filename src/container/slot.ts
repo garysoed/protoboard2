@@ -42,6 +42,7 @@ export class Slot extends BaseComponent<SlotPayload> {
           [TriggerSpec.D, context => new DropAction(context)],
         ]),
         context,
+        $.host,
     );
 
     this.render($.root._.content, this.contents$);
