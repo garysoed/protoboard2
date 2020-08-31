@@ -6,7 +6,7 @@ import { TriggerSpec } from '../core/trigger-spec';
 
 
 export interface ActionTrigger {
-  readonly action: BaseAction<unknown>;
+  readonly action: BaseAction<object, unknown>;
   readonly trigger: TriggerSpec;
 }
 
@@ -17,11 +17,11 @@ export class HelpService {
     this.actions$.next([]);
   }
 
-  show(actions: ReadonlyMap<TriggerSpec, BaseAction<unknown>>): void {
+  show(actions: ReadonlyMap<TriggerSpec, BaseAction<object, unknown>>): void {
     this.actions$.next(
         [...actions].map(([trigger, action]) => ({action, trigger})),
     );
   }
 }
 
-export const $helpService = source(() => new HelpService());
+export const $helpService = source('HelpService', () => new HelpService());

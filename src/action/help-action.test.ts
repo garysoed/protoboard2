@@ -1,20 +1,20 @@
-import { Vine } from 'grapevine';
 import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { _v } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction } from '../core/base-action';
 import { TriggerSpec } from '../core/trigger-spec';
 
 import { HelpAction } from './help-action';
 import { $helpService, ActionTrigger } from './help-service';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
-class TestAction extends BaseAction {
-  constructor(vine: Vine) {
-    super('test', 'test', {}, vine);
+class TestAction extends BaseAction<object> {
+  constructor(context: ActionContext<object>) {
+    super('test', 'test', {}, context);
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
@@ -33,10 +33,12 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
-    const testAction = new TestAction(vine);
+    const context = createFakeActionContext({
+      personaContext: createFakeContext({shadowRoot, vine}),
+    });
+    const testAction = new TestAction(context);
 
-    const action = new HelpAction(new Map([[TRIGGER, testAction]]), vine);
-    action.setActionContext(createFakeContext({shadowRoot}));
+    const action = new HelpAction(context, new Map([[TRIGGER, testAction]]));
     run(action.run());
 
     return {action, el, testAction, vine};

@@ -7,6 +7,7 @@ import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf 
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
+import { HelpAction } from '../action/help-action';
 import { State } from '../state/state';
 import { $stateService } from '../state/state-service';
 
@@ -51,22 +52,22 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
 
   @cache()
   get actionsMap(): ReadonlyMap<TriggerSpec, BaseAction<object>> {
+    const actionContext = {
+      host$: host({}).getValue(this.context),
+      personaContext: this.context,
+      objectId$: this.objectId$,
+      state$: this.state$.pipe(filterNonNull()),
+    };
     const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
         this.triggerActionMap,
         $map(([triggerSpec, actionProvider]) => {
-          const action = actionProvider({
-            host$: host({}).getValue(this.context),
-            personaContext: this.context,
-            objectId$: this.objectId$,
-            state$: this.state$.pipe(filterNonNull()),
-          });
+          const action = actionProvider(actionContext);
           return [triggerSpec, action] as [TriggerSpec, BaseAction<object>];
         }),
         $asMap(),
     );
-    // TODO
-    // const helpAction = new HelpAction(this.triggerActionMap, this.vine);
-    // allActions.set(TriggerSpec.QUESTION, helpAction);
+    const helpAction = new HelpAction(actionContext, allActions);
+    allActions.set(TriggerSpec.QUESTION, helpAction);
 
     return allActions;
   }

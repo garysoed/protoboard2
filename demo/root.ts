@@ -5,6 +5,7 @@ import { api, classToggle, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
+import { HelpOverlay } from '../src/action/help-overlay';
 import { Active } from '../src/region/active';
 
 import { Documentation } from './core/documentation';
@@ -14,9 +15,6 @@ import { PlayArea } from './core/play-area';
 import { StagingArea } from './core/staging-area';
 import { $stagingService } from './core/staging-service';
 import template from './root.html';
-
-
-// import { HelpOverlay } from '../src-old/action/help-overlay';
 
 
 const $ = {
@@ -32,7 +30,7 @@ const $ = {
     Active,
     Documentation,
     Drawer,
-    // HelpOverlay,
+    HelpOverlay,
     PlayArea,
     RootLayout,
     StagingArea,

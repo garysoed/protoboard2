@@ -1,7 +1,8 @@
 import { assert, run, should, test } from 'gs-testing';
 import { $asArray, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { _p } from 'mask';
-import { PersonaTesterFactory } from 'persona/export/testing';
+import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
+import { ReplaySubject } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { TriggerSpec } from '../core/trigger-spec';
@@ -9,6 +10,7 @@ import { TriggerSpec } from '../core/trigger-spec';
 import { $, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';
 import { PickAction } from './pick-action';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
@@ -17,7 +19,14 @@ test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
     const tester = testerFactory.build([HelpOverlay], document)
         .createElement('pb-help-overlay');
-    return {tester};
+
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
+    const testAction = new PickAction(createFakeActionContext({
+      personaContext,
+    }));
+    return {testAction, tester};
   });
 
   test('renderIsVisible', () => {
@@ -29,7 +38,7 @@ test('@protoboard2/action/help-overlay', init => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
+            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
           }),
       ));
 
@@ -39,11 +48,10 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('renderRows', () => {
     should(`render rows correctly`, () => {
-      const action = new PickAction(_.tester.vine);
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, action]]));
+            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
           }),
       ));
 
@@ -60,15 +68,14 @@ test('@protoboard2/action/help-overlay', init => {
       );
 
       assert(triggers$).to.emitWith('click');
-      assert(actions$).to.emitWith(action.actionName);
+      assert(actions$).to.emitWith(_.testAction.actionName);
     });
 
     should(`render deletion correctly`, () => {
-      const action = new PickAction(_.tester.vine);
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, action]]));
+            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
             service.show(new Map());
           }),
       ));
@@ -91,7 +98,7 @@ test('@protoboard2/action/help-overlay', init => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, new PickAction(_.tester.vine)]]));
+            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
           }),
       ));
 
