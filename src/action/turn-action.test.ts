@@ -3,11 +3,11 @@ import { _v } from 'mask';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject } from 'rxjs';
 
-import { FlipAction } from './flip-action';
 import { createFakeActionContext } from './testing/fake-action-context';
+import { TurnAction } from './turn-action';
 
 
-test('@protoboard2/action/flip-action', init => {
+test('@protoboard2/action/turn-action', init => {
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
@@ -21,7 +21,7 @@ test('@protoboard2/action/flip-action', init => {
       payload: {faceIndex: faceIndex$},
     };
 
-    const action = new FlipAction(
+    const action = new TurnAction(
         createFakeActionContext({
           host$: observableOf(el),
           personaContext,
@@ -59,7 +59,7 @@ test('@protoboard2/action/flip-action', init => {
       _.faceIndex$.next(1);
 
       const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'flip');
+      configEl.setAttribute('action', 'turn');
       configEl.setAttribute('count', '4');
       _.el.appendChild(configEl);
 

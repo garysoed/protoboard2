@@ -15,21 +15,21 @@ interface Config {
   readonly count: number;
 }
 
-export const KEY = 'flip';
+export const KEY = 'turn';
 
 /**
- * Lets the user flip the object to reveal different faces.
+ * Lets the user turn the object to reveal different faces.
  *
  * @thModule action
  */
-export class FlipAction extends BaseAction<OrientablePayload, Config> {
+export class TurnAction extends BaseAction<OrientablePayload, Config> {
   constructor(
       context: ActionContext<OrientablePayload>,
       private readonly defaultConfig: Config,
   ) {
     super(
         KEY,
-        'Flip',
+        'Turn',
         {count: integerParser()},
         context,
     );
