@@ -8,10 +8,11 @@ import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
 import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
+import { SavedState } from '../../src/state/saved-state';
 import { $stateService } from '../../src/state/state-service';
 
 import template from './staging-area.html';
-import { $stagingService } from './staging-service';
+import { $stagingService, GenericPiecePayload } from './staging-service';
 
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
@@ -52,11 +53,16 @@ export class StagingArea extends ThemedCustomElementCtrl {
         switchMap(states => {
           const node$List = $pipe(
               states,
-              $map(state => renderCustomElement(
-                  $iconWithText,
-                  {inputs: {label: observableOf(state.id)}},
-                  this.context,
-              )),
+              $map(state => {
+                const payload = (state as SavedState<GenericPiecePayload>).payload;
+                const label = `${payload.componentTag.substr(3)}: ${payload.icons.join(', ')}`;
+
+                return renderCustomElement(
+                    $iconWithText,
+                    {inputs: {label: observableOf(label)}},
+                    this.context,
+                );
+              }),
               $asArray(),
           );
 

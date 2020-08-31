@@ -20,8 +20,8 @@ import { $saveService, SaveService } from './save-service';
 
 const DEMO_PREVIEW_TYPE = 'pbd-demo';
 
-interface GenericPiecePayload extends MovablePayload, OrientablePayload, RotatablePayload {
-
+export interface GenericPiecePayload extends
+    PieceSpec, MovablePayload, OrientablePayload, RotatablePayload {
 }
 
 export class StagingService {
