@@ -52,6 +52,7 @@ const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
 const PIECE_LINK_CONFIGS: LinkConfig[] = [
   {label: 'D1', path: Views.D1},
   {label: 'D2', path: Views.D2},
+  {label: 'D6', path: Views.D6},
 ];
 
 @_p.customElement({

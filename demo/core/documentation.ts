@@ -9,6 +9,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { $d1Demo, D1Demo } from '../piece/d1';
 import { $d2Demo, D2Demo } from '../piece/d2';
+import { $d6Demo, D6Demo } from '../piece/d6';
 
 import template from './documentation.html';
 import { $instruction, Instruction } from './instruction';
@@ -32,6 +33,7 @@ const $ = {
   dependencies: [
     D1Demo,
     D2Demo,
+    D6Demo,
     // Deck,
     Instruction,
   ],
@@ -54,6 +56,8 @@ export class Documentation extends ThemedCustomElementCtrl {
                   return $d1Demo;
                 case Views.D2:
                   return $d2Demo;
+                case Views.D6:
+                  return $d6Demo;
                 // case Views.DECK:
                 //   return 'pbd-deck';
                 // case Views.GRID_LAYOUT:

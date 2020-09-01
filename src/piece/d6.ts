@@ -16,34 +16,34 @@ import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
-import template from './d2.html';
+import template from './d6.html';
 
 /**
- * The D2's API.
+ * The D6's API.
  *
  * @thModule piece
  */
-export const $d2 = {
+export const $d6 = {
   api: {...$baseComponent.api},
-  tag: 'pb-d2',
+  tag: 'pb-d6',
 };
 
 export const $ = {
-  host: host(api($d2.api)),
+  host: host(api($d6.api)),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
 };
 
-export interface D2Payload extends MovablePayload, OrientablePayload, RotatablePayload {
+export interface D6Payload extends MovablePayload, OrientablePayload, RotatablePayload {
 
 }
 
 /**
- * Represents an object with two faces.
+ * Represents an object with six faces.
  *
  * @remarks
- * D2 supports {@link PickAction}, {@link RotateAction}., {@link FlipAction}, {@link RollAction},
+ * D6 supports {@link PickAction}, {@link RotateAction}., {@link FlipAction}, {@link RollAction},
  * and {@link TurnAction}.
  *
  * @thSlot - Face to display for the object.
@@ -51,21 +51,21 @@ export interface D2Payload extends MovablePayload, OrientablePayload, RotatableP
  * @thModule piece
  */
 @_p.customElement({
-  ...$d2,
+  ...$d6,
   template,
 })
-export class D2 extends BaseComponent<D2Payload> {
+export class D6 extends BaseComponent<D6Payload> {
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseActionCtor<D2Payload, any>>([
+        new Map<UnreservedTriggerSpec, BaseActionCtor<D6Payload, any>>([
           [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
             context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           ],
-          [TriggerSpec.F, context => new FlipAction(context, {count: 2})],
-          [TriggerSpec.T, context => new TurnAction(context, {count: 2})],
-          [TriggerSpec.L, context => new RollAction(context, {count: 2})],
+          [TriggerSpec.F, context => new FlipAction(context, {count: 6})],
+          [TriggerSpec.T, context => new TurnAction(context, {count: 6})],
+          [TriggerSpec.L, context => new RollAction(context, {count: 6})],
         ]),
         context,
         $.host,
