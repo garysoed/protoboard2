@@ -1,5 +1,5 @@
 <style>
-  :host {
+  /* :host {
     --pbSlotBorderColor: var(--mkThemeActionFG2);
   }
 
@@ -15,9 +15,14 @@
 
   ::slotted(*:not(:last-child)) {
     display: none;
-  }
+  } */
 </style>
 
-<div id="root" fill-parent>
-  <slot></slot>
+<div id="root" layout="row">
+  <div id="target">
+    <slot></slot>
+  </div>
+  <div id="contents">
+    <!-- #contents -->
+  </div>
 </div>

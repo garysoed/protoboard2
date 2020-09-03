@@ -10,11 +10,11 @@ import { map, switchMap } from 'rxjs/operators';
 import { $d1Demo, D1Demo } from '../piece/d1';
 import { $d2Demo, D2Demo } from '../piece/d2';
 import { $d6Demo, D6Demo } from '../piece/d6';
+import { $deckDemo, DeckDemo } from '../zone/deck';
 
 import template from './documentation.html';
 import { $instruction, Instruction } from './instruction';
 import { $locationService, Views } from './location-service';
-// import { Deck } from '../zone/deck';
 
 
 const $documentation = {
@@ -34,7 +34,7 @@ const $ = {
     D1Demo,
     D2Demo,
     D6Demo,
-    // Deck,
+    DeckDemo,
     Instruction,
   ],
   template,
@@ -58,10 +58,8 @@ export class Documentation extends ThemedCustomElementCtrl {
                   return $d2Demo;
                 case Views.D6:
                   return $d6Demo;
-                // case Views.DECK:
-                //   return 'pbd-deck';
-                // case Views.GRID_LAYOUT:
-                //   return 'pbd-grid-layout';
+                case Views.DECK:
+                  return $deckDemo;
                 case Views.INSTRUCTION:
                   return $instruction;
                 default:

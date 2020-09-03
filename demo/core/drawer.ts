@@ -41,7 +41,7 @@ interface LinkConfig {
 }
 
 const CONTAINER_LINK_CONFIGS: LinkConfig[] = [
-  // {label: 'Deck', path: Views.DECK},
+  {label: 'Deck', path: Views.DECK},
 ];
 
 const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
