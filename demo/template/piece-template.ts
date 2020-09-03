@@ -1,8 +1,8 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $textIconButton, _p, ACTION_EVENT, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, host, integerParser, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
-import { BehaviorSubject, combineLatest, merge, Observable, of as observableOf } from 'rxjs';
+import { attributeIn, element, host, integerParser, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
+import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
@@ -10,8 +10,8 @@ import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
+import { $stagingService } from '../core/staging-service';
 
-import { ADD_PIECE_EVENT, AddPieceEvent } from './add-piece-event';
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
 import { $pieceButton, ClickEvent as ClickButtonEvent, PieceButton } from './piece-button';
 import { $piecePreview, ClickEvent as ClickPreviewEvent, PiecePreview } from './piece-preview';
@@ -26,7 +26,7 @@ export const $pieceTemplate = {
   api: {
     faceCount: attributeIn('face-count', integerParser()),
     label: attributeIn('label', stringParser(), ''),
-    onAdd: dispatcher<AddPieceEvent>(ADD_PIECE_EVENT),
+    componentTag: attributeIn('component-tag', stringParser(), ''),
   },
 };
 
@@ -70,10 +70,10 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
     this.addSetup(this.handleOnCustomizeClick$);
     this.addSetup(this.handlePreviewClick$);
+    this.addSetup(this.handleAdd$);
     this.render($.template._.label, this.declareInput($.host._.label));
     this.render($.previews._.content, this.previewContents$);
     this.render($.editors._.content, this.editorContents$);
-    this.render($.host._.onAdd, this.onAdd$);
   }
 
   @cache()
@@ -95,14 +95,34 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get handleOnCustomizeClick$(): Observable<unknown> {
-    return this.declareInput($.editors._.onClick)
-    .pipe(
-        withLatestFrom(this.previewIcons$, this.selectedIndex$),
-        tap(([{payload}, previewIcons, selectedIcon]) => {
-          previewIcons[selectedIcon % previewIcons.length].next(payload.icon);
+  private get handleAdd$(): Observable<unknown> {
+    return this.declareInput($.addButton._.actionEvent).pipe(
+        withLatestFrom(
+            this.previewIcons$,
+            this.declareInput($.host._.componentTag),
+            $stagingService.get(this.vine),
+        ),
+        switchMap(([, previewIcons, componentTag, stagingService]) => {
+          const icons = previewIcons.map(preview => preview.getValue());
+          return stagingService.addPiece(
+              {
+                componentTag,
+                icons,
+              },
+          );
         }),
     );
+  }
+
+  @cache()
+  private get handleOnCustomizeClick$(): Observable<unknown> {
+    return this.declareInput($.editors._.onClick)
+        .pipe(
+            withLatestFrom(this.previewIcons$, this.selectedIndex$),
+            tap(([{payload}, previewIcons, selectedIcon]) => {
+              previewIcons[selectedIcon % previewIcons.length].next(payload.icon);
+            }),
+        );
   }
 
   @cache()
@@ -110,17 +130,6 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
     return this.declareInput($.previews._.onClick).pipe(
         tap(event => {
           this.selectedIndex$.next(event.payload.index);
-        }),
-    );
-  }
-
-  @cache()
-  private get onAdd$(): Observable<AddPieceEvent> {
-    return this.declareInput($.addButton._.actionEvent).pipe(
-        withLatestFrom(this.previewIcons$),
-        map(([, previewIcons]) => {
-          const icons = previewIcons.map(preview => preview.getValue());
-          return new AddPieceEvent(icons);
         }),
     );
   }
