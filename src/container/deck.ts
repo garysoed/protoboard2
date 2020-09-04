@@ -9,6 +9,7 @@ import { Logger } from 'santa';
 
 import { DropAction } from '../action/drop-action';
 import { DroppablePayload } from '../action/payload/droppable-payload';
+import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { $stateService } from '../state/state-service';
@@ -54,7 +55,7 @@ export class Deck extends BaseComponent<DeckPayload> {
           //   ),
           // ],
           [TriggerSpec.D, context => new DropAction(context)],
-          // [TriggerSpec.S, new ShuffleAction(context.vine)],
+          [TriggerSpec.S, context => new ShuffleAction(context)],
         ]),
         context,
         $.target,
