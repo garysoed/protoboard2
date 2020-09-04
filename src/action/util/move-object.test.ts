@@ -47,7 +47,7 @@ test('@protoboard2/action/util/move-object', () => {
     run(moveObject(movedObjectState, destinationObjectState, vine));
 
     assert(contentIds$).to
-        .emitWith(arrayThat<string>().haveExactElements([otherContentId, movedId]));
+        .emitWith(arrayThat<string>().haveExactElements([movedId, otherContentId]));
     assert(parentId$).to.emitWith(destinationId);
     assert(parentContentIds$).to.emitSequence([
       arrayThat<string>().haveExactElements([otherParentContentId, movedId]),

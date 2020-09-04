@@ -10,9 +10,13 @@ import { $stateService } from '../state/state-service';
 
 
 export function renderContents(
-    state: State<DroppablePayload>,
+    state: State<DroppablePayload>|null,
     context: PersonaContext,
 ): Observable<readonly Node[]> {
+  if (!state) {
+    return observableOf([]);
+  }
+
   return state.payload.contentIds.pipe(
       withLatestFrom($stateService.get(context.vine)),
       switchMap(([contentIds, stateService]) => {

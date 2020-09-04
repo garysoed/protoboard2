@@ -54,5 +54,17 @@ test('@protoboard2/render/render-contents', () => {
         arrayThat<Element>().haveExactElements([]),
       ]);
     });
+
+    should(`render return empty array if state is null`, () => {
+      const el = document.createElement('div');
+      const shadowRoot = el.attachShadow({mode: 'open'});
+      const context = createFakeContext({shadowRoot});
+
+      const contents$ = createSpySubject(renderContents(null, context));
+
+      assert(contents$).to.emitSequence([
+        arrayThat<Element>().haveExactElements([]),
+      ]);
+    });
   });
 });

@@ -55,7 +55,7 @@ export function moveObject(
         return destinationContentIds$.pipe(
             take(1),
             tap(contentIds => {
-              destinationContentIds$.next([...contentIds, movedObjectState.id]);
+              destinationContentIds$.next([movedObjectState.id, ...contentIds]);
             }),
         );
       }),

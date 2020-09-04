@@ -76,7 +76,7 @@ test('@protoboard2/action/drop-action', init => {
 
       assert(targetIds$).to.emitSequence([
         arrayThat<string>().haveExactElements([OTHER_TARGET_ID]),
-        arrayThat<string>().haveExactElements([OTHER_TARGET_ID, MOVED_ID]),
+        arrayThat<string>().haveExactElements([MOVED_ID, OTHER_TARGET_ID]),
       ]);
     });
   });

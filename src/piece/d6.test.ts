@@ -5,7 +5,8 @@ import { tap } from 'rxjs/operators';
 
 import { $stateService } from '../state/state-service';
 
-import { $, D2, D2Payload } from './d2';
+import { $ } from './d2';
+import { $d6, D6, D6Payload } from './d6';
 
 
 test('@protoboard2/component/d6', init => {
