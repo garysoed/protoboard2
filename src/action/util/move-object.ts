@@ -1,68 +1,33 @@
-import { Vine } from 'grapevine';
-import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
 import { mod } from 'gs-tools/export/math';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 
 import { State } from '../../state/state';
-import { $stateService } from '../../state/state-service';
 import { DroppablePayload } from '../payload/droppable-payload';
-import { MovablePayload } from '../payload/movable-payload';
+
 
 export function moveObject(
-    movedObjectState: State<MovablePayload>,
-    destinationObjectState: State<DroppablePayload>,
-    vine: Vine,
-    dropLocation: number,
+    fromObjectState: State<DroppablePayload>,
+    toObjectState: State<DroppablePayload>,
+    fromLocation: number,
+    toLocation: number,
 ): Observable<unknown> {
   return combineLatest([
-    movedObjectState.payload.parentId,
-    $stateService.get(vine),
+    fromObjectState.payload.contentIds,
+    toObjectState.payload.contentIds,
   ])
   .pipe(
       take(1),
-      switchMap(([parentId, service]) => {
-        if (!parentId) {
-          return observableOf(null);
-        }
-        return service.getState<DroppablePayload>(parentId);
-      }),
-      take(1),
-      switchMap(parentState => {
-        if (!parentState) {
-          return observableOf({});
-        }
-
+      tap(([fromContentIds, toContentIds]) => {
         // Remove the moved object from the current parent.
-        const parentContentIds$ = parentState.payload.contentIds;
-        return parentContentIds$.pipe(
-            take(1),
-            map(contentIds => $pipe(
-                contentIds,
-                $filter(contentId => contentId !== movedObjectState.id),
-                $asArray(),
-            )),
-            tap(newIds => {
-              parentContentIds$.next(newIds);
-            }),
-        );
-      }),
-      take(1),
-      switchMap(() => {
-        // Set the new parent of the moved object.
-        movedObjectState.payload.parentId.next(destinationObjectState.id);
+        const newFromContentIds = [...fromContentIds];
+        const [movedId] = newFromContentIds.splice(mod(fromLocation, fromContentIds.length), 1);
+        fromObjectState.payload.contentIds.next(newFromContentIds);
 
         // Add the moved object to the destination.
-        const destinationContentIds$ = destinationObjectState.payload.contentIds;
-        return destinationContentIds$.pipe(
-            take(1),
-            tap(contentIds => {
-              const newContentIds = [...contentIds];
-              newContentIds.splice(mod(dropLocation, contentIds.length), 0, movedObjectState.id);
-              destinationContentIds$.next(newContentIds);
-            }),
-        );
+        const newToContentIds = [...toContentIds];
+        newToContentIds.splice(mod(toLocation, toContentIds.length), 0, movedId);
+        toObjectState.payload.contentIds.next(newToContentIds);
       }),
-      take(1),
   );
 }

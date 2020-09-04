@@ -58,7 +58,6 @@ export class D2 extends BaseComponent<D2Payload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<D2Payload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
             context => new RotateAction(context, {stops: [0, 90, 180, 270]}),

@@ -3,7 +3,6 @@ import { host, PersonaContext } from 'persona';
 
 import { MovablePayload } from '../action/payload/movable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
-import { PickAction } from '../action/pick-action';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
@@ -45,7 +44,6 @@ export class D1 extends BaseComponent<D1Payload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<D1Payload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
             context => new RotateAction(context, {stops: [0, 90, 180, 270]}),

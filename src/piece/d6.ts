@@ -9,7 +9,6 @@ import { FlipAction } from '../action/flip-action';
 import { MovablePayload } from '../action/payload/movable-payload';
 import { OrientablePayload } from '../action/payload/orientable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
-import { PickAction } from '../action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
@@ -17,6 +16,7 @@ import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-comp
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 
 import template from './d6.html';
+
 
 /**
  * The D6's API.
@@ -58,7 +58,6 @@ export class D6 extends BaseComponent<D6Payload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<D6Payload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
           [
             TriggerSpec.R,
             context => new RotateAction(context, {stops: [0, 90, 180, 270]}),

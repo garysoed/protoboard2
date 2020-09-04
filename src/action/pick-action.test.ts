@@ -8,7 +8,7 @@ import { State } from '../state/state';
 import { $stateService } from '../state/state-service';
 import { createFakeStateService } from '../state/testing/fake-state-service';
 
-import { MovablePayload } from './payload/movable-payload';
+import { DroppablePayload } from './payload/droppable-payload';
 import { PickAction } from './pick-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 
@@ -18,15 +18,13 @@ test('@protoboard2/action/pick-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const state$ = new ReplaySubject<State<MovablePayload>>(1);
+    const state$ = new ReplaySubject<State<DroppablePayload>>(1);
     const action = new PickAction(createFakeActionContext({
       personaContext,
       state$,
     }));
 
     const fakeStateService = createFakeStateService(personaContext.vine);
-    const activeState = {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}};
-    fakeStateService.setStates(new Set([activeState]));
     run(action.run());
 
     return {action, fakeStateService, personaContext, el, state$};
@@ -34,12 +32,22 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const objectId = 'objectId';
+      const movedId = 'movedId';
+      const otherId = 'otherId';
+      const contentIds$ = new BehaviorSubject<readonly string[]>([movedId, otherId]);
+
+      const otherActiveId = 'otherActiveId';
+      const activeState = {
+        id: ACTIVE_ID,
+        type: ACTIVE_TYPE,
+        payload: {contentIds: [otherActiveId]},
+      };
+      _.fakeStateService.setStates(new Set([activeState]));
 
       _.state$.next({
-        id: objectId,
+        id: 'objectId',
         type: 'movedType',
-        payload: {parentId: new BehaviorSubject<string|null>(null)},
+        payload: {contentIds: contentIds$},
       });
 
       const activeIds$ = createSpySubject(
@@ -53,8 +61,11 @@ test('@protoboard2/action/pick-action', init => {
       _.action.trigger();
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<string>().beEmpty(),
-        arrayThat<string>().haveExactElements([objectId]),
+        arrayThat<string>().haveExactElements([otherActiveId]),
+        arrayThat<string>().haveExactElements([otherActiveId, movedId]),
+      ]);
+      assert(contentIds$).to.emitSequence([
+        arrayThat<string>().haveExactElements([otherId]),
       ]);
     });
   });

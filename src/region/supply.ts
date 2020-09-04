@@ -6,7 +6,9 @@ import { Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { DroppablePayload } from '../action/payload/droppable-payload';
+import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
+import { TriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
 import { registerStateHandler } from '../state/state-service';
 
@@ -81,7 +83,13 @@ export interface SupplyPayload extends DroppablePayload { }
 })
 export class Supply extends BaseComponent<SupplyPayload> {
   constructor(context: PersonaContext) {
-    super(new Map(), context, $.host);
+    super(
+        new Map([
+          [TriggerSpec.CLICK, context => new PickAction(context)],
+        ]),
+        context,
+        $.host,
+    );
 
     this.render($.root._.content, this.contents$);
   }
