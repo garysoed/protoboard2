@@ -19,13 +19,14 @@ interface Config {
 export class RollAction extends BaseAction<OrientablePayload, Config> {
   constructor(
       context: ActionContext<OrientablePayload>,
-      private readonly defaultConfig: Config,
+      defaultConfig: Config,
   ) {
     super(
         'roll',
         'Roll',
         {count: integerParser()},
         context,
+        defaultConfig,
     );
 
     this.addSetup(this.handleTrigger$);
@@ -49,8 +50,6 @@ export class RollAction extends BaseAction<OrientablePayload, Config> {
 
   @cache()
   private get faceCount$(): Observable<number> {
-    return this.config$.pipe(
-        map(config => config.count ?? this.defaultConfig.count),
-    );
+    return this.config$.pipe(map(config => config.count));
   }
 }

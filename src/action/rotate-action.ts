@@ -24,13 +24,14 @@ interface Config {
 export class RotateAction extends BaseAction<RotatablePayload, Config> {
   constructor(
       context: ActionContext<RotatablePayload>,
-      private readonly defaultConfig: Config,
+      defaultConfig: Config,
   ) {
     super(
         'rotate',
         'Rotate',
         {stops: listParser(identity<number>())},
         context,
+        defaultConfig,
     );
 
     this.addSetup(this.handleTrigger$);
@@ -74,8 +75,6 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
 
   @cache()
   private get stops$(): Observable<readonly number[]> {
-    return this.config$.pipe(
-        map(config => config.stops ?? this.defaultConfig.stops),
-    );
+    return this.config$.pipe(map(config => config.stops));
   }
 }

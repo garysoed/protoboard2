@@ -14,7 +14,7 @@ class TestAction extends BaseAction<{}> {
   readonly value$ = new ReplaySubject<number>(1);
 
   constructor(context: ActionContext<{}>) {
-    super(ACTION_KEY, 'Test', {}, context);
+    super(ACTION_KEY, 'Test', {}, context, {});
   }
 
   get onTriggerOut$(): Observable<unknown> {

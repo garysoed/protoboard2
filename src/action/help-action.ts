@@ -17,6 +17,7 @@ export class HelpAction extends BaseAction<{}> {
         'Help',
         {},
         context,
+        {},
     );
 
     this.addSetup(this.setupHandleTrigger());

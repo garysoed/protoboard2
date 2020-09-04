@@ -15,6 +15,7 @@ export class ShuffleAction extends BaseAction<DroppablePayload> {
         'Shuffle',
         {},
         context,
+        {},
     );
 
     this.addSetup(this.setupHandleTrigger());

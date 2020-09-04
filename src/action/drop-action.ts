@@ -22,6 +22,7 @@ export class DropAction extends BaseAction<DroppablePayload> {
         'drop',
         {},
         context,
+        {},
     );
 
     this.addSetup(this.handleTrigger$);

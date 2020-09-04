@@ -14,7 +14,7 @@ import { createFakeActionContext } from './testing/fake-action-context';
 
 class TestAction extends BaseAction<object> {
   constructor(context: ActionContext<object>) {
-    super('test', 'test', {}, context);
+    super('test', 'test', {}, context, {});
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {

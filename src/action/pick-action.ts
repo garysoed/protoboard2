@@ -25,6 +25,7 @@ export class PickAction extends BaseAction<MovablePayload> {
         'Pick',
         {},
         context,
+        {},
     );
 
     this.addSetup(this.handleTrigger$);

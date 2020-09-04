@@ -52,6 +52,7 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
       protected readonly context: ActionContext<P>,
+      private readonly defaultConfig: C,
   ) {
     super();
   }
@@ -67,7 +68,7 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
    * Emits the current configuration state for the action.
    */
   @cache()
-  get config$(): Observable<Partial<C>> {
+  get config$(): Observable<C> {
     const shadowRoot = this.context.personaContext.shadowRoot;
     return $.host._.onMutation.getValue(this.context.personaContext).pipe(
         startWith({}),
@@ -98,7 +99,12 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
 
           return config;
         }),
-        map(config => config || {}),
+        map(config => {
+          return {
+            ...this.defaultConfig,
+            ...(config || {}),
+          };
+        }),
     );
   }
 

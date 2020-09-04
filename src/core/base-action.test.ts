@@ -13,6 +13,7 @@ import { ActionContext, BaseAction } from './base-action';
 
 
 const ACTION_KEY = 'test';
+const DEFAULT_CONFIG_VALUE = 234;
 
 interface ActionConfig {
   readonly value: number;
@@ -22,7 +23,7 @@ class TestAction extends BaseAction<{}, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
 
   constructor(context: ActionContext<{}>) {
-    super(ACTION_KEY, 'Test', {value: integerParser()}, context);
+    super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
 
     this.addSetup(this.setupConfig());
   }
@@ -74,6 +75,14 @@ test('@protoboard2/core/base-action', init => {
       _.element.appendChild(configEl);
 
       assert(_.action.value$).to.emitSequence([123]);
+    });
+
+    should(`use the default config if config element does not exist`, () => {
+      const configEl = document.createElement('pb-action-config');
+      configEl.setAttribute('action', 'test');
+      _.element.appendChild(configEl);
+
+      assert(_.action.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
     });
 
     should(`update the configuration when attribute has changed`, () => {
