@@ -9,6 +9,7 @@ import { Logger } from 'santa';
 
 import { DropAction } from '../action/drop-action';
 import { DroppablePayload } from '../action/payload/droppable-payload';
+import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
@@ -42,18 +43,7 @@ export class Deck extends BaseComponent<DeckPayload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<DeckPayload, any>>([
-          // [
-          //   TriggerSpec.F,
-          //   new SequenceAction(
-          //       'flip',
-          //       'Flip deck',
-          //       [
-          //         new BatchAction(FLIP_ACTION_KEY, 'Batch flip', context.vine),
-          //         new ReverseAction(context.vine),
-          //       ],
-          //       context.vine,
-          //   ),
-          // ],
+          [TriggerSpec.CLICK, context => new PickAction(context)],
           [TriggerSpec.D, context => new DropAction(context, {location: 0})],
           [TriggerSpec.S, context => new ShuffleAction(context)],
         ]),

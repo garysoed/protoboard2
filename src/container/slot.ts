@@ -5,10 +5,11 @@ import { element, host, multi, PersonaContext } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
 import { DroppablePayload } from '../action/payload/droppable-payload';
-import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerSpec } from '../core/trigger-spec';
+import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
+import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';
@@ -38,7 +39,8 @@ export interface SlotPayload extends DroppablePayload { }
 export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
-        new Map([
+        new Map<UnreservedTriggerSpec, BaseActionCtor<SlotPayload, any>>([
+          [TriggerSpec.CLICK, context => new PickAction(context)],
           [TriggerSpec.D, context => new DropAction(context, {location: 0})],
         ]),
         context,
