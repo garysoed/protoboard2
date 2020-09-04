@@ -54,7 +54,7 @@ export class Deck extends BaseComponent<DeckPayload> {
           //       context.vine,
           //   ),
           // ],
-          [TriggerSpec.D, context => new DropAction(context)],
+          [TriggerSpec.D, context => new DropAction(context, {location: 0})],
           [TriggerSpec.S, context => new ShuffleAction(context)],
         ]),
         context,

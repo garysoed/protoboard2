@@ -30,9 +30,10 @@ test('@protoboard2/action/util/move-object', () => {
       payload: {parentId: parentId$},
     };
 
-    const otherContentId = 'otherContentId';
+    const otherContentId1 = 'otherContentId1';
+    const otherContentId2 = 'otherContentId2';
     const destinationId = 'destinationId';
-    const contentIds$ = new BehaviorSubject<readonly string[]>([otherContentId]);
+    const contentIds$ = new BehaviorSubject<readonly string[]>([otherContentId1, otherContentId2]);
     const destinationObjectState = {
       id: destinationId,
       type: 'destinationType',
@@ -44,10 +45,11 @@ test('@protoboard2/action/util/move-object', () => {
         .pipe(switchMap(state => state!.payload.contentIds)),
     );
 
-    run(moveObject(movedObjectState, destinationObjectState, vine));
+    run(moveObject(movedObjectState, destinationObjectState, vine, 1));
 
-    assert(contentIds$).to
-        .emitWith(arrayThat<string>().haveExactElements([movedId, otherContentId]));
+    assert(contentIds$).to.emitWith(
+        arrayThat<string>().haveExactElements([otherContentId1, movedId, otherContentId2]),
+    );
     assert(parentId$).to.emitWith(destinationId);
     assert(parentContentIds$).to.emitSequence([
       arrayThat<string>().haveExactElements([otherParentContentId, movedId]),

@@ -1,3 +1,4 @@
+import { integerParser } from 'persona';
 import { EMPTY, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
@@ -9,20 +10,27 @@ import { DroppablePayload } from './payload/droppable-payload';
 import { MovablePayload } from './payload/movable-payload';
 import { moveObject } from './util/move-object';
 
+interface Config {
+  readonly location: number;
+}
+
 
 /**
  * Lets the user drop an object onto this object.
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<DroppablePayload> {
-  constructor(context: ActionContext<DroppablePayload>) {
+export class DropAction extends BaseAction<DroppablePayload, Config> {
+  constructor(
+      context: ActionContext<DroppablePayload>,
+      defaultConfig: Config,
+  ) {
     super(
         'Drop',
         'drop',
-        {},
+        {location: integerParser()},
         context,
-        {},
+        defaultConfig,
     );
 
     this.addSetup(this.handleTrigger$);
@@ -60,8 +68,8 @@ export class DropAction extends BaseAction<DroppablePayload> {
 
     return this.onTrigger$
         .pipe(
-            withLatestFrom(movedObjectState$, this.context.state$),
-            switchMap(([, movedObjectState, destinationObjectState]) => {
+            withLatestFrom(movedObjectState$, this.context.state$, this.config$),
+            switchMap(([, movedObjectState, destinationObjectState, config]) => {
               if (!movedObjectState) {
                 return EMPTY;
               }
@@ -70,6 +78,7 @@ export class DropAction extends BaseAction<DroppablePayload> {
                   movedObjectState,
                   destinationObjectState,
                   this.context.personaContext.vine,
+                  config.location,
               );
             }),
         );

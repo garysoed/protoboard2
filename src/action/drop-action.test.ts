@@ -23,10 +23,10 @@ test('@protoboard2/action/drop-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
     const state$ = new ReplaySubject<State<DroppablePayload>>(1);
-    const action = new DropAction(createFakeActionContext({
-      personaContext,
-      state$,
-    }));
+    const action = new DropAction(
+        createFakeActionContext({personaContext, state$}),
+        {location: 0},
+    );
 
     const fakeStateService = createFakeStateService(personaContext.vine);
     const activeState = {

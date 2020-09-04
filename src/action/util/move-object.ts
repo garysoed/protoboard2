@@ -1,5 +1,6 @@
 import { Vine } from 'grapevine';
 import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
+import { mod } from 'gs-tools/export/math';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
@@ -12,6 +13,7 @@ export function moveObject(
     movedObjectState: State<MovablePayload>,
     destinationObjectState: State<DroppablePayload>,
     vine: Vine,
+    dropLocation: number,
 ): Observable<unknown> {
   return combineLatest([
     movedObjectState.payload.parentId,
@@ -55,7 +57,9 @@ export function moveObject(
         return destinationContentIds$.pipe(
             take(1),
             tap(contentIds => {
-              destinationContentIds$.next([movedObjectState.id, ...contentIds]);
+              const newContentIds = [...contentIds];
+              newContentIds.splice(mod(dropLocation, contentIds.length), 0, movedObjectState.id);
+              destinationContentIds$.next(newContentIds);
             }),
         );
       }),

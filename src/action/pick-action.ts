@@ -48,6 +48,7 @@ export class PickAction extends BaseAction<MovablePayload> {
                   state,
                   activeState,
                   this.context.personaContext.vine,
+                  0,
               );
             }),
         );
