@@ -7,7 +7,6 @@ import { BehaviorSubject, combineLatest, Observable, of as observableOf } from '
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { DroppablePayload } from '../../src/action/payload/droppable-payload';
-import { MovablePayload } from '../../src/action/payload/movable-payload';
 import { OrientablePayload } from '../../src/action/payload/orientable-payload';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
@@ -22,7 +21,7 @@ import { $saveService, SaveService } from './save-service';
 const DEMO_PREVIEW_TYPE = 'pbd-demo';
 
 export interface GenericPiecePayload extends
-    PieceSpec, MovablePayload, OrientablePayload, RotatablePayload, DroppablePayload {
+    PieceSpec, OrientablePayload, RotatablePayload, DroppablePayload {
 }
 
 export class StagingService {
@@ -67,7 +66,6 @@ export class StagingService {
           const payload: GenericPiecePayload = {
             ...pieceSpec,
             faceIndex: 0,
-            parentId: SUPPLY_ID,
             rotationIndex: 0,
             contentIds: [],
           };

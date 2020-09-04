@@ -25,7 +25,6 @@ test('@protoboard2/component/d6', init => {
       run(_.el.setAttribute($.host._.objectId, objectId));
 
       const payload: D6Payload = {
-        parentId: null,
         faceIndex: 2,
         rotationIndex: 0,
       };

@@ -6,7 +6,6 @@ import { Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
-import { MovablePayload } from '../action/payload/movable-payload';
 import { OrientablePayload } from '../action/payload/orientable-payload';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { RollAction } from '../action/roll-action';
@@ -35,7 +34,7 @@ export const $ = {
   }),
 };
 
-export interface D6Payload extends MovablePayload, OrientablePayload, RotatablePayload {
+export interface D6Payload extends OrientablePayload, RotatablePayload {
 
 }
 
