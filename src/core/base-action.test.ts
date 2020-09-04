@@ -50,17 +50,15 @@ test('@protoboard2/core/base-action', init => {
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<{}>>(1);
 
     const action = new TestAction(createFakeActionContext({
       personaContext,
-      objectId$,
       state$,
     }));
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
 
-    return {action, personaContext, element, objectId$, onTrigger$};
+    return {action, personaContext, element, onTrigger$};
   });
 
   test('config$', _, init => {

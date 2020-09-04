@@ -18,11 +18,9 @@ test('@protoboard2/action/shuffle-action', () => {
     const shadowRoot = rootEl.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
     const state$ = new ReplaySubject<State<DroppablePayload>>(1);
-    const objectId$ = new ReplaySubject<string>(1);
 
     const action = new ShuffleAction(createFakeActionContext({
       personaContext,
-      objectId$,
       state$,
     }));
 

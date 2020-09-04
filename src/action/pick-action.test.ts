@@ -18,10 +18,8 @@ test('@protoboard2/action/pick-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<MovablePayload>>(1);
     const action = new PickAction(createFakeActionContext({
-      objectId$,
       personaContext,
       state$,
     }));
@@ -31,13 +29,12 @@ test('@protoboard2/action/pick-action', init => {
     fakeStateService.setStates(new Set([activeState]));
     run(action.run());
 
-    return {action, fakeStateService, objectId$, personaContext, el, state$};
+    return {action, fakeStateService, personaContext, el, state$};
   });
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
       const objectId = 'objectId';
-      _.objectId$.next(objectId);
 
       _.state$.next({
         id: objectId,

@@ -20,10 +20,6 @@ class TestAction extends BaseAction<{}> {
   get onTriggerOut$(): Observable<unknown> {
     return this.onTrigger$;
   }
-
-  get objectId$(): Observable<string> {
-    return this.context.objectId$;
-  }
 }
 
 class TestComponent extends BaseComponent<{}> {
@@ -116,12 +112,12 @@ test('@protoboard2/core/base-component', init => {
       const objectId = 'objectId';
       _.element.setAttribute('object-id', objectId);
 
-      const objectId$ = createSpySubject((_.component.actionsMap.get(KEY) as TestAction).objectId$);
+      const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$).to.emitSequence([objectId]);
     });
 
     should(`emit nothing if the object ID does not exist`, () => {
-      const objectId$ = createSpySubject((_.component.actionsMap.get(KEY) as TestAction).objectId$);
+      const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$).to.emitSequence([]);
     });
   });

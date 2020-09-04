@@ -12,7 +12,6 @@ export function createFakeActionContext<P extends object>(
 ): ActionContext<P> {
   return {
     host$: new ReplaySubject<Element>(1),
-    objectId$: new ReplaySubject<string>(1),
     state$: new ReplaySubject<State<P>>(1),
     ...context,
   };

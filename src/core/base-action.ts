@@ -11,7 +11,6 @@ import { State } from '../state/state';
 export interface ActionContext<P extends object> {
   readonly host$: Observable<Element>;
   readonly personaContext: PersonaContext;
-  readonly objectId$: Observable<string>;
   readonly state$: Observable<State<P>>;
 }
 

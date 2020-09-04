@@ -22,11 +22,9 @@ test('@protoboard2/action/drop-action', init => {
 
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const objectId$ = new ReplaySubject<string>(1);
     const state$ = new ReplaySubject<State<DroppablePayload>>(1);
     const action = new DropAction(createFakeActionContext({
       personaContext,
-      objectId$,
       state$,
     }));
 
@@ -43,14 +41,12 @@ test('@protoboard2/action/drop-action', init => {
 
     run(action.run());
 
-    return {action, el, fakeStateService, personaContext, objectId$, state$};
+    return {action, el, fakeStateService, personaContext, state$};
   });
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
       const objectId = 'objectId';
-      _.objectId$.next(objectId);
-
       const state = {
         id: objectId,
         type: 'objectType',
