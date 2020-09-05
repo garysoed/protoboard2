@@ -85,7 +85,7 @@ export class Supply extends BaseComponent<SupplyPayload> {
   constructor(context: PersonaContext) {
     super(
         new Map([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
+          [TriggerSpec.CLICK, context => new PickAction(context, {location: 0})],
         ]),
         context,
         $.host,

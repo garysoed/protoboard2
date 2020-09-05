@@ -2,7 +2,6 @@ import { assert, run, should, test } from 'gs-testing';
 import { $asArray, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
-import { ReplaySubject } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { TriggerSpec } from '../core/trigger-spec';
@@ -23,9 +22,12 @@ test('@protoboard2/action/help-overlay', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
-    const testAction = new PickAction(createFakeActionContext({
-      personaContext,
-    }));
+    const testAction = new PickAction(
+        createFakeActionContext({
+          personaContext,
+        }),
+        {location: 0},
+    );
     return {testAction, tester};
   });
 

@@ -1,4 +1,5 @@
 import { cache } from 'gs-tools/export/data';
+import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
@@ -9,23 +10,29 @@ import { $stateService } from '../state/state-service';
 import { DroppablePayload } from './payload/droppable-payload';
 import { moveObject } from './util/move-object';
 
+interface Config {
+  readonly location: number;
+}
 
 /**
  * Lets the user pick up the object.
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<DroppablePayload> {
+export class PickAction extends BaseAction<DroppablePayload, Config> {
   /**
    * @internal
    */
-  constructor(context: ActionContext<DroppablePayload>) {
+  constructor(
+      context: ActionContext<DroppablePayload>,
+      defaultConfig: Config,
+  ) {
     super(
         'pick',
         'Pick',
-        {},
+        {location: integerParser()},
         context,
-        {},
+        defaultConfig,
     );
 
     this.addSetup(this.handleTrigger$);
@@ -39,8 +46,8 @@ export class PickAction extends BaseAction<DroppablePayload> {
 
     return this.onTrigger$
         .pipe(
-            withLatestFrom(this.context.state$, activeState$),
-            switchMap(([, fromState, activeState]) => {
+            withLatestFrom(this.context.state$, activeState$, this.config$),
+            switchMap(([, fromState, activeState, config]) => {
               if (!activeState) {
                 return EMPTY;
               }
@@ -48,7 +55,7 @@ export class PickAction extends BaseAction<DroppablePayload> {
               return moveObject(
                   fromState,
                   activeState,
-                  0,
+                  config.location,
                   -1,
               );
             }),

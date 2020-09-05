@@ -40,7 +40,7 @@ export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<SlotPayload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
+          [TriggerSpec.CLICK, context => new PickAction(context, {location: 0})],
           [TriggerSpec.D, context => new DropAction(context, {location: 0})],
         ]),
         context,

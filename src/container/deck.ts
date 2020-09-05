@@ -43,7 +43,7 @@ export class Deck extends BaseComponent<DeckPayload> {
   constructor(context: PersonaContext) {
     super(
         new Map<UnreservedTriggerSpec, BaseActionCtor<DeckPayload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context)],
+          [TriggerSpec.CLICK, context => new PickAction(context, {location: 0})],
           [TriggerSpec.D, context => new DropAction(context, {location: 0})],
           [TriggerSpec.S, context => new ShuffleAction(context)],
         ]),

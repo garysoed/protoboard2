@@ -19,10 +19,13 @@ test('@protoboard2/action/pick-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
     const state$ = new ReplaySubject<State<DroppablePayload>>(1);
-    const action = new PickAction(createFakeActionContext({
-      personaContext,
-      state$,
-    }));
+    const action = new PickAction(
+        createFakeActionContext({
+          personaContext,
+          state$,
+        }),
+        {location: 1},
+    );
 
     const fakeStateService = createFakeStateService(personaContext.vine);
     run(action.run());
@@ -33,8 +36,9 @@ test('@protoboard2/action/pick-action', init => {
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
       const movedId = 'movedId';
-      const otherId = 'otherId';
-      const contentIds$ = new BehaviorSubject<readonly string[]>([movedId, otherId]);
+      const otherId1 = 'otherId1';
+      const otherId2 = 'otherId2';
+      const contentIds$ = new BehaviorSubject<readonly string[]>([otherId1, movedId, otherId2]);
 
       const otherActiveId = 'otherActiveId';
       const activeState = {
@@ -65,7 +69,7 @@ test('@protoboard2/action/pick-action', init => {
         arrayThat<string>().haveExactElements([otherActiveId, movedId]),
       ]);
       assert(contentIds$).to.emitSequence([
-        arrayThat<string>().haveExactElements([otherId]),
+        arrayThat<string>().haveExactElements([otherId1, otherId2]),
       ]);
     });
   });
