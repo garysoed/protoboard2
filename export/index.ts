@@ -6,8 +6,12 @@
 // action
 export { PickAction } from '../src/action/pick-action';
 
+// container
+export { Slot, $slot } from '../src/container/slot';
+
 // core
 export { ConverterOf, BaseAction } from '../src/core/base-action';
 
 // piece
 export { $d1, D1 } from '../src/piece/d1';
+export { $d2, D2 } from '../src/piece/d2';
