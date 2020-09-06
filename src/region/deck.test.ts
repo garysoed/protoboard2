@@ -3,22 +3,22 @@ import { $asArray, $pipe } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { Subject } from 'rxjs';
-import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { $stateService } from '../state/state-service';
 import { createFakeStateService } from '../state/testing/fake-state-service';
 import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
 
-import { $, $slot, Slot, SlotPayload } from './slot';
+import { $, $deck, Deck, DeckPayload } from './deck';
 
 
-test('@protoboard2/container/slot', init => {
+test('@protoboard2/region/deck', init => {
   const OBJECT_ID = 'objectId';
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
-    const tester = factory.build([Slot], document);
-    const el = tester.createElement($slot.tag);
+    const tester = factory.build([Deck], document);
+    const el = tester.createElement($deck.tag);
     run(el.setAttribute($.host._.objectId, OBJECT_ID));
 
     const fakeStateService = createFakeStateService(tester.vine);
@@ -27,32 +27,30 @@ test('@protoboard2/container/slot', init => {
     const onContentIds$ = new Subject<readonly string[]>();
     fakeStateService.setStates(new Set([]));
 
-    run(fakeStateService.subscribeValuesFor<SlotPayload>(OBJECT_ID, {contentIds: onContentIds$}));
+    run(fakeStateService.subscribeValuesFor<DeckPayload>(OBJECT_ID, {contentIds: onContentIds$}));
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
     return {el, fakeStateService, onContentIds$, tester};
   });
 
+
   test('contents$', () => {
-    should(`render the contents correctly`, () => {
-      const contents$ = createSpySubject(_.el.getChildren($.root).pipe(
+    should(`render only the top item`, () => {
+      const contents$ = createSpySubject(_.el.getChildren($.contents).pipe(
           map(children => $pipe(children, $asArray())),
       ));
 
       const id1 = 'id1';
       const id2 = 'id2';
-      const id3 = 'id3';
 
       const el1 = document.createElement('div1');
       const el2 = document.createElement('div2');
-      const el3 = document.createElement('div3');
 
       registerFakeStateHandler(
           new Map([
             [id1, el1],
             [id2, el2],
-            [id3, el3],
           ]),
           _.tester.vine,
       );
@@ -60,28 +58,20 @@ test('@protoboard2/container/slot', init => {
       _.fakeStateService.setStates(new Set([
         {type: 'test', id: id1, payload: {}},
         {type: 'test', id: id2, payload: {}},
-        {type: 'test', id: id3, payload: {}},
         {id: OBJECT_ID, type: 'test', payload: {contentIds: []}},
       ]));
 
       _.onContentIds$.next([]);
       _.onContentIds$.next([id1]);
       _.onContentIds$.next([id1, id2]);
-      _.onContentIds$.next([id1, id2, id3]);
-      _.onContentIds$.next([id1, id3]);
-      _.onContentIds$.next([id3]);
+      _.onContentIds$.next([id2]);
       _.onContentIds$.next([]);
 
       assert(contents$).to.emitSequence([
         arrayThat<Element>().haveExactElements([]),
         arrayThat<Element>().haveExactElements([el1]),
-        arrayThat<Element>().haveExactElements([el1, el2]),
-        arrayThat<Element>().haveExactElements([el1, el2, el3]),
-        arrayThat<Element>().haveExactElements([el1, el3, el2]),
-        arrayThat<Element>().haveExactElements([el1, el3, el2]),
-        arrayThat<Element>().haveExactElements([el1, el3]),
-        arrayThat<Element>().haveExactElements([el3, el1]),
-        arrayThat<Element>().haveExactElements([el3]),
+        arrayThat<Element>().haveExactElements([]), // el1 was removed to be replaced with el2
+        arrayThat<Element>().haveExactElements([el2]),
         arrayThat<Element>().haveExactElements([]),
       ]);
     });

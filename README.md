@@ -66,8 +66,8 @@ Some example regions:
 
 -   **Active**: Refers to the player's cursor. Only visible to the local player.
 -   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
--   **Desk**: Area on the desk that is available for all players.
 -   **Supply**: Default area to put items in.
+-   **Slot**: A place where objects can be placed in it.
 
 ### Layout
 
@@ -99,4 +99,3 @@ together. Some example containers:
     at any time.
 -   **Chute**: Mimics a cube tower. Put in pieces and they may randomly come out.
 -   **Bag**: Puts in pieces, and you can only take out random items from the bag.
--   **Slot**: A place where objects can be placed on it.

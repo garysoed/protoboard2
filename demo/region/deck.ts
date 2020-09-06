@@ -1,6 +1,6 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
-import { Deck } from '../../src/container/deck';
+import { Deck } from '../../src/region/deck';
 import { PieceTemplate } from '../template/piece-template';
 
 import template from './deck.html';

@@ -7,10 +7,10 @@ import { element, PersonaContext, renderCustomElement, single } from 'persona';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { $deckDemo, DeckDemo } from '../container/deck';
 import { $d1Demo, D1Demo } from '../piece/d1';
 import { $d2Demo, D2Demo } from '../piece/d2';
 import { $d6Demo, D6Demo } from '../piece/d6';
+import { $deckDemo, DeckDemo } from '../region/deck';
 
 import template from './documentation.html';
 import { $instruction, Instruction } from './instruction';
