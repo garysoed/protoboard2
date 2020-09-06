@@ -4,7 +4,7 @@ import { element, PersonaContext, renderCustomElement } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { $slot, Slot } from '../../src/container/slot';
+import { $slot, Slot } from '../../src/region/slot';
 import { Supply } from '../../src/region/supply';
 import { Render } from '../../src/state/render';
 import { registerStateHandler } from '../../src/state/state-service';

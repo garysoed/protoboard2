@@ -54,10 +54,7 @@ test('@protoboard2/action/roll-action', init => {
     should(`use the config object`, () => {
       _.faceIndex$.next(0);
 
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'roll');
-      configEl.setAttribute('count', '4');
-      _.el.appendChild(configEl);
+      _.el.setAttribute('pb-roll-count', '4');
 
       _.seed.values = [0.9];
 

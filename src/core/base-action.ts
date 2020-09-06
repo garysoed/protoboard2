@@ -1,9 +1,10 @@
+import { $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { mapNonNull, Runnable, switchMapNonNull } from 'gs-tools/export/rxjs';
+import { Runnable } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
-import { host, mutationObservable, onMutation, PersonaContext } from 'persona';
+import { host, onMutation, PersonaContext } from 'persona';
 import { Observable, Subject } from 'rxjs';
-import { map, mapTo, startWith } from 'rxjs/operators';
+import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
 
 import { State } from '../state/state';
 
@@ -25,7 +26,7 @@ export type ConverterOf<O> = {
 
 const $ = {
   host: host({
-    onMutation: onMutation({childList: true, subtree: true}),
+    onMutation: onMutation({attributes: true}),
   }),
 };
 
@@ -70,35 +71,43 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
   @cache()
   get config$(): Observable<C> {
     const shadowRoot = this.context.personaContext.shadowRoot;
-    return $.host._.onMutation.getValue(this.context.personaContext).pipe(
-        startWith({}),
-        map(() => {
-          return shadowRoot.host.querySelector(`pb-action-config[action="${this.key}"]`);
+    const attributePrefix = `pb-${this.key}-`;
+    const attributeFilter = Object.keys(this.actionConfigConverters)
+        .map(configKey => `${attributePrefix}${configKey}`);
+    const $host = host({
+      onMutation: onMutation({attributes: true, attributeFilter}),
+    });
+    return $host._.onMutation.getValue(this.context.personaContext).pipe(
+        startWith(null),
+        map(records => {
+          if (!records) {
+            return new Set(attributeFilter);
+          }
+
+          return $pipe(
+              records,
+              $map(record => record.attributeName),
+              $filterNonNull(),
+              $asSet(),
+          );
         }),
-        switchMapNonNull(configEl => {
-          return mutationObservable(
-              configEl,
-              {
-                attributes: true,
-                attributeFilter: Object.keys(this.actionConfigConverters),
-              })
-              .pipe(startWith({}), mapTo(configEl));
-        }),
-        mapNonNull(configEl => {
-          const config: Partial<C> = {};
-          const keys = Object.keys(this.actionConfigConverters) as
-              Array<keyof C & 'trigger'>;
-          for (const key of keys) {
-            const parseResult = this.actionConfigConverters[key]
-                .convertBackward(configEl.getAttribute(key) || '');
+        withLatestFrom($host.getValue(this.context.personaContext)),
+        map(([changedAttributes, hostEl]) => {
+          const changedConfig: Partial<C> = {};
+          for (const attribute of changedAttributes) {
+            const rawValue = hostEl.getAttribute(attribute);
+            const configKey = attribute.substr(attributePrefix.length) as keyof C;
+
+            const parseResult = this.actionConfigConverters[configKey]
+                .convertBackward(rawValue || '');
             if (parseResult.success) {
-              // TODO: Fix this typing.
-              config[key] = parseResult.result as any;
+              changedConfig[configKey] = parseResult.result;
             }
           }
 
-          return config;
+          return changedConfig;
         }),
+        scan((config, newConfig) => ({...config, ...newConfig}), {}),
         map(config => {
           return {
             ...this.defaultConfig,

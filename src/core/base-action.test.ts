@@ -66,43 +66,29 @@ test('@protoboard2/core/base-action', init => {
       return _;
     });
 
-    should(`update the configuration when element is added`, () => {
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'test');
-      configEl.setAttribute('value', '123');
-      _.element.appendChild(configEl);
+    should(`update the configuration when attribute is specified`, () => {
+      _.element.setAttribute('pb-test-value', '123');
 
       assert(_.action.value$).to.emitSequence([123]);
     });
 
-    should(`use the default config if config element does not exist`, () => {
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'test');
-      _.element.appendChild(configEl);
-
+    should(`use the default config if config attribute does not exist`, () => {
       assert(_.action.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
     });
 
     should(`update the configuration when attribute has changed`, () => {
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'test');
-      configEl.setAttribute('value', '123');
-      _.element.appendChild(configEl);
-
-      configEl.setAttribute('value', '345');
+      _.element.setAttribute('pb-test-value', '123');
+      _.element.setAttribute('pb-test-value', '345');
 
       assert(_.action.value$).to.emitSequence([345]);
     });
 
     should(`update the trigger configuration correctly`, () => {
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'test');
-      configEl.setAttribute('trigger', 'click');
-      _.element.appendChild(configEl);
+      _.element.setAttribute('pb-test-trigger', 'click');
 
       _.element.dispatchEvent(new CustomEvent('click'));
 
-      configEl.setAttribute('value', '345');
+      _.element.setAttribute('pb-test-value', '345');
 
       assert(_.action.value$).to.emitSequence([345]);
     });

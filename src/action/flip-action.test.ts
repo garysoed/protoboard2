@@ -58,10 +58,7 @@ test('@protoboard2/action/flip-action', init => {
     should(`use the config object`, () => {
       _.faceIndex$.next(1);
 
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'flip');
-      configEl.setAttribute('count', '4');
-      _.el.appendChild(configEl);
+      _.el.setAttribute('pb-flip-count', '4');
 
       const faceIndex$ = createSpySubject(_.faceIndex$);
 

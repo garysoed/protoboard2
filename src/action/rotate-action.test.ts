@@ -57,10 +57,7 @@ test('@protoboard2/action/rotate-action', init => {
       const _ = setupTest([]);
       _.rotationIndex$.next(1);
 
-      const configEl = document.createElement('pb-action-config');
-      configEl.setAttribute('action', 'rotate');
-      configEl.setAttribute('stops', '[12 34 45]');
-      _.el.appendChild(configEl);
+      _.el.setAttribute('pb-rotate-stops', '[12 34 45]');
 
       assert(_.el.style.transform).to.equal('rotateZ(34deg)');
     });
