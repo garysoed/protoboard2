@@ -56,7 +56,7 @@ export const $ = {
  * @thModule region
  */
 // tslint:disable-next-line: no-empty-interface
-export interface SupplyPayload extends DroppablePayload { }
+export type SupplyPayload = DroppablePayload;
 
 
 /**
