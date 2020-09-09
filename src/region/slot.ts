@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { element, host, multi, PersonaContext } from 'persona';
+import { element, host, multi, PersonaContext, setAttribute } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -23,7 +23,10 @@ export const $slot = {
 };
 
 export const $ = {
-  host: host($slot.api),
+  host: host({
+    ...$slot.api,
+    action: setAttribute('mk-action-2'),
+  }),
   root: element('root', instanceofType(HTMLDivElement), {
     content: multi('#content'),
   }),
@@ -48,6 +51,7 @@ export class Slot extends BaseComponent<SlotPayload> {
     );
 
     this.render($.root._.content, this.contents$);
+    this.render($.host._.action, observableOf(true));
   }
 
   @cache()

@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $textIconButton, _p, ACTION_EVENT, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, host, integerParser, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
@@ -32,7 +32,7 @@ export const $pieceTemplate = {
 
 const $ = {
   host: host($pieceTemplate.api),
-  addButton: element('addbutton', $textIconButton, {}),
+  addButton: element('addbutton', $button, {}),
   editors: element('editors', instanceofType(HTMLElement), {
     content: multi('#content'),
     onClick: onDom<ClickButtonEvent>(ACTION_EVENT),
@@ -55,10 +55,11 @@ const ICONS = ['meeple', 'coin', 'gem', 'card'];
     registerSvg(vine, 'card', {type: 'embed', content: cardFront});
   },
   dependencies: [
+    Button,
     DocumentationTemplate,
+    LineLayout,
     PieceButton,
     PiecePreview,
-    TextIconButton,
   ],
   template,
 })

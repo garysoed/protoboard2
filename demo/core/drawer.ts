@@ -1,6 +1,6 @@
-import { ArrayDiff, assertByType, filterNonNull } from 'gs-tools/export/rxjs';
+import { assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
-import { $textIconButton, _p, IconWithText, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $button, $lineLayout, _p, Icon, LineLayout, ListItemLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -61,8 +61,9 @@ const PIECE_LINK_CONFIGS: LinkConfig[] = [
     registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
   },
   dependencies: [
-    IconWithText,
-    TextIconButton,
+    Icon,
+    LineLayout,
+    ListItemLayout,
   ],
   template,
 })
@@ -81,10 +82,17 @@ export class Drawer extends ThemedCustomElementCtrl {
   private createNodes(linkConfig: readonly LinkConfig[]): Observable<readonly Node[]> {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement(
-          $textIconButton,
+          $button,
           {
-            inputs: {label: observableOf(label)},
-            attrs: new Map([['path', observableOf(path)]]),
+            children: renderCustomElement(
+                $lineLayout,
+                {
+                  attrs: new Map([['path', observableOf(path)]]),
+                  textContent: observableOf(label),
+                },
+                this.context,
+            ).pipe(map(node => [node])),
+            inputs: {isSecondary: observableOf(true)},
           },
           this.context,
       );

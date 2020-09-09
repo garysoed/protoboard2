@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { elementWithTagType, instanceofType } from 'gs-types';
-import { $drawer, $textIconButton, _p, Drawer, registerSvg, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $button, $drawer, $icon, _p, Button, Drawer, Icon, ListItemLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, host, PersonaContext, stringParser, textContent } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -20,7 +20,8 @@ export const $documentationTemplate = {
 
 const $ = {
   drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
-  drawerIcon: element('drawerIcon', $textIconButton, {}),
+  drawerButton: element('drawerButton', $button, {}),
+  drawerIcon: element('drawerIcon', $icon, {}),
   host: host($documentationTemplate.api),
   title: element('title', instanceofType(HTMLHeadingElement), {
     text: textContent(),
@@ -34,22 +35,22 @@ const $ = {
     registerSvg(vine, 'chevron_up', {type: 'embed', content: chevronUpSvg});
   },
   dependencies: [
+    Button,
     Drawer,
-    TextIconButton,
+    Icon,
+    ListItemLayout,
   ],
   template,
 })
 export class DocumentationTemplate extends ThemedCustomElementCtrl {
   private readonly drawerExpanded$ = new BehaviorSubject(false);
-  private readonly label$ = this.declareInput($.host._.label);
-  private readonly onDrawerIconClick$ = this.declareInput($.drawerIcon._.actionEvent);
 
   constructor(context: PersonaContext) {
     super(context);
 
     this.render($.drawer._.expanded, this.drawerExpanded$);
     this.render($.drawerIcon._.icon, this.drawerIcon$);
-    this.render($.title._.text, this.label$);
+    this.render($.title._.text, this.declareInput($.host._.label));
     this.addSetup(this.handleDrawerIconClick$);
   }
 
@@ -60,7 +61,7 @@ export class DocumentationTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleDrawerIconClick$(): Observable<unknown> {
-    return this.onDrawerIconClick$
+    return this.declareInput($.drawerButton._.actionEvent)
         .pipe(
             withLatestFrom(this.drawerExpanded$),
             tap(([, expanded]) => this.drawerExpanded$.next(!expanded)),

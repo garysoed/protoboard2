@@ -1,5 +1,5 @@
 import { cache } from 'gs-tools/export/data';
-import { $textIconButton, _p, ThemedCustomElementCtrl } from 'mask';
+import { $button, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, PersonaContext, renderCustomElement } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
@@ -15,11 +15,13 @@ import { $stagingService } from './staging-service';
 
 
 const $ = {
-  clearButton: element('clearButton', $textIconButton, {}),
+  clearButton: element('clearButton', $button, {}),
 };
 
 @_p.customElement({
   dependencies: [
+    Button,
+    LineLayout,
     Render,
     Slot,
     Supply,

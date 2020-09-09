@@ -1,7 +1,7 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $iconWithText, $textIconButton, _p, IconWithText, TextIconButton, ThemedCustomElementCtrl } from 'mask';
+import { $button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
@@ -27,14 +27,14 @@ const $ = {
   list: element('list', instanceofType(HTMLDivElement), {
     content: multi('#content'),
   }),
-  startButton: element('startButton', $textIconButton, {}),
+  startButton: element('startButton', $button, {}),
 };
 
 @_p.customElement({
   ...$stagingArea,
   dependencies: [
-    IconWithText,
-    TextIconButton,
+    Button,
+    LineLayout,
   ],
   template,
 })
@@ -58,8 +58,8 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 const label = `${payload.componentTag.substr(3)}: ${payload.icons.join(', ')}`;
 
                 return renderCustomElement(
-                    $iconWithText,
-                    {inputs: {label: observableOf(label)}},
+                    $lineLayout,
+                    {textContent: observableOf(label)},
                     this.context,
                 );
               }),

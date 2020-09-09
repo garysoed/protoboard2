@@ -31,7 +31,12 @@
   </section>
   <mk-drawer id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
     <section>
-      <mk-text-icon-button id="drawerIcon" mk-theme-highlight label="Details"></mk-text-icon-button>
+      <mk-button id="drawerButton">
+        <mk-list-item-layout>
+          <mk-icon id="drawerIcon" slot="bullet"></mk-icon>
+          <p slot="label">Details</p>
+        </mk-list-item-layout>
+      </mk-button>
     </section>
     <section id="detailsSection">
       <slot name="details"></slot>
