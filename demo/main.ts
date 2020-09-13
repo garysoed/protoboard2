@@ -1,12 +1,16 @@
-import { filterNonNull } from 'gs-tools/export/rxjs';
-import { $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
-import { switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { PALETTE, registerSvg, start, Theme } from 'mask';
+import { renderCustomElement } from 'persona';
+import { of as observableOf } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
+
+import { registerObjectCreateSpec } from '../src/objects/object-service';
+import { $slot, SlotPayload } from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
 import { $saveService } from './core/save-service';
-import { $stagingService } from './core/staging-service';
+import { SUPPLY_TYPE } from './core/supply';
 import { Root } from './root';
 
 
@@ -40,6 +44,18 @@ window.addEventListener('load', () => {
   $saveService.get(vine)
       .pipe(switchMap(saveService => saveService.run()))
       .subscribe();
+
+  registerObjectCreateSpec<SlotPayload>(
+      SUPPLY_TYPE,
+      (state, context) => {
+        return renderCustomElement(
+            $slot,
+            {inputs: {objectId: observableOf(state.id)}},
+            context,
+        );
+      },
+      vine,
+  );
 
       // TODO
   // $saveService.get(vine)

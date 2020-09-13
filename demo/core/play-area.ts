@@ -4,10 +4,9 @@ import { element, PersonaContext, renderCustomElement } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { $slot, Slot } from '../../src/region/slot';
-import { Supply } from '../../src/region/supply';
 import { registerObjectCreateSpec } from '../../src/objects/object-service';
 import { Render } from '../../src/objects/render';
+import { $slot, Slot } from '../../src/region/slot';
 
 import template from './play-area.html';
 import { ROOT_SLOT_TYPE } from './staging-area';
@@ -24,7 +23,6 @@ const $ = {
     LineLayout,
     Render,
     Slot,
-    Supply,
   ],
   configure: vine => {
     registerObjectCreateSpec(

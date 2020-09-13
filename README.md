@@ -66,7 +66,6 @@ Some example regions:
 
 -   **Active**: Refers to the player's cursor. Only visible to the local player.
 -   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
--   **Supply**: Default area to put items in.
 -   **Slot**: A place where objects can be placed in it.
 
 ### Layout

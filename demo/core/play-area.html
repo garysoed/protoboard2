@@ -8,6 +8,10 @@
   #main > div {
     position: relative;
   }
+
+  #supplyContainer {
+    position: relative;
+  }
 </style>
 
 <div id="root" layout="column" fill-parent>
@@ -22,9 +26,11 @@
     <div><pb-render object-id="pbd.root-slot7"></pb-render></div>
     <div><pb-render object-id="pbd.root-slot8"></pb-render></div>
   </div>
-  <div flex>
+  <div flex layout="column">
     <h3 mk-display>Supply</h3>
-    <pb-render object-id="pb.supply"></pb-render>
+    <div id="supplyContainer" flex>
+      <pb-render object-id="pbd.supply"></pb-render>
+    </div>
   </div>
   <div>
     <mk-button id="clearButton">

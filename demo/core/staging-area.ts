@@ -12,11 +12,11 @@ import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
-import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
 
 import { PieceSpec } from './piece-spec';
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
+import { SUPPLY_ID, SUPPLY_TYPE } from './supply';
 
 
 export interface GenericPiecePayload extends
