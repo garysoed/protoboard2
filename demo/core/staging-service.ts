@@ -10,9 +10,8 @@ import { DroppablePayload } from '../../src/action/payload/droppable-payload';
 import { OrientablePayload } from '../../src/action/payload/orientable-payload';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
-import { registerStateHandler } from '../../src/state/renderable-service';
+import { $renderableService, registerStateHandler } from '../../src/state/renderable-service';
 import { SavedState } from '../../src/state/saved-state';
-import { $stateService } from '../../src/state/state-service';
 
 import { PieceSpec } from './piece-spec';
 import { $saveService, SaveService } from './save-service';
@@ -59,8 +58,8 @@ export class StagingService {
   }
 
   private addObject(objectType: string, pieceSpec: PieceSpec): Observable<unknown> {
-    return $stateService.get(this.vine).pipe(
-        switchMap(stateService => stateService.objectIds$),
+    return $renderableService.get(this.vine).pipe(
+        switchMap(renderableService => renderableService.objectIds$),
         tap(objectIds => {
           const id = this.idGenerator.generate(objectIds);
           const payload: GenericPiecePayload = {

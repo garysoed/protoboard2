@@ -1,11 +1,10 @@
-import { source, Vine } from 'grapevine';
-import { $asArray, $asMap, $asRecord, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
+import { source } from 'grapevine';
+import { $asArray, $asRecord, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
-import { $stateHandlers } from './renderable-service';
 import { SavedState } from './saved-state';
 import { State } from './state';
 
@@ -19,29 +18,8 @@ export type StateHandler<P extends object> =
     (state: State<P>, context: PersonaContext) => Observable<Node>;
 
 
-class ObjectCache {
-  private object: Observable<Node>|null = null;
-
-  constructor(
-      private readonly fn: StateHandler<object>,
-      private readonly state: State<object>,
-  ) { }
-
-  getOrCreate(context: PersonaContext): Observable<Node> {
-    if (this.object) {
-      return this.object;
-    }
-
-    const object = this.fn(this.state, context).pipe(shareReplay({bufferSize: 1, refCount: true}));
-    this.object = object;
-    return object;
-  }
-}
-
 export class StateService {
   protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
-
-  constructor(private readonly vine: Vine) { }
 
   @cache()
   get currentState$(): Observable<ReadonlyMap<string, SavedState<object>>> {
@@ -69,19 +47,6 @@ export class StateService {
     );
   }
 
-  getObject(id: string, context: PersonaContext): Observable<Node|null> {
-    return this.objectCachesMap$.pipe(
-        switchMap(objectCachesMap => {
-          const cache = objectCachesMap.get(id);
-          if (!cache) {
-            return observableOf(null);
-          }
-
-          return cache.getOrCreate(context);
-        }),
-    );
-  }
-
   getState<P extends object>(id: string): Observable<State<P>|null> {
     return this.statesMap$.pipe(map(statesMap => statesMap.get(id) as State<P> || null));
   }
@@ -91,36 +56,7 @@ export class StateService {
   }
 
   @cache()
-  get objectIds$(): Observable<ReadonlySet<string>> {
-    return this.objectCachesMap$.pipe(
-        map(objectCachesMap => $pipe(objectCachesMap, $map(([id]) => id), $asSet())),
-    );
-  }
-
-  @cache()
-  private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
-    return combineLatest([$stateHandlers.get(this.vine), this.statesMap$]).pipe(
-        map(([stateHandlers, statesMap]) => {
-          return $pipe(
-              statesMap,
-              $map(([id, state]) => {
-                const handler = stateHandlers.get(state.type);
-                if (!handler) {
-                  return null;
-                }
-
-                return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
-              }),
-              $filterNonNull(),
-              $asMap(),
-          );
-        }),
-        shareReplay({bufferSize: 1, refCount: true}),
-    );
-  }
-
-  @cache()
-  private get statesMap$(): Observable<ReadonlyMap<string, State<object>>> {
+  get statesMap$(): Observable<ReadonlyMap<string, State<object>>> {
     return this.statesRaw$.pipe(
         map(statesRaw => {
           const statesMap = new Map<string, State<object>>();
@@ -150,7 +86,7 @@ export class StateService {
   }
 }
 
-export const $stateService = source('StateService', vine => new StateService(vine));
+export const $stateService = source('StateService', () => new StateService());
 
 function resolveMap(
     subjectObject: object,

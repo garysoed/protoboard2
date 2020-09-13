@@ -5,8 +5,8 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DroppablePayload } from '../action/payload/droppable-payload';
+import { $renderableService } from '../state/renderable-service';
 import { State } from '../state/state';
-import { $stateService } from '../state/state-service';
 
 
 export function renderContents(
@@ -18,11 +18,11 @@ export function renderContents(
   }
 
   return state.payload.contentIds.pipe(
-      withLatestFrom($stateService.get(context.vine)),
-      switchMap(([contentIds, stateService]) => {
+      withLatestFrom($renderableService.get(context.vine)),
+      switchMap(([contentIds, renderableService]) => {
         const node$list = $pipe(
             contentIds,
-            $map(id => stateService.getObject(id, context).pipe(filterNonNull())),
+            $map(id => renderableService.getObject(id, context).pipe(filterNonNull())),
             $filterNonNull(),
             $asArray(),
         );

@@ -47,7 +47,7 @@ class FakeStateService extends StateService {
 }
 
 export function createFakeStateService(vine: Vine): FakeStateService {
-  const service = new FakeStateService(vine);
+  const service = new FakeStateService();
   $stateService.set(vine, () => service);
   return service;
 }

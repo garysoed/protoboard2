@@ -13,9 +13,10 @@ import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
-import { $stateService } from '../state/state-service';
+import { $renderableService } from '../state/renderable-service';
 
 import template from './deck.html';
+
 
 const LOGGER = new Logger('pb.Deck');
 
@@ -58,14 +59,14 @@ export class Deck extends BaseComponent<DeckPayload> {
   private get contents$(): Observable<Node|null> {
     return this.state$.pipe(
         switchMap(state => state?.payload.contentIds || observableOf([])),
-        withLatestFrom($stateService.get(this.vine)),
-        switchMap(([contentIds, stateService]) => {
+        withLatestFrom($renderableService.get(this.vine)),
+        switchMap(([contentIds, renderableService]) => {
           const [topId] = contentIds;
           if (!topId) {
             return observableOf(null);
           }
 
-          return stateService.getObject(topId, this.context);
+          return renderableService.getObject(topId, this.context);
         }),
         debug(LOGGER, 'node'),
     );

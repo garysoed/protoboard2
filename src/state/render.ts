@@ -6,7 +6,7 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import template from './render.html';
-import { $stateService } from './state-service';
+import { $renderableService } from './renderable-service';
 
 
 export const $render = {
@@ -38,14 +38,14 @@ export class Render extends ThemedCustomElementCtrl {
   private get object$(): Observable<Node|null> {
     return combineLatest([
       this.declareInput($.host._.objectId),
-      $stateService.get(this.vine),
+      $renderableService.get(this.vine),
     ])
     .pipe(
-        switchMap(([objectId, stateService]) => {
+        switchMap(([objectId, renderableService]) => {
           if (!objectId) {
             return observableOf(null);
           }
-          return stateService.getObject(objectId, this.context) || observableOf(null);
+          return renderableService.getObject(objectId, this.context) || observableOf(null);
         }),
     );
   }
