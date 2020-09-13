@@ -10,9 +10,9 @@ import { DroppablePayload } from '../../src/action/payload/droppable-payload';
 import { OrientablePayload } from '../../src/action/payload/orientable-payload';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
-import { SUPPLY_ID } from '../../src/region/supply';
+import { registerStateHandler } from '../../src/state/renderable-service';
 import { SavedState } from '../../src/state/saved-state';
-import { $stateService, registerStateHandler } from '../../src/state/state-service';
+import { $stateService } from '../../src/state/state-service';
 
 import { PieceSpec } from './piece-spec';
 import { $saveService, SaveService } from './save-service';

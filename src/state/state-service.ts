@@ -5,6 +5,7 @@ import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
+import { $stateHandlers } from './renderable-service';
 import { SavedState } from './saved-state';
 import { State } from './state';
 
@@ -147,22 +148,6 @@ export class StateService {
         shareReplay({bufferSize: 1, refCount: true}),
     );
   }
-}
-
-export const $stateHandlers =
-    source('stateHandlers', () => new Map<string, StateHandler<object>>());
-export function registerStateHandler<P extends object>(
-    type: string,
-    handler: StateHandler<P>,
-    vine: Vine,
-): void {
-  $stateHandlers.set(
-      vine,
-      existingHandlers => new Map([
-        ...existingHandlers,
-        [type, handler as StateHandler<object>],
-      ]),
-  );
 }
 
 export const $stateService = source('StateService', vine => new StateService(vine));

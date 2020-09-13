@@ -7,7 +7,7 @@ import { tap, withLatestFrom } from 'rxjs/operators';
 import { $slot, Slot } from '../../src/region/slot';
 import { Supply } from '../../src/region/supply';
 import { Render } from '../../src/state/render';
-import { registerStateHandler } from '../../src/state/state-service';
+import { registerStateHandler } from '../../src/state/renderable-service';
 
 import template from './play-area.html';
 import { ROOT_SLOT_TYPE } from './staging-area';

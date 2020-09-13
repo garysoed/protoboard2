@@ -1,7 +1,7 @@
 import { Vine } from 'grapevine';
 import { of as observableOf, throwError } from 'rxjs';
 
-import { registerStateHandler } from '../state-service';
+import { registerStateHandler } from '../renderable-service';
 
 
 export function registerFakeStateHandler(

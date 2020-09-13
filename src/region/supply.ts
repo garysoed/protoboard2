@@ -10,7 +10,7 @@ import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
-import { registerStateHandler } from '../state/state-service';
+import { registerStateHandler } from '../state/renderable-service';
 
 import template from './supply.html';
 
