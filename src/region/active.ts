@@ -8,7 +8,7 @@ import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { renderContents } from '../render/render-contents';
-import { registerStateHandler } from '../state-old/renderable-service';
+import { registerObjectCreateSpec } from '../state-old/object-service';
 
 import template from './active.html';
 
@@ -72,7 +72,7 @@ export interface ActivePayload extends DroppablePayload { }
   ...$active,
   template,
   configure: vine => {
-    registerStateHandler<ActivePayload>(
+    registerObjectCreateSpec<ActivePayload>(
         ACTIVE_TYPE,
         (state, context) => {
           return renderCustomElement(

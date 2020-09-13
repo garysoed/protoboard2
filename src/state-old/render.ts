@@ -5,8 +5,8 @@ import { attributeIn, element, host, PersonaContext, single, stringParser } from
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { $objectService } from './object-service';
 import template from './render.html';
-import { $renderableService } from './renderable-service';
 
 
 export const $render = {
@@ -38,7 +38,7 @@ export class Render extends ThemedCustomElementCtrl {
   private get object$(): Observable<Node|null> {
     return combineLatest([
       this.declareInput($.host._.objectId),
-      $renderableService.get(this.vine),
+      $objectService.get(this.vine),
     ])
     .pipe(
         switchMap(([objectId, renderableService]) => {

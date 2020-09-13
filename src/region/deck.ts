@@ -13,7 +13,7 @@ import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
-import { $renderableService } from '../state-old/renderable-service';
+import { $objectService } from '../state-old/object-service';
 
 import template from './deck.html';
 
@@ -59,7 +59,7 @@ export class Deck extends BaseComponent<DeckPayload> {
   private get contents$(): Observable<Node|null> {
     return this.state$.pipe(
         switchMap(state => state?.payload.contentIds || observableOf([])),
-        withLatestFrom($renderableService.get(this.vine)),
+        withLatestFrom($objectService.get(this.vine)),
         switchMap(([contentIds, renderableService]) => {
           const [topId] = contentIds;
           if (!topId) {

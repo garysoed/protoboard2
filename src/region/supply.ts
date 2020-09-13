@@ -10,7 +10,7 @@ import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
-import { registerStateHandler } from '../state-old/renderable-service';
+import { registerObjectCreateSpec } from '../state-old/object-service';
 
 import template from './supply.html';
 
@@ -68,7 +68,7 @@ export type SupplyPayload = DroppablePayload;
   ...$supply,
   template,
   configure: vine => {
-    registerStateHandler<SupplyPayload>(
+    registerObjectCreateSpec<SupplyPayload>(
         SUPPLY_TYPE,
         (state, context) => {
           return renderCustomElement(

@@ -6,8 +6,8 @@ import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { $slot, Slot } from '../../src/region/slot';
 import { Supply } from '../../src/region/supply';
+import { registerObjectCreateSpec } from '../../src/state-old/object-service';
 import { Render } from '../../src/state-old/render';
-import { registerStateHandler } from '../../src/state-old/renderable-service';
 
 import template from './play-area.html';
 import { ROOT_SLOT_TYPE } from './staging-area';
@@ -27,7 +27,7 @@ const $ = {
     Supply,
   ],
   configure: vine => {
-    registerStateHandler(
+    registerObjectCreateSpec(
         ROOT_SLOT_TYPE,
         (state, context) => {
           return renderCustomElement(

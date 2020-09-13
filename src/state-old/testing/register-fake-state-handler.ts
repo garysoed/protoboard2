@@ -1,14 +1,14 @@
 import { Vine } from 'grapevine';
 import { of as observableOf, throwError } from 'rxjs';
 
-import { registerStateHandler } from '../renderable-service';
+import { registerObjectCreateSpec } from '../object-service';
 
 
 export function registerFakeStateHandler(
     nodeMap: ReadonlyMap<string, Node>,
     vine: Vine,
 ): void {
-  registerStateHandler(
+  registerObjectCreateSpec(
       'test',
       state => {
         const node = nodeMap.get(state.id);

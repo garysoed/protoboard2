@@ -5,14 +5,15 @@ import { PersonaContext } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
+import { ObjectCreateSpec } from './object-create-spec';
 import { State } from './state';
-import { $stateService, StateHandler, StateService } from './state-service';
+import { $stateService, StateService } from './state-service';
 
 class ObjectCache {
   private object: Observable<Node>|null = null;
 
   constructor(
-      private readonly fn: StateHandler<object>,
+      private readonly fn: ObjectCreateSpec<object>,
       private readonly state: State<object>,
   ) { }
 
@@ -28,7 +29,7 @@ class ObjectCache {
 }
 
 
-class RenderableService {
+class ObjectService {
   constructor(
       private readonly stateService: StateService,
       private readonly vine: Vine,
@@ -77,26 +78,26 @@ class RenderableService {
   }
 }
 
-export const $renderableService = stream(
+export const $objectService = stream(
     'RenderableService',
     vine => $stateService.get(vine).pipe(
-        map(stateService => new RenderableService(stateService, vine)),
+        map(stateService => new ObjectService(stateService, vine)),
     ),
     globalThis,
 );
 
 export const $stateHandlers =
-    source('stateHandlers', () => new Map<string, StateHandler<object>>());
-export function registerStateHandler<P extends object>(
+    source('stateHandlers', () => new Map<string, ObjectCreateSpec<object>>());
+export function registerObjectCreateSpec<P extends object>(
     type: string,
-    handler: StateHandler<P>,
+    handler: ObjectCreateSpec<P>,
     vine: Vine,
 ): void {
   $stateHandlers.set(
       vine,
       existingHandlers => new Map([
         ...existingHandlers,
-        [type, handler as StateHandler<object>],
+        [type, handler as ObjectCreateSpec<object>],
       ]),
   );
 }

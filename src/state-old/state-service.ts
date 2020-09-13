@@ -9,15 +9,6 @@ import { SavedState } from './saved-state';
 import { State } from './state';
 
 
-/**
- * Function called when creating the object corresponding to the state.
- *
- * @thHidden
- */
-export type StateHandler<P extends object> =
-    (state: State<P>, context: PersonaContext) => Observable<Node>;
-
-
 export class StateService {
   protected readonly statesRaw$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
 
