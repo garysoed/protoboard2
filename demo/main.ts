@@ -1,9 +1,7 @@
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { PALETTE, registerSvg, start, Theme } from 'mask';
+import { PALETTE, registerSvg, start, Theme, $stateService } from 'mask';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
-
-import { $stateService } from '../src/state-old/state-service';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
@@ -51,7 +49,7 @@ window.addEventListener('load', () => {
           withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
       )
       .subscribe(([state, stateService, stagingService]) => {
-        stateService.setStates(new Set(state));
+        stateService.init(state);
         stagingService.setStaging(false);
       });
 });

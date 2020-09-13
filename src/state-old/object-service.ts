@@ -1,4 +1,4 @@
-import { source, stream, Vine } from 'grapevine';
+import { source, Vine } from 'grapevine';
 import { $asMap, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
@@ -7,7 +7,8 @@ import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { ObjectCreateSpec } from './object-create-spec';
 import { ObjectSpec } from './object-spec';
-import { $stateService, StateService } from './state-service';
+import { $objectSpecMap } from './object-spec-list';
+
 
 class ObjectCache {
   private object: Observable<Node>|null = null;
@@ -30,10 +31,7 @@ class ObjectCache {
 
 
 class ObjectService {
-  constructor(
-      private readonly stateService: StateService,
-      private readonly vine: Vine,
-  ) { }
+  constructor(private readonly vine: Vine) { }
 
   getObject(id: string, context: PersonaContext): Observable<Node|null> {
     return this.objectCachesMap$.pipe(
@@ -50,7 +48,7 @@ class ObjectService {
 
   @cache()
   private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
-    return combineLatest([$stateHandlers.get(this.vine), this.stateService.statesMap$]).pipe(
+    return combineLatest([$stateHandlers.get(this.vine), $objectSpecMap.get(this.vine)]).pipe(
         map(([stateHandlers, statesMap]) => {
           return $pipe(
               statesMap,
@@ -78,13 +76,7 @@ class ObjectService {
   }
 }
 
-export const $objectService = stream(
-    'RenderableService',
-    vine => $stateService.get(vine).pipe(
-        map(stateService => new ObjectService(stateService, vine)),
-    ),
-    globalThis,
-);
+export const $objectService = source('ObjectService', vine => new ObjectService(vine));
 
 export const $stateHandlers =
     source('stateHandlers', () => new Map<string, ObjectCreateSpec<object>>());

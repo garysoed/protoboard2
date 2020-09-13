@@ -56,6 +56,6 @@ export class Slot extends BaseComponent<SlotPayload> {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.state$.pipe(switchMap(state => renderContents(state, this.context)));
+    return this.objectSpec$.pipe(switchMap(state => renderContents(state, this.context)));
   }
 }

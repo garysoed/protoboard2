@@ -1,81 +1,47 @@
-import { stream } from 'grapevine';
-import { listConverter, objectConverter } from 'gs-tools/export/serializer';
+import { source, Vine } from 'grapevine';
+import { Snapshot } from 'gs-tools/export/state';
 import { LocalStorage } from 'gs-tools/export/store';
-import { $window } from 'mask';
-import { Converter, identity, json, Result, Serializable } from 'nabu';
-import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { $stateService } from 'mask';
+import { identity, json } from 'nabu';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { SavedState } from '../../src/state-old/saved-state';
-import { $stateService, StateService } from '../../src/state-old/state-service';
+import { $objectSpecListId } from '../../src/state-old/object-spec-list';
 
 
 const ID = 'save';
 
-class StateConverter implements Converter<object, Serializable> {
-  convertBackward(value: Serializable): Result<object> {
-    if (typeof value !== 'object') {
-      return {success: false};
-    }
-
-    const obj: Record<string, Serializable> = {};
-    for (const key in value) {
-      if (!value.hasOwnProperty(key)) {
-        continue;
-      }
-
-      obj[key] = (value as any)[key];
-    }
-    return {success: true, result: obj};
-  }
-
-  convertForward(input: object): Result<Serializable> {
-    const obj: Record<string, Serializable> = {};
-    for (const key in input) {
-      if (!input.hasOwnProperty(key)) {
-        continue;
-      }
-
-      obj[key] = (input as any)[key];
-    }
-    return {success: true, result: obj};
-  }
-}
-
+// TODO: MOVE TO mask
 export class SaveService {
   private readonly isSaving$ = new BehaviorSubject(false);
-  private readonly storage = new LocalStorage<ReadonlyArray<SavedState<object>>>(
+  private readonly storage = new LocalStorage<Snapshot<any>>(
       this.window,
       'pbd',
-      listConverter(
-          objectConverter<SavedState<object>>({
-            id: identity<string>(),
-            type: identity<string>(),
-            payload: new StateConverter(),
-          }),
-      ),
+      // TODO: Make this easier.
+      identity() as any,
       json(),
   );
 
   constructor(
-      private readonly stateService: StateService,
+      private readonly vine: Vine,
       private readonly window: Window,
   ) { }
 
   run(): Observable<unknown> {
     return this.isSaving$.pipe(
-        switchMap(isSaving => {
-          if (!isSaving) {
+        withLatestFrom($stateService.get(this.vine), $objectSpecListId.get(this.vine)),
+        switchMap(([isSaving, stateService, objectSpecListId]) => {
+          if (!isSaving || !objectSpecListId) {
             return EMPTY;
           }
 
-          return this.stateService.currentState$;
+          return stateService.onChange$.pipe(map(() => stateService.snapshot(objectSpecListId)));
         }),
-        switchMap(state => this.storage.update(ID, [...state.values()])),
+        switchMap(snapshot => this.storage.update(ID, snapshot)),
     );
   }
 
-  get savedState$(): Observable<ReadonlyArray<SavedState<object>>|null> {
+  get savedState$(): Observable<Snapshot<unknown>|null> {
     return this.storage.read(ID);
   }
 
@@ -84,12 +50,4 @@ export class SaveService {
   }
 }
 
-export const $saveService = stream(
-    'SaveService',
-    vine => combineLatest([
-      $stateService.get(vine),
-      $window.get(vine),
-    ])
-    .pipe(map(([stateService, window]) => new SaveService(stateService, window))),
-    globalThis,
-);
+export const $saveService = source('SaveService', vine => new SaveService(vine, window));

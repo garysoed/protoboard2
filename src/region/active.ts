@@ -108,7 +108,7 @@ export class Active extends BaseComponent<ActivePayload> {
 
   @cache()
   private get contentIds$(): Observable<readonly string[]> {
-    return this.state$.pipe(
+    return this.objectSpec$.pipe(
         switchMap(state => {
           if (!state) {
             return observableOf([]);
@@ -121,7 +121,7 @@ export class Active extends BaseComponent<ActivePayload> {
 
   @cache()
   private get content$(): Observable<readonly Node[]> {
-    return this.state$.pipe(switchMap(state => renderContents(state, this.context)));
+    return this.objectSpec$.pipe(switchMap(state => renderContents(state, this.context)));
   }
 
   @cache()

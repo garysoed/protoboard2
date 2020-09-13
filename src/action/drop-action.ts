@@ -1,13 +1,9 @@
 import { integerParser } from 'persona';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { NEVER, Observable } from 'rxjs';
 
 import { ActionContext, BaseAction } from '../core/base-action';
-import { ACTIVE_ID, ActivePayload } from '../region/active';
-import { $stateService } from '../state-old/state-service';
 
 import { DroppablePayload } from './payload/droppable-payload';
-import { moveObject } from './util/move-object';
 
 
 interface Config {
@@ -37,26 +33,27 @@ export class DropAction extends BaseAction<DroppablePayload, Config> {
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    const stateService$ = $stateService.get(this.context.personaContext.vine);
-    const activeState$ = stateService$.pipe(
-        switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
-    );
+    return NEVER;
+    // const stateService$ = $stateService.get(this.context.personaContext.vine);
+    // const activeState$ = stateService$.pipe(
+    //     switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
+    // );
 
-    return this.onTrigger$
-        .pipe(
-            withLatestFrom(activeState$, this.context.state$, this.config$),
-            switchMap(([, activeState, toObjectState, config]) => {
-              if (!activeState) {
-                return EMPTY;
-              }
+    // return this.onTrigger$
+    //     .pipe(
+    //         withLatestFrom(activeState$, this.context.state$, this.config$),
+    //         switchMap(([, activeState, toObjectState, config]) => {
+    //           if (!activeState) {
+    //             return EMPTY;
+    //           }
 
-              return moveObject(
-                  activeState,
-                  toObjectState,
-                  -1,
-                  config.location,
-              );
-            }),
-        );
+    //           return moveObject(
+    //               activeState,
+    //               toObjectState,
+    //               -1,
+    //               config.location,
+    //           );
+    //         }),
+    //     );
   }
 }

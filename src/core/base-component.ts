@@ -10,7 +10,7 @@ import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
 import { ObjectSpec } from '../state-old/object-spec';
-import { $stateService } from '../state-old/state-service';
+import { $objectSpecMap } from '../state-old/object-spec-list';
 
 import { ActionContext, BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
@@ -51,7 +51,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
       host$: host({}).getValue(this.context),
       personaContext: this.context,
       objectId$: this.objectId$,
-      state$: this.state$.pipe(filterNonNull()),
+      state$: this.objectSpec$.pipe(filterNonNull()),
     };
     const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
         this.triggerActionMap,
@@ -85,14 +85,14 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   }
 
   @cache()
-  get state$(): Observable<ObjectSpec<P>|null> {
+  get objectSpec$(): Observable<ObjectSpec<P>|null> {
     return combineLatest([
       this.objectId$,
-      $stateService.get(this.context.vine),
+      $objectSpecMap.get(this.context.vine),
     ])
     .pipe(
-        switchMap(([objectId, stateService]) => {
-          return stateService.getState<P>(objectId);
+        map(([objectId, objectSpecMap]) => {
+          return objectSpecMap.get(objectId) as ObjectSpec<P>;
         }),
     );
   }

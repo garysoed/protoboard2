@@ -57,7 +57,7 @@ export class Deck extends BaseComponent<DeckPayload> {
 
   @cache()
   private get contents$(): Observable<Node|null> {
-    return this.state$.pipe(
+    return this.objectSpec$.pipe(
         switchMap(state => state?.payload.contentIds || observableOf([])),
         withLatestFrom($objectService.get(this.vine)),
         switchMap(([contentIds, renderableService]) => {

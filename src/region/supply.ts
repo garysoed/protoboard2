@@ -96,7 +96,7 @@ export class Supply extends BaseComponent<SupplyPayload> {
 
   @cache()
   private get contents$(): Observable<readonly Node[]> {
-    return this.state$.pipe(
+    return this.objectSpec$.pipe(
       switchMap(state => {
         if (!state) {
           return observableOf([]);

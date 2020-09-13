@@ -73,7 +73,7 @@ export class D6 extends BaseComponent<D6Payload> {
 
   @cache()
   private get faceName$(): Observable<string> {
-    return this.state$.pipe(
+    return this.objectSpec$.pipe(
         switchMap(state => {
           if (!state) {
             return observableOf(0);

@@ -3,13 +3,10 @@ import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { combineLatest, NEVER, Observable, of as observableOf } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
-import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
 import { SavedState } from '../../src/state-old/saved-state';
-import { $stateService } from '../../src/state-old/state-service';
 
 import template from './staging-area.html';
 import { $stagingService, GenericPiecePayload } from './staging-service';
@@ -73,38 +70,39 @@ export class StagingArea extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleStartAction$(): Observable<unknown> {
-    return this.declareInput($.startButton._.actionEvent).pipe(
-        withLatestFrom($stagingService.get(this.vine)),
-        switchMap(([, stagingService]) => {
-          return stagingService.states$.pipe(
-              take(1),
-              withLatestFrom($stateService.get(this.vine)),
-              tap(([states, stateService]) => {
-                const rootSlots = [];
-                for (let i = 0; i < 9; i++) {
-                  rootSlots.push({
-                    id: `${ROOT_SLOT_PREFIX}${i}`,
-                    type: ROOT_SLOT_TYPE,
-                    payload: {contentIds: []},
-                  });
-                }
+    return NEVER;
+    // return this.declareInput($.startButton._.actionEvent).pipe(
+    //     withLatestFrom($stagingService.get(this.vine)),
+    //     switchMap(([, stagingService]) => {
+    //       return stagingService.states$.pipe(
+    //           take(1),
+    //           withLatestFrom($stateService.get(this.vine)),
+    //           tap(([states, stateService]) => {
+    //             const rootSlots = [];
+    //             for (let i = 0; i < 9; i++) {
+    //               rootSlots.push({
+    //                 id: `${ROOT_SLOT_PREFIX}${i}`,
+    //                 type: ROOT_SLOT_TYPE,
+    //                 payload: {contentIds: []},
+    //               });
+    //             }
 
-                const supplyContentIds = $pipe(
-                    states,
-                    $map(({id}) => id),
-                    $asArray(),
-                );
+    //             const supplyContentIds = $pipe(
+    //                 states,
+    //                 $map(({id}) => id),
+    //                 $asArray(),
+    //             );
 
-                stateService.setStates(new Set([
-                  ...rootSlots,
-                  ...states,
-                  {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
-                  {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
-                ]));
-                stagingService.setStaging(false);
-              }),
-          );
-        }),
-    );
+    //             stateService.setStates(new Set([
+    //               ...rootSlots,
+    //               ...states,
+    //               {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
+    //               {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
+    //             ]));
+    //             stagingService.setStaging(false);
+    //           }),
+    //       );
+    //     }),
+    // );
   }
 }
