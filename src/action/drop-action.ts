@@ -3,7 +3,7 @@ import { NEVER, Observable } from 'rxjs';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { DroppablePayload } from './payload/droppable-payload';
+import { IsContainer } from './payload/is-container';
 
 
 interface Config {
@@ -16,9 +16,9 @@ interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<DroppablePayload, Config> {
+export class DropAction extends BaseAction<IsContainer, Config> {
   constructor(
-      context: ActionContext<DroppablePayload>,
+      context: ActionContext<IsContainer>,
       defaultConfig: Config,
   ) {
     super(

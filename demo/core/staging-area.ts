@@ -6,7 +6,6 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { DroppablePayload } from '../../src/action/payload/droppable-payload';
 import { IsContainer } from '../../src/action/payload/is-container';
 import { OrientablePayload } from '../../src/action/payload/orientable-payload';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
@@ -21,7 +20,7 @@ import { $stagingService } from './staging-service';
 
 
 export interface GenericPiecePayload extends
-    PieceSpec, OrientablePayload, RotatablePayload, DroppablePayload {
+    PieceSpec, OrientablePayload, RotatablePayload, IsContainer {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';

@@ -4,7 +4,7 @@ import { NEVER, Observable } from 'rxjs';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { DroppablePayload } from './payload/droppable-payload';
+import { IsContainer } from './payload/is-container';
 
 
 interface Config {
@@ -16,12 +16,12 @@ interface Config {
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<DroppablePayload, Config> {
+export class PickAction extends BaseAction<IsContainer, Config> {
   /**
    * @internal
    */
   constructor(
-      context: ActionContext<DroppablePayload>,
+      context: ActionContext<IsContainer>,
       defaultConfig: Config,
   ) {
     super(

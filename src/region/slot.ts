@@ -7,7 +7,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
-import { DroppablePayload } from '../action/payload/droppable-payload';
+import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
@@ -32,8 +32,7 @@ export const $ = {
   }),
 };
 
-// tslint:disable-next-line: no-empty-interface
-export interface SlotPayload extends DroppablePayload { }
+export type SlotPayload = IsContainer;
 
 @_p.customElement({
   ...$slot,

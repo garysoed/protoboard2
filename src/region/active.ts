@@ -5,7 +5,7 @@ import { classToggle, element, host, multi, PersonaContext, renderCustomElement,
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { DroppablePayload } from '../action/payload/droppable-payload';
+import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { registerObjectCreateSpec } from '../objects/object-service';
 import { renderContents } from '../render/render-contents';
@@ -58,7 +58,7 @@ export const $ = {
  * @thModule region
  */
 // tslint:disable-next-line: no-empty-interface
-export interface ActivePayload extends DroppablePayload { }
+export interface ActivePayload extends IsContainer { }
 
 /**
  * Represents a region containing objects that are actively manipulated.

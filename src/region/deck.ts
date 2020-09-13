@@ -1,19 +1,16 @@
 import { cache } from 'gs-tools/export/data';
-import { debug } from 'gs-tools/export/rxjs';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, PersonaContext, single } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { DropAction } from '../action/drop-action';
-import { DroppablePayload } from '../action/payload/droppable-payload';
+import { IsContainer } from '../action/payload/is-container';
 import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
-import { $objectService } from '../objects/object-service';
 
 import template from './deck.html';
 
@@ -34,7 +31,7 @@ export const $ = {
   target: element('target', instanceofType(HTMLDivElement), {}),
 };
 
-export interface DeckPayload extends DroppablePayload { }
+export type DeckPayload = IsContainer;
 
 @_p.customElement({
   ...$deck,

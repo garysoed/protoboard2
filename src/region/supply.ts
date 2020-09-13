@@ -5,12 +5,12 @@ import { element, host, multi, PersonaContext, renderCustomElement } from 'perso
 import { Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { DroppablePayload } from '../action/payload/droppable-payload';
+import { IsContainer } from '../action/payload/is-container';
 import { PickAction } from '../action/pick-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerSpec } from '../core/trigger-spec';
-import { renderContents } from '../render/render-contents';
 import { registerObjectCreateSpec } from '../objects/object-service';
+import { renderContents } from '../render/render-contents';
 
 import template from './supply.html';
 
@@ -55,8 +55,7 @@ export const $ = {
  *
  * @thModule region
  */
-// tslint:disable-next-line: no-empty-interface
-export type SupplyPayload = DroppablePayload;
+export type SupplyPayload = IsContainer;
 
 
 /**

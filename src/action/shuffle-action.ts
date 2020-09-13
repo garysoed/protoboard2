@@ -4,12 +4,12 @@ import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { DroppablePayload } from './payload/droppable-payload';
+import { IsContainer } from './payload/is-container';
 import { $random } from './util/random';
 
 
-export class ShuffleAction extends BaseAction<DroppablePayload> {
-  constructor(context: ActionContext<DroppablePayload>) {
+export class ShuffleAction extends BaseAction<IsContainer> {
+  constructor(context: ActionContext<IsContainer>) {
     super(
         'shuffle',
         'Shuffle',

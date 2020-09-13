@@ -3,12 +3,11 @@ import { combineLatest, NEVER, Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 import { ObjectSpec } from '../../objects/object-spec';
-import { DroppablePayload } from '../payload/droppable-payload';
-
+import { IsContainer } from '../payload/is-container';
 
 export function moveObject(
-    fromObjectState: ObjectSpec<DroppablePayload>,
-    toObjectState: ObjectSpec<DroppablePayload>,
+    fromObjectState: ObjectSpec<IsContainer>,
+    toObjectState: ObjectSpec<IsContainer>,
     fromLocation: number,
     toLocation: number,
 ): Observable<unknown> {
