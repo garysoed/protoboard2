@@ -5,8 +5,8 @@ import { PersonaContext } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
+import { ObjectSpec } from './object-spec';
 import { SavedState } from './saved-state';
-import { State } from './state';
 
 
 export class StateService {
@@ -38,8 +38,8 @@ export class StateService {
     );
   }
 
-  getState<P extends object>(id: string): Observable<State<P>|null> {
-    return this.statesMap$.pipe(map(statesMap => statesMap.get(id) as State<P> || null));
+  getState<P extends object>(id: string): Observable<ObjectSpec<P>|null> {
+    return this.statesMap$.pipe(map(statesMap => statesMap.get(id) as ObjectSpec<P> || null));
   }
 
   setStates(statesRaw: ReadonlySet<SavedState<object>>): void {
@@ -47,10 +47,10 @@ export class StateService {
   }
 
   @cache()
-  get statesMap$(): Observable<ReadonlyMap<string, State<object>>> {
+  get statesMap$(): Observable<ReadonlyMap<string, ObjectSpec<object>>> {
     return this.statesRaw$.pipe(
         map(statesRaw => {
-          const statesMap = new Map<string, State<object>>();
+          const statesMap = new Map<string, ObjectSpec<object>>();
           for (const state of statesRaw) {
             const runtimePayload: Record<string, BehaviorSubject<unknown>> = {};
 

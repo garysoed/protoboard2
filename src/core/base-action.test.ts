@@ -5,7 +5,7 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { createFakeActionContext } from '../action/testing/fake-action-context';
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 
 import { ActionContext, BaseAction } from './base-action';
 
@@ -49,7 +49,7 @@ test('@protoboard2/core/base-action', init => {
     const element = document.createElement('div');
     const shadowRoot = element.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const state$ = new ReplaySubject<State<{}>>(1);
+    const state$ = new ReplaySubject<ObjectSpec<{}>>(1);
 
     const action = new TestAction(createFakeActionContext({
       personaContext,

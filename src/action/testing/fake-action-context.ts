@@ -2,7 +2,7 @@ import { PersonaContext } from 'persona';
 import { ReplaySubject } from 'rxjs';
 
 import { ActionContext } from '../../core/base-action';
-import { State } from '../../state-old/state';
+import { ObjectSpec } from '../../state-old/object-spec';
 
 type PartialActionContext<P extends object> = Partial<ActionContext<P>> &
     {readonly personaContext: PersonaContext};
@@ -12,7 +12,7 @@ export function createFakeActionContext<P extends object>(
 ): ActionContext<P> {
   return {
     host$: new ReplaySubject<Element>(1),
-    state$: new ReplaySubject<State<P>>(1),
+    state$: new ReplaySubject<ObjectSpec<P>>(1),
     ...context,
   };
 }

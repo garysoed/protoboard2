@@ -4,7 +4,7 @@ import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../region/active';
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 import { createFakeStateService } from '../state-old/testing/fake-state-service';
 
 import { DropAction } from './drop-action';
@@ -22,7 +22,7 @@ test('@protoboard2/action/drop-action', init => {
 
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const state$ = new ReplaySubject<State<DroppablePayload>>(1);
+    const state$ = new ReplaySubject<ObjectSpec<DroppablePayload>>(1);
     const action = new DropAction(
         createFakeActionContext({personaContext, state$}),
         {location: 0},

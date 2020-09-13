@@ -9,7 +9,7 @@ import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 import { $stateService } from '../state-old/state-service';
 
 import { ActionContext, BaseAction } from './base-action';
@@ -85,7 +85,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   }
 
   @cache()
-  get state$(): Observable<State<P>|null> {
+  get state$(): Observable<ObjectSpec<P>|null> {
     return combineLatest([
       this.objectId$,
       $stateService.get(this.context.vine),

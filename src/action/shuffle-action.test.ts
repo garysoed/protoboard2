@@ -4,7 +4,7 @@ import { _v } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 
 import { DroppablePayload } from './payload/droppable-payload';
 import { ShuffleAction } from './shuffle-action';
@@ -17,7 +17,7 @@ test('@protoboard2/action/shuffle-action', () => {
     const rootEl = document.createElement('div');
     const shadowRoot = rootEl.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const state$ = new ReplaySubject<State<DroppablePayload>>(1);
+    const state$ = new ReplaySubject<ObjectSpec<DroppablePayload>>(1);
 
     const action = new ShuffleAction(createFakeActionContext({
       personaContext,

@@ -2,13 +2,13 @@ import { mod } from 'gs-tools/export/math';
 import { combineLatest, Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
-import { State } from '../../state-old/state';
+import { ObjectSpec } from '../../state-old/object-spec';
 import { DroppablePayload } from '../payload/droppable-payload';
 
 
 export function moveObject(
-    fromObjectState: State<DroppablePayload>,
-    toObjectState: State<DroppablePayload>,
+    fromObjectState: ObjectSpec<DroppablePayload>,
+    toObjectState: ObjectSpec<DroppablePayload>,
     fromLocation: number,
     toLocation: number,
 ): Observable<unknown> {

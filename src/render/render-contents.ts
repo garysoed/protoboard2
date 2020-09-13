@@ -6,11 +6,11 @@ import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $objectService } from '../state-old/object-service';
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 
 
 export function renderContents(
-    state: State<DroppablePayload>|null,
+    state: ObjectSpec<DroppablePayload>|null,
     context: PersonaContext,
 ): Observable<readonly Node[]> {
   if (!state) {

@@ -6,13 +6,13 @@ import { host, onMutation, PersonaContext } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
 
-import { State } from '../state-old/state';
+import { ObjectSpec } from '../state-old/object-spec';
 
 
 export interface ActionContext<P extends object> {
   readonly host$: Observable<Element>;
   readonly personaContext: PersonaContext;
-  readonly state$: Observable<State<P>>;
+  readonly state$: Observable<ObjectSpec<P>>;
 }
 
 /**

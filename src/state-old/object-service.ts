@@ -6,7 +6,7 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { ObjectCreateSpec } from './object-create-spec';
-import { State } from './state';
+import { ObjectSpec } from './object-spec';
 import { $stateService, StateService } from './state-service';
 
 class ObjectCache {
@@ -14,7 +14,7 @@ class ObjectCache {
 
   constructor(
       private readonly fn: ObjectCreateSpec<object>,
-      private readonly state: State<object>,
+      private readonly state: ObjectSpec<object>,
   ) { }
 
   getOrCreate(context: PersonaContext): Observable<Node> {

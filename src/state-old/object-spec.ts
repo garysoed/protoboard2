@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
  *
  * @thModule core
  */
-export interface State<P extends object> {
+export interface ObjectSpec<P extends object> {
   /**
    * Identifies the object. Must be globally unique.
    */
