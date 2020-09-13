@@ -8,8 +8,8 @@ import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
 import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
-import { SavedState } from '../../src/state/saved-state';
-import { $stateService } from '../../src/state/state-service';
+import { SavedState } from '../../src/state-old/saved-state';
+import { $stateService } from '../../src/state-old/state-service';
 
 import template from './staging-area.html';
 import { $stagingService, GenericPiecePayload } from './staging-service';

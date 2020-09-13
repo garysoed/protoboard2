@@ -4,7 +4,7 @@ import { _v } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
-import { State } from '../state/state';
+import { State } from '../state-old/state';
 
 import { DroppablePayload } from './payload/droppable-payload';
 import { ShuffleAction } from './shuffle-action';

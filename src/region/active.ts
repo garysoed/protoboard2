@@ -8,7 +8,7 @@ import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { renderContents } from '../render/render-contents';
-import { registerStateHandler } from '../state/renderable-service';
+import { registerStateHandler } from '../state-old/renderable-service';
 
 import template from './active.html';
 

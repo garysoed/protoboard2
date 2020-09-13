@@ -2,7 +2,7 @@ import { PersonaContext } from 'persona';
 import { ReplaySubject } from 'rxjs';
 
 import { ActionContext } from '../../core/base-action';
-import { State } from '../../state/state';
+import { State } from '../../state-old/state';
 
 type PartialActionContext<P extends object> = Partial<ActionContext<P>> &
     {readonly personaContext: PersonaContext};

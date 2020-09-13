@@ -9,8 +9,8 @@ import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
-import { State } from '../state/state';
-import { $stateService } from '../state/state-service';
+import { State } from '../state-old/state';
+import { $stateService } from '../state-old/state-service';
 
 import { ActionContext, BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';

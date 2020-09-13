@@ -6,8 +6,8 @@ import { Converter, identity, json, Result, Serializable } from 'nabu';
 import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { SavedState } from '../../src/state/saved-state';
-import { $stateService, StateService } from '../../src/state/state-service';
+import { SavedState } from '../../src/state-old/saved-state';
+import { $stateService, StateService } from '../../src/state-old/state-service';
 
 
 const ID = 'save';

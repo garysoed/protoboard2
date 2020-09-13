@@ -5,8 +5,8 @@ import { PersonaTesterFactory } from 'persona/export/testing';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { createFakeStateService } from '../state/testing/fake-state-service';
-import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
+import { createFakeStateService } from '../state-old/testing/fake-state-service';
+import { registerFakeStateHandler } from '../state-old/testing/register-fake-state-handler';
 
 import { $, $active, Active, ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from './active';
 

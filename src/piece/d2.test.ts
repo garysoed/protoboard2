@@ -3,7 +3,7 @@ import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { tap } from 'rxjs/operators';
 
-import { $stateService } from '../state/state-service';
+import { $stateService } from '../state-old/state-service';
 
 import { $, D2, D2Payload } from './d2';
 

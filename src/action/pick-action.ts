@@ -5,7 +5,7 @@ import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
-import { $stateService } from '../state/state-service';
+import { $stateService } from '../state-old/state-service';
 
 import { DroppablePayload } from './payload/droppable-payload';
 import { moveObject } from './util/move-object';

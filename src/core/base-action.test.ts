@@ -5,7 +5,7 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { createFakeActionContext } from '../action/testing/fake-action-context';
-import { State } from '../state/state';
+import { State } from '../state-old/state';
 
 import { ActionContext, BaseAction } from './base-action';
 

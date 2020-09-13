@@ -5,9 +5,9 @@ import { PersonaTesterFactory } from 'persona/export/testing';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { $stateService } from '../state/state-service';
-import { createFakeStateService } from '../state/testing/fake-state-service';
-import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
+import { $stateService } from '../state-old/state-service';
+import { createFakeStateService } from '../state-old/testing/fake-state-service';
+import { registerFakeStateHandler } from '../state-old/testing/register-fake-state-handler';
 
 import { $, $deck, Deck, DeckPayload } from './deck';
 

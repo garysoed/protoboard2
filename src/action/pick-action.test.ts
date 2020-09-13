@@ -4,9 +4,9 @@ import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../region/active';
-import { State } from '../state/state';
-import { $stateService } from '../state/state-service';
-import { createFakeStateService } from '../state/testing/fake-state-service';
+import { State } from '../state-old/state';
+import { $stateService } from '../state-old/state-service';
+import { createFakeStateService } from '../state-old/testing/fake-state-service';
 
 import { DroppablePayload } from './payload/droppable-payload';
 import { PickAction } from './pick-action';

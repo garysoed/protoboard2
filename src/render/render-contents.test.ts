@@ -2,8 +2,8 @@ import { arrayThat, assert, createSpySubject, should, test } from 'gs-testing';
 import { createFakeContext } from 'persona/export/testing';
 import { Subject } from 'rxjs';
 
-import { createFakeStateService } from '../state/testing/fake-state-service';
-import { registerFakeStateHandler } from '../state/testing/register-fake-state-handler';
+import { createFakeStateService } from '../state-old/testing/fake-state-service';
+import { registerFakeStateHandler } from '../state-old/testing/register-fake-state-handler';
 
 import { renderContents } from './render-contents';
 
