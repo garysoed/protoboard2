@@ -6,8 +6,8 @@ import { tap, withLatestFrom } from 'rxjs/operators';
 
 import { $slot, Slot } from '../../src/region/slot';
 import { Supply } from '../../src/region/supply';
-import { registerObjectCreateSpec } from '../../src/state-old/object-service';
-import { Render } from '../../src/state-old/render';
+import { registerObjectCreateSpec } from '../../src/objects/object-service';
+import { Render } from '../../src/objects/render';
 
 import template from './play-area.html';
 import { ROOT_SLOT_TYPE } from './staging-area';

@@ -6,7 +6,7 @@ import { identity, json } from 'nabu';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { map, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { $objectSpecListId } from '../../src/state-old/object-spec-list';
+import { $objectSpecListId } from '../../src/objects/object-spec-list';
 
 
 const ID = 'save';

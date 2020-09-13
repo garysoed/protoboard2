@@ -2,7 +2,7 @@ import { mod } from 'gs-tools/export/math';
 import { combineLatest, Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
-import { ObjectSpec } from '../../state-old/object-spec';
+import { ObjectSpec } from '../../objects/object-spec';
 import { DroppablePayload } from '../payload/droppable-payload';
 
 

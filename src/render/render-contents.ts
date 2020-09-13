@@ -5,8 +5,8 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DroppablePayload } from '../action/payload/droppable-payload';
-import { $objectService } from '../state-old/object-service';
-import { ObjectSpec } from '../state-old/object-spec';
+import { $objectService } from '../objects/object-service';
+import { ObjectSpec } from '../objects/object-spec';
 
 
 export function renderContents(

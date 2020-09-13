@@ -9,8 +9,8 @@ import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
-import { ObjectSpec } from '../state-old/object-spec';
-import { $objectSpecMap } from '../state-old/object-spec-list';
+import { ObjectSpec } from '../objects/object-spec';
+import { $objectSpecMap } from '../objects/object-spec-list';
 
 import { ActionContext, BaseAction } from './base-action';
 import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';

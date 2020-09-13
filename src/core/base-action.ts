@@ -6,7 +6,7 @@ import { host, onMutation, PersonaContext } from 'persona';
 import { Observable, Subject } from 'rxjs';
 import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
 
-import { ObjectSpec } from '../state-old/object-spec';
+import { ObjectSpec } from '../objects/object-spec';
 
 
 export interface ActionContext<P extends object> {

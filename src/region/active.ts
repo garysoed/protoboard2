@@ -7,8 +7,8 @@ import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DroppablePayload } from '../action/payload/droppable-payload';
 import { $baseComponent, BaseComponent } from '../core/base-component';
+import { registerObjectCreateSpec } from '../objects/object-service';
 import { renderContents } from '../render/render-contents';
-import { registerObjectCreateSpec } from '../state-old/object-service';
 
 import template from './active.html';
 

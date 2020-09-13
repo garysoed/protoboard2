@@ -13,7 +13,7 @@ import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
-import { $objectService } from '../state-old/object-service';
+import { $objectService } from '../objects/object-service';
 
 import template from './deck.html';
 

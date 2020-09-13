@@ -6,7 +6,7 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, NEVER, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SavedState } from '../../src/state-old/saved-state';
+import { SavedState } from '../../src/objects/saved-state';
 
 import template from './staging-area.html';
 import { $stagingService, GenericPiecePayload } from './staging-service';
