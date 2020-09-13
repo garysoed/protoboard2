@@ -54,7 +54,7 @@ export class StagingService {
     return $objectService.get(this.vine).pipe(
         switchMap(renderableService => renderableService.objectIds$),
         tap(objectIds => {
-          const id = this.idGenerator.generate(objectIds);
+          const id = `object-${this.idGenerator.generate(objectIds)}`;
           const state = {
             type: objectType,
             id,

@@ -92,7 +92,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
     ])
     .pipe(
         map(([objectId, objectSpecMap]) => {
-          return objectSpecMap.get(objectId) as ObjectSpec<P>;
+          return objectSpecMap.get(objectId) as ObjectSpec<P>|null;
         }),
     );
   }

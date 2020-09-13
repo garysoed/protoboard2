@@ -49,9 +49,9 @@ class ObjectService {
   @cache()
   private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
     return combineLatest([$stateHandlers.get(this.vine), $objectSpecMap.get(this.vine)]).pipe(
-        map(([stateHandlers, statesMap]) => {
+        map(([stateHandlers, objectSpecMap]) => {
           return $pipe(
-              statesMap,
+              objectSpecMap,
               $map(([id, state]) => {
                 const handler = stateHandlers.get(state.type);
                 if (!handler) {

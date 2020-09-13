@@ -1,5 +1,5 @@
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { PALETTE, registerSvg, start, Theme, $stateService } from 'mask';
+import { $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
@@ -41,15 +41,16 @@ window.addEventListener('load', () => {
       .pipe(switchMap(saveService => saveService.run()))
       .subscribe();
 
-  $saveService.get(vine)
-      .pipe(
-          switchMap(service => service.savedState$),
-          take(1),
-          filterNonNull(),
-          withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
-      )
-      .subscribe(([state, stateService, stagingService]) => {
-        stateService.init(state);
-        stagingService.setStaging(false);
-      });
+      // TODO
+  // $saveService.get(vine)
+  //     .pipe(
+  //         switchMap(service => service.savedState$),
+  //         take(1),
+  //         filterNonNull(),
+  //         withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
+  //     )
+  //     .subscribe(([state, stateService, stagingService]) => {
+  //       stateService.init(state);
+  //       stagingService.setStaging(false);
+  //     });
 });

@@ -122,7 +122,6 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 };
 
                 // User defined object specs.
-                // TODO: DO NOT USE THE ANY
                 const userDefinedObjectSpecs: Array<ObjectSpec<GenericPiecePayload>> = [];
                 for (const spec of specs) {
                   const $contentIds = stateService.add<readonly string[]>([]);
@@ -140,6 +139,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                     ...rootSlotObjectSpecs,
                     supplyObjectSpec,
                     activeObjectSpec,
+                    ...userDefinedObjectSpecs,
                   ],
                 };
                 const rootId = stateService.add(root);

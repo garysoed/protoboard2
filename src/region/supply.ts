@@ -14,7 +14,7 @@ import { renderContents } from '../render/render-contents';
 
 import template from './supply.html';
 
-
+// TODO: Should only be for demo.
 /**
  * Type of the supply region.
  *
