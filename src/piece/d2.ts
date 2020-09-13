@@ -2,7 +2,7 @@ import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
+import { NEVER, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
@@ -73,15 +73,17 @@ export class D2 extends BaseComponent<D2Payload> {
 
   @cache()
   private get faceName$(): Observable<string> {
-    return this.objectSpec$.pipe(
-        switchMap(state => {
-          if (!state) {
-            return observableOf(0);
-          }
+    // TODO
+    return NEVER;
+    // return this.objectSpec$.pipe(
+    //     switchMap(state => {
+    //       if (!state) {
+    //         return observableOf(0);
+    //       }
 
-          return state.payload.faceIndex;
-        }),
-        map(index => `face-${index}`),
-    );
+    //       return state.payload.faceIndex;
+    //     }),
+    //     map(index => `face-${index}`),
+    // );
   }
 }

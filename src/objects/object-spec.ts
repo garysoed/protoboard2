@@ -1,6 +1,3 @@
-import { Subject } from 'rxjs';
-
-
 /**
  * State of a game during its runtime.
  *
@@ -20,5 +17,5 @@ export interface ObjectSpec<P extends object> {
   /**
    * Used to generate the object.
    */
-  readonly payload: {readonly [K in keyof P]: Subject<P[K]>};
+  readonly payload: P;
 }

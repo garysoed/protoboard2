@@ -6,12 +6,9 @@ import { renderCustomElement, renderElement } from 'persona';
 import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
-import { DroppablePayload } from '../../src/action/payload/droppable-payload';
-import { OrientablePayload } from '../../src/action/payload/orientable-payload';
-import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
 import { $objectService, registerObjectCreateSpec } from '../../src/objects/object-service';
-import { SavedState } from '../../src/objects/saved-state';
+import { ObjectSpec } from '../../src/objects/object-spec';
 
 import { PieceSpec } from './piece-spec';
 import { $saveService, SaveService } from './save-service';
@@ -19,13 +16,9 @@ import { $saveService, SaveService } from './save-service';
 
 const DEMO_PREVIEW_TYPE = 'pbd-demo';
 
-export interface GenericPiecePayload extends
-    PieceSpec, OrientablePayload, RotatablePayload, DroppablePayload {
-}
-
 export class StagingService {
   readonly #isStaging$ = new BehaviorSubject(true);
-  readonly #states$ = new BehaviorSubject<ReadonlySet<SavedState<object>>>(new Set());
+  readonly #states$ = new BehaviorSubject<ReadonlySet<ObjectSpec<PieceSpec>>>(new Set());
   private readonly idGenerator = new SimpleIdGenerator();
 
   get isStaging$(): Observable<boolean> {
@@ -33,7 +26,7 @@ export class StagingService {
   }
 
   @cache()
-  get states$(): Observable<ReadonlySet<SavedState<object>>> {
+  get states$(): Observable<ReadonlySet<ObjectSpec<PieceSpec>>> {
     return this.#states$;
   }
 
@@ -62,16 +55,10 @@ export class StagingService {
         switchMap(renderableService => renderableService.objectIds$),
         tap(objectIds => {
           const id = this.idGenerator.generate(objectIds);
-          const payload: GenericPiecePayload = {
-            ...pieceSpec,
-            faceIndex: 0,
-            rotationIndex: 0,
-            contentIds: [],
-          };
           const state = {
             type: objectType,
             id,
-            payload,
+            payload: pieceSpec,
           };
           const states = this.#states$.getValue();
           this.#states$.next(new Set([...states, state]));
@@ -84,35 +71,26 @@ export class StagingService {
     registerObjectCreateSpec<PieceSpec>(
         DEMO_PREVIEW_TYPE,
         (state, context) => {
-          const icon$ = state.payload.icons.pipe(
-              switchMap(icons => {
-                const icon$list = icons.map((icon, index) => renderCustomElement(
-                    $icon,
-                    {
-                      inputs: {icon: observableOf(icon)},
-                      attrs: new Map([
-                        ['slot', observableOf(`face-${index}`)],
-                      ]),
-                    },
-                    context,
-                ));
+          const icon$list = state.payload.icons.map((icon, index) => renderCustomElement(
+              $icon,
+              {
+                inputs: {icon: observableOf(icon)},
+                attrs: new Map([
+                  ['slot', observableOf(`face-${index}`)],
+                ]),
+              },
+              context,
+          ));
 
-                return icon$list.length <= 0 ? observableOf([]) : combineLatest(icon$list);
-              }),
-          );
-          return state.payload.componentTag.pipe(
-              switchMap(componentTag => {
-                return renderElement(
-                    componentTag,
-                    {
-                      children: icon$,
-                      attrs: new Map([
-                        [$baseComponent.api.objectId.attrName, observableOf(state.id)],
-                      ]),
-                    },
-                    context,
-                );
-              }),
+          return renderElement(
+              state.payload.componentTag,
+              {
+                children: icon$list.length <= 0 ? observableOf([]) : combineLatest(icon$list),
+                attrs: new Map([
+                  [$baseComponent.api.objectId.attrName, observableOf(state.id)],
+                ]),
+              },
+              context,
           );
         },
         this.vine,

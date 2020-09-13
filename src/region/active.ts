@@ -110,11 +110,12 @@ export class Active extends BaseComponent<ActivePayload> {
   private get contentIds$(): Observable<readonly string[]> {
     return this.objectSpec$.pipe(
         switchMap(state => {
-          if (!state) {
+          // TODO
+          // if (!state) {
             return observableOf([]);
-          }
+          // }
 
-          return state.payload.contentIds;
+          // return state.payload.contentIds;
         }),
     );
   }

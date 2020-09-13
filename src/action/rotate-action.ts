@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { identity } from 'nabu';
 import { listParser } from 'persona';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, NEVER, Observable } from 'rxjs';
 import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
@@ -44,7 +44,8 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
         map(([, state]) => state.payload.rotationIndex),
         withLatestFrom(this.rotationIndex$, this.stops$),
         tap(([rotationIndex$, rotationIndex, stops]) => {
-          rotationIndex$.next((rotationIndex + 1) % stops.length);
+          // TODO
+          // rotationIndex$.next((rotationIndex + 1) % stops.length);
         }),
     );
   }
@@ -68,9 +69,11 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
 
   @cache()
   private get rotationIndex$(): Observable<number> {
-    return this.context.state$.pipe(
-        switchMap(state => state.payload.rotationIndex),
-    );
+    // TODO
+    return NEVER;
+    // return this.context.state$.pipe(
+    //     switchMap(state => state.payload.rotationIndex),
+    // );
   }
 
   @cache()

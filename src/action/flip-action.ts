@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { integerParser } from 'persona';
-import { Observable } from 'rxjs';
+import { NEVER, Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
@@ -43,18 +43,19 @@ export class FlipAction extends BaseAction<OrientablePayload, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const faceIndex$$ = this.context.state$.pipe(
-        map(state => state.payload.faceIndex),
-    );
+    return NEVER;
+    // const faceIndex$$ = this.context.state$.pipe(
+    //     map(state => state.payload.faceIndex),
+    // );
 
-    const faceIndex$ = faceIndex$$.pipe(switchMap(faceIndex$ => faceIndex$));
+    // const faceIndex$ = faceIndex$$.pipe(switchMap(faceIndex$ => faceIndex$));
 
-    return this.onTrigger$.pipe(
-        withLatestFrom(faceIndex$$, faceIndex$, this.faceCount$),
-        tap(([, faceIndex$, faceIndex, faceCount]) => {
-          faceIndex$.next((faceIndex + Math.floor(faceCount / 2)) % faceCount);
-        }),
-    );
+    // return this.onTrigger$.pipe(
+    //     withLatestFrom(faceIndex$$, faceIndex$, this.faceCount$),
+    //     tap(([, faceIndex$, faceIndex, faceCount]) => {
+    //       faceIndex$.next((faceIndex + Math.floor(faceCount / 2)) % faceCount);
+    //     }),
+    // );
   }
 
   @cache()

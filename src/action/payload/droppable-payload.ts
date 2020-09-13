@@ -1,3 +1,4 @@
-export interface DroppablePayload {
-  readonly contentIds: readonly string[];
-}
+import { IsContainer } from './is-container';
+
+// TODO Delete
+export type DroppablePayload = IsContainer;

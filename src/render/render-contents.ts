@@ -13,22 +13,23 @@ export function renderContents(
     state: ObjectSpec<DroppablePayload>|null,
     context: PersonaContext,
 ): Observable<readonly Node[]> {
-  if (!state) {
+  // TODO
+  // if (!state) {
     return observableOf([]);
-  }
+  // }
 
-  return state.payload.contentIds.pipe(
-      withLatestFrom($objectService.get(context.vine)),
-      switchMap(([contentIds, renderableService]) => {
-        const node$list = $pipe(
-            contentIds,
-            $map(id => renderableService.getObject(id, context).pipe(filterNonNull())),
-            $filterNonNull(),
-            $asArray(),
-        );
+  // return state.payload.contentIds.pipe(
+  //     withLatestFrom($objectService.get(context.vine)),
+  //     switchMap(([contentIds, renderableService]) => {
+  //       const node$list = $pipe(
+  //           contentIds,
+  //           $map(id => renderableService.getObject(id, context).pipe(filterNonNull())),
+  //           $filterNonNull(),
+  //           $asArray(),
+  //       );
 
-        return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
-      }),
-  );
+  //       return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+  //     }),
+  // );
 }
 

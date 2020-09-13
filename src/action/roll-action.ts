@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { integerParser } from 'persona';
-import { Observable } from 'rxjs';
+import { NEVER, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
@@ -34,18 +34,20 @@ export class RollAction extends BaseAction<OrientablePayload, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const faceIndex$$ = this.context.state$.pipe(
-        map(state => state.payload.faceIndex),
-    );
+    return NEVER;
+    // TODO
+    // const faceIndex$$ = this.context.state$.pipe(
+    //     map(state => state.payload.faceIndex),
+    // );
 
-    return this.onTrigger$.pipe(
-        withLatestFrom(this.faceCount$, faceIndex$$, $random.get(this.context.personaContext.vine)),
-        map(([, count, faceIndex$, random]) => {
-          const randomValue = random.next();
-          const nextIndex = Math.floor(randomValue * count);
-          faceIndex$.next(nextIndex);
-        }),
-    );
+    // return this.onTrigger$.pipe(
+    //     withLatestFrom(this.faceCount$, faceIndex$$, $random.get(this.context.personaContext.vine)),
+    //     map(([, count, faceIndex$, random]) => {
+    //       const randomValue = random.next();
+    //       const nextIndex = Math.floor(randomValue * count);
+    //       faceIndex$.next(nextIndex);
+    //     }),
+    // );
   }
 
   @cache()

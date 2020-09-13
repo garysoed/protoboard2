@@ -1,16 +1,28 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
+import { $button, $lineLayout, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
-import { combineLatest, NEVER, Observable, of as observableOf } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { SavedState } from '../../src/objects/saved-state';
+import { DroppablePayload } from '../../src/action/payload/droppable-payload';
+import { IsContainer } from '../../src/action/payload/is-container';
+import { OrientablePayload } from '../../src/action/payload/orientable-payload';
+import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
+import { ObjectSpec } from '../../src/objects/object-spec';
+import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
+import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
+import { SUPPLY_ID, SUPPLY_TYPE } from '../../src/region/supply';
 
+import { PieceSpec } from './piece-spec';
 import template from './staging-area.html';
-import { $stagingService, GenericPiecePayload } from './staging-service';
+import { $stagingService } from './staging-service';
 
+
+export interface GenericPiecePayload extends
+    PieceSpec, OrientablePayload, RotatablePayload, DroppablePayload {
+}
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
 export const ROOT_SLOT_TYPE = 'pbd.root-slot';
@@ -51,7 +63,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
           const node$List = $pipe(
               states,
               $map(state => {
-                const payload = (state as SavedState<GenericPiecePayload>).payload;
+                const payload = (state as ObjectSpec<GenericPiecePayload>).payload;
                 const label = `${payload.componentTag.substr(3)}: ${payload.icons.join(', ')}`;
 
                 return renderCustomElement(
@@ -70,39 +82,73 @@ export class StagingArea extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleStartAction$(): Observable<unknown> {
-    return NEVER;
-    // return this.declareInput($.startButton._.actionEvent).pipe(
-    //     withLatestFrom($stagingService.get(this.vine)),
-    //     switchMap(([, stagingService]) => {
-    //       return stagingService.states$.pipe(
-    //           take(1),
-    //           withLatestFrom($stateService.get(this.vine)),
-    //           tap(([states, stateService]) => {
-    //             const rootSlots = [];
-    //             for (let i = 0; i < 9; i++) {
-    //               rootSlots.push({
-    //                 id: `${ROOT_SLOT_PREFIX}${i}`,
-    //                 type: ROOT_SLOT_TYPE,
-    //                 payload: {contentIds: []},
-    //               });
-    //             }
+    return this.declareInput($.startButton._.actionEvent).pipe(
+        withLatestFrom($stagingService.get(this.vine)),
+        switchMap(([, stagingService]) => {
+          return stagingService.states$.pipe(
+              take(1),
+              withLatestFrom($stateService.get(this.vine)),
+              tap(([specs, stateService]) => {
+                stateService.clear();
 
-    //             const supplyContentIds = $pipe(
-    //                 states,
-    //                 $map(({id}) => id),
-    //                 $asArray(),
-    //             );
+                // Add the root slot specs.
+                const rootSlotObjectSpecs: Array<ObjectSpec<IsContainer>> = [];
+                for (let i = 0; i < 9; i++) {
+                  const $contentIds = stateService.add<readonly string[]>([]);
+                  rootSlotObjectSpecs.push({
+                    id: `${ROOT_SLOT_PREFIX}${i}`,
+                    type: ROOT_SLOT_TYPE,
+                    payload: {$contentIds},
+                  });
+                }
 
-    //             stateService.setStates(new Set([
-    //               ...rootSlots,
-    //               ...states,
-    //               {id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}},
-    //               {id: SUPPLY_ID, type: SUPPLY_TYPE, payload: {contentIds: supplyContentIds}},
-    //             ]));
-    //             stagingService.setStaging(false);
-    //           }),
-    //       );
-    //     }),
-    // );
+                // Add the supply specs.
+                const $supplyContentIds = stateService.add<readonly string[]>($pipe(
+                    specs,
+                    $map(({id}) => id),
+                    $asArray(),
+                ));
+                const supplyObjectSpec: ObjectSpec<IsContainer> = {
+                  id: SUPPLY_ID,
+                  type: SUPPLY_TYPE,
+                  payload: {$contentIds: $supplyContentIds},
+                };
+
+                // Add the active specs.
+                const $activeContentIds = stateService.add<readonly string[]>([]);
+                const activeObjectSpec: ObjectSpec<IsContainer> = {
+                  id: ACTIVE_ID,
+                  type: ACTIVE_TYPE,
+                  payload: {$contentIds: $activeContentIds},
+                };
+
+                // User defined object specs.
+                // TODO: DO NOT USE THE ANY
+                const userDefinedObjectSpecs: Array<ObjectSpec<GenericPiecePayload>> = [];
+                for (const spec of specs) {
+                  const $contentIds = stateService.add<readonly string[]>([]);
+                  const payload: GenericPiecePayload = {
+                    ...spec.payload,
+                    faceIndex: 0,
+                    rotationIndex: 0,
+                    $contentIds,
+                  };
+                  userDefinedObjectSpecs.push({...spec, payload});
+                }
+
+                const root: HasObjectSpecList = {
+                  objectSpecs: [
+                    ...rootSlotObjectSpecs,
+                    supplyObjectSpec,
+                    activeObjectSpec,
+                  ],
+                };
+                const rootId = stateService.add(root);
+                $objectSpecListId.set(this.vine, () => rootId);
+                stagingService.setStaging(false);
+              }),
+          );
+        }),
+    );
   }
 }
