@@ -1,8 +1,8 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, host, onDom, PersonaContext, stringParser } from 'persona';
-import { Observable } from 'rxjs';
+import { attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser } from 'persona';
+import { Observable, of as observableOf } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import template from './piece-button.html';
@@ -19,7 +19,10 @@ export const $pieceButton = {
 };
 
 const $ = {
-  host: host($pieceButton.api),
+  host: host({
+    ...$pieceButton.api,
+    mkAction: setAttribute('mk-action-2'),
+  }),
   icon: element('icon', $icon, {}),
   root: element('root', instanceofType(HTMLDivElement), {
     onClick: onDom('click'),
@@ -36,6 +39,7 @@ export class PieceButton extends ThemedCustomElementCtrl {
 
     this.render($.icon._.icon, this.declareInput($.host._.icon));
     this.render($.host._.onClick, this.onClick$);
+    this.render($.host._.mkAction, observableOf(true));
   }
 
   @cache()

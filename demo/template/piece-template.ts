@@ -145,10 +145,15 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
                 inputs: {
                   icon: icon$,
                   index: observableOf(index),
-                  selected: this.selectedIndex$.pipe(
-                      map(selectedIndex => selectedIndex === index),
-                  ),
                 },
+                attrs: new Map([
+                  [
+                    'mk-theme-highlight',
+                    this.selectedIndex$.pipe(
+                        map(selectedIndex => selectedIndex === index ? '' : null),
+                    ),
+                  ],
+                ]),
               },
               this.context,
           ));

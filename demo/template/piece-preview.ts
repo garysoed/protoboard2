@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, dispatcher, element, host, integerParser, onDom, PersonaContext, stringParser } from 'persona';
+import { attributeIn, dispatcher, element, host, integerParser, onDom, PersonaContext, stringParser } from 'persona';
 import { EMPTY, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
@@ -16,7 +16,6 @@ export const $piecePreview = {
     icon: attributeIn('icon', stringParser(), ''),
     index: attributeIn('index', integerParser()),
     onClick: dispatcher<ClickEvent>(ACTION_EVENT),
-    selected: attributeIn('selected', booleanParser(), false),
   },
 };
 
