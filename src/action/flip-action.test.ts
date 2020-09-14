@@ -1,72 +1,81 @@
-// TODO
-// import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
-// import { _v } from 'mask';
-// import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
-// import { of as observableOf, ReplaySubject } from 'rxjs';
+import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
+import { StateService } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
 
-// import { FlipAction } from './flip-action';
-// import { createFakeActionContext } from './testing/fake-action-context';
+import { $objectSpecListId } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+
+import { FlipAction } from './flip-action';
+import { IsMultifaced } from './payload/is-multifaced';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
-// test('@protoboard2/action/flip-action', init => {
-//   const _ = init(() => {
-//     runEnvironment(new PersonaTesterEnvironment());
+test('@protoboard2/action/flip-action', init => {
+  const TARGET_ID = 'TARGET_ID';
 
-//     const el = document.createElement('div');
-//     const shadowRoot = el.attachShadow({mode: 'open'});
-//     const personaContext = createFakeContext({shadowRoot});
-//     const faceIndex$ = new ReplaySubject<number>(1);
-//     const state$ = {
-//       id: 'objectId',
-//       type: 'objectType',
-//       payload: {faceIndex: faceIndex$},
-//     };
+  const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
 
-//     const action = new FlipAction(
-//         createFakeActionContext({
-//           host$: observableOf(el),
-//           personaContext,
-//           state$: observableOf(state$),
-//         }),
-//         {count: 2},
-//     );
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const personaContext = createFakeContext({shadowRoot});
 
-//     run(action.run());
+    const stateService = new StateService();
+    $stateService.set(personaContext.vine, () => stateService);
 
-//     return {action, personaContext, el, faceIndex$};
-//   });
+    const builder = fakeObjectSpecListBuilder();
+    const $faceIndex = stateService.add(2);
+    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$faceIndex}});
 
-//   test('handleTrigger', () => {
-//     should(`increase the face by 1`, () => {
-//       _.faceIndex$.next(0);
+    const $rootId = stateService.add(builder.build());
+    $objectSpecListId.set(personaContext.vine, () => $rootId);
 
-//       _.action.trigger();
+    const action = new FlipAction(
+        createFakeActionContext({
+          personaContext,
+          objectId$: observableOf(TARGET_ID),
+        }),
+        {count: 4},
+    );
 
-//       assert(_.faceIndex$).to.emitWith(1);
-//     });
+    run(action.run());
 
-//     should(`wrap the face index by the count`, () => {
-//       _.faceIndex$.next(1);
+    return {$faceIndex, action, el, personaContext, stateService};
+  });
 
-//       const faceIndex$ = createSpySubject(_.faceIndex$);
+  test('handleTrigger', () => {
+    should(`increase the face by half the face count`, () => {
+      _.stateService.set(_.$faceIndex, 1);
 
-//       _.action.trigger();
-//       _.action.trigger();
+      _.action.trigger();
 
-//       assert(faceIndex$).to.emitSequence([1, 0, 1]);
-//     });
+      assert(_.stateService.get(_.$faceIndex)).to.emitWith(3);
+    });
 
-//     should(`use the config object`, () => {
-//       _.faceIndex$.next(1);
+    should(`wrap the face index by the count`, () => {
+      _.stateService.set(_.$faceIndex, 1);
 
-//       _.el.setAttribute('pb-flip-count', '4');
+      const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
 
-//       const faceIndex$ = createSpySubject(_.faceIndex$);
+      _.action.trigger();
+      _.action.trigger();
 
-//       _.action.trigger();
-//       _.action.trigger();
+      assert(faceIndex$).to.emitSequence([1, 3, 1]);
+    });
 
-//       assert(faceIndex$).to.emitSequence([1, 3, 1]);
-//     });
-//   });
-// });
+    should(`use the config object`, () => {
+      _.stateService.set(_.$faceIndex, 1);
+
+      _.el.setAttribute('pb-flip-count', '6');
+
+      const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
+
+      _.action.trigger();
+      _.action.trigger();
+
+      assert(faceIndex$).to.emitSequence([1, 4, 1]);
+    });
+  });
+});

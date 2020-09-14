@@ -1,6 +1,6 @@
 import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
-import { switchMap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
@@ -57,6 +57,7 @@ export class DropAction extends BaseAction<IsContainer, Config> {
                   this.context.personaContext.vine,
               );
             }),
+            take(1),
         );
   }
 }
