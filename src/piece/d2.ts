@@ -6,7 +6,7 @@ import { NEVER, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
-import { OrientablePayload } from '../action/payload/orientable-payload';
+import { OrientablePayload as IsMultifaced } from '../action/payload/is-multifaced';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
@@ -34,7 +34,7 @@ export const $ = {
   }),
 };
 
-export interface D2Payload extends OrientablePayload, RotatablePayload {
+export interface D2Payload extends IsMultifaced, RotatablePayload {
 
 }
 

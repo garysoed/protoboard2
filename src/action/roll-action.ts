@@ -5,7 +5,7 @@ import { map, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { OrientablePayload } from './payload/orientable-payload';
+import { IsMultifaced } from './payload/is-multifaced';
 import { $random } from './util/random';
 
 
@@ -16,7 +16,7 @@ interface Config {
 /**
  * Lets the user pick a random face of the object
  */
-export class RollAction extends BaseAction<OrientablePayload, Config> {
+export class RollAction extends BaseAction<IsMultifaced, Config> {
   constructor(
       context: ActionContext,
       defaultConfig: Config,

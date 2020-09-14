@@ -6,7 +6,7 @@ import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { OrientablePayload } from './payload/orientable-payload';
+import { IsMultifaced } from './payload/is-multifaced';
 
 const LOGGER = new Logger('pb.FlipAction');
 
@@ -25,7 +25,7 @@ export const KEY = 'flip';
  *
  * @thModule action
  */
-export class FlipAction extends BaseAction<OrientablePayload, Config> {
+export class FlipAction extends BaseAction<IsMultifaced, Config> {
   constructor(
       context: ActionContext,
       defaultConfig: Config,

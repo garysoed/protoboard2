@@ -7,7 +7,7 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../../src/action/payload/is-container';
-import { OrientablePayload } from '../../src/action/payload/orientable-payload';
+import { IsMultifaced } from '../../src/action/payload/is-multifaced';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
 import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
@@ -22,7 +22,7 @@ import { SUPPLY_ID } from './supply';
 
 
 export interface GenericPiecePayload extends
-    PieceSpec, OrientablePayload, RotatablePayload, IsContainer {
+    PieceSpec, IsMultifaced, RotatablePayload, IsContainer {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
