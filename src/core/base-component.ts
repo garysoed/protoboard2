@@ -1,6 +1,5 @@
 import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { filterNonNull } from 'gs-tools/export/rxjs';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
 import { Input } from 'persona/export/internal';
@@ -20,7 +19,7 @@ const LOG = new Logger('protoboard.core.BaseComponent');
 
 
 export type BaseActionCtor<P extends object, Q extends P> =
-    (context: ActionContext<P>) => BaseAction<Q>;
+    (context: ActionContext) => BaseAction<Q>;
 
 export const $baseComponent = {
   api: {
@@ -51,7 +50,6 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
       host$: host({}).getValue(this.context),
       personaContext: this.context,
       objectId$: this.objectId$,
-      state$: this.objectSpec$.pipe(filterNonNull()),
     };
     const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
         this.triggerActionMap,
@@ -92,7 +90,7 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
     ])
     .pipe(
         map(([objectId, objectSpecMap]) => {
-          return objectSpecMap.get(objectId) as ObjectSpec<P>|null;
+          return (objectSpecMap.get(objectId) || null) as ObjectSpec<P>|null;
         }),
     );
   }

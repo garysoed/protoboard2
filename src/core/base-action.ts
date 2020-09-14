@@ -3,16 +3,17 @@ import { cache } from 'gs-tools/export/data';
 import { Runnable } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { host, onMutation, PersonaContext } from 'persona';
-import { Observable, Subject } from 'rxjs';
-import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { map, scan, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { $objectService } from '../objects/object-service';
 import { ObjectSpec } from '../objects/object-spec';
 
 
-export interface ActionContext<P extends object> {
+export interface ActionContext {
   readonly host$: Observable<Element>;
   readonly personaContext: PersonaContext;
-  readonly state$: Observable<ObjectSpec<P>>;
+  readonly objectId$: Observable<string>;
 }
 
 /**
@@ -24,11 +25,6 @@ export type ConverterOf<O> = {
   readonly [K in keyof O]: Converter<O[K], string>;
 };
 
-const $ = {
-  host: host({
-    onMutation: onMutation({attributes: true}),
-  }),
-};
 
 /**
  * Base class of all actions.
@@ -52,17 +48,10 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
       readonly key: string,
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly context: ActionContext<P>,
+      protected readonly context: ActionContext,
       private readonly defaultConfig: C,
   ) {
     super();
-  }
-
-  /**
-   * Triggers the action.
-   */
-  trigger(): void {
-    this.#onTrigger$.next();
   }
 
   /**
@@ -70,7 +59,6 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
    */
   @cache()
   get config$(): Observable<C> {
-    const shadowRoot = this.context.personaContext.shadowRoot;
     const attributePrefix = `pb-${this.key}-`;
     const attributeFilter = Object.keys(this.actionConfigConverters)
         .map(configKey => `${attributePrefix}${configKey}`);
@@ -120,7 +108,27 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
   /**
    * Emits whenever the action is triggered.
    */
+  @cache()
   get onTrigger$(): Observable<unknown> {
     return this.#onTrigger$;
+  }
+
+  @cache()
+  get objectSpec$(): Observable<ObjectSpec<P>|null> {
+    return combineLatest([
+      $objectService.get(this.context.personaContext.vine),
+      this.context.objectId$,
+    ])
+    .pipe(
+        switchMap(([service, objectId]) => service.getObjectSpec(objectId)),
+        map(spec => spec as ObjectSpec<P>|null),
+    );
+  }
+
+  /**
+   * Triggers the action.
+   */
+  trigger(): void {
+    this.#onTrigger$.next();
   }
 }

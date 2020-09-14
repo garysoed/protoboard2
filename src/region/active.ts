@@ -7,18 +7,11 @@ import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { registerObjectCreateSpec } from '../objects/object-service';
+import { ObjectSpec } from '../objects/object-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './active.html';
 
-
-/**
- * Type of the active region.
- *
- * @thModule region
- */
-export const ACTIVE_TYPE = 'pb.active';
 
 /**
  * ID of the object representing the active region.
@@ -71,19 +64,6 @@ export interface ActivePayload extends IsContainer { }
 @_p.customElement({
   ...$active,
   template,
-  configure: vine => {
-    registerObjectCreateSpec<ActivePayload>(
-        ACTIVE_TYPE,
-        (state, context) => {
-          return renderCustomElement(
-              $active,
-              {inputs: {objectId: observableOf(state.id)}},
-              context,
-          );
-        },
-        vine,
-    );
-  },
 })
 export class Active extends BaseComponent<ActivePayload> {
   private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
@@ -182,4 +162,15 @@ function computeRect(element: ElementWithRect): Rect {
   element[__rect] = rect;
 
   return rect;
+}
+
+export function renderActive(
+    spec: ObjectSpec<ActivePayload>,
+    context: PersonaContext,
+): Observable<Node> {
+  return renderCustomElement(
+      $active,
+      {inputs: {objectId: observableOf(spec.id)}},
+      context,
+  );
 }

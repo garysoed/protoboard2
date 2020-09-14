@@ -9,7 +9,7 @@ import { $helpService } from './help-service';
 
 export class HelpAction extends BaseAction<{}> {
   constructor(
-      context: ActionContext<{}>,
+      context: ActionContext,
       private readonly actions: ReadonlyMap<TriggerSpec, BaseAction<object>>,
   ) {
     super(

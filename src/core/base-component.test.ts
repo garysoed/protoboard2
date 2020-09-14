@@ -13,7 +13,7 @@ const ACTION_KEY = 'test';
 class TestAction extends BaseAction<{}> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: ActionContext<{}>) {
+  constructor(context: ActionContext) {
     super(ACTION_KEY, 'Test', {}, context, {});
   }
 

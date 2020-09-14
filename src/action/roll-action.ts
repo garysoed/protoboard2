@@ -18,7 +18,7 @@ interface Config {
  */
 export class RollAction extends BaseAction<OrientablePayload, Config> {
   constructor(
-      context: ActionContext<OrientablePayload>,
+      context: ActionContext,
       defaultConfig: Config,
   ) {
     super(

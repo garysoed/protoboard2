@@ -1,15 +1,13 @@
 import { cache } from 'gs-tools/export/data';
 import { $button, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
-import { element, PersonaContext, renderCustomElement } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
+import { element, PersonaContext } from 'persona';
+import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
 
-import { registerObjectCreateSpec } from '../../src/objects/object-service';
 import { Render } from '../../src/objects/render';
-import { $slot, Slot } from '../../src/region/slot';
+import { Slot } from '../../src/region/slot';
 
 import template from './play-area.html';
-import { ROOT_SLOT_TYPE } from './staging-area';
 import { $stagingService } from './staging-service';
 
 
@@ -24,19 +22,6 @@ const $ = {
     Render,
     Slot,
   ],
-  configure: vine => {
-    registerObjectCreateSpec(
-        ROOT_SLOT_TYPE,
-        (state, context) => {
-          return renderCustomElement(
-              $slot,
-              {inputs: {objectId: observableOf(state.id)}},
-              context,
-          );
-        },
-        vine,
-    );
-  },
   tag: 'pbd-play-area',
   template,
   api: {},

@@ -9,7 +9,7 @@ import { ObjectSpec } from './object-spec';
 
 
 export interface HasObjectSpecList {
-  readonly objectSpecs: ReadonlyArray<ObjectSpec<object>>;
+  readonly objectSpecs: ReadonlyArray<ObjectSpec<any>>;
 }
 
 export const $objectSpecListId = source<StateId<HasObjectSpecList>|null>(
@@ -17,7 +17,7 @@ export const $objectSpecListId = source<StateId<HasObjectSpecList>|null>(
     () => null,
 );
 
-export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<object>>, typeof globalThis>(
+export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>, typeof globalThis>(
     'objectSpecMap',
     vine => combineLatest([$objectSpecListId.get(vine), $stateService.get(vine)]).pipe(
         switchMap(([objectSpecId, stateService]) => {
@@ -34,7 +34,7 @@ export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<object>>, ty
 
           return $pipe(
               hasObjectSpecList.objectSpecs,
-              $map(spec => ([spec.id, spec] as [string, ObjectSpec<object>])),
+              $map(spec => ([spec.id, spec] as [string, ObjectSpec<any>])),
               $asMap(),
           );
         }),

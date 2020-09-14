@@ -23,7 +23,7 @@ interface Config {
  */
 export class RotateAction extends BaseAction<RotatablePayload, Config> {
   constructor(
-      context: ActionContext<RotatablePayload>,
+      context: ActionContext,
       defaultConfig: Config,
   ) {
     super(
@@ -39,15 +39,16 @@ export class RotateAction extends BaseAction<RotatablePayload, Config> {
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    return this.onTrigger$.pipe(
-        withLatestFrom(this.context.state$),
-        map(([, state]) => state.payload.rotationIndex),
-        withLatestFrom(this.rotationIndex$, this.stops$),
-        tap(([rotationIndex$, rotationIndex, stops]) => {
+    return NEVER;
+    // return this.onTrigger$.pipe(
+    //     withLatestFrom(this.context.state$),
+    //     map(([, state]) => state.payload.rotationIndex),
+    //     withLatestFrom(this.rotationIndex$, this.stops$),
+    //     tap(([rotationIndex$, rotationIndex, stops]) => {
           // TODO
           // rotationIndex$.next((rotationIndex + 1) % stops.length);
-        }),
-    );
+    //     }),
+    // );
   }
 
   @cache()

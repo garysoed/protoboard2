@@ -1,9 +1,11 @@
+import { ObjectCreateSpec } from './object-create-spec';
+
 /**
  * State of a game during its runtime.
  *
  * @thModule core
  */
-export interface ObjectSpec<P extends object> {
+export interface ObjectSpec<P> {
   /**
    * Identifies the object. Must be globally unique.
    */
@@ -12,7 +14,7 @@ export interface ObjectSpec<P extends object> {
   /**
    * Used to map to a function that generates the object.
    */
-  readonly type: string;
+  readonly createSpec: ObjectCreateSpec<P>;
 
   /**
    * Used to generate the object.

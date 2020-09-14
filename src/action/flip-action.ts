@@ -27,7 +27,7 @@ export const KEY = 'flip';
  */
 export class FlipAction extends BaseAction<OrientablePayload, Config> {
   constructor(
-      context: ActionContext<OrientablePayload>,
+      context: ActionContext,
       defaultConfig: Config,
   ) {
     super(

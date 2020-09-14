@@ -2,7 +2,7 @@ import { source, Vine } from 'grapevine';
 import { $asMap, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { ObjectCreateSpec } from './object-create-spec';
@@ -15,7 +15,7 @@ class ObjectCache {
 
   constructor(
       private readonly fn: ObjectCreateSpec<object>,
-      private readonly state: ObjectSpec<object>,
+      readonly state: ObjectSpec<object>,
   ) { }
 
   getOrCreate(context: PersonaContext): Observable<Node> {
@@ -30,7 +30,7 @@ class ObjectCache {
 }
 
 
-class ObjectService {
+export class ObjectService {
   constructor(private readonly vine: Vine) { }
 
   getObject(id: string, context: PersonaContext): Observable<Node|null> {
@@ -46,14 +46,22 @@ class ObjectService {
     );
   }
 
+  getObjectSpec<P>(id: string): Observable<ObjectSpec<P>|null> {
+    return this.objectCachesMap$.pipe(
+        map(cache => {
+          return (cache.get(id)?.state || null) as ObjectSpec<P>|null;
+        }),
+    );
+  }
+
   @cache()
   private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
-    return combineLatest([$stateHandlers.get(this.vine), $objectSpecMap.get(this.vine)]).pipe(
-        map(([stateHandlers, objectSpecMap]) => {
+    return $objectSpecMap.get(this.vine).pipe(
+        map(objectSpecMap => {
           return $pipe(
               objectSpecMap,
               $map(([id, state]) => {
-                const handler = stateHandlers.get(state.type);
+                const handler = state.createSpec;
                 if (!handler) {
                   return null;
                 }
@@ -77,19 +85,3 @@ class ObjectService {
 }
 
 export const $objectService = source('ObjectService', vine => new ObjectService(vine));
-
-export const $stateHandlers =
-    source('stateHandlers', () => new Map<string, ObjectCreateSpec<object>>());
-export function registerObjectCreateSpec<P extends object>(
-    type: string,
-    handler: ObjectCreateSpec<P>,
-    vine: Vine,
-): void {
-  $stateHandlers.set(
-      vine,
-      existingHandlers => new Map([
-        ...existingHandlers,
-        [type, handler as ObjectCreateSpec<object>],
-      ]),
-  );
-}

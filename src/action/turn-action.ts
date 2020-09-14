@@ -24,7 +24,7 @@ export const KEY = 'turn';
  */
 export class TurnAction extends BaseAction<OrientablePayload, Config> {
   constructor(
-      context: ActionContext<OrientablePayload>,
+      context: ActionContext,
       defaultConfig: Config,
   ) {
     super(

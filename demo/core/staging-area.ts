@@ -1,22 +1,24 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $button, $lineLayout, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
-import { element, multi, PersonaContext, renderCustomElement } from 'persona';
+import { $button, $icon, $lineLayout, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
+import { element, multi, PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../../src/action/payload/is-container';
 import { OrientablePayload } from '../../src/action/payload/orientable-payload';
 import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
+import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
-import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
+import { ACTIVE_ID, renderActive } from '../../src/region/active';
+import { $slot } from '../../src/region/slot';
 
 import { PieceSpec } from './piece-spec';
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
-import { SUPPLY_ID, SUPPLY_TYPE } from './supply';
+import { SUPPLY_ID } from './supply';
 
 
 export interface GenericPiecePayload extends
@@ -24,7 +26,6 @@ export interface GenericPiecePayload extends
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
-export const ROOT_SLOT_TYPE = 'pbd.root-slot';
 
 export const $stagingArea = {
   tag: 'pbd-staging-area',
@@ -57,13 +58,12 @@ export class StagingArea extends ThemedCustomElementCtrl {
   @cache()
   private get contentNodes$(): Observable<readonly Node[]> {
     return $stagingService.get(this.vine).pipe(
-        switchMap(service => service.states$),
+        switchMap(service => service.pieceSpecs$),
         switchMap(states => {
           const node$List = $pipe(
               states,
-              $map(state => {
-                const payload = (state as ObjectSpec<GenericPiecePayload>).payload;
-                const label = `${payload.componentTag.substr(3)}: ${payload.icons.join(', ')}`;
+              $map(spec => {
+                const label = `${spec.componentTag.substr(3)}: ${spec.icons.join(', ')}`;
 
                 return renderCustomElement(
                     $lineLayout,
@@ -84,7 +84,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
     return this.declareInput($.startButton._.actionEvent).pipe(
         withLatestFrom($stagingService.get(this.vine)),
         switchMap(([, stagingService]) => {
-          return stagingService.states$.pipe(
+          return stagingService.pieceSpecs$.pipe(
               take(1),
               withLatestFrom($stateService.get(this.vine)),
               tap(([specs, stateService]) => {
@@ -96,7 +96,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                   const $contentIds = stateService.add<readonly string[]>([]);
                   rootSlotObjectSpecs.push({
                     id: `${ROOT_SLOT_PREFIX}${i}`,
-                    type: ROOT_SLOT_TYPE,
+                    createSpec: renderRootSlot,
                     payload: {$contentIds},
                   });
                 }
@@ -109,7 +109,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 ));
                 const supplyObjectSpec: ObjectSpec<IsContainer> = {
                   id: SUPPLY_ID,
-                  type: SUPPLY_TYPE,
+                  createSpec: renderSupply,
                   payload: {$contentIds: $supplyContentIds},
                 };
 
@@ -117,21 +117,21 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 const $activeContentIds = stateService.add<readonly string[]>([]);
                 const activeObjectSpec: ObjectSpec<IsContainer> = {
                   id: ACTIVE_ID,
-                  type: ACTIVE_TYPE,
+                  createSpec: renderActive,
                   payload: {$contentIds: $activeContentIds},
                 };
 
                 // User defined object specs.
-                const userDefinedObjectSpecs: Array<ObjectSpec<GenericPiecePayload>> = [];
+                const userDefinedObjectSpecs: Array<ObjectSpec<any>> = [];
                 for (const spec of specs) {
                   const $contentIds = stateService.add<readonly string[]>([]);
                   const payload: GenericPiecePayload = {
-                    ...spec.payload,
+                    ...spec,
                     faceIndex: 0,
                     rotationIndex: 0,
                     $contentIds,
                   };
-                  userDefinedObjectSpecs.push({...spec, payload});
+                  userDefinedObjectSpecs.push({...spec, createSpec: renderDemoPreview, payload});
                 }
 
                 const root: HasObjectSpecList = {
@@ -150,4 +150,48 @@ export class StagingArea extends ThemedCustomElementCtrl {
         }),
     );
   }
+}
+
+
+function renderRootSlot(spec: ObjectSpec<IsContainer>, context: PersonaContext): Observable<Node> {
+  return renderCustomElement(
+      $slot,
+      {inputs: {objectId: observableOf(spec.id)}},
+      context,
+  );
+}
+
+function renderSupply(spec: ObjectSpec<IsContainer>, context: PersonaContext): Observable<Node> {
+  return renderCustomElement(
+      $slot,
+      {inputs: {objectId: observableOf(spec.id)}},
+      context,
+  );
+}
+
+function renderDemoPreview(
+    state: ObjectSpec<GenericPiecePayload>,
+    context: PersonaContext,
+): Observable<Node> {
+  const icon$list = state.payload.icons.map((icon, index) => renderCustomElement(
+      $icon,
+      {
+        inputs: {icon: observableOf(icon)},
+        attrs: new Map([
+          ['slot', observableOf(`face-${index}`)],
+        ]),
+      },
+      context,
+  ));
+
+  return renderElement(
+      state.payload.componentTag,
+      {
+        children: icon$list.length <= 0 ? observableOf([]) : combineLatest(icon$list),
+        attrs: new Map([
+          [$baseComponent.api.objectId.attrName, observableOf(state.id)],
+        ]),
+      },
+      context,
+  );
 }

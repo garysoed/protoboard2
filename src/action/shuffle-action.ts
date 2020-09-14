@@ -9,7 +9,7 @@ import { $random } from './util/random';
 
 
 export class ShuffleAction extends BaseAction<IsContainer> {
-  constructor(context: ActionContext<IsContainer>) {
+  constructor(context: ActionContext) {
     super(
         'shuffle',
         'Shuffle',

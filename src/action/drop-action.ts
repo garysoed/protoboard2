@@ -18,7 +18,7 @@ interface Config {
  */
 export class DropAction extends BaseAction<IsContainer, Config> {
   constructor(
-      context: ActionContext<IsContainer>,
+      context: ActionContext,
       defaultConfig: Config,
   ) {
     super(
