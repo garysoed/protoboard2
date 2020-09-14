@@ -1,12 +1,12 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { _p } from 'mask';
+import { $stateService, _p } from 'mask';
 import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
-import { NEVER, Observable, of as observableOf } from 'rxjs';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
-import { OrientablePayload as IsMultifaced } from '../action/payload/is-multifaced';
+import { IsMultifaced } from '../action/payload/is-multifaced';
 import { RotatablePayload } from '../action/payload/rotatable-payload';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
@@ -73,17 +73,15 @@ export class D2 extends BaseComponent<D2Payload> {
 
   @cache()
   private get faceName$(): Observable<string> {
-    // TODO
-    return NEVER;
-    // return this.objectSpec$.pipe(
-    //     switchMap(state => {
-    //       if (!state) {
-    //         return observableOf(0);
-    //       }
+    return combineLatest([this.objectSpec$, $stateService.get(this.vine)]).pipe(
+        switchMap(([spec, stateService]) => {
+          if (!spec) {
+            return observableOf(null);
+          }
 
-    //       return state.payload.faceIndex;
-    //     }),
-    //     map(index => `face-${index}`),
-    // );
+          return stateService.get(spec.payload.$faceIndex);
+        }),
+        map(faceIndex => `face-${faceIndex ?? 0}`),
+    );
   }
 }

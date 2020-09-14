@@ -1,3 +1,5 @@
+import { StateId } from 'gs-tools/export/state';
+
 export interface IsMultifaced {
-  readonly faceIndex: number;
+  readonly $faceIndex: StateId<number>;
 }
