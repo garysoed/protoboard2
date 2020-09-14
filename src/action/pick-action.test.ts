@@ -5,12 +5,10 @@ import { createFakeContext } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { ObjectSpec } from '../objects/object-spec';
-import { $objectSpecListId, HasObjectSpecList } from '../objects/object-spec-list';
+import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ACTIVE_ID } from '../region/active';
 
-import { IsContainer } from './payload/is-container';
 import { PickAction } from './pick-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 

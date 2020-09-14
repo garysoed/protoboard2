@@ -1,80 +1,85 @@
-// TODO
-// import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
-// import { createFakeContext } from 'persona/export/testing';
-// import { BehaviorSubject, ReplaySubject } from 'rxjs';
-// import { switchMap } from 'rxjs/operators';
+import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
+import { StateService } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-// import { ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from '../region/active';
-// import { ObjectSpec } from '../state-old/object-spec';
-// import { createFakeStateService } from '../state-old/testing/fake-state-service';
+import { $objectSpecListId } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { ACTIVE_ID } from '../region/active';
 
-// import { DropAction } from './drop-action';
-// import { DroppablePayload } from './payload/droppable-payload';
-// import { createFakeActionContext } from './testing/fake-action-context';
+import { DropAction } from './drop-action';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
-// test('@protoboard2/action/drop-action', init => {
-//   const OTHER_ACTIVE_ID = 'otherActiveId';
-//   const OTHER_TARGET_ID = 'otherTargetId';
-//   const MOVED_ID = 'movedId';
+test('@protoboard2/action/drop-action', init => {
+  const TARGET_ID = 'targetId';
 
-//   const _ = init(() => {
-//     const el = document.createElement('div');
+  const _ = init(() => {
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const personaContext = createFakeContext({shadowRoot});
+    const stateService = new StateService();
+    $stateService.set(personaContext.vine, () => stateService);
 
-//     const shadowRoot = el.attachShadow({mode: 'open'});
-//     const personaContext = createFakeContext({shadowRoot});
-//     const state$ = new ReplaySubject<ObjectSpec<DroppablePayload>>(1);
-//     const action = new DropAction(
-//         createFakeActionContext({personaContext, state$}),
-//         {location: 0},
-//     );
+    const action = new DropAction(
+        createFakeActionContext({
+          personaContext,
+          objectId$: observableOf(TARGET_ID),
+        }),
+        {location: 1},
+    );
 
-//     const fakeStateService = createFakeStateService(personaContext.vine);
-//     const activeState = {
-//       id: ACTIVE_ID,
-//       type: ACTIVE_TYPE,
-//       payload: {contentIds: [OTHER_ACTIVE_ID, MOVED_ID]},
-//     };
-//     fakeStateService.setStates(new Set([
-//       activeState,
-//       {id: MOVED_ID, type: 'movedType', payload: {parentId: ACTIVE_ID}},
-//     ]));
+    run(action.run());
 
-//     run(action.run());
+    return {action, el, personaContext, stateService};
+  });
 
-//     return {action, el, fakeStateService, personaContext, state$};
-//   });
+  test('onTrigger', () => {
+    should(`trigger correctly`, () => {
+      const movedId = 'movedId';
+      const otherId1 = 'otherId1';
+      const otherId2 = 'otherId2';
 
-//   test('onTrigger', () => {
-//     should(`trigger correctly`, () => {
-//       const objectId = 'objectId';
-//       const state = {
-//         id: objectId,
-//         type: 'objectType',
-//         payload: {contentIds: new BehaviorSubject<readonly string[]>([OTHER_TARGET_ID])},
-//       };
-//       _.state$.next(state);
+      const otherActiveId = 'otherActiveId';
 
-//       const activeIds$ = createSpySubject(
-//           _.fakeStateService.getState<ActivePayload>(ACTIVE_ID).pipe(
-//               switchMap(state => state!.payload.contentIds),
-//           ),
-//       );
-//       const targetIds$ = createSpySubject(
-//           _.state$.pipe(switchMap(state => state.payload.contentIds)),
-//       );
+      const objectSpecListBuilder = fakeObjectSpecListBuilder();
+      const $activeContentIds = _.stateService.add([otherId1, movedId, otherId2]);
+      objectSpecListBuilder.add({
+        id: ACTIVE_ID,
+        payload: {$contentIds: $activeContentIds},
+      });
 
-//       _.action.trigger();
+      const $targetContentIds = _.stateService.add([otherActiveId]);
+      objectSpecListBuilder.add({
+        id: TARGET_ID,
+        payload: {$contentIds: $targetContentIds},
+      });
 
-//       assert(activeIds$).to.emitSequence([
-//         arrayThat<string>().haveExactElements([OTHER_ACTIVE_ID, MOVED_ID]),
-//         arrayThat<string>().haveExactElements([OTHER_ACTIVE_ID]),
-//       ]);
+      const rootState = objectSpecListBuilder.build();
+      const $rootId = _.stateService.add(rootState);
+      $objectSpecListId.set(_.personaContext.vine, () => $rootId);
 
-//       assert(targetIds$).to.emitSequence([
-//         arrayThat<string>().haveExactElements([OTHER_TARGET_ID]),
-//         arrayThat<string>().haveExactElements([MOVED_ID, OTHER_TARGET_ID]),
-//       ]);
-//     });
-//   });
-// });
+      const activeIds$ = createSpySubject(
+          $stateService.get(_.personaContext.vine)
+              .pipe(switchMap(service => service.get($activeContentIds))),
+      );
+      const targetIds$ = createSpySubject(
+          $stateService.get(_.personaContext.vine)
+              .pipe(switchMap(service => service.get($targetContentIds))),
+      );
+
+      _.action.trigger();
+
+      assert(activeIds$).to.emitSequence([
+        arrayThat<string>().haveExactElements([otherId1, movedId, otherId2]),
+        arrayThat<string>().haveExactElements([otherId1, otherId2]),
+      ]);
+      assert(targetIds$).to.emitSequence([
+        arrayThat<string>().haveExactElements([otherActiveId]),
+        arrayThat<string>().haveExactElements([otherActiveId, movedId]),
+      ]);
+    });
+  });
+});

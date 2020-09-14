@@ -30,6 +30,10 @@ export function moveObject(
               const newFromContentIds = [...fromContentIds];
               const [movedId] = newFromContentIds
                   .splice(mod(fromLocation, fromContentIds.length), 1);
+
+              if (!movedId) {
+                return;
+              }
               stateService.set($fromContentIds, newFromContentIds);
 
               // Add the moved object to the destination.

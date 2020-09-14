@@ -1,9 +1,13 @@
 import { integerParser } from 'persona';
-import { NEVER, Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
+import { $objectService } from '../objects/object-service';
+import { ACTIVE_ID, ActivePayload } from '../region/active';
 
 import { IsContainer } from './payload/is-container';
+import { moveObject } from './util/move-object';
 
 
 interface Config {
@@ -33,27 +37,26 @@ export class DropAction extends BaseAction<IsContainer, Config> {
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    return NEVER;
-    // const stateService$ = $stateService.get(this.context.personaContext.vine);
-    // const activeState$ = stateService$.pipe(
-    //     switchMap(service => service.getState<ActivePayload>(ACTIVE_ID)),
-    // );
+    const activeState$ = $objectService.get(this.context.personaContext.vine).pipe(
+        switchMap(service => service.getObjectSpec<ActivePayload>(ACTIVE_ID)),
+    );
 
-    // return this.onTrigger$
-    //     .pipe(
-    //         withLatestFrom(activeState$, this.context.state$, this.config$),
-    //         switchMap(([, activeState, toObjectState, config]) => {
-    //           if (!activeState) {
-    //             return EMPTY;
-    //           }
+    return this.onTrigger$
+        .pipe(
+            withLatestFrom(this.objectSpec$, activeState$, this.config$),
+            switchMap(([, fromState, activeState, config]) => {
+              if (!fromState || !activeState) {
+                return EMPTY;
+              }
 
-    //           return moveObject(
-    //               activeState,
-    //               toObjectState,
-    //               -1,
-    //               config.location,
-    //           );
-    //         }),
-    //     );
+              return moveObject(
+                  activeState.payload.$contentIds,
+                  fromState.payload.$contentIds,
+                  config.location,
+                  -1,
+                  this.context.personaContext.vine,
+              );
+            }),
+        );
   }
 }
