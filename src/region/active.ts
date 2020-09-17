@@ -79,9 +79,9 @@ export class Active extends BaseComponent<ActivePayload> {
   constructor(context: PersonaContext) {
     super(new Map(), context, $.host);
 
+    this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
     this.render($.count._.text, this.itemCount$);
     this.render($.root._.classMultiple, this.multipleItems$);
-    this.render($.root._.content, this.content$);
     this.render($.root._.left, this.left$);
     this.render($.root._.top, this.top$);
   }
@@ -98,11 +98,6 @@ export class Active extends BaseComponent<ActivePayload> {
           // return state.payload.contentIds;
         }),
     );
-  }
-
-  @cache()
-  private get content$(): Observable<readonly Node[]> {
-    return this.objectSpec$.pipe(switchMap(state => renderContents(state, this.context)));
   }
 
   @cache()

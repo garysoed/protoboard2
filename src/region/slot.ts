@@ -1,9 +1,7 @@
-import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, host, multi, PersonaContext, setAttribute } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
 
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
@@ -49,12 +47,7 @@ export class Slot extends BaseComponent<SlotPayload> {
         $.host,
     );
 
-    this.render($.root._.content, this.contents$);
+    this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
     this.render($.host._.action, observableOf(true));
-  }
-
-  @cache()
-  private get contents$(): Observable<readonly Node[]> {
-    return this.objectSpec$.pipe(switchMap(state => renderContents(state, this.context)));
   }
 }

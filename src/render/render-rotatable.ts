@@ -12,11 +12,7 @@ export function renderRotatable(
     output: StyleOutput<'transform'>,
     context: PersonaContext,
 ): Observable<unknown> {
-  return combineLatest([
-    $stateService.get(context.vine),
-    isRotatable$,
-  ])
-  .pipe(
+  return combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
       switchMap(([stateService, isRotatable]) => {
         if (!isRotatable) {
           return observableOf(null);
