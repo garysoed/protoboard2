@@ -1,9 +1,8 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
-import { NEVER, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { api, attributeOut, element, host, PersonaContext, stringParser, style } from 'persona';
+import { NEVER, Observable } from 'rxjs';
 
 import { FlipAction } from '../action/flip-action';
 import { IsMultifaced } from '../action/payload/is-multifaced';
@@ -13,6 +12,7 @@ import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d6.html';
 
@@ -28,7 +28,10 @@ export const $d6 = {
 };
 
 export const $ = {
-  host: host(api($d6.api)),
+  host: host({
+    ...api($d6.api),
+    styleTransform: style('transform'),
+  }),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
@@ -69,6 +72,7 @@ export class D6 extends BaseComponent<D6Payload> {
         $.host,
     );
     this.render($.face._.name, this.faceName$);
+    this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
   }
 
   @cache()

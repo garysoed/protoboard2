@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $stateService, _p } from 'mask';
-import { api, attributeOut, element, host, PersonaContext, stringParser } from 'persona';
+import { api, attributeOut, element, host, PersonaContext, stringParser, style } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -13,6 +13,7 @@ import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d2.html';
 
@@ -28,7 +29,10 @@ export const $d2 = {
 };
 
 export const $ = {
-  host: host(api($d2.api)),
+  host: host({
+    ...api($d2.api),
+    styleTransform: style('transform'),
+  }),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
@@ -69,17 +73,18 @@ export class D2 extends BaseComponent<D2Payload> {
         $.host,
     );
     this.render($.face._.name, this.faceName$);
+    this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
   }
 
   @cache()
   private get faceName$(): Observable<string> {
-    return combineLatest([this.objectSpec$, $stateService.get(this.vine)]).pipe(
-        switchMap(([spec, stateService]) => {
-          if (!spec) {
+    return combineLatest([this.objectPayload$, $stateService.get(this.vine)]).pipe(
+        switchMap(([payload, stateService]) => {
+          if (!payload) {
             return observableOf(null);
           }
 
-          return stateService.get(spec.payload.$faceIndex);
+          return stateService.get(payload.$faceIndex);
         }),
         map(faceIndex => `face-${faceIndex ?? 0}`),
     );

@@ -1,10 +1,11 @@
 import { _p } from 'mask';
-import { host, PersonaContext } from 'persona';
+import { host, PersonaContext, style } from 'persona';
 
 import { IsRotatable } from '../action/payload/is-rotatable';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d1.html';
 
@@ -19,7 +20,13 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export interface D1Payload extends IsRotatable { }
+export type D1Payload = IsRotatable;
+
+const $ = {
+  host: host({
+    styleTransform: style('transform'),
+  }),
+};
 
 /**
  * Represents an object with one face.
@@ -51,5 +58,7 @@ export class D1 extends BaseComponent<D1Payload> {
         context,
         host({}),
     );
+
+    this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
   }
 }

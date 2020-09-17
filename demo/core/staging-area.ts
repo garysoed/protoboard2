@@ -126,10 +126,11 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 for (const spec of specs) {
                   const $contentIds = stateService.add<readonly string[]>([]);
                   const $faceIndex = stateService.add<number>(0);
+                  const $rotationDeg = stateService.add<number>(0);
                   const payload: GenericPiecePayload = {
                     ...spec,
                     $faceIndex,
-                    rotationIndex: 0,
+                    $rotationDeg,
                     $contentIds,
                   };
                   userDefinedObjectSpecs.push({...spec, createSpec: renderDemoPreview, payload});

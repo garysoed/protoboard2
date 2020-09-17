@@ -27,11 +27,12 @@ test('@protoboard2/component/d2', init => {
       const stateService = new StateService();
       $stateService.set(_.tester.vine, () => stateService);
       const $faceIndex = stateService.add<number>(2);
+      const $rotationDeg = stateService.add<number>(0);
 
       const builder = fakeObjectSpecListBuilder();
       builder.add<D2Payload>({
         id: objectId,
-        payload: {$faceIndex, rotationIndex: 0},
+        payload: {$faceIndex, $rotationDeg},
       });
       const $root = stateService.add(builder.build());
       $objectSpecListId.set(_.tester.vine, () => $root);

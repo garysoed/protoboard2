@@ -1,3 +1,6 @@
+import { StateId } from 'gs-tools/export/state';
+import { State } from 'gs-tools/src/random/seed/alea-seed';
+
 export interface IsRotatable {
-  readonly rotationIndex: number;
+  readonly $rotationDeg: StateId<number>;
 }

@@ -83,6 +83,11 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   }
 
   @cache()
+  get objectPayload$(): Observable<P|null> {
+    return this.objectSpec$.pipe(map(objectSpec => objectSpec?.payload ?? null));
+  }
+
+  @cache()
   get objectSpec$(): Observable<ObjectSpec<P>|null> {
     return combineLatest([
       this.objectId$,
