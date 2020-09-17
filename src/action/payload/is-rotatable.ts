@@ -1,3 +1,3 @@
-export interface RotatablePayload {
+export interface IsRotatable {
   readonly rotationIndex: number;
 }

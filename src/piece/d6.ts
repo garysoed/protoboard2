@@ -7,7 +7,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
 import { IsMultifaced } from '../action/payload/is-multifaced';
-import { RotatablePayload } from '../action/payload/rotatable-payload';
+import { IsRotatable } from '../action/payload/is-rotatable';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
@@ -34,7 +34,7 @@ export const $ = {
   }),
 };
 
-export interface D6Payload extends IsMultifaced, RotatablePayload {
+export interface D6Payload extends IsMultifaced, IsRotatable {
 
 }
 

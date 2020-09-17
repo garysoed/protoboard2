@@ -7,7 +7,7 @@ import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { RotatablePayload } from './payload/rotatable-payload';
+import { IsRotatable } from './payload/is-rotatable';
 
 const LOGGER = new Logger('pb.RotateAction');
 
@@ -21,7 +21,7 @@ interface Config {
  *
  * @thModule action
  */
-export class RotateAction extends BaseAction<RotatablePayload, Config> {
+export class RotateAction extends BaseAction<IsRotatable, Config> {
   constructor(
       context: ActionContext,
       defaultConfig: Config,

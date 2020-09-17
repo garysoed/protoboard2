@@ -1,7 +1,7 @@
 import { _p } from 'mask';
 import { host, PersonaContext } from 'persona';
 
-import { RotatablePayload } from '../action/payload/rotatable-payload';
+import { IsRotatable } from '../action/payload/is-rotatable';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
@@ -19,7 +19,7 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export interface D1Payload extends RotatablePayload { }
+export interface D1Payload extends IsRotatable { }
 
 /**
  * Represents an object with one face.

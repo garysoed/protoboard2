@@ -8,7 +8,7 @@ import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../../src/action/payload/is-container';
 import { IsMultifaced } from '../../src/action/payload/is-multifaced';
-import { RotatablePayload } from '../../src/action/payload/rotatable-payload';
+import { IsRotatable } from '../../src/action/payload/is-rotatable';
 import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
@@ -22,7 +22,7 @@ import { SUPPLY_ID } from './supply';
 
 
 export interface GenericPiecePayload extends
-    PieceSpec, IsMultifaced, RotatablePayload, IsContainer {
+    PieceSpec, IsMultifaced, IsRotatable, IsContainer {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
