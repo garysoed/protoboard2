@@ -27,7 +27,7 @@ test('@protoboard2/action/flip-action', init => {
 
     const builder = fakeObjectSpecListBuilder();
     const $faceIndex = stateService.add(2);
-    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$faceIndex}});
+    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
 
     const $rootId = stateService.add(builder.build());
     $objectSpecListId.set(personaContext.vine, () => $rootId);

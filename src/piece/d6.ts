@@ -1,8 +1,6 @@
-import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { api, attributeOut, element, host, PersonaContext, stringParser, style } from 'persona';
-import { NEVER, Observable } from 'rxjs';
 
 import { FlipAction } from '../action/flip-action';
 import { IsMultifaced } from '../action/payload/is-multifaced';
@@ -12,6 +10,7 @@ import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d6.html';
@@ -71,23 +70,7 @@ export class D6 extends BaseComponent<D6Payload> {
         context,
         $.host,
     );
-    this.render($.face._.name, this.faceName$);
+    this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
-  }
-
-  @cache()
-  private get faceName$(): Observable<string> {
-    // TODO
-    return NEVER;
-    // return this.objectSpec$.pipe(
-    //     switchMap(state => {
-    //       if (!state) {
-    //         return observableOf(0);
-    //       }
-
-    //       return state.payload.faceIndex;
-    //     }),
-    //     map(index => `face-${index}`),
-    // );
   }
 }

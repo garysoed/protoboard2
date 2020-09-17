@@ -54,7 +54,7 @@ export class FlipAction extends BaseAction<IsMultifaced, Config> {
             return observableOf(null);
           }
 
-          const $faceIndex = objectSpec.payload.$faceIndex;
+          const $faceIndex = objectSpec.payload.$currentFaceIndex;
           return stateService.get($faceIndex).pipe(
               take(1),
               filterNonNull(),

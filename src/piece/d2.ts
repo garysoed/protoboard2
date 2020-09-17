@@ -1,9 +1,6 @@
-import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $stateService, _p } from 'mask';
+import { _p } from 'mask';
 import { api, attributeOut, element, host, PersonaContext, stringParser, style } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
 import { IsMultifaced } from '../action/payload/is-multifaced';
@@ -13,6 +10,7 @@ import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d2.html';
@@ -72,21 +70,7 @@ export class D2 extends BaseComponent<D2Payload> {
         context,
         $.host,
     );
-    this.render($.face._.name, this.faceName$);
+    this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
-  }
-
-  @cache()
-  private get faceName$(): Observable<string> {
-    return combineLatest([this.objectPayload$, $stateService.get(this.vine)]).pipe(
-        switchMap(([payload, stateService]) => {
-          if (!payload) {
-            return observableOf(null);
-          }
-
-          return stateService.get(payload.$faceIndex);
-        }),
-        map(faceIndex => `face-${faceIndex ?? 0}`),
-    );
   }
 }
