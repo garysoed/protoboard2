@@ -57,7 +57,6 @@ export class DropAction extends BaseAction<IsContainer, Config> {
                   this.context.personaContext.vine,
               );
             }),
-            take(1),
         );
   }
 }
