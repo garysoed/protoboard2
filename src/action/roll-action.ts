@@ -1,7 +1,8 @@
 import { cache } from 'gs-tools/export/data';
+import { $stateService } from 'mask';
 import { integerParser } from 'persona';
-import { NEVER, Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
@@ -34,20 +35,24 @@ export class RollAction extends BaseAction<IsMultifaced, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    return NEVER;
-    // TODO
-    // const faceIndex$$ = this.context.state$.pipe(
-    //     map(state => state.payload.faceIndex),
-    // );
+    const stateService$ = $stateService.get(this.context.personaContext.vine);
+    return this.onTrigger$.pipe(
+        withLatestFrom(
+            this.objectSpec$,
+            this.faceCount$,
+            stateService$,
+            $random.get(this.context.personaContext.vine),
+        ),
+        tap(([, objectSpec, faceCount, stateService, random]) => {
+          if (!objectSpec) {
+            return;
+          }
 
-    // return this.onTrigger$.pipe(
-    //     withLatestFrom(this.faceCount$, faceIndex$$, $random.get(this.context.personaContext.vine)),
-    //     map(([, count, faceIndex$, random]) => {
-    //       const randomValue = random.next();
-    //       const nextIndex = Math.floor(randomValue * count);
-    //       faceIndex$.next(nextIndex);
-    //     }),
-    // );
+          const randomValue = random.next();
+          const nextIndex = Math.floor(randomValue * faceCount);
+          stateService.set(objectSpec.payload.$currentFaceIndex, nextIndex);
+        }),
+    );
   }
 
   @cache()

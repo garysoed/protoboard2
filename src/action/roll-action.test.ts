@@ -1,67 +1,75 @@
-// TODO
-// import { assert, run, runEnvironment, should, test } from 'gs-testing';
-// import { FakeSeed, fromSeed } from 'gs-tools/export/random';
-// import { _v } from 'mask';
-// import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
-// import { of as observableOf, ReplaySubject } from 'rxjs';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
+import { FakeSeed, fromSeed } from 'gs-tools/export/random';
+import { StateService } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
 
-// import { RollAction } from './roll-action';
-// import { createFakeActionContext } from './testing/fake-action-context';
-// import { $random } from './util/random';
+import { $objectSpecListId } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+
+import { IsMultifaced } from './payload/is-multifaced';
+import { RollAction } from './roll-action';
+import { createFakeActionContext } from './testing/fake-action-context';
+import { $random } from './util/random';
 
 
-// test('@protoboard2/action/roll-action', init => {
-//   const _ = init(() => {
-//     runEnvironment(new PersonaTesterEnvironment());
+test('@protoboard2/action/roll-action', init => {
+  const TARGET_ID = 'TARGET_ID';
 
-//     const el = document.createElement('div');
-//     const shadowRoot = el.attachShadow({mode: 'open'});
+  const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
 
-//     const personaContext = createFakeContext({shadowRoot});
-//     const seed = new FakeSeed();
-//     $random.set(personaContext.vine, () => fromSeed(seed));
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const personaContext = createFakeContext({shadowRoot});
 
-//     const faceIndex$ = new ReplaySubject<number>(1);
-//     const state$ = {
-//       id: 'objectId',
-//       type: 'objectType',
-//       payload: {faceIndex: faceIndex$},
-//     };
+    const seed = new FakeSeed();
+    $random.set(personaContext.vine, () => fromSeed(seed));
 
-//     const action = new RollAction(
-//         createFakeActionContext({
-//           host$: observableOf(el),
-//           personaContext,
-//           state$: observableOf(state$),
-//         }),
-//         {count: 3},
-//     );
+    const stateService = new StateService();
+    $stateService.set(personaContext.vine, () => stateService);
 
-//     run(action.run());
+    const builder = fakeObjectSpecListBuilder();
+    const $faceIndex = stateService.add(2);
+    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
 
-//     return {action, el, faceIndex$, seed};
-//   });
+    const $rootId = stateService.add(builder.build());
+    $objectSpecListId.set(personaContext.vine, () => $rootId);
 
-//   test('handleTrigger', () => {
-//     should(`change the current face correctly`, () => {
-//       _.faceIndex$.next(0);
-//       _.seed.values = [0.9];
+    const action = new RollAction(
+        createFakeActionContext({
+          personaContext,
+          objectId$: observableOf(TARGET_ID),
+        }),
+        {count: 3},
+    );
 
-//       _.action.trigger();
+    run(action.run());
 
-//       assert(_.faceIndex$).to.emitWith(2);
-//     });
+    return {$faceIndex, action, el, seed, stateService};
+  });
 
-//     should(`use the config object`, () => {
-//       _.faceIndex$.next(0);
+  test('handleTrigger', () => {
+    should(`change the current face correctly`, () => {
+      _.stateService.set(_.$faceIndex, 0);
+      _.seed.values = [0.9];
 
-//       _.el.setAttribute('pb-roll-count', '4');
+      _.action.trigger();
 
-//       _.seed.values = [0.9];
+      assert(_.stateService.get(_.$faceIndex)).to.emitWith(2);
+    });
 
-//       _.action.trigger();
+    should(`use the config object`, () => {
+      _.stateService.set(_.$faceIndex, 0);
 
-//       assert(_.faceIndex$).to.emitWith(3);
-//     });
-//   });
-// });
+      _.el.setAttribute('pb-roll-count', '4');
+
+      _.seed.values = [0.9];
+
+      _.action.trigger();
+
+      assert(_.stateService.get(_.$faceIndex)).to.emitWith(3);
+    });
+  });
+});
