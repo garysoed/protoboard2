@@ -17,7 +17,7 @@ export class HelpService {
     this.actions$.next([]);
   }
 
-  show(actions: ReadonlyMap<TriggerSpec, BaseAction<object, unknown>>): void {
+  show(actions: ReadonlyMap<TriggerSpec, BaseAction<any, unknown>>): void {
     this.actions$.next(
         [...actions].map(([trigger, action]) => ({action, trigger})),
     );
