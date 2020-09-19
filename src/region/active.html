@@ -5,20 +5,21 @@
     z-index: 9999;
   }
 
-  #root.multiple > *:not(#count) {
-    opacity: 0;
+  #root > :nth-child(n + 4) {
+    display: none;
   }
 
-  #root.multiple > *:not(#count):nth-child(-n+3) {
-    opacity: .1;
+  #root.multiple > #count:nth-child(n + 4) {
+    display: block;
   }
 
-  #root > * {
-    position: absolute;
+  #count {
+    display: none;
+    padding: .5rem;
   }
 </style>
 
-<div id="root" layout="row">
+<div id="root" layout="row" flex-align="center">
   <!-- #content -->
   <div id="count" mk-body-1></div>
 </div>

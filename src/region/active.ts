@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { _p } from 'mask';
+import { $stateService, _p } from 'mask';
 import { classToggle, element, host, multi, PersonaContext, renderCustomElement, style, textContent } from 'persona';
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
@@ -12,6 +12,8 @@ import { renderContents } from '../render/render-contents';
 
 import template from './active.html';
 
+
+const COUNT_THRESHOLD = 3;
 
 /**
  * ID of the object representing the active region.
@@ -89,21 +91,22 @@ export class Active extends BaseComponent<ActivePayload> {
   @cache()
   private get contentIds$(): Observable<readonly string[]> {
     return this.objectSpec$.pipe(
-        switchMap(state => {
-          // TODO
-          // if (!state) {
-            return observableOf([]);
-          // }
+        withLatestFrom($stateService.get(this.vine)),
+        switchMap(([state, stateService]) => {
+          if (!state) {
+            return observableOf(null);
+          }
 
-          // return state.payload.contentIds;
+          return stateService.get(state.payload.$contentIds);
         }),
+        map(ids => ids ?? []),
     );
   }
 
   @cache()
   private get itemCount$(): Observable<string> {
     return this.contentIds$.pipe(
-        map(ids => ids.length > 1 ? `${ids.length}` : ''),
+        map(ids => ids.length > COUNT_THRESHOLD ? `+${ids.length - COUNT_THRESHOLD}` : ''),
     );
   }
 
@@ -114,7 +117,7 @@ export class Active extends BaseComponent<ActivePayload> {
 
   @cache()
   private get multipleItems$(): Observable<boolean> {
-    return this.contentIds$.pipe(map(ids => ids.length > 1));
+    return this.contentIds$.pipe(map(ids => ids.length > COUNT_THRESHOLD));
   }
 
   @cache()

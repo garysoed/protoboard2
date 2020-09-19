@@ -1,248 +1,153 @@
-// TODO
-// import { arrayThat, assert, createSpySubject, run, setThat, should, test } from 'gs-testing';
-// import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
-// import { _p } from 'mask';
-// import { PersonaTesterFactory } from 'persona/export/testing';
-// import { Subject } from 'rxjs';
-// import { map } from 'rxjs/operators';
+import { assert, run, setThat, should, test } from 'gs-testing';
+import { StateService } from 'gs-tools/export/state';
+import { $stateService, _p } from 'mask';
+import { PersonaTesterFactory } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
 
-// import { createFakeStateService } from '../state-old/testing/fake-state-service';
-// import { registerFakeStateHandler } from '../state-old/testing/register-fake-state-handler';
+import { IsContainer } from '../action/payload/is-container';
+import { $objectSpecListId } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
-// import { $, $active, Active, ACTIVE_ID, ACTIVE_TYPE, ActivePayload } from './active';
+import { $, $active, Active, ACTIVE_ID } from './active';
 
 
-// test('@protoboard2/region/active', init => {
-//   const factory = new PersonaTesterFactory(_p);
+test('@protoboard2/region/active', init => {
+  const factory = new PersonaTesterFactory(_p);
 
-//   const _ = init(() => {
-//     const tester = factory.build([Active], document);
-//     const el = tester.createElement($active.tag);
-//     run(el.setAttribute($.host._.objectId, ACTIVE_ID));
+  const _ = init(() => {
+    const tester = factory.build([Active], document);
+    const el = tester.createElement($active.tag);
+    run(el.setAttribute($.host._.objectId, ACTIVE_ID));
 
-//     const fakeStateService = createFakeStateService(tester.vine);
-//     const contentIds$ = new Subject<readonly string[]>();
-//     run(fakeStateService.subscribeValuesFor<ActivePayload>(ACTIVE_ID, {contentIds: contentIds$}));
-//     fakeStateService.addState({id: ACTIVE_ID, type: ACTIVE_TYPE, payload: {contentIds: []}});
+    const stateService = new StateService();
+    $stateService.set(tester.vine, () => stateService);
 
-//     // Need to add to body so the dimensions work.
-//     document.body.appendChild(el.element);
-//     return {contentIds$, el, fakeStateService, tester};
-//   });
+    const $contentIds = stateService.add<readonly string[]>([]);
+    const builder = fakeObjectSpecListBuilder();
+    builder.add<IsContainer>({id: ACTIVE_ID, payload: {$contentIds}});
 
-//   test('content$', () => {
-//     should(`handle element addition and deletion`, () => {
-//       const contents$ = createSpySubject(_.el.getChildren($.root).pipe(
-//           // Filter out the count element
-//           map(children => $pipe(
-//               children,
-//               $filter(el => (el as HTMLElement).id !== 'count'),
-//               $asArray(),
-//           )),
-//       ));
+    const root = builder.build();
+    const $rootId = stateService.add(root);
+    $objectSpecListId.set(tester.vine, () => $rootId);
 
-//       // Add and remove items.
-//       const id1 = 'id1';
-//       const id2 = 'id2';
-//       const id3 = 'id3';
+    // Need to add to body so the dimensions work.
+    document.body.appendChild(el.element);
 
-//       const el1 = document.createElement('div1');
-//       const el2 = document.createElement('div2');
-//       const el3 = document.createElement('div3');
+    return {$contentIds, $rootId, el, root, stateService, tester};
+  });
 
-//       registerFakeStateHandler(
-//           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-//           _.tester.vine,
-//       );
+  test('itemCount$', _, () => {
+    should(`render the 0 item count correctly`, () => {
+      _.stateService.set(_.$contentIds, []);
 
-//       _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
+      assert(_.el.getTextContent($.count)).to.emitWith('');
+    });
 
-//       _.contentIds$.next([]);
-//       _.contentIds$.next([id1]);
-//       _.contentIds$.next([id1, id2]);
-//       _.contentIds$.next([id1, id2, id3]);
-//       _.contentIds$.next([id1, id3]);
-//       _.contentIds$.next([id3]);
-//       _.contentIds$.next([]);
+    should(`render the 1 item count correctly`, () => {
+      _.stateService.set(_.$contentIds, ['id']);
 
-//       assert(contents$).to.emitSequence([
-//         arrayThat<Element>().haveExactElements([]),
-//         arrayThat<Element>().haveExactElements([el1]),
-//         arrayThat<Element>().haveExactElements([el1, el2]),
-//         arrayThat<Element>().haveExactElements([el1, el2, el3]),
-//         arrayThat<Element>().haveExactElements([el1, el3, el2]),
-//         arrayThat<Element>().haveExactElements([el1, el3, el2]),
-//         arrayThat<Element>().haveExactElements([el1, el3]),
-//         arrayThat<Element>().haveExactElements([el3, el1]),
-//         arrayThat<Element>().haveExactElements([el3, el1]),
-//         arrayThat<Element>().haveExactElements([el3]),
-//         arrayThat<Element>().haveExactElements([]),
-//       ]);
-//     });
-//   });
+      assert(_.el.getTextContent($.count)).to.emitWith('');
+    });
 
-//   test('itemCount$', _, init => {
-//     const _ = init(_ => {
-//       const id1 = 'id1';
-//       const id2 = 'id2';
-//       const id3 = 'id3';
+    should(`render the 3 items count correctly`, () => {
+      _.stateService.set(_.$contentIds, ['id1', 'id2', 'id3', 'id4', 'id5']);
 
-//       const el1 = document.createElement('div1');
-//       const el2 = document.createElement('div2');
-//       const el3 = document.createElement('div3');
+      assert(_.el.getTextContent($.count)).to.emitWith('+2');
+    });
+  });
 
-//       registerFakeStateHandler(
-//           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-//           _.tester.vine,
-//       );
-//       _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
+  test('left$', () => {
+    should(`render left correctly`, () => {
+      const left = 123;
+      const width = 456;
+      const content = document.createElement('div');
+      content.style.display = 'block';
+      content.style.width = `${width}px`;
 
-//       return {..._, id1, id2, id3, el1, el2, el3};
-//     });
+      const contentId = 'contentId';
+      const builder = fakeObjectSpecListBuilder(_.root);
+      builder.add({id: contentId, createSpec: () => observableOf(content), payload: {}});
+      _.stateService.set(_.$rootId, builder.build());
 
-//     should(`render the 0 item count correctly`, () => {
-//       _.contentIds$.next([]);
+      _.stateService.set(_.$contentIds, [contentId]);
 
-//       assert(_.el.getTextContent($.count)).to.emitWith('');
-//     });
+      window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
-//     should(`render the 1 item count correctly`, () => {
-//       _.contentIds$.next([_.id1]);
+      assert(_.el.getStyle($.root._.left)).to.emitWith(`${left - width / 2}px`);
+    });
+  });
 
-//       assert(_.el.getTextContent($.count)).to.emitWith('');
-//     });
+  test('multipleItems$', _, () => {
+    should(`remove the multiple classname if there are 0 items`, () => {
+      _.stateService.set(_.$contentIds, []);
 
-//     should(`render the 3 items count correctly`, () => {
-//       _.contentIds$.next([_.id1, _.id2, _.id3]);
+      assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
+    });
 
-//       assert(_.el.getTextContent($.count)).to.emitWith('3');
-//     });
-//   });
+    should(`remove the multiple classname if there is 1 item`, () => {
+      _.stateService.set(_.$contentIds, ['id']);
 
-//   test('left$', () => {
-//     should(`render left correctly`, () => {
-//       const left = 123;
-//       const width = 456;
-//       const content = document.createElement('div');
-//       content.style.display = 'block';
-//       content.style.width = `${width}px`;
+      assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
+    });
 
-//       const id = 'id';
+    should(`add the multiple classname if there are 3 items`, () => {
+      _.stateService.set(_.$contentIds, ['id1', 'id2', 'id3', 'id4']);
 
-//       registerFakeStateHandler(
-//           new Map([[id, content]]),
-//           _.tester.vine,
-//       );
-//       _.fakeStateService.addState({type: 'test', id, payload: {}});
+      assert(_.el.getClassList($.root)).to.emitWith(
+          setThat<string>().haveExactElements(new Set(['multiple'])),
+      );
+    });
+  });
 
-//       _.contentIds$.next([id]);
+  test('top$', () => {
+    should(`render top correctly`, () => {
+      const top = 123;
+      const height = 456;
+      const content = document.createElement('div');
+      content.style.display = 'block';
+      content.style.height = `${height}px`;
 
-//       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
+      const contentId = 'contentId';
+      const builder = fakeObjectSpecListBuilder(_.root);
+      builder.add({id: contentId, createSpec: () => observableOf(content), payload: {}});
+      _.stateService.set(_.$rootId, builder.build());
 
-//       assert(_.el.getStyle($.root._.left)).to.emitWith(`${left - width / 2}px`);
-//     });
-//   });
+      _.stateService.set(_.$contentIds, [contentId]);
 
-//   test('multipleItems$', _, init => {
-//     const _ = init(_ => {
-//       const id1 = 'id1';
-//       const id2 = 'id2';
-//       const id3 = 'id3';
+      window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
-//       const el1 = document.createElement('div1');
-//       const el2 = document.createElement('div2');
-//       const el3 = document.createElement('div3');
+      assert(_.el.getStyle($.root._.top)).to.emitWith(`${top - height / 2}px`);
+    });
+  });
 
-//       registerFakeStateHandler(
-//           new Map([[id1, el1], [id2, el2], [id3, el3]]),
-//           _.tester.vine,
-//       );
-//       _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id3, payload: {}});
+  test('computeAllRects', () => {
+    should(`use the largest width and height`, () => {
+      const size = 123;
 
-//       return {..._, id1, id2, id3, el1, el2, el3};
-//     });
+      const content1 = document.createElement('div');
+      content1.style.display = 'block';
+      content1.style.width = `1px`;
+      content1.style.height = `${size}px`;
 
-//     should(`remove the multiple classname if there are 0 items`, () => {
-//       _.contentIds$.next([]);
+      const content2 = document.createElement('div');
+      content2.style.display = 'block';
+      content2.style.height = `1px`;
+      content2.style.width = `${size}px`;
 
-//       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
-//     });
+      const id1 = 'id1';
+      const id2 = 'id2';
 
-//     should(`remove the multiple classname if there is 1 item`, () => {
-//       _.contentIds$.next([_.id1]);
+      const builder = fakeObjectSpecListBuilder(_.root);
+      builder.add({id: id1, createSpec: () => observableOf(content1), payload: {}});
+      builder.add({id: id2, createSpec: () => observableOf(content2), payload: {}});
+      _.stateService.set(_.$rootId, builder.build());
 
-//       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
-//     });
+      _.stateService.set(_.$contentIds, [id1, id2]);
 
-//     should(`add the multiple classname if there are 3 items`, () => {
-//       _.contentIds$.next([_.id1, _.id2, _.id3]);
+      window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 
-//       assert(_.el.getClassList($.root)).to.emitWith(
-//           setThat<string>().haveExactElements(new Set(['multiple'])),
-//       );
-//     });
-//   });
-
-//   test('top$', () => {
-//     should(`render top correctly`, () => {
-//       const top = 123;
-//       const height = 456;
-//       const content = document.createElement('div');
-//       content.style.display = 'block';
-//       content.style.height = `${height}px`;
-
-//       const id = 'id';
-
-//       registerFakeStateHandler(
-//           new Map([[id, content]]),
-//           _.tester.vine,
-//       );
-//       _.fakeStateService.addState({type: 'test', id, payload: {}});
-
-//       _.contentIds$.next([id]);
-
-//       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
-
-//       assert(_.el.getStyle($.root._.top)).to.emitWith(`${top - height / 2}px`);
-//     });
-//   });
-
-//   test('computeAllRects', () => {
-//     should(`use the largest width and height`, () => {
-//       const size = 123;
-
-//       const content1 = document.createElement('div');
-//       content1.style.display = 'block';
-//       content1.style.width = `1px`;
-//       content1.style.height = `${size}px`;
-
-//       const content2 = document.createElement('div');
-//       content2.style.display = 'block';
-//       content2.style.height = `1px`;
-//       content2.style.width = `${size}px`;
-
-//       const id1 = 'id1';
-//       const id2 = 'id2';
-
-//       registerFakeStateHandler(
-//           new Map([[id1, content1], [id2, content2]]),
-//           _.tester.vine,
-//       );
-//       _.fakeStateService.addState({type: 'test', id: id1, payload: {}});
-//       _.fakeStateService.addState({type: 'test', id: id2, payload: {}});
-
-//       _.contentIds$.next([id1, id2]);
-
-//       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
-
-//       assert(_.el.getStyle($.root._.left)).to.emitWith(`${-size / 2}px`);
-//       assert(_.el.getStyle($.root._.top)).to.emitWith(`${-size / 2}px`);
-//     });
-//   });
-// });
+      assert(_.el.getStyle($.root._.left)).to.emitWith(`${-size / 2}px`);
+      assert(_.el.getStyle($.root._.top)).to.emitWith(`${-size / 2}px`);
+    });
+  });
+});

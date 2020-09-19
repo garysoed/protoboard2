@@ -7,7 +7,9 @@ import { HasObjectSpecList } from '../object-spec-list';
 type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
 
 class ObjectSpecListBuilder {
-  private readonly specs: Array<ObjectSpec<any>> = [];
+  private readonly specs: Array<ObjectSpec<any>> = [...this.baseObjectSpecs];
+
+  constructor(private readonly baseObjectSpecs: ReadonlyArray<ObjectSpec<any>>) { }
 
   add<T>(partial: PartialObjectSpec<T>): ObjectSpec<T> {
     const spec = {
@@ -25,6 +27,8 @@ class ObjectSpecListBuilder {
 }
 
 
-export function fakeObjectSpecListBuilder(): ObjectSpecListBuilder {
-  return new ObjectSpecListBuilder();
+export function fakeObjectSpecListBuilder(
+    baseHasObjectSpecList: HasObjectSpecList = {objectSpecs: []},
+): ObjectSpecListBuilder {
+  return new ObjectSpecListBuilder(baseHasObjectSpecList.objectSpecs);
 }
