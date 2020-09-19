@@ -1,39 +1,26 @@
 <style>
   :host {
-    --pbdAccordionHeight: 0;
+    --pbdDisplay: none;
   }
 
   :host([drawer-expanded="T"]) {
-    --pbdAccordionHeight: 16rem;
+    --pbdDisplay: block;
+  }
+
+  #root {
+    display: var(--pbdDisplay);
   }
 
   #containers, #pieces, #layouts {
-    height: var(--pbdAccordionHeight);
     overflow: hidden;
-    transition: height var(--mkAnimationTime);
   }
 </style>
 
 <div id="root">
-  <mk-list-item-layout label="Layouts" icon="chevron_down">
-    <mk-icon icon="chevron_down" slot="bullet"></mk-icon>
-    <p slot="label">Layouts</p>
-  </mk-list-item-layout>
-  <div id="layouts">
-    <!-- #contents -->
-  </div>
-  <mk-list-item-layout label="Containers" icon="chevron_down">
-    <mk-icon icon="chevron_down" slot="bullet"></mk-icon>
-    <p slot="label">Containers</p>
-  </mk-list-item-layout>
-  <div id="containers">
-    <!-- #contents -->
-  </div>
-  <mk-list-item-layout label="Pieces" icon="chevron_down">
-    <mk-icon icon="chevron_down" slot="bullet"></mk-icon>
-    <p slot="label">Pieces</p>
-  </mk-list-item-layout>
-  <div id="pieces">
-    <!-- #contents -->
-  </div>
+  <mk-line-layout mk-body-2>Layouts</mk-line-layout>
+  <!-- #layouts -->
+  <mk-line-layout mk-body-2>Containers</mk-line-layout>
+  <!-- #containers -->
+  <mk-line-layout mk-body-2>Pieces</mk-line-layout>
+  <!-- #pieces -->
 </div>

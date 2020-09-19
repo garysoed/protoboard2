@@ -1,6 +1,6 @@
 import { assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
-import { $button, $lineLayout, _p, Icon, LineLayout, ListItemLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
+import { $button, $lineLayout, _p, Icon, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -21,17 +21,11 @@ export const $drawer = {
 
 const $ = {
   host: host($drawer.api),
-  containers: element('containers', instanceofType(HTMLDivElement), {
-    contents: multi('#contents'),
-  }),
-  layouts: element('layouts', instanceofType(HTMLDivElement), {
-    contents: multi('#contents'),
-  }),
-  pieces: element('pieces', instanceofType(HTMLDivElement), {
-    contents: multi('#contents'),
-  }),
   root: element('root', instanceofType(HTMLDivElement), {
+    containers: multi('#containers'),
+    layouts: multi('#layouts'),
     onClick: onDom('click'),
+    pieces: multi('#pieces'),
   }),
 };
 
@@ -63,7 +57,6 @@ const PIECE_LINK_CONFIGS: LinkConfig[] = [
   dependencies: [
     Icon,
     LineLayout,
-    ListItemLayout,
   ],
   template,
 })
@@ -73,9 +66,9 @@ export class Drawer extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.layouts._.contents, this.createNodes(LAYOUT_LINK_CONFIGS));
-    this.render($.pieces._.contents, this.createNodes(PIECE_LINK_CONFIGS));
-    this.render($.containers._.contents, this.createNodes(CONTAINER_LINK_CONFIGS));
+    this.render($.root._.layouts, this.createNodes(LAYOUT_LINK_CONFIGS));
+    this.render($.root._.pieces, this.createNodes(PIECE_LINK_CONFIGS));
+    this.render($.root._.containers, this.createNodes(CONTAINER_LINK_CONFIGS));
     this.addSetup(this.setupRootOnClick());
   }
 
