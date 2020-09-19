@@ -4,7 +4,7 @@ import { instanceofType } from 'gs-types';
 import { $button, $icon, $lineLayout, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../../src/action/payload/is-container';
 import { IsMultifaced } from '../../src/action/payload/is-multifaced';
@@ -175,16 +175,28 @@ function renderDemoPreview(
     state: ObjectSpec<GenericPiecePayload>,
     context: PersonaContext,
 ): Observable<Node> {
-  const icon$list = state.payload.icons.map((icon, index) => renderCustomElement(
-      $icon,
-      {
-        inputs: {icon: observableOf(icon)},
-        attrs: new Map([
-          ['slot', observableOf(`face-${index}`)],
-        ]),
-      },
-      context,
-  ));
+  const icon$list = state.payload.icons.map((icon, index) => {
+    const icon$ = renderCustomElement(
+        $icon,
+        {
+          inputs: {icon: observableOf(icon)},
+          attrs: new Map([
+          ]),
+        },
+        context,
+    );
+    return renderElement(
+        'div',
+        {
+          attrs: new Map([
+            ['style', observableOf('height: 3rem; width: 3rem;')],
+            ['slot', observableOf(`face-${index}`)],
+          ]),
+          children: icon$.pipe(map(icon => [icon])),
+        },
+        context,
+    );
+  });
 
   return renderElement(
       state.payload.componentTag,

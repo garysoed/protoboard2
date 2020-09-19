@@ -1,10 +1,14 @@
+import { debug } from 'gs-tools/export/rxjs';
 import { $stateService } from 'mask';
 import { PersonaContext } from 'persona';
 import { StyleOutput } from 'persona/export/internal';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { Logger } from 'santa';
 
 import { IsRotatable } from '../action/payload/is-rotatable';
+
+const LOGGER = new Logger('protoboard2.renderRotatable');
 
 
 export function renderRotatable(

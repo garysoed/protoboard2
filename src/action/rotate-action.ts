@@ -1,13 +1,16 @@
+import { $asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
+import { $stateService } from 'mask';
 import { identity } from 'nabu';
 import { listParser } from 'persona';
-import { combineLatest, NEVER, Observable } from 'rxjs';
-import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { map, share, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
 import { IsRotatable } from './payload/is-rotatable';
+
 
 const LOGGER = new Logger('pb.RotateAction');
 
@@ -35,46 +38,40 @@ export class RotateAction extends BaseAction<IsRotatable, Config> {
     );
 
     this.addSetup(this.handleTrigger$);
-    this.addSetup(this.renderIndex$);
   }
 
   private get handleTrigger$(): Observable<unknown> {
-    return NEVER;
-    // return this.onTrigger$.pipe(
-    //     withLatestFrom(this.context.state$),
-    //     map(([, state]) => state.payload.rotationIndex),
-    //     withLatestFrom(this.rotationIndex$, this.stops$),
-    //     tap(([rotationIndex$, rotationIndex, stops]) => {
-          // TODO
-          // rotationIndex$.next((rotationIndex + 1) % stops.length);
-    //     }),
-    // );
-  }
-
-  @cache()
-  private get renderIndex$(): Observable<unknown> {
-    return combineLatest([
-        this.rotationIndex$,
-        this.stops$,
-        this.context.host$,
-    ]).pipe(
-        tap(([index, stops, hostEl]) => {
-          if (!(hostEl instanceof HTMLElement)) {
-            return;
+    return this.onTrigger$.pipe(
+        withLatestFrom(this.objectSpec$, $stateService.get(this.context.personaContext.vine)),
+        switchMap(([, objectSpec, stateService]) => {
+          if (!objectSpec) {
+            return EMPTY;
           }
 
-          hostEl.style.transform = `rotateZ(${stops[index % stops.length]}deg)`;
+          const $rotationDeg = objectSpec.payload.$rotationDeg;
+          return stateService.get($rotationDeg).pipe(
+              take(1),
+              map(rotationDeg => rotationDeg ?? 0),
+              withLatestFrom(this.stops$),
+              tap(([rotationDeg, stops]) => {
+                const rotationIndex = $pipe(
+                    stops,
+                    $zip(countableIterable()),
+                    $map(([stop, index]) => {
+                      const distance = Math.abs((stop % 360) - (rotationDeg % 360));
+                      return [distance, index] as [number, number];
+                    }),
+                    $asArray(),
+                    $sort(withMap(([value]) => value, normal())),
+                )[0][1];
+
+                const newIndex = (rotationIndex + 1) % stops.length;
+                stateService.set($rotationDeg, stops[newIndex]);
+              }),
+              share(),
+          );
         }),
     );
-  }
-
-  @cache()
-  private get rotationIndex$(): Observable<number> {
-    // TODO
-    return NEVER;
-    // return this.context.state$.pipe(
-    //     switchMap(state => state.payload.rotationIndex),
-    // );
   }
 
   @cache()

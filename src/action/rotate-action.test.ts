@@ -1,66 +1,66 @@
-// TODO
-// import { assert, run, runEnvironment, should, test } from 'gs-testing';
-// import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
-// import { of as observableOf, ReplaySubject, Subject } from 'rxjs';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
+import { StateService } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
 
-// import { RotateAction } from './rotate-action';
-// import { createFakeActionContext } from './testing/fake-action-context';
+import { $objectSpecListId } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+
+import { IsRotatable } from './payload/is-rotatable';
+import { RotateAction } from './rotate-action';
+import { createFakeActionContext } from './testing/fake-action-context';
 
 
-// interface TestState {
-//   readonly action: RotateAction;
-//   readonly el: HTMLElement;
-//   readonly rotationIndex$: Subject<number>;
-// }
+test('@protoboard2/action/rotate-action', init => {
+  const TARGET_ID = 'targetId';
 
-// test('@protoboard2/action/rotate-action', init => {
-//   function setupTest(stops: readonly number[]): TestState {
-//     const el = document.createElement('div');
-//     const shadowRoot = el.attachShadow({mode: 'open'});
-//     const personaContext = createFakeContext({shadowRoot});
-//     const rotationIndex$ = new ReplaySubject<number>(1);
-//     const state$ = {
-//       id: 'objectId',
-//       type: 'objectType',
-//       payload: {rotationIndex: rotationIndex$},
-//     };
-//     const action = new RotateAction(
-//         createFakeActionContext({
-//           host$: observableOf(el),
-//           personaContext,
-//           state$: observableOf(state$),
-//         }),
-//         {stops},
-//     );
-//     run(action.run());
+  const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
 
-//     return {action, el, rotationIndex$};
-//   }
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const personaContext = createFakeContext({shadowRoot});
 
-//   init(() => {
-//     runEnvironment(new PersonaTesterEnvironment());
-//     return {};
-//   });
+    const stateService = new StateService();
+    $stateService.set(personaContext.vine, () => stateService);
 
-//   test('handleTrigger', () => {
-//     should(`change the rotation`, () => {
-//       const _ = setupTest([11, 22, 33]);
-//       _.rotationIndex$.next(1);
+    const builder = fakeObjectSpecListBuilder();
+    const $rotationDeg = stateService.add(2);
+    builder.add<IsRotatable>({id: TARGET_ID, payload: {$rotationDeg}});
 
-//       _.action.trigger();
+    const $rootId = stateService.add(builder.build());
+    $objectSpecListId.set(personaContext.vine, () => $rootId);
 
-//       assert(_.el.style.transform).to.equal('rotateZ(33deg)');
-//     });
-//   });
+    const action = new RotateAction(
+        createFakeActionContext({
+          personaContext,
+          objectId$: observableOf(TARGET_ID),
+        }),
+        {stops: [11, 22, 33]},
+    );
+    run(action.run());
 
-//   test('renderIndex', () => {
-//     should(`change the stops when updated`, () => {
-//       const _ = setupTest([]);
-//       _.rotationIndex$.next(1);
+    return {$rotationDeg, action, el, stateService};
+  });
 
-//       _.el.setAttribute('pb-rotate-stops', '[12 34 45]');
+  test('handleTrigger$', () => {
+    should(`change the rotation to the next index`, () => {
+      _.stateService.set(_.$rotationDeg, 1);
 
-//       assert(_.el.style.transform).to.equal('rotateZ(34deg)');
-//     });
-//   });
-// });
+      _.action.trigger();
+
+      assert(_.stateService.get(_.$rotationDeg)).to.emitWith(22);
+    });
+
+    should(`handle rotations that are more than 360`, () => {
+      _.el.setAttribute('pb-rotate-stops', '[123 456 678]');
+
+      _.stateService.set(_.$rotationDeg, 910);
+
+      _.action.trigger();
+
+      assert(_.stateService.get(_.$rotationDeg)).to.emitWith(456);
+    });
+  });
+});

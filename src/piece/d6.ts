@@ -1,6 +1,6 @@
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { api, attributeOut, element, host, PersonaContext, stringParser, style } from 'persona';
+import { api, attributeOut, element, host, PersonaContext, slotted, stringParser, style } from 'persona';
 
 import { FlipAction } from '../action/flip-action';
 import { IsMultifaced } from '../action/payload/is-multifaced';
@@ -27,12 +27,12 @@ export const $d6 = {
 };
 
 export const $ = {
-  host: host({
-    ...api($d6.api),
-    styleTransform: style('transform'),
-  }),
+  host: host($d6.api),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
+  }),
+  slot: slotted('face', {
+    styleTransform: style('transform'),
   }),
 };
 
@@ -71,6 +71,6 @@ export class D6 extends BaseComponent<D6Payload> {
         $.host,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
-    this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
+    this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));
   }
 }

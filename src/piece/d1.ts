@@ -1,5 +1,5 @@
 import { _p } from 'mask';
-import { host, PersonaContext, style } from 'persona';
+import { host, PersonaContext, slotted, style } from 'persona';
 
 import { IsRotatable } from '../action/payload/is-rotatable';
 import { RotateAction } from '../action/rotate-action';
@@ -23,7 +23,7 @@ export const $d1 = {
 export type D1Payload = IsRotatable;
 
 const $ = {
-  host: host({
+  slot: slotted('slot', {
     styleTransform: style('transform'),
   }),
 };
@@ -59,6 +59,6 @@ export class D1 extends BaseComponent<D1Payload> {
         host({}),
     );
 
-    this.addSetup(renderRotatable(this.objectPayload$, $.host._.styleTransform, context));
+    this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));
   }
 }
