@@ -2,7 +2,7 @@ import { assert, createSpyInstance, objectThat, run, should, test } from 'gs-tes
 import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 
-import { $, $$, Lens } from './lens';
+import { $, $lens, Lens } from './lens';
 import { $lensService, LensService } from './lens-service';
 
 const TESTER_FACTORY = new PersonaTesterFactory(_p);
@@ -10,7 +10,7 @@ const TESTER_FACTORY = new PersonaTesterFactory(_p);
 test('@protoboard2/util/lens', init => {
   const _ = init(() => {
     const tester = TESTER_FACTORY.build([Lens], document);
-    const el = tester.createElement($$.tag);
+    const el = tester.createElement($lens.tag);
 
     const mockLensService = createSpyInstance(LensService);
     $lensService.set(tester.vine, () => mockLensService);

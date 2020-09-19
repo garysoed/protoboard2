@@ -7,7 +7,7 @@ import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import template from './lens-display.html';
 import { $lensService } from './lens-service';
 
-export const $$ = {
+export const $lensDisplay = {
   tag: 'pb-lens-display',
   api: {},
 };
@@ -17,7 +17,7 @@ export const $ = {
 };
 
 @_p.customElement({
-  ...$$,
+  ...$lensDisplay,
   template,
 })
 export class LensDisplay extends ThemedCustomElementCtrl {

@@ -3,7 +3,7 @@ import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { map, take, tap } from 'rxjs/operators';
 
-import { $, $$, LensDisplay } from './lens-display';
+import { $, $lensDisplay, LensDisplay } from './lens-display';
 import { $lensService } from './lens-service';
 
 
@@ -12,7 +12,7 @@ const TESTER_FACTORY = new PersonaTesterFactory(_p);
 test('@protoboard2/util/lens-display', init => {
   const _ = init(() => {
     const tester = TESTER_FACTORY.build([LensDisplay], document);
-    const el = tester.createElement($$.tag);
+    const el = tester.createElement($lensDisplay.tag);
 
     return {el, tester};
   });
