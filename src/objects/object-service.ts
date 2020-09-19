@@ -2,7 +2,7 @@ import { source, Vine } from 'grapevine';
 import { $asMap, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { PersonaContext } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { ObjectCreateSpec } from './object-create-spec';
@@ -56,24 +56,25 @@ export class ObjectService {
 
   @cache()
   private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
-    return $objectSpecMap.get(this.vine).pipe(
-        map(objectSpecMap => {
-          return $pipe(
-              objectSpecMap,
-              $map(([id, state]) => {
-                const handler = state.createSpec;
-                if (!handler) {
-                  return null;
-                }
+    return combineLatest([$objectSpecMap.get(this.vine), $createSpecMap.get(this.vine)])
+        .pipe(
+            map(([objectSpecMap, createSpecMap]) => {
+              return $pipe(
+                  objectSpecMap,
+                  $map(([id, state]) => {
+                    const handler = createSpecMap.get(state.type);
+                    if (!handler) {
+                      return null;
+                    }
 
-                return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
-              }),
-              $filterNonNull(),
-              $asMap(),
-          );
-        }),
-        shareReplay({bufferSize: 1, refCount: true}),
-    );
+                    return [id, new ObjectCache(handler, state)] as [string, ObjectCache];
+                  }),
+                  $filterNonNull(),
+                  $asMap(),
+              );
+            }),
+            shareReplay({bufferSize: 1, refCount: true}),
+        );
   }
 
   @cache()
@@ -85,3 +86,8 @@ export class ObjectService {
 }
 
 export const $objectService = source('ObjectService', vine => new ObjectService(vine));
+
+export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
+    'createSpecMap',
+    () => new Map(),
+);

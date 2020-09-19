@@ -22,6 +22,8 @@ const COUNT_THRESHOLD = 3;
  */
 export const ACTIVE_ID = 'pb.active';
 
+export const ACTIVE_TYPE = 'pb.active';
+
 /**
  * The active object API.
  *

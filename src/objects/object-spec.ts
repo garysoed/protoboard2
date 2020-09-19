@@ -1,4 +1,3 @@
-import { ObjectCreateSpec } from './object-create-spec';
 
 /**
  * State of a game during its runtime.
@@ -12,9 +11,9 @@ export interface ObjectSpec<P> {
   readonly id: string;
 
   /**
-   * Used to map to a function that generates the object.
+   * Type of the object. Identifies how to render the object.
    */
-  readonly createSpec: ObjectCreateSpec<P>;
+  readonly type: string;
 
   /**
    * Used to generate the object.

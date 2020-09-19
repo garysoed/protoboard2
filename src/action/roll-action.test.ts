@@ -33,9 +33,7 @@ test('@protoboard2/action/roll-action', init => {
     const builder = fakeObjectSpecListBuilder();
     const $faceIndex = stateService.add(2);
     builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
-
-    const $rootId = stateService.add(builder.build());
-    $objectSpecListId.set(personaContext.vine, () => $rootId);
+    builder.build(stateService, personaContext.vine);
 
     const action = new RollAction(
         createFakeActionContext({

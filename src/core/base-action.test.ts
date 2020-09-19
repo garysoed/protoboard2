@@ -7,7 +7,6 @@ import { Observable, of as observableOf, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { createFakeActionContext } from '../action/testing/fake-action-context';
-import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { ActionContext, BaseAction } from './base-action';
@@ -104,10 +103,7 @@ test('@protoboard2/core/base-action', init => {
         id: TARGET_ID,
         payload: {},
       });
-      const hasObjectSpecList = builder.build();
-
-      const $rootId = stateService.add(hasObjectSpecList);
-      $objectSpecListId.set(_.personaContext.vine, () => $rootId);
+      builder.build(stateService, _.personaContext.vine);
 
       assert(_.action.objectSpec$).to.emitWith(objectSpec);
     });

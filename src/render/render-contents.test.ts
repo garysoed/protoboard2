@@ -7,7 +7,7 @@ import { createFakeContext } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject } from 'rxjs';
 
 import { IsContainer } from '../action/payload/is-container';
-import { $objectSpecListId, HasObjectSpecList } from '../objects/object-spec-list';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { renderContents } from './render-contents';
 
@@ -42,13 +42,11 @@ test('@protoboard2/render/render-contents', init => {
       const el2 = document.createElement('div2');
       const el3 = document.createElement('div3');
 
-      const objectSpecs = [
-        {id: id1, createSpec: () => observableOf(el1), payload: {}},
-        {id: id2, createSpec: () => observableOf(el2), payload: {}},
-        {id: id3, createSpec: () => observableOf(el3), payload: {}},
-      ];
-      const $rootId = _.stateService.add<HasObjectSpecList>({objectSpecs});
-      $objectSpecListId.set(_.context.vine, () => $rootId);
+      const builder = fakeObjectSpecListBuilder();
+      builder.add({id: id1, payload: {}}, () => observableOf(el1));
+      builder.add({id: id2, payload: {}}, () => observableOf(el2));
+      builder.add({id: id3, payload: {}}, () => observableOf(el3));
+      builder.build(_.stateService, _.context.vine);
 
       const $contentIds = _.stateService.add<readonly string[]>([]);
       _.isContainer$.next({$contentIds});

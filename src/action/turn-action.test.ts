@@ -4,7 +4,6 @@ import { $stateService } from 'mask';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
-import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { IsMultifaced } from './payload/is-multifaced';
@@ -29,8 +28,7 @@ test('@protoboard2/action/turn-action', init => {
     const $faceIndex = stateService.add(2);
     builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
 
-    const $rootId = stateService.add(builder.build());
-    $objectSpecListId.set(personaContext.vine, () => $rootId);
+    builder.build(stateService, personaContext.vine);
 
     const action = new TurnAction(
         createFakeActionContext({

@@ -1,10 +1,20 @@
-import { PALETTE, registerSvg, start, Theme } from 'mask';
-import { switchMap } from 'rxjs/operators';
+import { filterNonNull } from 'gs-tools/export/rxjs';
+import { Snapshot, StateId } from 'gs-tools/export/state';
+import { LocalStorage } from 'gs-tools/export/store';
+import { $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
+import { identity, json } from 'nabu';
+import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
+
+import { $saveService, $saveStorage } from '../src/action/util/save-service';
+import { $createSpecMap } from '../src/objects/object-service';
+import { $objectSpecListId, HasObjectSpecList } from '../src/objects/object-spec-list';
+import { ACTIVE_TYPE, renderActive } from '../src/region/active';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
-import { $saveService } from './core/save-service';
+import { PREVIEW_TYPE, renderDemoPreview, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
+import { $stagingService } from './core/staging-service';
 import { Root } from './root';
 
 
@@ -39,16 +49,33 @@ window.addEventListener('load', () => {
       .pipe(switchMap(saveService => saveService.run()))
       .subscribe();
 
-      // TODO
-  // $saveService.get(vine)
-  //     .pipe(
-  //         switchMap(service => service.savedState$),
-  //         take(1),
-  //         filterNonNull(),
-  //         withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
-  //     )
-  //     .subscribe(([state, stateService, stagingService]) => {
-  //       stateService.init(state);
-  //       stagingService.setStaging(false);
-  //     });
+
+  const storage = new LocalStorage<Snapshot<any>>(
+      window,
+      'pbd',
+      // TODO: Make this easier.
+      identity() as any,
+      json(),
+  );
+  $saveStorage.set(vine, () => storage);
+
+  $saveService.get(vine)
+      .pipe(
+          switchMap(service => service.savedState$),
+          filterNonNull(),
+          withLatestFrom($stateService.get(vine), $stagingService.get(vine)),
+          take(1),
+      )
+      .subscribe(([state, stateService, stagingService]) => {
+        stateService.init(state);
+        $objectSpecListId.set(vine, () => state.rootId as StateId<HasObjectSpecList>);
+        stagingService.setStaging(false);
+      });
+
+  $createSpecMap.set(vine, () => new Map([
+    [ACTIVE_TYPE, renderActive],
+    [ROOT_SLOT_TYPE, renderRootSlot],
+    [SUPPLY_TYPE, renderSupply],
+    [PREVIEW_TYPE, renderDemoPreview],
+  ]));
 });

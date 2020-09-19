@@ -4,7 +4,6 @@ import { $stateService } from 'mask';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
-import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { IsRotatable } from './payload/is-rotatable';
@@ -28,9 +27,7 @@ test('@protoboard2/action/rotate-action', init => {
     const builder = fakeObjectSpecListBuilder();
     const $rotationDeg = stateService.add(2);
     builder.add<IsRotatable>({id: TARGET_ID, payload: {$rotationDeg}});
-
-    const $rootId = stateService.add(builder.build());
-    $objectSpecListId.set(personaContext.vine, () => $rootId);
+    builder.build(stateService, personaContext.vine);
 
     const action = new RotateAction(
         createFakeActionContext({

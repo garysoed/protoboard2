@@ -4,10 +4,10 @@ import { SimpleIdGenerator } from 'gs-tools/export/random';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
+import { $saveService, SaveService } from '../../src/action/util/save-service';
 import { $objectService } from '../../src/objects/object-service';
 
 import { PieceSpec } from './piece-spec';
-import { $saveService, SaveService } from './save-service';
 
 
 type PieceSpecNoId = {[K in Exclude<keyof PieceSpec, 'id'>]: PieceSpec[K]};

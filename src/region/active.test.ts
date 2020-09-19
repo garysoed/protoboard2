@@ -5,7 +5,6 @@ import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
 import { IsContainer } from '../action/payload/is-container';
-import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { $, $active, Active, ACTIVE_ID } from './active';
@@ -25,10 +24,7 @@ test('@protoboard2/region/active', init => {
     const $contentIds = stateService.add<readonly string[]>([]);
     const builder = fakeObjectSpecListBuilder();
     builder.add<IsContainer>({id: ACTIVE_ID, payload: {$contentIds}});
-
-    const root = builder.build();
-    const $rootId = stateService.add(root);
-    $objectSpecListId.set(tester.vine, () => $rootId);
+    const {$rootId, objectSpecList: root} = builder.build(stateService, tester.vine);
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
@@ -66,8 +62,8 @@ test('@protoboard2/region/active', init => {
 
       const contentId = 'contentId';
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: contentId, createSpec: () => observableOf(content), payload: {}});
-      _.stateService.set(_.$rootId, builder.build());
+      builder.add({id: contentId, payload: {}}, () => observableOf(content));
+      builder.build(_.stateService, _.tester.vine);
 
       _.stateService.set(_.$contentIds, [contentId]);
 
@@ -109,8 +105,8 @@ test('@protoboard2/region/active', init => {
 
       const contentId = 'contentId';
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: contentId, createSpec: () => observableOf(content), payload: {}});
-      _.stateService.set(_.$rootId, builder.build());
+      builder.add({id: contentId, payload: {}}, () => observableOf(content));
+      builder.build(_.stateService, _.tester.vine);
 
       _.stateService.set(_.$contentIds, [contentId]);
 
@@ -138,9 +134,9 @@ test('@protoboard2/region/active', init => {
       const id2 = 'id2';
 
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: id1, createSpec: () => observableOf(content1), payload: {}});
-      builder.add({id: id2, createSpec: () => observableOf(content2), payload: {}});
-      _.stateService.set(_.$rootId, builder.build());
+      builder.add({id: id1, payload: {}}, () => observableOf(content1));
+      builder.add({id: id2, payload: {}}, () => observableOf(content2));
+      builder.build(_.stateService, _.tester.vine);
 
       _.stateService.set(_.$contentIds, [id1, id2]);
 

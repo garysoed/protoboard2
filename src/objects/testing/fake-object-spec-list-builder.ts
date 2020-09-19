@@ -1,28 +1,46 @@
-import { StateId } from 'gs-tools/export/state';
+import { Vine } from 'grapevine';
+import { StateId, StateService } from 'gs-tools/export/state';
 import { of as observableOf } from 'rxjs';
 
+import { ObjectCreateSpec } from '../object-create-spec';
+import { $createSpecMap } from '../object-service';
 import { ObjectSpec } from '../object-spec';
-import { HasObjectSpecList } from '../object-spec-list';
+import { $objectSpecListId, HasObjectSpecList } from '../object-spec-list';
+
 
 type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
 
+interface State {
+  readonly objectSpecList: HasObjectSpecList;
+  readonly $rootId: StateId<HasObjectSpecList>;
+}
+
 class ObjectSpecListBuilder {
   private readonly specs: Array<ObjectSpec<any>> = [...this.baseObjectSpecs];
+  private readonly createSpecMap = new Map<string, ObjectCreateSpec<any>>();
 
   constructor(private readonly baseObjectSpecs: ReadonlyArray<ObjectSpec<any>>) { }
 
-  add<T>(partial: PartialObjectSpec<T>): ObjectSpec<T> {
+  add<T>(
+      partial: PartialObjectSpec<T>,
+      createFn: ObjectCreateSpec<T> = () => observableOf(document.createElement('div')),
+  ): ObjectSpec<T> {
     const spec = {
-      createSpec: () => observableOf(document.createElement('div')),
+      type: partial.id,
       ...partial,
     };
     this.specs.push(spec);
+    this.createSpecMap.set(spec.type, createFn);
 
     return spec;
   }
 
-  build(): HasObjectSpecList {
-    return {objectSpecs: [...this.specs]};
+  build(stateService: StateService, vine: Vine): State {
+    const objectSpecList = {objectSpecs: [...this.specs]};
+    const $rootId = stateService.add<HasObjectSpecList>(objectSpecList);
+    $objectSpecListId.set(vine, () => $rootId);
+    $createSpecMap.set(vine, existing => new Map([...existing, ...this.createSpecMap]));
+    return {$rootId, objectSpecList};
   }
 }
 

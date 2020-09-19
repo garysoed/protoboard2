@@ -44,22 +44,19 @@ test('@protoboard2/action/pick-action', init => {
 
       const otherActiveId = 'otherActiveId';
 
-      const objectSpecListBuilder = fakeObjectSpecListBuilder();
+      const builder = fakeObjectSpecListBuilder();
       const $activeContentIds = _.stateService.add([otherActiveId]);
-      objectSpecListBuilder.add({
+      builder.add({
         id: ACTIVE_ID,
         payload: {$contentIds: $activeContentIds},
       });
 
       const $targetContentIds = _.stateService.add([otherId1, movedId, otherId2]);
-      objectSpecListBuilder.add({
+      builder.add({
         id: TARGET_ID,
         payload: {$contentIds: $targetContentIds},
       });
-
-      const rootState = objectSpecListBuilder.build();
-      const $rootId = _.stateService.add(rootState);
-      $objectSpecListId.set(_.personaContext.vine, () => $rootId);
+      builder.build(_.stateService, _.personaContext.vine);
 
       const activeIds$ = createSpySubject(
           $stateService.get(_.personaContext.vine)
