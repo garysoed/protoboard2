@@ -35,12 +35,11 @@ export class RollAction extends BaseAction<IsMultifaced, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const stateService$ = $stateService.get(this.context.personaContext.vine);
     return this.onTrigger$.pipe(
         withLatestFrom(
             this.objectSpec$,
             this.faceCount$,
-            stateService$,
+            $stateService.get(this.context.personaContext.vine),
             $random.get(this.context.personaContext.vine),
         ),
         tap(([, objectSpec, faceCount, stateService, random]) => {

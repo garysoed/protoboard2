@@ -1,12 +1,15 @@
 import { cache } from 'gs-tools/export/data';
+import { filterNonNull } from 'gs-tools/export/rxjs';
+import { $stateService } from 'mask';
 import { integerParser } from 'persona';
-import { NEVER, Observable } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, of as observableOf } from 'rxjs';
+import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
 import { IsMultifaced } from './payload/is-multifaced';
+
 
 const LOGGER = new Logger('pb.FlipAction');
 
@@ -40,18 +43,24 @@ export class TurnAction extends BaseAction<IsMultifaced, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    return NEVER;
-    // TODO
-    // const faceIndex$ = this.context.state$.pipe(
-    //     map(state => state.payload.faceIndex),
-    // );
+    const stateService$ = $stateService.get(this.context.personaContext.vine);
+    return this.onTrigger$.pipe(
+        withLatestFrom(this.objectSpec$, this.faceCount$, stateService$),
+        switchMap(([, objectSpec, faceCount, stateService]) => {
+          if (!objectSpec) {
+            return observableOf(null);
+          }
 
-    // return this.onTrigger$.pipe(
-    //     withLatestFrom(faceIndex$, faceIndex$, this.faceCount$),
-    //     tap(([, faceIndex$, faceIndex, faceCount]) => {
-    //       faceIndex$.next((faceIndex + 1) % faceCount);
-    //     }),
-    // );
+          const $faceIndex = objectSpec.payload.$currentFaceIndex;
+          return stateService.get($faceIndex).pipe(
+              take(1),
+              filterNonNull(),
+              tap(faceIndex => {
+                stateService.set($faceIndex, (faceIndex + 1) % faceCount);
+              }),
+          );
+        }),
+    );
   }
 
   @cache()
