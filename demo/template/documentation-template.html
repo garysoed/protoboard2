@@ -14,6 +14,10 @@
     width: 100%;
   }
 
+  #iconContainer {
+    height: 2rem;
+  }
+
   #title {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -33,7 +37,9 @@
     <section>
       <mk-button id="drawerButton">
         <mk-list-item-layout>
-          <mk-icon id="drawerIcon" slot="bullet"></mk-icon>
+          <div id="iconContainer" slot="bullet">
+            <mk-icon id="drawerIcon"></mk-icon>
+          </div>
           <p slot="label">Details</p>
         </mk-list-item-layout>
       </mk-button>
