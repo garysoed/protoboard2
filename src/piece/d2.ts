@@ -8,8 +8,8 @@ import { IsRotatable } from '../action/payload/is-rotatable';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
-import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { $baseComponent, BaseComponent } from '../core/base-component';
+import { TriggerSpec } from '../core/trigger-spec';
 import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 
@@ -58,15 +58,24 @@ export interface D2Payload extends IsMultifaced, IsRotatable {
 export class D2 extends BaseComponent<D2Payload> {
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseActionCtor<D2Payload, any>>([
-          [
-            TriggerSpec.R,
-            context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
-          ],
-          [TriggerSpec.F, context => new FlipAction(context, {count: 2})],
-          [TriggerSpec.T, context => new TurnAction(context, {count: 2})],
-          [TriggerSpec.L, context => new RollAction(context, {count: 2})],
-        ]),
+        [
+          {
+            trigger: TriggerSpec.R as const,
+            provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
+          },
+          {
+            trigger: TriggerSpec.F,
+            provider: context => new FlipAction(context, {count: 2}),
+          },
+          {
+            trigger: TriggerSpec.T,
+            provider: context => new TurnAction(context, {count: 2}),
+          },
+          {
+            trigger: TriggerSpec.L,
+            provider: context => new RollAction(context, {count: 2}),
+          },
+        ],
         context,
         $.host,
     );

@@ -4,8 +4,8 @@ import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
 import { ActionContext, BaseAction } from './base-action';
-import { BaseActionCtor, BaseComponent } from './base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from './trigger-spec';
+import { ActionSpec, BaseComponent } from './base-component';
+import { TriggerSpec } from './trigger-spec';
 
 
 const ACTION_KEY = 'test';
@@ -24,7 +24,7 @@ class TestAction extends BaseAction<{}> {
 
 class TestComponent extends BaseComponent<{}> {
   constructor(
-      triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<{}, {}>>,
+      triggerActionMap: ReadonlyArray<ActionSpec<{}>>,
       context: PersonaContext,
   ) {
     super(triggerActionMap, context, host({}));
@@ -43,10 +43,10 @@ test('@protoboard2/core/base-component', init => {
 
     const personaContext = createFakeContext({shadowRoot});
     const component = new TestComponent(
-        new Map([
-          [TriggerSpec.CLICK, context => new TestAction(context)],
-          [KEY, context => new TestAction(context)],
-        ]),
+        [
+          {trigger: TriggerSpec.CLICK, provider: context => new TestAction(context)},
+          {trigger: KEY, provider: context => new TestAction(context)},
+        ],
         personaContext,
     );
     run(component.run());

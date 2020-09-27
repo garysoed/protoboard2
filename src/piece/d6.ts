@@ -59,15 +59,24 @@ export interface D6Payload extends IsMultifaced, IsRotatable {
 export class D6 extends BaseComponent<D6Payload> {
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseActionCtor<D6Payload, any>>([
-          [
-            TriggerSpec.R,
-            context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
-          ],
-          [TriggerSpec.F, context => new FlipAction(context, {count: 6})],
-          [TriggerSpec.T, context => new TurnAction(context, {count: 6})],
-          [TriggerSpec.L, context => new RollAction(context, {count: 6})],
-        ]),
+        [
+          {
+            trigger: TriggerSpec.R as const,
+            provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
+          },
+          {
+            trigger: TriggerSpec.F as const,
+            provider: context => new FlipAction(context, {count: 6}),
+          },
+          {
+            trigger: TriggerSpec.T as const,
+            provider: context => new TurnAction(context, {count: 6}),
+          },
+          {
+            trigger: TriggerSpec.L as const,
+            provider: context => new RollAction(context, {count: 6}),
+          },
+        ],
         context,
         $.host,
     );

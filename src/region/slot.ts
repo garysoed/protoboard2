@@ -6,8 +6,8 @@ import { of as observableOf } from 'rxjs';
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
 import { IsContainer } from '../action/payload/is-container';
-import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { $baseComponent, BaseComponent } from '../core/base-component';
+import { TriggerSpec } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';
@@ -39,10 +39,10 @@ export type SlotPayload = IsContainer;
 export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseActionCtor<SlotPayload, any>>([
-          [TriggerSpec.CLICK, context => new PickAction(context, {location: 0})],
-          [TriggerSpec.D, context => new DropAction(context, {location: 0})],
-        ]),
+        [
+          {trigger: TriggerSpec.CLICK, provider: context => new PickAction(context, {location: 0})},
+          {trigger: TriggerSpec.D, provider: context => new DropAction(context, {location: 0})},
+        ],
         context,
         $.host,
     );

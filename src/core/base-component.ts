@@ -18,8 +18,13 @@ import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec
 const LOG = new Logger('protoboard.core.BaseComponent');
 
 
-export type BaseActionCtor<P, Q extends P> =
-    (context: ActionContext<P>) => BaseAction<Q>;
+export type BaseActionCtor<P> =
+    (context: ActionContext<P>) => BaseAction<any>;
+
+export interface ActionSpec<P> {
+  readonly trigger: UnreservedTriggerSpec;
+  readonly provider: BaseActionCtor<P>;
+}
 
 export const $baseComponent = {
   api: {
@@ -35,7 +40,7 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   constructor(
-      private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P, P>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<P>>,
       context: PersonaContext,
       private readonly targetInput: Input<Element>,
   ) {
@@ -52,9 +57,9 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
       objectSpec$: this.objectSpec$,
     };
     const allActions: Map<TriggerSpec, BaseAction<any>> = $pipe(
-        this.triggerActionMap,
-        $map(([triggerSpec, actionProvider]) => {
-          return [triggerSpec, actionProvider(actionContext)] as const;
+        this.triggerActions,
+        $map(({trigger, provider}) => {
+          return [trigger, provider(actionContext)] as const;
         }),
         $asMap(),
     );

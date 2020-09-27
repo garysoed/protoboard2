@@ -49,12 +49,12 @@ export class D1 extends BaseComponent<D1Payload> {
    */
   constructor(context: PersonaContext) {
     super(
-        new Map<UnreservedTriggerSpec, BaseActionCtor<D1Payload, any>>([
-          [
-            TriggerSpec.R,
-            context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
-          ],
-        ]),
+        [
+          {
+            trigger: TriggerSpec.R,
+            provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
+          },
+        ],
         context,
         host({}),
     );
