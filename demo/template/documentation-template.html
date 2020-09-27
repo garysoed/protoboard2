@@ -33,7 +33,7 @@
     <h3 id="title" mk-display></h3>
     <slot name="content"></slot>
   </section>
-  <mk-drawer id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
+  <mk-drawer-layout id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
     <section>
       <mk-button id="drawerButton">
         <mk-list-item-layout>
@@ -47,5 +47,5 @@
     <section id="detailsSection">
       <slot name="details"></slot>
     </section>
-  </mk-drawer>
+  </mk-drawer-layout>
 </section>

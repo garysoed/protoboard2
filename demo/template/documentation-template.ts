@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { elementWithTagType, instanceofType } from 'gs-types';
-import { $button, $drawer, $icon, _p, Button, Drawer, Icon, ListItemLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
+import { $button, $drawerLayout, $icon, _p, Button, DrawerLayout, Icon, ListItemLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
 import { api, attributeIn, element, host, PersonaContext, stringParser, textContent } from 'persona';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -19,7 +19,7 @@ export const $documentationTemplate = {
 };
 
 const $ = {
-  drawer: element('drawer', elementWithTagType('mk-drawer'), api($drawer.api)),
+  drawer: element('drawer', $drawerLayout, {}),
   drawerButton: element('drawerButton', $button, {}),
   drawerIcon: element('drawerIcon', $icon, {}),
   host: host($documentationTemplate.api),
@@ -36,7 +36,7 @@ const $ = {
   },
   dependencies: [
     Button,
-    Drawer,
+    DrawerLayout,
     Icon,
     ListItemLayout,
   ],

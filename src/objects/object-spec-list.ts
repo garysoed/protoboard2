@@ -17,7 +17,7 @@ export const $objectSpecListId = source<StateId<HasObjectSpecList>|null>(
     () => null,
 );
 
-export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>, typeof globalThis>(
+export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>>(
     'objectSpecMap',
     vine => combineLatest([$objectSpecListId.get(vine), $stateService.get(vine)]).pipe(
         switchMap(([objectSpecId, stateService]) => {
@@ -39,5 +39,4 @@ export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>, typeo
           );
         }),
     ),
-    globalThis,
 );

@@ -1,10 +1,10 @@
 import { stream, Vine } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { SimpleIdGenerator } from 'gs-tools/export/random';
+import { $saveService, SaveService } from 'mask';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
-import { $saveService, SaveService } from '../../src/action/util/save-service';
 import { $objectService } from '../../src/objects/object-service';
 
 import { PieceSpec } from './piece-spec';
@@ -63,5 +63,4 @@ export const $stagingService = stream(
         .pipe(
             map(saveService => new StagingService(saveService, vine)),
         ),
-    globalThis,
 );

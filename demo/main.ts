@@ -1,12 +1,11 @@
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { Snapshot, StateId } from 'gs-tools/export/state';
 import { LocalStorage } from 'gs-tools/export/store';
-import { $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
+import { $saveConfig, $saveService, $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
 import { identity, json } from 'nabu';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
-import { $saveService, $saveStorage } from '../src/action/util/save-service';
 import { $createSpecMap } from '../src/objects/object-service';
 import { $objectSpecListId, HasObjectSpecList } from '../src/objects/object-spec-list';
 import { ACTIVE_TYPE, renderActive } from '../src/region/active';
@@ -49,7 +48,6 @@ window.addEventListener('load', () => {
       .pipe(switchMap(saveService => saveService.run()))
       .subscribe();
 
-
   const storage = new LocalStorage<Snapshot<any>>(
       window,
       'pbd',
@@ -57,7 +55,11 @@ window.addEventListener('load', () => {
       identity() as any,
       json(),
   );
-  $saveStorage.set(vine, () => storage);
+  $saveConfig.set(vine, () => ({
+    saveId: 'save',
+    storage,
+    initFn: stateService => stateService.add<HasObjectSpecList>({objectSpecs: []}),
+  }));
 
   $saveService.get(vine)
       .pipe(
