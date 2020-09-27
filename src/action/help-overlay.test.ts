@@ -26,7 +26,7 @@ test('@protoboard2/action/help-overlay', init => {
     const testAction = new PickAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf('id'),
+          objectSpec$: observableOf(null),
         }),
         {location: 0},
     );

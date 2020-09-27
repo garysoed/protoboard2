@@ -5,7 +5,6 @@ import { $stateService } from 'mask';
 import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
-import { $objectSpecListId } from '../objects/object-spec-list';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { IsMultifaced } from './payload/is-multifaced';
@@ -15,8 +14,6 @@ import { $random } from './util/random';
 
 
 test('@protoboard2/action/roll-action', init => {
-  const TARGET_ID = 'TARGET_ID';
-
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
@@ -32,13 +29,16 @@ test('@protoboard2/action/roll-action', init => {
 
     const builder = fakeObjectSpecListBuilder();
     const $faceIndex = stateService.add(2);
-    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
+    const objectSpec = builder.add<IsMultifaced>({
+      id: 'TARGET_ID',
+      payload: {$currentFaceIndex: $faceIndex},
+    });
     builder.build(stateService, personaContext.vine);
 
     const action = new RollAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(TARGET_ID),
+          objectSpec$: observableOf(objectSpec),
         }),
         {count: 3},
     );

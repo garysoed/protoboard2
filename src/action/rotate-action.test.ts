@@ -12,8 +12,6 @@ import { createFakeActionContext } from './testing/fake-action-context';
 
 
 test('@protoboard2/action/rotate-action', init => {
-  const TARGET_ID = 'targetId';
-
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
@@ -26,13 +24,13 @@ test('@protoboard2/action/rotate-action', init => {
 
     const builder = fakeObjectSpecListBuilder();
     const $rotationDeg = stateService.add(2);
-    builder.add<IsRotatable>({id: TARGET_ID, payload: {$rotationDeg}});
+    const objectSpec = builder.add<IsRotatable>({id: 'TARGET_ID', payload: {$rotationDeg}});
     builder.build(stateService, personaContext.vine);
 
     const action = new RotateAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(TARGET_ID),
+          objectSpec$: observableOf(objectSpec),
         }),
         {stops: [11, 22, 33]},
     );

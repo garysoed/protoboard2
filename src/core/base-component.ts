@@ -18,8 +18,8 @@ import { TRIGGER_KEYS, TriggerSpec, UnreservedTriggerSpec } from './trigger-spec
 const LOG = new Logger('protoboard.core.BaseComponent');
 
 
-export type BaseActionCtor<P extends object, Q extends P> =
-    (context: ActionContext) => BaseAction<Q>;
+export type BaseActionCtor<P, Q extends P> =
+    (context: ActionContext<P>) => BaseAction<Q>;
 
 export const $baseComponent = {
   api: {
@@ -33,7 +33,7 @@ const $ = {
 
 // TODO: Rename?
 @_p.baseCustomElement({})
-export abstract class BaseComponent<P extends object> extends ThemedCustomElementCtrl {
+export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   constructor(
       private readonly triggerActionMap: ReadonlyMap<UnreservedTriggerSpec, BaseActionCtor<P, P>>,
       context: PersonaContext,
@@ -45,17 +45,16 @@ export abstract class BaseComponent<P extends object> extends ThemedCustomElemen
   }
 
   @cache()
-  get actionsMap(): ReadonlyMap<TriggerSpec, BaseAction<object>> {
+  get actionsMap(): ReadonlyMap<TriggerSpec, BaseAction<any>> {
     const actionContext = {
       host$: host({}).getValue(this.context),
       personaContext: this.context,
-      objectId$: this.objectId$,
+      objectSpec$: this.objectSpec$,
     };
-    const allActions: Map<TriggerSpec, BaseAction<object>> = $pipe(
+    const allActions: Map<TriggerSpec, BaseAction<any>> = $pipe(
         this.triggerActionMap,
         $map(([triggerSpec, actionProvider]) => {
-          const action = actionProvider(actionContext);
-          return [triggerSpec, action] as [TriggerSpec, BaseAction<object>];
+          return [triggerSpec, actionProvider(actionContext)] as const;
         }),
         $asMap(),
     );

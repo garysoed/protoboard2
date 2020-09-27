@@ -27,7 +27,7 @@ export const KEY = 'turn';
  */
 export class TurnAction extends BaseAction<IsMultifaced, Config> {
   constructor(
-      context: ActionContext,
+      context: ActionContext<IsMultifaced>,
       defaultConfig: Config,
   ) {
     super(
@@ -45,7 +45,7 @@ export class TurnAction extends BaseAction<IsMultifaced, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const stateService$ = $stateService.get(this.context.personaContext.vine);
     return this.onTrigger$.pipe(
-        withLatestFrom(this.objectSpec$, this.faceCount$, stateService$),
+        withLatestFrom(this.context.objectSpec$, this.faceCount$, stateService$),
         switchMap(([, objectSpec, faceCount, stateService]) => {
           if (!objectSpec) {
             return observableOf(null);

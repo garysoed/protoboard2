@@ -12,8 +12,6 @@ import { TurnAction } from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
-  const TARGET_ID = 'TARGET_ID';
-
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
@@ -26,14 +24,17 @@ test('@protoboard2/action/turn-action', init => {
 
     const builder = fakeObjectSpecListBuilder();
     const $faceIndex = stateService.add(2);
-    builder.add<IsMultifaced>({id: TARGET_ID, payload: {$currentFaceIndex: $faceIndex}});
+    const objectSpec = builder.add<IsMultifaced>({
+      id: 'TARGET_ID',
+      payload: {$currentFaceIndex: $faceIndex},
+    });
 
     builder.build(stateService, personaContext.vine);
 
     const action = new TurnAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(TARGET_ID),
+          objectSpec$: observableOf(objectSpec),
         }),
         {count: 2},
     );

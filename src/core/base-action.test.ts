@@ -22,7 +22,7 @@ interface ActionConfig {
 class TestAction extends BaseAction<{}, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: ActionContext) {
+  constructor(context: ActionContext<{}>) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
 
     this.addSetup(this.setupConfig());
@@ -45,8 +45,6 @@ class TestAction extends BaseAction<{}, ActionConfig> {
 }
 
 test('@protoboard2/core/base-action', init => {
-  const TARGET_ID = 'TARGET_ID';
-
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
@@ -56,7 +54,7 @@ test('@protoboard2/core/base-action', init => {
 
     const action = new TestAction(createFakeActionContext({
       personaContext,
-      objectId$: observableOf(TARGET_ID),
+      objectSpec$: observableOf(null),
     }));
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
     run(action.run());
@@ -90,22 +88,6 @@ test('@protoboard2/core/base-action', init => {
       _.element.setAttribute('pb-test-value', '345');
 
       assert(_.action.value$).to.emitSequence([345]);
-    });
-  });
-
-  test('objectSpec$', () => {
-    should(`emit the object specs correctly`, () => {
-      const stateService = new StateService();
-      $stateService.set(_.personaContext.vine, () => stateService);
-
-      const builder = fakeObjectSpecListBuilder();
-      const objectSpec = builder.add({
-        id: TARGET_ID,
-        payload: {},
-      });
-      builder.build(stateService, _.personaContext.vine);
-
-      assert(_.action.objectSpec$).to.emitWith(objectSpec);
     });
   });
 });

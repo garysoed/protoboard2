@@ -26,7 +26,7 @@ interface Config {
  */
 export class RotateAction extends BaseAction<IsRotatable, Config> {
   constructor(
-      context: ActionContext,
+      context: ActionContext<IsRotatable>,
       defaultConfig: Config,
   ) {
     super(
@@ -42,7 +42,10 @@ export class RotateAction extends BaseAction<IsRotatable, Config> {
 
   private get handleTrigger$(): Observable<unknown> {
     return this.onTrigger$.pipe(
-        withLatestFrom(this.objectSpec$, $stateService.get(this.context.personaContext.vine)),
+        withLatestFrom(
+            this.context.objectSpec$,
+            $stateService.get(this.context.personaContext.vine),
+        ),
         switchMap(([, objectSpec, stateService]) => {
           if (!objectSpec) {
             return EMPTY;

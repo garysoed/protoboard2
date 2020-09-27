@@ -1,6 +1,6 @@
 import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
-import { switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
@@ -22,7 +22,7 @@ interface Config {
  */
 export class DropAction extends BaseAction<IsContainer, Config> {
   constructor(
-      context: ActionContext,
+      context: ActionContext<IsContainer>,
       defaultConfig: Config,
   ) {
     super(
@@ -43,7 +43,7 @@ export class DropAction extends BaseAction<IsContainer, Config> {
 
     return this.onTrigger$
         .pipe(
-            withLatestFrom(this.objectSpec$, activeState$, this.config$),
+            withLatestFrom(this.context.objectSpec$, activeState$, this.config$),
             switchMap(([, fromState, activeState, config]) => {
               if (!fromState || !activeState) {
                 return EMPTY;

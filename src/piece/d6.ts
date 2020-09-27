@@ -8,6 +8,7 @@ import { IsRotatable } from '../action/payload/is-rotatable';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
+import { BaseAction } from '../core/base-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { renderMultifaced } from '../render/render-multifaced';

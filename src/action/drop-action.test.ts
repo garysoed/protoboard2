@@ -2,13 +2,15 @@ import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testi
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ACTIVE_ID } from '../region/active';
 
 import { DropAction } from './drop-action';
+import { IsContainer } from './payload/is-container';
 import { createFakeActionContext } from './testing/fake-action-context';
 
 
@@ -22,17 +24,19 @@ test('@protoboard2/action/drop-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
+    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer>|null>(1);
+
     const action = new DropAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(TARGET_ID),
+          objectSpec$,
         }),
         {location: 1},
     );
 
     run(action.run());
 
-    return {action, el, personaContext, stateService};
+    return {action, el, objectSpec$, personaContext, stateService};
   });
 
   test('onTrigger', () => {
@@ -51,11 +55,13 @@ test('@protoboard2/action/drop-action', init => {
       });
 
       const $targetContentIds = _.stateService.add([otherActiveId]);
-      builder.add({
+      const objectSpec = builder.add({
         id: TARGET_ID,
         payload: {$contentIds: $targetContentIds},
       });
       builder.build(_.stateService, _.personaContext.vine);
+
+      _.objectSpec$.next(objectSpec);
 
       const activeIds$ = createSpySubject(
           $stateService.get(_.personaContext.vine)

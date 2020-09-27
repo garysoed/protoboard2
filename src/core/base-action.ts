@@ -3,17 +3,16 @@ import { cache } from 'gs-tools/export/data';
 import { Runnable } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { host, onMutation, PersonaContext } from 'persona';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, scan, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
 
-import { $objectService } from '../objects/object-service';
 import { ObjectSpec } from '../objects/object-spec';
 
 
-export interface ActionContext {
+export interface ActionContext<P> {
   readonly host$: Observable<Element>;
   readonly personaContext: PersonaContext;
-  readonly objectId$: Observable<string>;
+  readonly objectSpec$: Observable<ObjectSpec<P>|null>;
 }
 
 /**
@@ -32,7 +31,7 @@ export type ConverterOf<O> = {
  * @typeParam C - The configuration object.
  * @thModule action
  */
-export abstract class BaseAction<P extends object, C = {}> extends Runnable {
+export abstract class BaseAction<P, C = {}> extends Runnable {
   readonly #onTrigger$ = new Subject<void>();
 
   /**
@@ -48,7 +47,7 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
       readonly key: string,
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly context: ActionContext,
+      protected readonly context: ActionContext<P>,
       private readonly defaultConfig: C,
   ) {
     super();
@@ -111,18 +110,6 @@ export abstract class BaseAction<P extends object, C = {}> extends Runnable {
   @cache()
   get onTrigger$(): Observable<unknown> {
     return this.#onTrigger$;
-  }
-
-  @cache()
-  get objectSpec$(): Observable<ObjectSpec<P>|null> {
-    return combineLatest([
-      $objectService.get(this.context.personaContext.vine),
-      this.context.objectId$,
-    ])
-    .pipe(
-        switchMap(([service, objectId]) => service.getObjectSpec(objectId)),
-        map(spec => spec as ObjectSpec<P>|null),
-    );
   }
 
   /**
