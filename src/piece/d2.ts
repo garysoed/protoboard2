@@ -9,7 +9,7 @@ import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerSpec } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 
@@ -60,19 +60,19 @@ export class D2 extends BaseComponent<D2Payload> {
     super(
         [
           {
-            trigger: TriggerSpec.R as const,
+            trigger: TriggerType.R,
             provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           },
           {
-            trigger: TriggerSpec.F,
+            trigger: TriggerType.F,
             provider: context => new FlipAction(context, {count: 2}),
           },
           {
-            trigger: TriggerSpec.T,
+            trigger: TriggerType.T,
             provider: context => new TurnAction(context, {count: 2}),
           },
           {
-            trigger: TriggerSpec.L,
+            trigger: TriggerType.L,
             provider: context => new RollAction(context, {count: 2}),
           },
         ],

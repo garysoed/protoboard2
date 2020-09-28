@@ -1,5 +1,5 @@
-export enum TriggerSpec {
-  // Keys
+
+export enum TriggerType {
   A = 'a',
   B = 'b',
   C = 'c',
@@ -27,40 +27,24 @@ export enum TriggerSpec {
   Y = 'y',
   Z = 'z',
   QUESTION = '?',
-
-  // Others
   CLICK = 'click',
 }
 
-type ReservedTriggerSpec = TriggerSpec.QUESTION;
-export type UnreservedTriggerSpec = Exclude<TriggerSpec, ReservedTriggerSpec>;
+type ReservedTriggerKey = TriggerType.QUESTION;
+type UnreservedTriggerKey = Exclude<TriggerType, ReservedTriggerKey>;
 
-export const TRIGGER_KEYS: ReadonlySet<TriggerSpec> = new Set([
-  TriggerSpec.A,
-  TriggerSpec.B,
-  TriggerSpec.C,
-  TriggerSpec.D,
-  TriggerSpec.E,
-  TriggerSpec.F,
-  TriggerSpec.G,
-  TriggerSpec.H,
-  TriggerSpec.I,
-  TriggerSpec.J,
-  TriggerSpec.K,
-  TriggerSpec.L,
-  TriggerSpec.M,
-  TriggerSpec.N,
-  TriggerSpec.O,
-  TriggerSpec.P,
-  TriggerSpec.Q,
-  TriggerSpec.R,
-  TriggerSpec.S,
-  TriggerSpec.T,
-  TriggerSpec.U,
-  TriggerSpec.V,
-  TriggerSpec.W,
-  TriggerSpec.X,
-  TriggerSpec.Y,
-  TriggerSpec.Z,
-  TriggerSpec.QUESTION,
-]);
+export interface DetailedTriggerSpec<T> {
+  readonly type: T;
+  readonly alt?: boolean;
+  readonly ctrl?: boolean;
+  readonly meta?: boolean;
+  readonly shift?: boolean;
+}
+
+export type UnreservedTriggerSpec =
+    UnreservedTriggerKey|DetailedTriggerSpec<UnreservedTriggerKey>;
+export type TriggerSpec = TriggerType|DetailedTriggerSpec<TriggerType>;
+
+export function isKeyTrigger(triggerType: TriggerType): boolean {
+  return triggerType !== TriggerType.CLICK;
+}

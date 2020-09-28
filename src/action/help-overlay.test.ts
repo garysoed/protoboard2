@@ -1,15 +1,17 @@
-import { assert, run, should, test } from 'gs-testing';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
+import { BrowserSnapshotsEnv } from 'gs-testing/export/browser';
 import { $asArray, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 
-import { TriggerSpec } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 
-import { $, HelpOverlay } from './help-overlay';
+import { $, $helpOverlay, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';
 import { PickAction } from './pick-action';
+import * as snapshots from './snapshots.json';
 import { createFakeActionContext } from './testing/fake-action-context';
 
 
@@ -17,11 +19,13 @@ const testerFactory = new PersonaTesterFactory(_p);
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
-    const tester = testerFactory.build([HelpOverlay], document)
-        .createElement('pb-help-overlay');
+    runEnvironment(new BrowserSnapshotsEnv(snapshots));
 
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
+    const tester = testerFactory.build([HelpOverlay], document);
+    const el = tester.createElement($helpOverlay.tag);
+
+    const targetEl = document.createElement('div');
+    const shadowRoot = targetEl.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
     const testAction = new PickAction(
         createFakeActionContext({
@@ -30,70 +34,50 @@ test('@protoboard2/action/help-overlay', init => {
         }),
         {location: 0},
     );
-    return {testAction, tester};
+    return {el, testAction, tester};
   });
 
   test('renderIsVisible', () => {
     should(`not add the isVisible class if there are no actions in the help service`, () => {
-      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
     });
 
     should(`add the isVisible class if there is an action in the help service`, () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
+            service.show(new Map([[TriggerType.CLICK, _.testAction]]));
           }),
       ));
 
-      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
+      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
     });
   });
 
-  test('renderRows', () => {
+  test('tableRows$', () => {
     should(`render rows correctly`, () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
+            service.show(new Map([
+              [{type: TriggerType.CLICK, meta: true, alt: true}, _.testAction],
+            ]));
           }),
       ));
 
-      const nodes$ = _.tester.getElement($.content).pipe(map(el => arrayFrom(el.children)));
-      const triggers$ = nodes$.pipe(
-          map(nodes => {
-            return (nodes[0] as HTMLElement).children.item(0)?.textContent;
-          }),
-      );
-      const actions$ = nodes$.pipe(
-          map(nodes => {
-            return (nodes[0] as HTMLElement).children.item(1)?.textContent;
-          }),
-      );
-
-      assert(triggers$).to.emitWith('click');
-      assert(actions$).to.emitWith(_.testAction.actionName);
+      assert(_.el.element.shadowRoot!.innerHTML).to.matchSnapshot('helpOverlay.render');
     });
 
     should(`render deletion correctly`, () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
+            service.show(new Map([[TriggerType.CLICK, _.testAction]]));
             service.show(new Map());
           }),
       ));
 
-      const nodes$ = _.tester.getElement($.content).pipe(
-          map(el => {
-            return $pipe(
-                arrayFrom(el.children),
-                $filter(node => node instanceof HTMLElement),
-                $asArray(),
-            ).length;
-          }),
-      );
-      assert(nodes$).to.emitWith(0);
+      assert(_.el.element.shadowRoot!.innerHTML).to.matchSnapshot('helpOverlay.renderEmpty');
     });
   });
 
@@ -102,13 +86,13 @@ test('@protoboard2/action/help-overlay', init => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
-            service.show(new Map([[TriggerSpec.CLICK, _.testAction]]));
+            service.show(new Map([[TriggerType.CLICK, _.testAction]]));
           }),
       ));
 
-      run(_.tester.dispatchEvent($.root._.click));
+      run(_.el.dispatchEvent($.root._.click));
 
-      assert(_.tester.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
 
       const actionsLength$ = $helpService.get(_.tester.vine)
           .pipe(

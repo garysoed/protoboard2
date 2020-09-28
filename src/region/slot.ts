@@ -7,7 +7,7 @@ import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
 import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerSpec } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';
@@ -40,8 +40,8 @@ export class Slot extends BaseComponent<SlotPayload> {
   constructor(context: PersonaContext) {
     super(
         [
-          {trigger: TriggerSpec.CLICK, provider: context => new PickAction(context, {location: 0})},
-          {trigger: TriggerSpec.D, provider: context => new DropAction(context, {location: 0})},
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {location: 0})},
+          {trigger: TriggerType.D, provider: context => new DropAction(context, {location: 0})},
         ],
         context,
         $.host,

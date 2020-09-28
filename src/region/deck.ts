@@ -10,7 +10,7 @@ import { IsContainer } from '../action/payload/is-container';
 import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerSpec } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 
 import template from './deck.html';
 
@@ -41,9 +41,9 @@ export class Deck extends BaseComponent<DeckPayload> {
   constructor(context: PersonaContext) {
     super(
         [
-          {trigger: TriggerSpec.CLICK, provider: context => new PickAction(context, {location: 0})},
-          {trigger: TriggerSpec.D, provider: context => new DropAction(context, {location: 0})},
-          {trigger: TriggerSpec.S, provider: context => new ShuffleAction(context)},
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {location: 0})},
+          {trigger: TriggerType.D, provider: context => new DropAction(context, {location: 0})},
+          {trigger: TriggerType.S, provider: context => new ShuffleAction(context)},
         ],
         context,
         $.target,

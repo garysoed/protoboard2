@@ -1,11 +1,12 @@
 import { assert, createSpySubject, run, should, test } from 'gs-testing';
+import { $pipe } from 'gs-tools/export/collect';
 import { host, PersonaContext } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
 import { ActionContext, BaseAction } from './base-action';
 import { ActionSpec, BaseComponent } from './base-component';
-import { TriggerSpec } from './trigger-spec';
+import { TriggerType } from './trigger-spec';
 
 
 const ACTION_KEY = 'test';
@@ -31,7 +32,7 @@ class TestComponent extends BaseComponent<{}> {
   }
 }
 
-const KEY = TriggerSpec.T;
+const KEY = TriggerType.T;
 
 test('@protoboard2/core/base-component', init => {
   const _ = init(() => {
@@ -44,22 +45,22 @@ test('@protoboard2/core/base-component', init => {
     const personaContext = createFakeContext({shadowRoot});
     const component = new TestComponent(
         [
-          {trigger: TriggerSpec.CLICK, provider: context => new TestAction(context)},
+          {trigger: TriggerType.CLICK, provider: context => new TestAction(context)},
           {trigger: KEY, provider: context => new TestAction(context)},
         ],
         personaContext,
     );
     run(component.run());
 
-    return {component, element};
+    return {component, element, personaContext};
   });
 
   test('createTriggerClick', () => {
     should(`trigger click based actions`, () => {
       const onTrigger$ = createSpySubject(
-          _.component.actionsMap.get(TriggerSpec.CLICK)!.onTrigger$,
+          [..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1].onTrigger$,
       );
-      _.element.dispatchEvent(new CustomEvent('click'));
+      _.element.dispatchEvent(new MouseEvent('click'));
 
       assert(onTrigger$).to.emit();
     });
@@ -67,7 +68,9 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerKey', _, init => {
     const _ = init(_ => {
-      const onTrigger$ = createSpySubject(_.component.actionsMap.get(KEY)!.onTrigger$);
+      const onTrigger$ = createSpySubject(
+          [..._.component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+      );
 
       return {
         ..._,
@@ -122,9 +125,77 @@ test('@protoboard2/core/base-component', init => {
     });
   });
 
+  test('setupTrigger', _, () => {
+    should(`trigger if modifiers match`, () => {
+      const component = new TestComponent(
+          [
+            {
+              trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
+              provider: context => new TestAction(context)},
+          ],
+          _.personaContext,
+      );
+      run(component.run());
+
+      const onTrigger$ = createSpySubject(
+          [...component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+      );
+
+      // Hover over the element.
+      _.element.dispatchEvent(new CustomEvent('mouseover'));
+
+      // Press the key
+      window.dispatchEvent(new KeyboardEvent(
+          'keydown',
+          {
+            key: KEY,
+            altKey: true,
+            ctrlKey: true,
+            metaKey: true,
+            shiftKey: true,
+          },
+      ));
+      assert(onTrigger$).to.emit();
+    });
+
+    should(`default modifiers to false`, () => {
+      const component = new TestComponent(
+          [
+            {
+              trigger: {type: KEY},
+              provider: context => new TestAction(context)},
+          ],
+          _.personaContext,
+      );
+      run(component.run());
+
+      const onTrigger$ = createSpySubject(
+          [...component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+      );
+
+      // Hover over the element.
+      _.element.dispatchEvent(new CustomEvent('mouseover'));
+
+      // Press the key
+      window.dispatchEvent(new KeyboardEvent(
+          'keydown',
+          {
+            key: KEY,
+            altKey: false,
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: false,
+          },
+      ));
+      assert(onTrigger$).to.emit();
+    });
+  });
+
   test('setupTriggerFunction', () => {
     should(`create a function that triggers`, () => {
-      const onTrigger$ = createSpySubject(_.component.actionsMap.get(KEY)!.onTrigger$);
+      const onTrigger$ = createSpySubject(
+          [..._.component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+      );
 
       (_.element as any)[ACTION_KEY]();
 

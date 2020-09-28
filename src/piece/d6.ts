@@ -10,7 +10,7 @@ import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { BaseAction } from '../core/base-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { TriggerType, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 
@@ -61,19 +61,19 @@ export class D6 extends BaseComponent<D6Payload> {
     super(
         [
           {
-            trigger: TriggerSpec.R as const,
+            trigger: TriggerType.R as const,
             provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           },
           {
-            trigger: TriggerSpec.F as const,
+            trigger: TriggerType.F as const,
             provider: context => new FlipAction(context, {count: 6}),
           },
           {
-            trigger: TriggerSpec.T as const,
+            trigger: TriggerType.T as const,
             provider: context => new TurnAction(context, {count: 6}),
           },
           {
-            trigger: TriggerSpec.L as const,
+            trigger: TriggerType.L as const,
             provider: context => new RollAction(context, {count: 6}),
           },
         ],

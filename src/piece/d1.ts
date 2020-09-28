@@ -4,7 +4,7 @@ import { host, PersonaContext, slotted, style } from 'persona';
 import { IsRotatable } from '../action/payload/is-rotatable';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
-import { TriggerSpec, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { TriggerType, UnreservedTriggerSpec } from '../core/trigger-spec';
 import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d1.html';
@@ -51,7 +51,7 @@ export class D1 extends BaseComponent<D1Payload> {
     super(
         [
           {
-            trigger: TriggerSpec.R,
+            trigger: {type: TriggerType.R},
             provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           },
         ],

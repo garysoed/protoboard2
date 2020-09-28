@@ -5,7 +5,7 @@ import { EMPTY, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
-import { TriggerSpec } from '../core/trigger-spec';
+import { TriggerType } from '../core/trigger-spec';
 
 import { HelpAction } from './help-action';
 import { $helpService, ActionTrigger } from './help-service';
@@ -27,7 +27,7 @@ class TestAction extends BaseAction<{}> {
 }
 
 test('@protoboard2/action/help-action', init => {
-  const TRIGGER = TriggerSpec.T;
+  const TRIGGER = TriggerType.T;
 
   const _ = init(() => {
     const el = document.createElement('div');
