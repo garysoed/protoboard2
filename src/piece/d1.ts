@@ -56,7 +56,6 @@ export class D1 extends BaseComponent<D1Payload> {
           },
         ],
         context,
-        host({}),
     );
 
     this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));

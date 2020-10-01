@@ -44,7 +44,6 @@ export class Slot extends BaseComponent<SlotPayload> {
           {trigger: TriggerType.D, provider: context => new DropAction(context, {location: 0})},
         ],
         context,
-        $.host,
     );
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));

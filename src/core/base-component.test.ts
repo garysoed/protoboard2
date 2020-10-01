@@ -1,6 +1,6 @@
 import { assert, createSpySubject, run, should, test } from 'gs-testing';
-import { $pipe } from 'gs-tools/export/collect';
-import { host, PersonaContext } from 'persona';
+import { instanceofType } from 'gs-types';
+import { element, PersonaContext } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
@@ -28,7 +28,7 @@ class TestComponent extends BaseComponent<{}> {
       triggerActionMap: ReadonlyArray<ActionSpec<{}>>,
       context: PersonaContext,
   ) {
-    super(triggerActionMap, context, host({}));
+    super(triggerActionMap, context);
   }
 }
 
@@ -36,23 +36,30 @@ const KEY = TriggerType.T;
 
 test('@protoboard2/core/base-component', init => {
   const _ = init(() => {
-    const element = document.createElement('div');
-    const styleEl = document.createElement('style');
-    styleEl.id = 'theme';
-    const shadowRoot = element.attachShadow({mode: 'open'});
-    shadowRoot.appendChild(styleEl);
+    const $targetEl = element('target', instanceofType(HTMLElement), {});
+    const el = document.createElement('div');
+    const targetEl = document.createElement('div');
+    targetEl.id = 'target';
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    shadowRoot.appendChild(targetEl);
 
     const personaContext = createFakeContext({shadowRoot});
     const component = new TestComponent(
         [
-          {trigger: TriggerType.CLICK, provider: context => new TestAction(context)},
-          {trigger: KEY, provider: context => new TestAction(context)},
+          {
+            trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
+            provider: context => new TestAction(context),
+          },
+          {
+            trigger: {type: KEY, targetEl: $targetEl},
+            provider: context => new TestAction(context),
+          },
         ],
         personaContext,
     );
     run(component.run());
 
-    return {component, element, personaContext};
+    return {component, el, personaContext, targetEl};
   });
 
   test('createTriggerClick', () => {
@@ -60,7 +67,7 @@ test('@protoboard2/core/base-component', init => {
       const onTrigger$ = createSpySubject(
           [..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1].onTrigger$,
       );
-      _.element.dispatchEvent(new MouseEvent('click'));
+      _.targetEl.dispatchEvent(new MouseEvent('click'));
 
       assert(onTrigger$).to.emit();
     });
@@ -80,7 +87,7 @@ test('@protoboard2/core/base-component', init => {
 
     should(`emit when hovered and the correct key was pressed`, () => {
       // Hover over the element.
-      _.element.dispatchEvent(new CustomEvent('mouseover'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
@@ -90,7 +97,7 @@ test('@protoboard2/core/base-component', init => {
 
     should(`not emit when the wrong key was pressed`, () => {
       // Hover over the element.
-      _.element.dispatchEvent(new CustomEvent('mouseover'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: 'o'}));
@@ -100,8 +107,8 @@ test('@protoboard2/core/base-component', init => {
 
     should(`not emit when not hovered`, () => {
       // Hover over the element, then hover off.
-      _.element.dispatchEvent(new CustomEvent('mouseover'));
-      _.element.dispatchEvent(new CustomEvent('mouseout'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseout'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
@@ -113,7 +120,7 @@ test('@protoboard2/core/base-component', init => {
   test('objectId$', () => {
     should(`emit the object ID if exists`, () => {
       const objectId = 'objectId';
-      _.element.setAttribute('object-id', objectId);
+      _.el.setAttribute('object-id', objectId);
 
       const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$).to.emitSequence([objectId]);
@@ -142,7 +149,7 @@ test('@protoboard2/core/base-component', init => {
       );
 
       // Hover over the element.
-      _.element.dispatchEvent(new CustomEvent('mouseover'));
+      _.el.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
@@ -174,7 +181,7 @@ test('@protoboard2/core/base-component', init => {
       );
 
       // Hover over the element.
-      _.element.dispatchEvent(new CustomEvent('mouseover'));
+      _.el.dispatchEvent(new CustomEvent('mouseover'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
@@ -197,7 +204,7 @@ test('@protoboard2/core/base-component', init => {
           [..._.component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
       );
 
-      (_.element as any)[ACTION_KEY]();
+      (_.el as any)[ACTION_KEY]();
 
       assert(onTrigger$).to.emit();
     });

@@ -81,7 +81,7 @@ export class Active extends BaseComponent<ActivePayload> {
       );
 
   constructor(context: PersonaContext) {
-    super([], context, $.host);
+    super([], context);
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
     this.render($.count._.text, this.itemCount$);

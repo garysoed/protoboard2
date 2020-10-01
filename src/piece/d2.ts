@@ -77,7 +77,6 @@ export class D2 extends BaseComponent<D2Payload> {
           },
         ],
         context,
-        $.host,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));

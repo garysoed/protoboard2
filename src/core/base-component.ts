@@ -2,7 +2,6 @@ import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
-import { Input } from 'persona/export/internal';
 import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Logger } from 'santa';
@@ -42,7 +41,6 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   constructor(
       private readonly triggerActions: ReadonlyArray<ActionSpec<P>>,
       context: PersonaContext,
-      private readonly targetInput: Input<Element>,
   ) {
     super(context);
 
@@ -108,20 +106,26 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
     );
   }
 
-  private createTriggerClick(): Observable<MouseEvent> {
+  private createTriggerClick(
+      triggerSpec: DetailedTriggerSpec<TriggerSpec>,
+  ): Observable<MouseEvent> {
+    const targetEl = triggerSpec.targetEl ?? host({});
     return onDom<MouseEvent>('click')
-        .resolve(context => this.targetInput.getValue(context))
+        .resolve(context => targetEl.getValue(context))
         .getValue(this.context);
   }
 
-  private createTriggerKey(triggerKey: TriggerType): Observable<KeyboardEvent> {
+  private createTriggerKey(
+      triggerSpec: DetailedTriggerSpec<TriggerType>,
+  ): Observable<KeyboardEvent> {
+    const targetEl = triggerSpec.targetEl ?? host({});
     return merge(
         onDom('mouseout')
-            .resolve(context => this.targetInput.getValue(context))
+            .resolve(context => targetEl.getValue(context))
             .getValue(this.context)
             .pipe(mapTo(false)),
         onDom('mouseover')
-            .resolve(context => this.targetInput.getValue(context))
+            .resolve(context => targetEl.getValue(context))
             .getValue(this.context)
             .pipe(mapTo(true)),
     )
@@ -129,7 +133,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
         switchMap(hovered => {
           return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
         }),
-        filter(event => event.key === triggerKey),
+        filter(event => event.key === triggerSpec.type),
     );
   }
 
@@ -142,19 +146,19 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   }
 
   private setupTrigger(
-      trigger: DetailedTriggerSpec<TriggerType>,
+      triggerSpec: DetailedTriggerSpec<TriggerType>,
       action: BaseAction<object>,
   ): Observable<unknown> {
-    const trigger$: Observable<KeyboardEvent|MouseEvent> = isKeyTrigger(trigger.type) ?
-        this.createTriggerKey(trigger.type) :
-        this.createTriggerClick();
+    const trigger$: Observable<KeyboardEvent|MouseEvent> = isKeyTrigger(triggerSpec.type) ?
+        this.createTriggerKey(triggerSpec) :
+        this.createTriggerClick(triggerSpec);
     return trigger$
         .pipe(
             filter(event => {
-              return event.altKey === (trigger.alt ?? false) &&
-                  event.ctrlKey === (trigger.ctrl ?? false) &&
-                  event.metaKey === (trigger.meta ?? false) &&
-                  event.shiftKey === (trigger.shift ?? false);
+              return event.altKey === (triggerSpec.alt ?? false) &&
+                  event.ctrlKey === (triggerSpec.ctrl ?? false) &&
+                  event.metaKey === (triggerSpec.meta ?? false) &&
+                  event.shiftKey === (triggerSpec.shift ?? false);
             }),
             tap(() => {
               action.trigger();

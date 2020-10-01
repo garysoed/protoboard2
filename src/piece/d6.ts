@@ -78,7 +78,6 @@ export class D6 extends BaseComponent<D6Payload> {
           },
         ],
         context,
-        $.host,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));

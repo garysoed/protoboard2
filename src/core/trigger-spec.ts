@@ -1,3 +1,4 @@
+import { Input } from 'persona/export/internal';
 
 export enum TriggerType {
   A = 'a',
@@ -35,6 +36,7 @@ type UnreservedTriggerKey = Exclude<TriggerType, ReservedTriggerKey>;
 
 export interface DetailedTriggerSpec<T> {
   readonly type: T;
+  readonly targetEl?: Input<Element>;
   readonly alt?: boolean;
   readonly ctrl?: boolean;
   readonly meta?: boolean;

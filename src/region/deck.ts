@@ -46,7 +46,6 @@ export class Deck extends BaseComponent<DeckPayload> {
           {trigger: TriggerType.S, provider: context => new ShuffleAction(context)},
         ],
         context,
-        $.target,
     );
 
     this.render($.contents._.contents, this.contents$);
