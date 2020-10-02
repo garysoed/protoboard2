@@ -1,3 +1,4 @@
+import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $stateService, _p } from 'mask';
@@ -5,6 +6,7 @@ import { classToggle, element, host, multi, PersonaContext, renderCustomElement,
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
+import { Indexed } from '../coordinate/indexed';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { ObjectSpec } from '../objects/object-spec';
 import { IsContainer } from '../payload/is-container';
@@ -55,7 +57,7 @@ export const $ = {
  * @thModule region
  */
 // tslint:disable-next-line: no-empty-interface
-export interface ActivePayload extends IsContainer { }
+export interface ActivePayload extends IsContainer<Indexed> { }
 
 /**
  * Represents a region containing objects that are actively manipulated.
@@ -100,9 +102,13 @@ export class Active extends BaseComponent<ActivePayload> {
             return observableOf(null);
           }
 
-          return stateService.get(state.payload.$contentIds);
+          return stateService.get(state.payload.$contentSpecs);
         }),
-        map(ids => ids ?? []),
+        map(ids => $pipe(
+            ids ?? [],
+            $map(spec => spec.objectId),
+            $asArray(),
+        )),
     );
   }
 

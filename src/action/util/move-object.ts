@@ -5,10 +5,13 @@ import { $stateService } from 'mask';
 import { combineLatest, Observable } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
+import { Indexed } from '../../coordinate/indexed';
+import { ContentSpec } from '../../payload/is-container';
+
 
 export function moveObject(
-    $fromContentIds: StateId<readonly string[]>,
-    $toContentIds: StateId<readonly string[]>,
+    $fromContentIds: StateId<ReadonlyArray<ContentSpec<Indexed>>>,
+    $toContentIds: StateId<ReadonlyArray<ContentSpec<Indexed>>>,
     fromLocation: number,
     toLocation: number,
     vine: Vine,

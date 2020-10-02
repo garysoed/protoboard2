@@ -8,6 +8,7 @@ import { Logger } from 'santa';
 import { DropAction } from '../action/drop-action';
 import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
+import { Indexed } from '../coordinate/indexed';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
 import { IsContainer } from '../payload/is-container';
@@ -31,7 +32,7 @@ export const $ = {
   target: element('target', instanceofType(HTMLDivElement), {}),
 };
 
-export type DeckPayload = IsContainer;
+export type DeckPayload = IsContainer<Indexed>;
 
 @_p.customElement({
   ...$deck,

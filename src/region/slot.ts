@@ -5,6 +5,7 @@ import { of as observableOf } from 'rxjs';
 
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
+import { Indexed } from '../coordinate/indexed';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
 import { IsContainer } from '../payload/is-container';
@@ -30,7 +31,7 @@ export const $ = {
   }),
 };
 
-export type SlotPayload = IsContainer;
+export type SlotPayload = IsContainer<Indexed>;
 
 @_p.customElement({
   ...$slot,

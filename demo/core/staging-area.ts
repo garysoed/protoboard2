@@ -6,11 +6,12 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { IsContainer } from '../../src/payload/is-container';
-import { IsMultifaced } from '../../src/payload/is-multifaced';
-import { IsRotatable } from '../../src/payload/is-rotatable';
+import { Indexed } from '../../src/coordinate/indexed';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
+import { ContentSpec, IsContainer } from '../../src/payload/is-container';
+import { IsMultifaced } from '../../src/payload/is-multifaced';
+import { IsRotatable } from '../../src/payload/is-rotatable';
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
 
 import { PREVIEW_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './object-specs';
@@ -21,7 +22,7 @@ import { SUPPLY_ID } from './supply';
 
 
 export interface GenericPiecePayload extends
-    PieceSpec, IsMultifaced, IsRotatable, IsContainer {
+    PieceSpec, IsMultifaced, IsRotatable, IsContainer<Indexed> {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
@@ -90,47 +91,49 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 stateService.clear();
 
                 // Add the root slot specs.
-                const rootSlotObjectSpecs: Array<ObjectSpec<IsContainer>> = [];
+                const rootSlotObjectSpecs: Array<ObjectSpec<IsContainer<Indexed>>> = [];
                 for (let i = 0; i < 9; i++) {
-                  const $contentIds = stateService.add<readonly string[]>([]);
+                  const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
                   rootSlotObjectSpecs.push({
                     id: `${ROOT_SLOT_PREFIX}${i}`,
                     type: ROOT_SLOT_TYPE,
-                    payload: {$contentIds},
+                    payload: {$contentSpecs},
                   });
                 }
 
                 // Add the supply specs.
-                const $supplyContentIds = stateService.add<readonly string[]>($pipe(
-                    specs,
-                    $map(({id}) => id),
-                    $asArray(),
-                ));
-                const supplyObjectSpec: ObjectSpec<IsContainer> = {
+                const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
+                    $pipe(
+                        specs,
+                        $map(({id}) => ({objectId: id, coordinate: {index: 0}})),
+                        $asArray(),
+                    ),
+                );
+                const supplyObjectSpec: ObjectSpec<IsContainer<Indexed>> = {
                   id: SUPPLY_ID,
                   type: SUPPLY_TYPE,
-                  payload: {$contentIds: $supplyContentIds},
+                  payload: {$contentSpecs: $supplyContentSpecs},
                 };
 
                 // Add the active specs.
-                const $activeContentIds = stateService.add<readonly string[]>([]);
-                const activeObjectSpec: ObjectSpec<IsContainer> = {
+                const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
+                const activeObjectSpec: ObjectSpec<IsContainer<Indexed>> = {
                   id: ACTIVE_ID,
                   type: ACTIVE_TYPE,
-                  payload: {$contentIds: $activeContentIds},
+                  payload: {$contentSpecs: $activeContentIds},
                 };
 
                 // User defined object specs.
                 const userDefinedObjectSpecs: Array<ObjectSpec<any>> = [];
                 for (const spec of specs) {
-                  const $contentIds = stateService.add<readonly string[]>([]);
+                  const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
                   const $currentFaceIndex = stateService.add<number>(0);
                   const $rotationDeg = stateService.add<number>(0);
                   const payload: GenericPiecePayload = {
                     ...spec,
                     $currentFaceIndex,
                     $rotationDeg,
-                    $contentIds,
+                    $contentSpecs,
                   };
                   userDefinedObjectSpecs.push({...spec, type: PREVIEW_TYPE, payload});
                 }

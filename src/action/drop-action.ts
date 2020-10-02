@@ -8,6 +8,7 @@ import { ACTIVE_ID, ActivePayload } from '../region/active';
 
 import { IsContainer } from '../payload/is-container';
 import { moveObject } from './util/move-object';
+import { Indexed } from '../coordinate/indexed';
 
 
 interface Config {
@@ -20,9 +21,9 @@ interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<IsContainer, Config> {
+export class DropAction extends BaseAction<IsContainer<Indexed>, Config> {
   constructor(
-      context: ActionContext<IsContainer>,
+      context: ActionContext<IsContainer<Indexed>>,
       defaultConfig: Config,
   ) {
     super(
@@ -50,8 +51,8 @@ export class DropAction extends BaseAction<IsContainer, Config> {
               }
 
               return moveObject(
-                  activeState.payload.$contentIds,
-                  fromState.payload.$contentIds,
+                  activeState.payload.$contentSpecs,
+                  fromState.payload.$contentSpecs,
                   config.location,
                   -1,
                   this.context.personaContext.vine,

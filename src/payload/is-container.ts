@@ -1,5 +1,12 @@
 import { StateId } from 'gs-tools/export/state';
 
-export interface IsContainer {
-  readonly $contentIds: StateId<readonly string[]>;
+import { Coordinate } from '../coordinate/coordinate';
+
+export interface ContentSpec<C extends Coordinate> {
+  readonly objectId: string;
+  readonly coordinate: C;
+}
+
+export interface IsContainer<C extends Coordinate> {
+  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<C>>>;
 }

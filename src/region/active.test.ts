@@ -4,8 +4,9 @@ import { $stateService, _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
+import { Indexed } from '../coordinate/indexed';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { IsContainer } from '../payload/is-container';
+import { ContentSpec, IsContainer } from '../payload/is-container';
 
 import { $, $active, Active, ACTIVE_ID } from './active';
 
@@ -21,15 +22,15 @@ test('@protoboard2/region/active', init => {
     const stateService = new StateService();
     $stateService.set(tester.vine, () => stateService);
 
-    const $contentIds = stateService.add<readonly string[]>([]);
+    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
     const builder = fakeObjectSpecListBuilder();
-    builder.add<IsContainer>({id: ACTIVE_ID, payload: {$contentIds}});
+    builder.add<IsContainer<Indexed>>({id: ACTIVE_ID, payload: {$contentSpecs}});
     const {$rootId, objectSpecList: root} = builder.build(stateService, tester.vine);
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
 
-    return {$contentIds, $rootId, el, root, stateService, tester};
+    return {$contentIds: $contentSpecs, $rootId, el, root, stateService, tester};
   });
 
   test('itemCount$', _, () => {
@@ -40,13 +41,22 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`render the 1 item count correctly`, () => {
-      _.stateService.set(_.$contentIds, ['id']);
+      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: {index: 0}}]);
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
 
     should(`render the 3 items count correctly`, () => {
-      _.stateService.set(_.$contentIds, ['id1', 'id2', 'id3', 'id4', 'id5']);
+      _.stateService.set(
+          _.$contentIds,
+          [
+            {objectId: 'id1', coordinate: {index: 0}},
+            {objectId: 'id2', coordinate: {index: 1}},
+            {objectId: 'id3', coordinate: {index: 2}},
+            {objectId: 'id4', coordinate: {index: 3}},
+            {objectId: 'id5', coordinate: {index: 4}},
+          ],
+      );
 
       assert(_.el.getTextContent($.count)).to.emitWith('+2');
     });
@@ -60,12 +70,12 @@ test('@protoboard2/region/active', init => {
       content.style.display = 'block';
       content.style.width = `${width}px`;
 
-      const contentId = 'contentId';
+      const contentSpec = {objectId: 'contentId', coordinate: {index: 0}};
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: contentId, payload: {}}, () => observableOf(content));
+      builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
 
-      _.stateService.set(_.$contentIds, [contentId]);
+      _.stateService.set(_.$contentIds, [contentSpec]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
@@ -81,13 +91,21 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`remove the multiple classname if there is 1 item`, () => {
-      _.stateService.set(_.$contentIds, ['id']);
+      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: {index: 0}}]);
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
 
     should(`add the multiple classname if there are 3 items`, () => {
-      _.stateService.set(_.$contentIds, ['id1', 'id2', 'id3', 'id4']);
+      _.stateService.set(
+          _.$contentIds,
+          [
+            {objectId: 'id1', coordinate: {index: 0}},
+            {objectId: 'id2', coordinate: {index: 1}},
+            {objectId: 'id3', coordinate: {index: 2}},
+            {objectId: 'id4', coordinate: {index: 3}},
+          ],
+      );
 
       assert(_.el.getClassList($.root)).to.emitWith(
           setThat<string>().haveExactElements(new Set(['multiple'])),
@@ -103,12 +121,12 @@ test('@protoboard2/region/active', init => {
       content.style.display = 'block';
       content.style.height = `${height}px`;
 
-      const contentId = 'contentId';
+      const contentSpec = {objectId: 'contentId', coordinate: {index: 0}};
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: contentId, payload: {}}, () => observableOf(content));
+      builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
 
-      _.stateService.set(_.$contentIds, [contentId]);
+      _.stateService.set(_.$contentIds, [contentSpec]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
@@ -130,15 +148,15 @@ test('@protoboard2/region/active', init => {
       content2.style.height = `1px`;
       content2.style.width = `${size}px`;
 
-      const id1 = 'id1';
-      const id2 = 'id2';
+      const spec1 = {objectId: 'id1', coordinate: {index: 0}};
+      const spec2 = {objectId: 'id2', coordinate: {index: 1}};
 
       const builder = fakeObjectSpecListBuilder(_.root);
-      builder.add({id: id1, payload: {}}, () => observableOf(content1));
-      builder.add({id: id2, payload: {}}, () => observableOf(content2));
+      builder.add({id: spec1.objectId, payload: {}}, () => observableOf(content1));
+      builder.add({id: spec2.objectId, payload: {}}, () => observableOf(content2));
       builder.build(_.stateService, _.tester.vine);
 
-      _.stateService.set(_.$contentIds, [id1, id2]);
+      _.stateService.set(_.$contentIds, [spec1, spec2]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 

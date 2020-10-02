@@ -3,6 +3,7 @@ import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { Indexed } from '../coordinate/indexed';
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
 import { IsContainer } from '../payload/is-container';
@@ -20,12 +21,12 @@ interface Config {
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<IsContainer, Config> {
+export class PickAction extends BaseAction<IsContainer<Indexed>, Config> {
   /**
    * @internal
    */
   constructor(
-      context: ActionContext<IsContainer>,
+      context: ActionContext<IsContainer<Indexed>>,
       defaultConfig: Config,
   ) {
     super(
@@ -54,8 +55,8 @@ export class PickAction extends BaseAction<IsContainer, Config> {
               }
 
               return moveObject(
-                  fromState.payload.$contentIds,
-                  activeState.payload.$contentIds,
+                  fromState.payload.$contentSpecs,
+                  activeState.payload.$contentSpecs,
                   config.location,
                   -1,
                   this.context.personaContext.vine,

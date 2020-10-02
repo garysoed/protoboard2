@@ -3,13 +3,13 @@ import { NEVER, Observable } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
-
 import { IsContainer } from '../payload/is-container';
+
 import { $random } from './util/random';
 
 
-export class ShuffleAction extends BaseAction<IsContainer> {
-  constructor(context: ActionContext<IsContainer>) {
+export class ShuffleAction extends BaseAction<IsContainer<any>> {
+  constructor(context: ActionContext<IsContainer<any>>) {
     super(
         'shuffle',
         'Shuffle',

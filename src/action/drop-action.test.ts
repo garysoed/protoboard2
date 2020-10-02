@@ -5,9 +5,10 @@ import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { Indexed } from '../coordinate/indexed';
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { IsContainer } from '../payload/is-container';
+import { ContentSpec, IsContainer } from '../payload/is-container';
 import { ACTIVE_ID } from '../region/active';
 
 import { DropAction } from './drop-action';
@@ -24,7 +25,7 @@ test('@protoboard2/action/drop-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer>|null>(1);
+    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<Indexed>>|null>(1);
 
     const action = new DropAction(
         createFakeActionContext({
@@ -41,23 +42,23 @@ test('@protoboard2/action/drop-action', init => {
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const movedId = 'movedId';
-      const otherId1 = 'otherId1';
-      const otherId2 = 'otherId2';
+      const movedId = {objectId: 'movedId', coordinate: {index: 0}};
+      const otherId1 = {objectId: 'otherId1', coordinate: {index: 0}};
+      const otherId2 = {objectId: 'otherId2', coordinate: {index: 0}};
 
-      const otherActiveId = 'otherActiveId';
+      const otherActiveSpec = {objectId: 'otherActiveId', coordinate: {index: 0}};
 
       const builder = fakeObjectSpecListBuilder();
       const $activeContentIds = _.stateService.add([otherId1, movedId, otherId2]);
       builder.add({
         id: ACTIVE_ID,
-        payload: {$contentIds: $activeContentIds},
+        payload: {$contentSpecs: $activeContentIds},
       });
 
-      const $targetContentIds = _.stateService.add([otherActiveId]);
+      const $targetContentIds = _.stateService.add([otherActiveSpec]);
       const objectSpec = builder.add({
         id: TARGET_ID,
-        payload: {$contentIds: $targetContentIds},
+        payload: {$contentSpecs: $targetContentIds},
       });
       builder.build(_.stateService, _.personaContext.vine);
 
@@ -75,12 +76,12 @@ test('@protoboard2/action/drop-action', init => {
       _.action.trigger();
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<string>().haveExactElements([otherId1, movedId, otherId2]),
-        arrayThat<string>().haveExactElements([otherId1, otherId2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherId1, movedId, otherId2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherId1, otherId2]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<string>().haveExactElements([otherActiveId]),
-        arrayThat<string>().haveExactElements([otherActiveId, movedId]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec, movedId]),
       ]);
     });
   });
