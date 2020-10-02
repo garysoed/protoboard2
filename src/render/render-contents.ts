@@ -1,4 +1,4 @@
-import { $asArray, $filterNonNull, $map, $pipe, $sort, normal, withMap } from 'gs-tools/export/collect';
+import { $asArray, $map, $pipe, $sort, normal, withMap } from 'gs-tools/export/collect';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { $stateService } from 'mask';
 import { PersonaContext } from 'persona';
@@ -12,7 +12,7 @@ import { IsContainer } from '../payload/is-container';
 
 
 export function renderContents(
-    isContainer$: Observable<IsContainer<Indexed>|null>,
+    isContainer$: Observable<IsContainer<'indexed'>|null>,
     output: MultiOutput,
     context: PersonaContext,
 ): Observable<unknown> {
@@ -38,6 +38,15 @@ export function renderContents(
         return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
       }),
       output.output(context),
+  );
+}
+
+function renderIndexed(contents: ReadonlyMap<Indexed, Node>): readonly Node[] {
+  return $pipe(
+      [...contents],
+      $sort(withMap(([coordinate]) => coordinate.index, normal())),
+      $map(([, node]) => node),
+      $asArray(),
   );
 }
 

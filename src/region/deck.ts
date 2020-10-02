@@ -32,7 +32,7 @@ export const $ = {
   target: element('target', instanceofType(HTMLDivElement), {}),
 };
 
-export type DeckPayload = IsContainer<Indexed>;
+export type DeckPayload = IsContainer<'indexed'>;
 
 @_p.customElement({
   ...$deck,

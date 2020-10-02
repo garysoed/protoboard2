@@ -23,7 +23,7 @@ test('@protoboard2/action/pick-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<Indexed>>|null>(1);
+    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<'indexed'>>|null>(1);
 
     const action = new PickAction(
         createFakeActionContext({
@@ -56,7 +56,7 @@ test('@protoboard2/action/pick-action', init => {
       const $targetContentSpecs = _.stateService.add([otherId1, movedId, otherId2]);
       const objectSpec = builder.add({
         id: 'TARGET_ID',
-        payload: {$contentSpecs: $targetContentSpecs},
+        payload: {type: 'indexed' as const, $contentSpecs: $targetContentSpecs},
       });
       builder.build(_.stateService, _.personaContext.vine);
       _.objectSpec$.next(objectSpec);

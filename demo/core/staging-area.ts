@@ -22,7 +22,7 @@ import { SUPPLY_ID } from './supply';
 
 
 export interface GenericPiecePayload extends
-    PieceSpec, IsMultifaced, IsRotatable, IsContainer<Indexed> {
+    PieceSpec, IsMultifaced, IsRotatable, IsContainer<'indexed'> {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
@@ -91,13 +91,13 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 stateService.clear();
 
                 // Add the root slot specs.
-                const rootSlotObjectSpecs: Array<ObjectSpec<IsContainer<Indexed>>> = [];
+                const rootSlotObjectSpecs: Array<ObjectSpec<IsContainer<'indexed'>>> = [];
                 for (let i = 0; i < 9; i++) {
                   const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
                   rootSlotObjectSpecs.push({
                     id: `${ROOT_SLOT_PREFIX}${i}`,
                     type: ROOT_SLOT_TYPE,
-                    payload: {$contentSpecs},
+                    payload: {type: 'indexed', $contentSpecs},
                   });
                 }
 
@@ -109,18 +109,18 @@ export class StagingArea extends ThemedCustomElementCtrl {
                         $asArray(),
                     ),
                 );
-                const supplyObjectSpec: ObjectSpec<IsContainer<Indexed>> = {
+                const supplyObjectSpec: ObjectSpec<IsContainer<'indexed'>> = {
                   id: SUPPLY_ID,
                   type: SUPPLY_TYPE,
-                  payload: {$contentSpecs: $supplyContentSpecs},
+                  payload: {type: 'indexed', $contentSpecs: $supplyContentSpecs},
                 };
 
                 // Add the active specs.
                 const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-                const activeObjectSpec: ObjectSpec<IsContainer<Indexed>> = {
+                const activeObjectSpec: ObjectSpec<IsContainer<'indexed'>> = {
                   id: ACTIVE_ID,
                   type: ACTIVE_TYPE,
-                  payload: {$contentSpecs: $activeContentIds},
+                  payload: {type: 'indexed', $contentSpecs: $activeContentIds},
                 };
 
                 // User defined object specs.
@@ -130,6 +130,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                   const $currentFaceIndex = stateService.add<number>(0);
                   const $rotationDeg = stateService.add<number>(0);
                   const payload: GenericPiecePayload = {
+                    type: 'indexed',
                     ...spec,
                     $currentFaceIndex,
                     $rotationDeg,

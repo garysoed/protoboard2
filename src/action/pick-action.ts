@@ -21,12 +21,12 @@ interface Config {
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<IsContainer<Indexed>, Config> {
+export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
   /**
    * @internal
    */
   constructor(
-      context: ActionContext<IsContainer<Indexed>>,
+      context: ActionContext<IsContainer<'indexed'>>,
       defaultConfig: Config,
   ) {
     super(

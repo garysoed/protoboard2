@@ -31,7 +31,7 @@ export const $ = {
   }),
 };
 
-export type SlotPayload = IsContainer<Indexed>;
+export type SlotPayload = IsContainer<'indexed'>;
 
 @_p.customElement({
   ...$slot,

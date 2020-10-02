@@ -23,7 +23,7 @@ test('@protoboard2/render/render-contents', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const context = createFakeContext({shadowRoot});
     const $ = host({content: multi(slotName)});
-    const isContainer$ = new ReplaySubject<IsContainer<Indexed>|null>(1);
+    const isContainer$ = new ReplaySubject<IsContainer<'indexed'>|null>(1);
 
     const stateService = new StateService();
     $stateService.set(context.vine, () => stateService);
@@ -50,7 +50,7 @@ test('@protoboard2/render/render-contents', init => {
       builder.build(_.stateService, _.context.vine);
 
       const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-      _.isContainer$.next({$contentSpecs});
+      _.isContainer$.next({type: 'indexed', $contentSpecs});
 
       _.stateService.set($contentSpecs, []);
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);

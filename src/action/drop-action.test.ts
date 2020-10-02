@@ -25,7 +25,7 @@ test('@protoboard2/action/drop-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<Indexed>>|null>(1);
+    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<'indexed'>>|null>(1);
 
     const action = new DropAction(
         createFakeActionContext({
@@ -58,7 +58,7 @@ test('@protoboard2/action/drop-action', init => {
       const $targetContentIds = _.stateService.add([otherActiveSpec]);
       const objectSpec = builder.add({
         id: TARGET_ID,
-        payload: {$contentSpecs: $targetContentIds},
+        payload: {type: 'indexed' as const, $contentSpecs: $targetContentIds},
       });
       builder.build(_.stateService, _.personaContext.vine);
 

@@ -3,7 +3,6 @@ import { PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Indexed } from '../../src/coordinate/indexed';
 import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { IsContainer } from '../../src/payload/is-container';
@@ -15,7 +14,7 @@ import { GenericPiecePayload } from './staging-area';
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
 
 export function renderRootSlot(
-    spec: ObjectSpec<IsContainer<Indexed>>,
+    spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
 ): Observable<Node> {
   return renderCustomElement(
@@ -28,7 +27,7 @@ export function renderRootSlot(
 export const SUPPLY_TYPE = 'pbd.supply';
 
 export function renderSupply(
-    spec: ObjectSpec<IsContainer<Indexed>>,
+    spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
 ): Observable<Node> {
   return renderCustomElement(

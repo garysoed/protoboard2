@@ -4,11 +4,10 @@ import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
+import { IsContainer } from '../payload/is-container';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
 
-import { IsContainer } from '../payload/is-container';
 import { moveObject } from './util/move-object';
-import { Indexed } from '../coordinate/indexed';
 
 
 interface Config {
@@ -21,9 +20,9 @@ interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<IsContainer<Indexed>, Config> {
+export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
   constructor(
-      context: ActionContext<IsContainer<Indexed>>,
+      context: ActionContext<IsContainer<'indexed'>>,
       defaultConfig: Config,
   ) {
     super(

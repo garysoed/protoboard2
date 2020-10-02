@@ -57,7 +57,7 @@ export const $ = {
  * @thModule region
  */
 // tslint:disable-next-line: no-empty-interface
-export interface ActivePayload extends IsContainer<Indexed> { }
+export interface ActivePayload extends IsContainer<'indexed'> { }
 
 /**
  * Represents a region containing objects that are actively manipulated.
