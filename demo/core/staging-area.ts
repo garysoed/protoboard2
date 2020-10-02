@@ -6,7 +6,7 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { Indexed } from '../../src/coordinate/indexed';
+import { createIndexed, Indexed } from '../../src/coordinate/indexed';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
 import { ContentSpec, IsContainer } from '../../src/payload/is-container';
@@ -105,7 +105,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
                     $pipe(
                         specs,
-                        $map(({id}) => ({objectId: id, coordinate: {index: 0}})),
+                        $map(({id}) => ({objectId: id, coordinate: createIndexed(0)})),
                         $asArray(),
                     ),
                 );

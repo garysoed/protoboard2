@@ -3,7 +3,7 @@ import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testi
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 
-import { Indexed } from '../../coordinate/indexed';
+import { createIndexed, Indexed } from '../../coordinate/indexed';
 import { ContentSpec } from '../../payload/is-container';
 
 import { moveObject } from './move-object';
@@ -11,11 +11,11 @@ import { moveObject } from './move-object';
 
 test('@protoboard2/action/util/move-object', () => {
   should(`move the object correctly`, () => {
-    const movedId = {objectId: 'movedId', coordinate: {index: 0}};
-    const fromContentId1 = {objectId: 'fromContentId1', coordinate: {index: 0}};
-    const fromContentId2 = {objectId: 'fromContentId2', coordinate: {index: 1}};
-    const toContentId1 = {objectId: 'toContentId1', coordinate: {index: 0}};
-    const toContentId2 = {objectId: 'toContentId2', coordinate: {index: 1}};
+    const movedId = {objectId: 'movedId', coordinate: createIndexed(0)};
+    const fromContentId1 = {objectId: 'fromContentId1', coordinate: createIndexed(0)};
+    const fromContentId2 = {objectId: 'fromContentId2', coordinate: createIndexed(1)};
+    const toContentId1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
+    const toContentId2 = {objectId: 'toContentId2', coordinate: createIndexed(1)};
 
     const vine = new Vine('test');
 
@@ -39,8 +39,8 @@ test('@protoboard2/action/util/move-object', () => {
   });
 
   should(`do nothing if the souce container has no items`, () => {
-    const toContentId1 = {objectId: 'toContentId1', coordinate: {index: 0}};
-    const toContentId2 = {objectId: 'toContentId2', coordinate: {index: 0}};
+    const toContentId1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
+    const toContentId2 = {objectId: 'toContentId2', coordinate: createIndexed(0)};
 
     const vine = new Vine('test');
 

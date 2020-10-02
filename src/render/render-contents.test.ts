@@ -6,7 +6,7 @@ import { host, multi } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject } from 'rxjs';
 
-import { Indexed } from '../coordinate/indexed';
+import { createIndexed, Indexed } from '../coordinate/indexed';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
 
@@ -35,9 +35,9 @@ test('@protoboard2/render/render-contents', init => {
 
   test('contents$', () => {
     should(`render the contents correctly`, () => {
-      const spec1 = {objectId: 'id1', coordinate: {index: 0}};
-      const spec2 = {objectId: 'id2', coordinate: {index: 1}};
-      const spec3 = {objectId: 'id3', coordinate: {index: 2}};
+      const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
+      const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
+      const spec3 = {objectId: 'id3', coordinate: createIndexed(2)};
 
       const el1 = document.createElement('div1');
       const el2 = document.createElement('div2');

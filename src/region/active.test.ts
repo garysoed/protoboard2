@@ -4,7 +4,7 @@ import { $stateService, _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
-import { Indexed } from '../coordinate/indexed';
+import { createIndexed, Indexed } from '../coordinate/indexed';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
 
@@ -41,7 +41,7 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`render the 1 item count correctly`, () => {
-      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: {index: 0}}]);
+      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
       assert(_.el.getTextContent($.count)).to.emitWith('');
     });
@@ -50,11 +50,11 @@ test('@protoboard2/region/active', init => {
       _.stateService.set(
           _.$contentIds,
           [
-            {objectId: 'id1', coordinate: {index: 0}},
-            {objectId: 'id2', coordinate: {index: 1}},
-            {objectId: 'id3', coordinate: {index: 2}},
-            {objectId: 'id4', coordinate: {index: 3}},
-            {objectId: 'id5', coordinate: {index: 4}},
+            {objectId: 'id1', coordinate: createIndexed(0)},
+            {objectId: 'id2', coordinate: createIndexed(1)},
+            {objectId: 'id3', coordinate: createIndexed(2)},
+            {objectId: 'id4', coordinate: createIndexed(3)},
+            {objectId: 'id5', coordinate: createIndexed(4)},
           ],
       );
 
@@ -70,7 +70,7 @@ test('@protoboard2/region/active', init => {
       content.style.display = 'block';
       content.style.width = `${width}px`;
 
-      const contentSpec = {objectId: 'contentId', coordinate: {index: 0}};
+      const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
       const builder = fakeObjectSpecListBuilder(_.root);
       builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
@@ -91,7 +91,7 @@ test('@protoboard2/region/active', init => {
     });
 
     should(`remove the multiple classname if there is 1 item`, () => {
-      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: {index: 0}}]);
+      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
       assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
     });
@@ -100,10 +100,10 @@ test('@protoboard2/region/active', init => {
       _.stateService.set(
           _.$contentIds,
           [
-            {objectId: 'id1', coordinate: {index: 0}},
-            {objectId: 'id2', coordinate: {index: 1}},
-            {objectId: 'id3', coordinate: {index: 2}},
-            {objectId: 'id4', coordinate: {index: 3}},
+            {objectId: 'id1', coordinate: createIndexed(0)},
+            {objectId: 'id2', coordinate: createIndexed(1)},
+            {objectId: 'id3', coordinate: createIndexed(2)},
+            {objectId: 'id4', coordinate: createIndexed(3)},
           ],
       );
 
@@ -121,7 +121,7 @@ test('@protoboard2/region/active', init => {
       content.style.display = 'block';
       content.style.height = `${height}px`;
 
-      const contentSpec = {objectId: 'contentId', coordinate: {index: 0}};
+      const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
       const builder = fakeObjectSpecListBuilder(_.root);
       builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
@@ -148,8 +148,8 @@ test('@protoboard2/region/active', init => {
       content2.style.height = `1px`;
       content2.style.width = `${size}px`;
 
-      const spec1 = {objectId: 'id1', coordinate: {index: 0}};
-      const spec2 = {objectId: 'id2', coordinate: {index: 1}};
+      const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
+      const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
 
       const builder = fakeObjectSpecListBuilder(_.root);
       builder.add({id: spec1.objectId, payload: {}}, () => observableOf(content1));

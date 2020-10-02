@@ -5,7 +5,7 @@ import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { Indexed } from '../coordinate/indexed';
+import { createIndexed, Indexed } from '../coordinate/indexed';
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
@@ -40,11 +40,11 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const movedId = {objectId: 'movedId', coordinate: {index: 0}};
-      const otherId1 = {objectId: 'otherId1', coordinate: {index: 0}};
-      const otherId2 = {objectId: 'otherId2', coordinate: {index: 0}};
+      const movedId = {objectId: 'movedId', coordinate: createIndexed(0)};
+      const otherId1 = {objectId: 'otherId1', coordinate: createIndexed(0)};
+      const otherId2 = {objectId: 'otherId2', coordinate: createIndexed(0)};
 
-      const otherActiveId = {objectId: 'otherActiveId', coordinate: {index: 0}};
+      const otherActiveId = {objectId: 'otherActiveId', coordinate: createIndexed(0)};
 
       const builder = fakeObjectSpecListBuilder();
       const $activeContentIds = _.stateService.add([otherActiveId]);
