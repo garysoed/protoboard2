@@ -5,7 +5,7 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
-import { IsRotatable } from '../action/payload/is-rotatable';
+import { IsRotatable } from '../payload/is-rotatable';
 
 
 const LOGGER = new Logger('protoboard2.renderRotatable');

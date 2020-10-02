@@ -6,7 +6,7 @@ import { host, multi } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject } from 'rxjs';
 
-import { IsContainer } from '../action/payload/is-container';
+import { IsContainer } from '../payload/is-container';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { renderContents } from './render-contents';

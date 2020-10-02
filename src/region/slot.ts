@@ -5,9 +5,9 @@ import { of as observableOf } from 'rxjs';
 
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
-import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
+import { IsContainer } from '../payload/is-container';
 import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';

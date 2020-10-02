@@ -8,8 +8,7 @@ import { map, share, switchMap, take, tap, withLatestFrom } from 'rxjs/operators
 import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
-
-import { IsRotatable } from './payload/is-rotatable';
+import { IsRotatable } from '../payload/is-rotatable';
 
 
 const LOGGER = new Logger('pb.RotateAction');

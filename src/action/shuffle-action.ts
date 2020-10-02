@@ -4,7 +4,7 @@ import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 
-import { IsContainer } from './payload/is-container';
+import { IsContainer } from '../payload/is-container';
 import { $random } from './util/random';
 
 

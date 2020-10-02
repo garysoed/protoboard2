@@ -7,8 +7,7 @@ import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
-
-import { IsMultifaced } from './payload/is-multifaced';
+import { IsMultifaced } from '../payload/is-multifaced';
 
 
 const LOGGER = new Logger('pb.FlipAction');

@@ -6,8 +6,8 @@ import { MultiOutput } from 'persona/export/internal';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { IsContainer } from '../action/payload/is-container';
 import { $objectService } from '../objects/object-service';
+import { IsContainer } from '../payload/is-container';
 
 
 export function renderContents(

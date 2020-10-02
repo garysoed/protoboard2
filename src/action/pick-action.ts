@@ -5,9 +5,9 @@ import { switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
+import { IsContainer } from '../payload/is-container';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
 
-import { IsContainer } from './payload/is-container';
 import { moveObject } from './util/move-object';
 
 

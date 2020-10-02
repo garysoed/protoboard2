@@ -4,8 +4,8 @@ import { $stateService, _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
-import { IsContainer } from '../action/payload/is-container';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { IsContainer } from '../payload/is-container';
 
 import { $, $active, Active, ACTIVE_ID } from './active';
 

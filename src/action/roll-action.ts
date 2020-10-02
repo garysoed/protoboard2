@@ -5,8 +5,8 @@ import { Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
+import { IsMultifaced } from '../payload/is-multifaced';
 
-import { IsMultifaced } from './payload/is-multifaced';
 import { $random } from './util/random';
 
 

@@ -9,7 +9,7 @@ import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ACTIVE_ID } from '../region/active';
 
-import { IsContainer } from './payload/is-container';
+import { IsContainer } from '../payload/is-container';
 import { PickAction } from './pick-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 

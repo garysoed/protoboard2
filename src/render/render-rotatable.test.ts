@@ -5,7 +5,7 @@ import { host, style } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
 
-import { IsRotatable } from '../action/payload/is-rotatable';
+import { IsRotatable } from '../payload/is-rotatable';
 
 import { renderRotatable } from './render-rotatable';
 

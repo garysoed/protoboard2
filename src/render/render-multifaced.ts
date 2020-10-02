@@ -4,7 +4,7 @@ import { AttributeOutput } from 'persona/export/internal';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { IsMultifaced } from '../action/payload/is-multifaced';
+import { IsMultifaced } from '../payload/is-multifaced';
 
 
 export function renderMultifaced(

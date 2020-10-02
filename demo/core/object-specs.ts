@@ -3,7 +3,7 @@ import { PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { IsContainer } from '../../src/action/payload/is-container';
+import { IsContainer } from '../../src/payload/is-container';
 import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $slot } from '../../src/region/slot';

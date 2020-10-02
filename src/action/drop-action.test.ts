@@ -7,10 +7,10 @@ import { switchMap } from 'rxjs/operators';
 
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { IsContainer } from '../payload/is-container';
 import { ACTIVE_ID } from '../region/active';
 
 import { DropAction } from './drop-action';
-import { IsContainer } from './payload/is-container';
 import { createFakeActionContext } from './testing/fake-action-context';
 
 

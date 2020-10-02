@@ -6,9 +6,9 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
-import { IsContainer } from '../../src/action/payload/is-container';
-import { IsMultifaced } from '../../src/action/payload/is-multifaced';
-import { IsRotatable } from '../../src/action/payload/is-rotatable';
+import { IsContainer } from '../../src/payload/is-container';
+import { IsMultifaced } from '../../src/payload/is-multifaced';
+import { IsRotatable } from '../../src/payload/is-rotatable';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';

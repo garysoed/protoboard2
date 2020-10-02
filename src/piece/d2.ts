@@ -3,13 +3,13 @@ import { _p } from 'mask';
 import { attributeOut, element, host, PersonaContext, slotted, stringParser, style } from 'persona';
 
 import { FlipAction } from '../action/flip-action';
-import { IsMultifaced } from '../action/payload/is-multifaced';
-import { IsRotatable } from '../action/payload/is-rotatable';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
+import { IsMultifaced } from '../payload/is-multifaced';
+import { IsRotatable } from '../payload/is-rotatable';
 import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
 

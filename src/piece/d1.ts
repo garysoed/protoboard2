@@ -1,10 +1,10 @@
 import { _p } from 'mask';
 import { host, PersonaContext, slotted, style } from 'persona';
 
-import { IsRotatable } from '../action/payload/is-rotatable';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
 import { TriggerType, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { IsRotatable } from '../payload/is-rotatable';
 import { renderRotatable } from '../render/render-rotatable';
 
 import template from './d1.html';

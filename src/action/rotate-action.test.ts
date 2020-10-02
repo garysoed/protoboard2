@@ -6,7 +6,7 @@ import { of as observableOf } from 'rxjs';
 
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
-import { IsRotatable } from './payload/is-rotatable';
+import { IsRotatable } from '../payload/is-rotatable';
 import { RotateAction } from './rotate-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 

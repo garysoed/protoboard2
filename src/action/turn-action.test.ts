@@ -6,7 +6,7 @@ import { of as observableOf } from 'rxjs';
 
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
-import { IsMultifaced } from './payload/is-multifaced';
+import { IsMultifaced } from '../payload/is-multifaced';
 import { createFakeActionContext } from './testing/fake-action-context';
 import { TurnAction } from './turn-action';
 

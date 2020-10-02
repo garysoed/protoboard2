@@ -6,11 +6,11 @@ import { Observable, of as observableOf } from 'rxjs';
 import { Logger } from 'santa';
 
 import { DropAction } from '../action/drop-action';
-import { IsContainer } from '../action/payload/is-container';
 import { PickAction } from '../action/pick-action';
 import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
+import { IsContainer } from '../payload/is-container';
 
 import template from './deck.html';
 

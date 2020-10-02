@@ -5,7 +5,7 @@ import { attributeOut, host, stringParser } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
 
-import { IsMultifaced } from '../action/payload/is-multifaced';
+import { IsMultifaced } from '../payload/is-multifaced';
 
 import { renderMultifaced } from './render-multifaced';
 
