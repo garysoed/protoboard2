@@ -3,7 +3,7 @@ import { instanceofType } from 'gs-types';
 import { $stateService, _p } from 'mask';
 import { classToggle, element, host, multi, PersonaContext, renderCustomElement, style, textContent } from 'persona';
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
-import { map, share, switchMap, withLatestFrom } from 'rxjs/operators';
+import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
 import { IsContainer } from '../action/payload/is-container';
 import { $baseComponent, BaseComponent } from '../core/base-component';
@@ -72,6 +72,7 @@ export interface ActivePayload extends IsContainer { }
 export class Active extends BaseComponent<ActivePayload> {
   private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
       .pipe(
+          throttleTime(10),
           withLatestFrom(this.declareInput($.root)),
           map(([event, containerEl]) => ({
             event,

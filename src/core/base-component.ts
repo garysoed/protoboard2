@@ -120,11 +120,11 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   ): Observable<KeyboardEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     return merge(
-        onDom('mouseout')
+        onDom('mouseleave')
             .resolve(context => targetEl.getValue(context))
             .getValue(this.context)
             .pipe(mapTo(false)),
-        onDom('mouseover')
+        onDom('mouseenter')
             .resolve(context => targetEl.getValue(context))
             .getValue(this.context)
             .pipe(mapTo(true)),

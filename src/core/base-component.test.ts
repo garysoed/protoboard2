@@ -87,7 +87,7 @@ test('@protoboard2/core/base-component', init => {
 
     should(`emit when hovered and the correct key was pressed`, () => {
       // Hover over the element.
-      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
@@ -97,7 +97,7 @@ test('@protoboard2/core/base-component', init => {
 
     should(`not emit when the wrong key was pressed`, () => {
       // Hover over the element.
-      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: 'o'}));
@@ -107,8 +107,8 @@ test('@protoboard2/core/base-component', init => {
 
     should(`not emit when not hovered`, () => {
       // Hover over the element, then hover off.
-      _.targetEl.dispatchEvent(new CustomEvent('mouseover'));
-      _.targetEl.dispatchEvent(new CustomEvent('mouseout'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
+      _.targetEl.dispatchEvent(new CustomEvent('mouseleave'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
@@ -149,7 +149,7 @@ test('@protoboard2/core/base-component', init => {
       );
 
       // Hover over the element.
-      _.el.dispatchEvent(new CustomEvent('mouseover'));
+      _.el.dispatchEvent(new CustomEvent('mouseenter'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
@@ -181,7 +181,7 @@ test('@protoboard2/core/base-component', init => {
       );
 
       // Hover over the element.
-      _.el.dispatchEvent(new CustomEvent('mouseover'));
+      _.el.dispatchEvent(new CustomEvent('mouseenter'));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
