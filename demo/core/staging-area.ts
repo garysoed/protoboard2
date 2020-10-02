@@ -1,7 +1,7 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $button, $lineLayout, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
+import { $button, $lineLayout, $rootId, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
@@ -144,6 +144,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                   ],
                 };
                 const rootId = stateService.add(root);
+                $rootId.set(this.vine, () => rootId);
                 $objectSpecListId.set(this.vine, () => rootId);
                 stagingService.setStaging(false);
               }),

@@ -56,6 +56,7 @@ window.addEventListener('load', () => {
       json(),
   );
   $saveConfig.set(vine, () => ({
+    loadOnInit: true,
     saveId: 'save',
     storage,
     initFn: stateService => stateService.add<HasObjectSpecList>({objectSpecs: []}),
