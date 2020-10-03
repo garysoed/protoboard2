@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { $stateService } from 'mask';
 import { integerParser } from 'persona';
-import { EMPTY, Observable } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { ActionContext, BaseAction } from '../core/base-action';
@@ -56,13 +56,21 @@ export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
 
               return $stateService.get(this.context.personaContext.vine).pipe(
                   take(1),
-                  switchMap(service => service.get(activeState.payload.$contentSpecs)),
+                  switchMap(service => combineLatest([
+                    service.get(fromState.payload.$contentSpecs),
+                    service.get(activeState.payload.$contentSpecs),
+                  ])),
                   take(1),
-                  switchMap(activeContents => {
+                  switchMap(([fromContents, activeContents]) => {
+                    const movedObjectSpec = (fromContents ?? [])[config.location];
+                    if (!movedObjectSpec) {
+                      return EMPTY;
+                    }
+
                     return moveObject(
                         fromState.payload,
                         activeState.payload,
-                        {index: config.location},
+                        movedObjectSpec.objectId,
                         {index: activeContents?.length ?? 0},
                         this.context.personaContext.vine,
                     );

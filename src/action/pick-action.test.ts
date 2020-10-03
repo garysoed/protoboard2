@@ -1,4 +1,4 @@
-import { arrayThat, assert, createSpySubject, run, should, test, objectThat } from 'gs-testing';
+import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 import { createFakeContext } from 'persona/export/testing';

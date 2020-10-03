@@ -55,10 +55,17 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
                   switchMap(service => service.get(activeState.payload.$contentSpecs)),
                   take(1),
                   switchMap(activeContents => {
+                    const normalizedActiveContents = activeContents ?? [];
+                    const movedObjectSpec =
+                        normalizedActiveContents[normalizedActiveContents.length - 1];
+                    if (!movedObjectSpec) {
+                      return EMPTY;
+                    }
+
                     return moveObject(
                         activeState.payload,
                         toState.payload,
-                        {index: activeContents?.length ?? 0},
+                        movedObjectSpec.objectId,
                         {index: config.location},
                         this.context.personaContext.vine,
                     );

@@ -31,7 +31,7 @@ test('@protoboard2/action/util/move-object', () => {
     run(moveObject(
         {type: 'indexed', $contentSpecs: $fromContentSpecs},
         {type: 'indexed', $contentSpecs: $toContentSpecs},
-        {index: 1},
+        movedSpec.objectId,
         {index: 2},
         vine,
     ));
@@ -48,35 +48,6 @@ test('@protoboard2/action/util/move-object', () => {
             coordinate: objectThat<Indexed>().haveProperties(createIndexed(2)),
           }),
         ]),
-    );
-  });
-
-  should(`do nothing if the souce container has no items`, () => {
-    const toContentId1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
-    const toContentId2 = {objectId: 'toContentId2', coordinate: createIndexed(0)};
-
-    const vine = new Vine('test');
-
-    const stateService = new StateService();
-    $stateService.set(vine, () => stateService);
-
-    const $fromContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-    const $toContentIds = stateService.add([toContentId1, toContentId2]);
-
-    const fromContentIds$ = createSpySubject(stateService.get($fromContentIds));
-    const toContentIds$ = createSpySubject(stateService.get($toContentIds));
-
-    run(moveObject(
-        {type: 'indexed', $contentSpecs: $fromContentIds},
-        {type: 'indexed', $contentSpecs: $toContentIds},
-        {index: 1},
-        {index: 1},
-        vine,
-    ));
-
-    assert(fromContentIds$).to.emitWith(arrayThat<ContentSpec<Indexed>>().beEmpty());
-    assert(toContentIds$).to.emitWith(
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([toContentId1, toContentId2]),
     );
   });
 });
