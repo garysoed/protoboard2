@@ -1,5 +1,5 @@
 import { Vine } from 'grapevine';
-import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
+import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 
@@ -11,30 +11,43 @@ import { moveObject } from './move-object';
 
 test('@protoboard2/action/util/move-object', () => {
   should(`move the object correctly`, () => {
-    const movedId = {objectId: 'movedId', coordinate: createIndexed(0)};
-    const fromContentId1 = {objectId: 'fromContentId1', coordinate: createIndexed(0)};
-    const fromContentId2 = {objectId: 'fromContentId2', coordinate: createIndexed(1)};
-    const toContentId1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
-    const toContentId2 = {objectId: 'toContentId2', coordinate: createIndexed(1)};
+    const fromSpec1 = {objectId: 'fromContentId1', coordinate: createIndexed(0)};
+    const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
+    const fromSpec2 = {objectId: 'fromContentId2', coordinate: createIndexed(2)};
+    const toSpec1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
+    const toSpec2 = {objectId: 'toContentId2', coordinate: createIndexed(1)};
 
     const vine = new Vine('test');
 
     const stateService = new StateService();
     $stateService.set(vine, () => stateService);
 
-    const $fromContentSpecs = stateService.add([fromContentId1, movedId, fromContentId2]);
-    const $toContentSpecs = stateService.add([toContentId1, toContentId2]);
+    const $fromContentSpecs = stateService.add([fromSpec1, movedSpec, fromSpec2]);
+    const $toContentSpecs = stateService.add([toSpec1, toSpec2]);
 
     const fromContentIds$ = createSpySubject(stateService.get($fromContentSpecs));
     const toContentIds$ = createSpySubject(stateService.get($toContentSpecs));
 
-    run(moveObject($fromContentSpecs, $toContentSpecs, 1, 1, vine));
+    run(moveObject(
+        {type: 'indexed', $contentSpecs: $fromContentSpecs},
+        {type: 'indexed', $contentSpecs: $toContentSpecs},
+        {index: 1},
+        {index: 2},
+        vine,
+    ));
 
     assert(fromContentIds$).to.emitWith(
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([fromContentId1, fromContentId2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([fromSpec1, fromSpec2]),
     );
     assert(toContentIds$).to.emitWith(
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([toContentId1, movedId, toContentId2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([
+          toSpec1,
+          toSpec2,
+          objectThat<ContentSpec<Indexed>>().haveProperties({
+            ...movedSpec,
+            coordinate: objectThat<Indexed>().haveProperties(createIndexed(2)),
+          }),
+        ]),
     );
   });
 
@@ -53,7 +66,13 @@ test('@protoboard2/action/util/move-object', () => {
     const fromContentIds$ = createSpySubject(stateService.get($fromContentIds));
     const toContentIds$ = createSpySubject(stateService.get($toContentIds));
 
-    run(moveObject($fromContentIds, $toContentIds, 1, 1, vine));
+    run(moveObject(
+        {type: 'indexed', $contentSpecs: $fromContentIds},
+        {type: 'indexed', $contentSpecs: $toContentIds},
+        {index: 1},
+        {index: 1},
+        vine,
+    ));
 
     assert(fromContentIds$).to.emitWith(arrayThat<ContentSpec<Indexed>>().beEmpty());
     assert(toContentIds$).to.emitWith(

@@ -1,4 +1,4 @@
-import { arrayThat, assert, createSpySubject, run, should, test } from 'gs-testing';
+import { arrayThat, assert, createSpySubject, run, should, test, objectThat } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 import { createFakeContext } from 'persona/export/testing';
@@ -40,20 +40,20 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should(`trigger correctly`, () => {
-      const movedId = {objectId: 'movedId', coordinate: createIndexed(0)};
-      const otherId1 = {objectId: 'otherId1', coordinate: createIndexed(0)};
-      const otherId2 = {objectId: 'otherId2', coordinate: createIndexed(0)};
+      const otherSpec1 = {objectId: 'otherId1', coordinate: createIndexed(0)};
+      const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
+      const otherSpec2 = {objectId: 'otherId2', coordinate: createIndexed(2)};
 
-      const otherActiveId = {objectId: 'otherActiveId', coordinate: createIndexed(0)};
+      const otherActiveSpec = {objectId: 'otherActiveId', coordinate: createIndexed(0)};
 
       const builder = fakeObjectSpecListBuilder();
-      const $activeContentIds = _.stateService.add([otherActiveId]);
+      const $activeContentIds = _.stateService.add([otherActiveSpec]);
       builder.add({
         id: ACTIVE_ID,
         payload: {$contentSpecs: $activeContentIds},
       });
 
-      const $targetContentSpecs = _.stateService.add([otherId1, movedId, otherId2]);
+      const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
       const objectSpec = builder.add({
         id: 'TARGET_ID',
         payload: {type: 'indexed' as const, $contentSpecs: $targetContentSpecs},
@@ -73,12 +73,18 @@ test('@protoboard2/action/pick-action', init => {
       _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveId]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveId, movedId]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([
+          otherActiveSpec,
+          objectThat<ContentSpec<Indexed>>().haveProperties({
+            ...movedSpec,
+            coordinate: objectThat<Indexed>().haveProperties(createIndexed(1)),
+          }),
+        ]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherId1, movedId, otherId2]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherId1, otherId2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
+        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherSpec1, otherSpec2]),
       ]);
     });
   });

@@ -8,11 +8,13 @@ export interface ContentSpec<C extends Coordinate> {
   readonly coordinate: C;
 }
 
-interface TypeCoordinateMapping {
+export interface TypeCoordinateMapping {
   readonly indexed: Indexed;
 }
 
-export interface IsContainer<T extends keyof TypeCoordinateMapping> {
+export type CoordinateTypes = keyof TypeCoordinateMapping;
+
+export interface IsContainer<T extends CoordinateTypes> {
   readonly type: T;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<TypeCoordinateMapping[T]>>>;
 }
