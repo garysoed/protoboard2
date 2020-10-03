@@ -5,8 +5,8 @@ import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/test
 import { of as observableOf } from 'rxjs';
 
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-
 import { IsMultifaced } from '../payload/is-multifaced';
+
 import { createFakeActionContext } from './testing/fake-action-context';
 import { TurnAction } from './turn-action';
 
@@ -48,7 +48,7 @@ test('@protoboard2/action/turn-action', init => {
     should(`increase the face by 1`, () => {
       _.stateService.set(_.$faceIndex, 0);
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.get(_.$faceIndex)).to.emitWith(1);
     });
@@ -58,8 +58,8 @@ test('@protoboard2/action/turn-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
 
-      _.action.trigger();
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(faceIndex$).to.emitSequence([1, 0, 1]);
     });
@@ -71,8 +71,8 @@ test('@protoboard2/action/turn-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
 
-      _.action.trigger();
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(faceIndex$).to.emitSequence([1, 2, 3]);
     });

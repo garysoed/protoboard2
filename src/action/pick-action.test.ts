@@ -70,7 +70,7 @@ test('@protoboard2/action/pick-action', init => {
               .pipe(switchMap(service => service.get($targetContentSpecs))),
       );
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveId]),

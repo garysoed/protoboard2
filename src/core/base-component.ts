@@ -1,21 +1,22 @@
 import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { _p, ThemedCustomElementCtrl } from 'mask';
+import { _p, Keyboard, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
 import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
 import { ObjectSpec } from '../objects/object-spec';
 import { $objectSpecMap } from '../objects/object-spec-list';
 
-import { ActionContext, BaseAction } from './base-action';
+import { ActionContext, BaseAction, TriggerEvent } from './base-action';
 import { DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec } from './trigger-spec';
 
 
 const LOG = new Logger('protoboard.core.BaseComponent');
 
+type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
 export type BaseActionCtor<P> =
     (context: ActionContext<P>) => BaseAction<any>;
@@ -108,38 +109,51 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
 
   private createTriggerClick(
       triggerSpec: DetailedTriggerSpec<TriggerSpec>,
-  ): Observable<MouseEvent> {
+  ): Observable<MouseEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     return onDom<MouseEvent>('click')
         .resolve(context => targetEl.getValue(context))
-        .getValue(this.context);
+        .getValue(this.context)
+        .pipe(
+            map(event => {
+              return Object.assign(event, {mouseX: event.offsetX, mouseY: event.offsetY});
+            }),
+        );
   }
 
   private createTriggerKey(
       triggerSpec: DetailedTriggerSpec<TriggerType>,
-  ): Observable<KeyboardEvent> {
+  ): Observable<KeyboardEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
+    const onMouseLeave$ = onDom('mouseleave')
+        .resolve(context => targetEl.getValue(context))
+        .getValue(this.context);
+    const onMouseEnter$ = onDom('mouseenter')
+        .resolve(context => targetEl.getValue(context))
+        .getValue(this.context);
+    const onMouseMove$ = onDom<MouseEvent>('mousemove')
+        .resolve(context => targetEl.getValue(context))
+        .getValue(this.context);
     return merge(
-        onDom('mouseleave')
-            .resolve(context => targetEl.getValue(context))
-            .getValue(this.context)
-            .pipe(mapTo(false)),
-        onDom('mouseenter')
-            .resolve(context => targetEl.getValue(context))
-            .getValue(this.context)
-            .pipe(mapTo(true)),
+        onMouseLeave$.pipe(mapTo(false)),
+        onMouseEnter$.pipe(mapTo(true)),
     )
     .pipe(
         switchMap(hovered => {
           return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
         }),
-        filter(event => event.key === triggerSpec.type),
+        withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
+        filter(([event]) => event.key === triggerSpec.type),
+        map(([keyboardEvent, mouseEvent]) => {
+          return Object.assign(
+              keyboardEvent,
+              {mouseX: mouseEvent.offsetX, mouseY: mouseEvent.offsetY});
+        }),
     );
   }
 
   private setupActions(): void {
     for (const [trigger, action] of this.actionsMap) {
-      this.addSetup(this.setupTriggerFunction(action));
       this.addSetup(this.setupTrigger(trigger, action));
       this.addSetup(action.run());
     }
@@ -149,7 +163,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
       triggerSpec: DetailedTriggerSpec<TriggerType>,
       action: BaseAction<object>,
   ): Observable<unknown> {
-    const trigger$: Observable<KeyboardEvent|MouseEvent> = isKeyTrigger(triggerSpec.type) ?
+    const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
         this.createTriggerKey(triggerSpec) :
         this.createTriggerClick(triggerSpec);
     return trigger$
@@ -160,19 +174,8 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
                   event.metaKey === (triggerSpec.meta ?? false) &&
                   event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            tap(() => {
-              action.trigger();
-            }),
-        );
-  }
-
-  private setupTriggerFunction(action: BaseAction<object>): Observable<unknown> {
-    return this.declareInput($.host)
-        .pipe(
-            tap(hostEl => {
-              Object.assign(hostEl, {[action.key]: () => {
-                action.trigger();
-              }});
+            tap(event => {
+              action.trigger(event);
             }),
         );
   }

@@ -5,8 +5,8 @@ import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/test
 import { of as observableOf } from 'rxjs';
 
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-
 import { IsRotatable } from '../payload/is-rotatable';
+
 import { RotateAction } from './rotate-action';
 import { createFakeActionContext } from './testing/fake-action-context';
 
@@ -43,7 +43,7 @@ test('@protoboard2/action/rotate-action', init => {
     should(`change the rotation to the next index`, () => {
       _.stateService.set(_.$rotationDeg, 1);
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.get(_.$rotationDeg)).to.emitWith(22);
     });
@@ -53,7 +53,7 @@ test('@protoboard2/action/rotate-action', init => {
 
       _.stateService.set(_.$rotationDeg, 910);
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.get(_.$rotationDeg)).to.emitWith(456);
     });

@@ -73,7 +73,7 @@ test('@protoboard2/action/drop-action', init => {
               .pipe(switchMap(service => service.get($targetContentIds))),
       );
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<Indexed>>().haveExactElements([otherId1, movedId, otherId2]),

@@ -3,7 +3,6 @@ import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { Indexed } from '../coordinate/indexed';
 import { ActionContext, BaseAction } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
 import { IsContainer } from '../payload/is-container';

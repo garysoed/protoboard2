@@ -1,10 +1,10 @@
-import { assert, createSpySubject, run, should, test } from 'gs-testing';
+import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { instanceofType } from 'gs-types';
 import { element, PersonaContext } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 
-import { ActionContext, BaseAction } from './base-action';
+import { ActionContext, BaseAction, TriggerEvent } from './base-action';
 import { ActionSpec, BaseComponent } from './base-component';
 import { TriggerType } from './trigger-spec';
 
@@ -88,16 +88,25 @@ test('@protoboard2/core/base-component', init => {
     should(`emit when hovered and the correct key was pressed`, () => {
       // Hover over the element.
       _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
+      _.targetEl.dispatchEvent(Object.assign(
+          new CustomEvent('mousemove'),
+          {offsetX: 12, offsetY: 34},
+      ));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
 
-      assert(_.onTrigger$).to.emit();
+      assert(_.onTrigger$).to
+          .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
     should(`not emit when the wrong key was pressed`, () => {
       // Hover over the element.
       _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
+      _.targetEl.dispatchEvent(Object.assign(
+          new CustomEvent('mousemove'),
+          {offsetX: 12, offsetY: 34},
+      ));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: 'o'}));
@@ -150,6 +159,10 @@ test('@protoboard2/core/base-component', init => {
 
       // Hover over the element.
       _.el.dispatchEvent(new CustomEvent('mouseenter'));
+      _.el.dispatchEvent(Object.assign(
+          new CustomEvent('mousemove'),
+          {offsetX: 12, offsetY: 34},
+      ));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
@@ -162,7 +175,9 @@ test('@protoboard2/core/base-component', init => {
             shiftKey: true,
           },
       ));
-      assert(onTrigger$).to.emit();
+
+      assert(onTrigger$).to
+          .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
     should(`default modifiers to false`, () => {
@@ -182,6 +197,10 @@ test('@protoboard2/core/base-component', init => {
 
       // Hover over the element.
       _.el.dispatchEvent(new CustomEvent('mouseenter'));
+      _.el.dispatchEvent(Object.assign(
+          new CustomEvent('mousemove'),
+          {offsetX: 12, offsetY: 34},
+      ));
 
       // Press the key
       window.dispatchEvent(new KeyboardEvent(
@@ -194,19 +213,9 @@ test('@protoboard2/core/base-component', init => {
             shiftKey: false,
           },
       ));
-      assert(onTrigger$).to.emit();
-    });
-  });
 
-  test('setupTriggerFunction', () => {
-    should(`create a function that triggers`, () => {
-      const onTrigger$ = createSpySubject(
-          [..._.component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
-      );
-
-      (_.el as any)[ACTION_KEY]();
-
-      assert(onTrigger$).to.emit();
+      assert(onTrigger$).to
+          .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
   });
 });

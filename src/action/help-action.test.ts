@@ -51,7 +51,7 @@ test('@protoboard2/action/help-action', init => {
           .pipe(switchMap(service => service.actions$)),
       );
 
-      _.action.trigger();
+      _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(actions$).to.emitSequence([
         arrayThat<ActionTrigger>().haveExactElements([]),

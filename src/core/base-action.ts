@@ -15,6 +15,11 @@ export interface ActionContext<P> {
   readonly objectSpec$: Observable<ObjectSpec<P>|null>;
 }
 
+export interface TriggerEvent {
+  readonly mouseX: number;
+  readonly mouseY: number;
+}
+
 /**
  * Converters of the action's configuration object.
  *
@@ -32,7 +37,7 @@ export type ConverterOf<O> = {
  * @thModule action
  */
 export abstract class BaseAction<P, C = {}> extends Runnable {
-  readonly #onTrigger$ = new Subject<void>();
+  readonly #onTrigger$ = new Subject<TriggerEvent>();
 
   /**
    * Instantiates a new BaseAction.
@@ -115,7 +120,7 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
   /**
    * Triggers the action.
    */
-  trigger(): void {
-    this.#onTrigger$.next();
+  trigger(event: TriggerEvent): void {
+    this.#onTrigger$.next(event);
   }
 }
