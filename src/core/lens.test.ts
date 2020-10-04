@@ -20,7 +20,7 @@ test('@protoboard2/util/lens', init => {
 
   test(`setupHandleMouseOut`, () => {
     should(`hide the elements`, () => {
-      run(_.el.dispatchEvent($.host._.onMouseOut));
+      run(_.el.dispatchEvent($.host._.onMouseLeave));
 
       assert(_.mockLensService.hide).to.haveBeenCalledWith(objectThat<Lens>().beAnInstanceOf(Lens));
     });
@@ -34,7 +34,7 @@ test('@protoboard2/util/lens', init => {
       divEl.setAttribute('slot', 'details');
       _.el.element.appendChild(divEl);
 
-      run(_.el.dispatchEvent($.host._.onMouseOver));
+      run(_.el.dispatchEvent($.host._.onMouseEnter));
 
       const matcher = objectThat<DocumentFragment>().beAnInstanceOf(DocumentFragment);
 

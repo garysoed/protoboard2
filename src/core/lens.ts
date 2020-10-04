@@ -17,8 +17,8 @@ export const $lens = {
 export const $ = {
   host: host({
     ...$lens.api,
-    onMouseOver: onDom('mouseover'),
-    onMouseOut: onDom('mouseout'),
+    onMouseEnter: onDom('mouseenter'),
+    onMouseLeave: onDom('mouseleave'),
   }),
   details: element('details', instanceofType(HTMLSlotElement), {
     onSlotChange: onDom('slotchange'),
@@ -35,13 +35,13 @@ export class Lens extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.addSetup(this.handleMouseOut$);
-    this.addSetup(this.handleMouseOver$);
+    this.addSetup(this.handleMouseLeave$);
+    this.addSetup(this.handleMouseEnter$);
   }
 
   @cache()
-  private get handleMouseOut$(): Observable<unknown> {
-    return this.declareInput($.host._.onMouseOut).pipe(
+  private get handleMouseLeave$(): Observable<unknown> {
+    return this.declareInput($.host._.onMouseLeave).pipe(
         withLatestFrom(this.lensService$),
         tap(([, lensService]) => {
           lensService.hide(this);
@@ -50,8 +50,8 @@ export class Lens extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get handleMouseOver$(): Observable<unknown> {
-    return this.declareInput($.host._.onMouseOver).pipe(
+  private get handleMouseEnter$(): Observable<unknown> {
+    return this.declareInput($.host._.onMouseEnter).pipe(
         withLatestFrom(this.declareInput($.details), this.lensService$),
         tap(([, slotEl, lensService]) => {
           const assignedNodes = slotEl.assignedNodes();

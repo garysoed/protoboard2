@@ -1,6 +1,5 @@
 import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { BrowserSnapshotsEnv } from 'gs-testing/export/browser';
-import { $asArray, $filter, $pipe, arrayFrom } from 'gs-tools/export/collect';
 import { _p } from 'mask';
 import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
@@ -65,7 +64,8 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      assert(_.el.element.shadowRoot!.innerHTML).to.matchSnapshot('helpOverlay.render');
+      assert(_.el.element.shadowRoot!.getElementById('content')!.innerHTML)
+          .to.matchSnapshot('helpOverlay.render');
     });
 
     should(`render deletion correctly`, () => {
@@ -77,7 +77,8 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      assert(_.el.element.shadowRoot!.innerHTML).to.matchSnapshot('helpOverlay.renderEmpty');
+      assert(_.el.element.shadowRoot!.getElementById('content')!.innerHTML)
+          .to.matchSnapshot('helpOverlay.renderEmpty');
     });
   });
 
