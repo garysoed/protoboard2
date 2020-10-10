@@ -58,16 +58,6 @@ There are 4 classes of objects:
 -   **Piece**: Cannot contain other objects.
 -   **Container**: Allows placing pieces in it.
 
-### Region
-
-Regions are used to group several objects together. This is used for custom layouts to make
-playtesting the game easier. Unlike `Containers`, regions cannot be interacted with.
-Some example regions:
-
--   **Active**: Refers to the player's cursor. Only visible to the local player.
--   **Hand**: A player's hand. Only visible to specified players. This is protected by ACL.
--   **Slot**: A place where objects can be placed in it.
-
 ### Layout
 
 Layouts are easy ways to arrange objects together. Some example layouts:
@@ -87,14 +77,22 @@ blocks in a game. Pieces may have several faces and can switch between them. Som
 -   **D6**: A piece with six sides. For example: a d6 die.
 -   **DN**: A piece with any specified number of sides.
 
-### Container
+### Region
 
-A container is a game piece that can contain other pieces. They can be used to group pieces
-together. Some example containers:
+A region can contain other pieces. They can be used to group pieces together. Some example
+regions:
 
+-   **Bag**: Puts in pieces, and you can only take out random items from the bag.
+-   **Chute**: Mimics a cube tower. Put in pieces and they may randomly come out.
 -   **Deck**: Pieces are stacked. They can be shuffled, reversed, cut. Only the top and bottom
     pieces can be revealed at a time.
--   **Fan**: Arranges the pieces in a fan. All pieces are visible and can be accessed and reordered
-    at any time.
--   **Chute**: Mimics a cube tower. Put in pieces and they may randomly come out.
--   **Bag**: Puts in pieces, and you can only take out random items from the bag.
+-   **Hand**: A player's hand. Always arranges all the contents in horizontal order and allows
+    random access to all its contents.
+-   **Surface**: Pieces can be placed in an x - y coordinate.
+
+### Special
+
+-   **Active**: Refers to the player's cursor. Only visible to the local player.
+
+Deprecated:
+-   **Slot**: A place where objects can be placed in it.
