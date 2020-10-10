@@ -28,11 +28,12 @@ test('@protoboard2/action/drop-action', init => {
     const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<'indexed'>>|null>(1);
 
     const action = new DropAction(
+        () => 1,
         createFakeActionContext({
           personaContext,
           objectSpec$,
         }),
-        {location: 1},
+        {},
     );
 
     run(action.run());

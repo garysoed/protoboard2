@@ -27,11 +27,12 @@ test('@protoboard2/action/help-overlay', init => {
     const shadowRoot = targetEl.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
     const testAction = new PickAction(
+        () => 0,
         createFakeActionContext({
           personaContext,
           objectSpec$: observableOf(null),
         }),
-        {location: 0},
+        {},
     );
     return {el, testAction, tester};
   });

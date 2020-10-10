@@ -42,8 +42,8 @@ export class Deck extends BaseComponent<DeckPayload> {
   constructor(context: PersonaContext) {
     super(
         [
-          {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {location: 0})},
-          {trigger: TriggerType.D, provider: context => new DropAction(context, {location: 0})},
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
+          {trigger: TriggerType.D, provider: context => new DropAction(() => 0, context, {})},
           {trigger: TriggerType.S, provider: context => new ShuffleAction(context)},
         ],
         context,

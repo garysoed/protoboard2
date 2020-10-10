@@ -1,9 +1,8 @@
 import { $stateService } from 'mask';
-import { integerParser } from 'persona';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
-import { ActionContext, BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
 import { IsContainer } from '../payload/is-container';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
@@ -12,7 +11,6 @@ import { moveObject } from './util/move-object';
 
 
 interface Config {
-  readonly location: number;
 }
 
 
@@ -23,13 +21,14 @@ interface Config {
  */
 export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
   constructor(
+      private readonly locationFn: (event: TriggerEvent) => number,
       context: ActionContext<IsContainer<'indexed'>>,
       defaultConfig: Config,
   ) {
     super(
         'Drop',
         'drop',
-        {location: integerParser()},
+        {},
         context,
         defaultConfig,
     );
@@ -45,7 +44,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
     return this.onTrigger$
         .pipe(
             withLatestFrom(this.context.objectSpec$, activeState$, this.config$),
-            switchMap(([, toState, activeState, config]) => {
+            switchMap(([event, toState, activeState, config]) => {
               if (!toState || !activeState) {
                 return EMPTY;
               }
@@ -66,7 +65,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
                         activeState.payload,
                         toState.payload,
                         movedObjectSpec.objectId,
-                        {index: config.location},
+                        {index: this.locationFn(event)},
                         this.context.personaContext.vine,
                     );
                   }),

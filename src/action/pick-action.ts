@@ -4,7 +4,7 @@ import { integerParser } from 'persona';
 import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
-import { ActionContext, BaseAction } from '../core/base-action';
+import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
 import { IsContainer } from '../payload/is-container';
 import { ACTIVE_ID, ActivePayload } from '../region/active';
@@ -12,9 +12,7 @@ import { ACTIVE_ID, ActivePayload } from '../region/active';
 import { moveObject } from './util/move-object';
 
 
-interface Config {
-  readonly location: number;
-}
+interface Config { }
 
 /**
  * Lets the user pick up the object.
@@ -26,13 +24,14 @@ export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
    * @internal
    */
   constructor(
+      private readonly locationFn: (event: TriggerEvent) => number,
       context: ActionContext<IsContainer<'indexed'>>,
       defaultConfig: Config,
   ) {
     super(
         'pick',
         'Pick',
-        {location: integerParser()},
+        {},
         context,
         defaultConfig,
     );
@@ -49,7 +48,7 @@ export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
     return this.onTrigger$
         .pipe(
             withLatestFrom(this.context.objectSpec$, activeState$, this.config$),
-            switchMap(([, fromState, activeState, config]) => {
+            switchMap(([event, fromState, activeState, config]) => {
               if (!fromState || !activeState) {
                 return EMPTY;
               }
@@ -62,7 +61,7 @@ export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
                   ])),
                   take(1),
                   switchMap(([fromContents, activeContents]) => {
-                    const movedObjectSpec = (fromContents ?? [])[config.location];
+                    const movedObjectSpec = (fromContents ?? [])[this.locationFn(event)];
                     if (!movedObjectSpec) {
                       return EMPTY;
                     }

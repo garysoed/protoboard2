@@ -113,7 +113,7 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
    * Emits whenever the action is triggered.
    */
   @cache()
-  get onTrigger$(): Observable<unknown> {
+  get onTrigger$(): Observable<TriggerEvent> {
     return this.#onTrigger$;
   }
 
