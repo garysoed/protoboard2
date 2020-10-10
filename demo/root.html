@@ -11,8 +11,12 @@
     display: block;
   }
 
-  #main.isPlaying #stagingArea {
+  #main.isPlaying #stagingMode {
     display: none;
+  }
+
+  #stagingArea {
+    position: relative;
   }
 </style>
 
@@ -23,10 +27,12 @@
     label="Protoboard"
     mk-body-1
 >
-  <div id="main" layout="row" slot="main">
-    <pbd-documentation flex></pbd-documentation>
-    <pbd-play-area id="playArea" flex></pbd-play-area>
-    <pbd-staging-area id="stagingArea" flex></pbd-staging-area>
+  <div id="main" slot="main">
+    <div id="stagingMode" fill-parent layout="row">
+      <pbd-documentation flex></pbd-documentation>
+      <pbd-staging-area id="stagingArea" flex></pbd-staging-area>
+    </div>
+    <pbd-play-area id="playArea" fill-parent></pbd-play-area>
   </div>
   <pbd-drawer id="drawer" slot="drawer"></pbd-drawer>
 </mk-root-layout>

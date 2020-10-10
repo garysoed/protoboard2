@@ -1,5 +1,5 @@
 import { cache } from 'gs-tools/export/data';
-import { $button, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
+import { $button, $stateService, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
 import { element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { tap, withLatestFrom } from 'rxjs/operators';
@@ -36,8 +36,9 @@ export class PlayArea extends ThemedCustomElementCtrl {
   @cache()
   private get handleClearClick$(): Observable<unknown> {
     return this.declareInput($.clearButton._.actionEvent).pipe(
-        withLatestFrom($stagingService.get(this.vine)),
-        tap(([, stagingService]) => {
+        withLatestFrom($stagingService.get(this.vine), $stateService.get(this.vine)),
+        tap(([, stagingService, stateService]) => {
+          stateService.clear();
           stagingService.setStaging(true);
           stagingService.clear();
         }),
