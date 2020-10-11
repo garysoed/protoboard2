@@ -8,7 +8,7 @@ import { ObjectSpec } from '../../src/objects/object-spec';
 import { IsContainer } from '../../src/payload/is-container';
 import { $slot } from '../../src/region/slot';
 
-import { GenericPiecePayload } from './staging-area';
+import { GenericPiecePayload } from './payloads';
 
 
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';

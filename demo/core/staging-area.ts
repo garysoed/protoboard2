@@ -11,18 +11,13 @@ import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/core/active';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
 import { ContentSpec, IsContainer } from '../../src/payload/is-container';
-import { IsMultifaced } from '../../src/payload/is-multifaced';
-import { IsRotatable } from '../../src/payload/is-rotatable';
 
 import { PREVIEW_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './object-specs';
-import { PieceSpec } from './piece-spec';
+import { GenericPiecePayload } from './payloads';
 import template from './staging-area.html';
 import { $stagingService } from './staging-service';
 import { SUPPLY_ID } from './supply';
 
-
-export interface GenericPiecePayload extends PieceSpec, IsMultifaced, IsRotatable {
-}
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
 
