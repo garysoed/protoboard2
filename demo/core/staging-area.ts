@@ -7,12 +7,12 @@ import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 
 import { createIndexed, Indexed } from '../../src/coordinate/indexed';
+import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/core/active';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-spec-list';
 import { ContentSpec, IsContainer } from '../../src/payload/is-container';
 import { IsMultifaced } from '../../src/payload/is-multifaced';
 import { IsRotatable } from '../../src/payload/is-rotatable';
-import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/core/active';
 
 import { PREVIEW_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './object-specs';
 import { PieceSpec } from './piece-spec';
@@ -21,8 +21,7 @@ import { $stagingService } from './staging-service';
 import { SUPPLY_ID } from './supply';
 
 
-export interface GenericPiecePayload extends
-    PieceSpec, IsMultifaced, IsRotatable, IsContainer<'indexed'> {
+export interface GenericPiecePayload extends PieceSpec, IsMultifaced, IsRotatable {
 }
 
 export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
@@ -126,15 +125,12 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 // User defined object specs.
                 const userDefinedObjectSpecs: Array<ObjectSpec<any>> = [];
                 for (const spec of specs) {
-                  const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
                   const $currentFaceIndex = stateService.add<number>(0);
                   const $rotationDeg = stateService.add<number>(0);
                   const payload: GenericPiecePayload = {
-                    type: 'indexed',
                     ...spec,
                     $currentFaceIndex,
                     $rotationDeg,
-                    $contentSpecs,
                   };
                   userDefinedObjectSpecs.push({...spec, type: PREVIEW_TYPE, payload});
                 }

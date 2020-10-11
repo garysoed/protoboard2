@@ -7,6 +7,7 @@ import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
 import { ACTIVE_TYPE, renderActive } from '../src/core/active';
+import { ObjectCreateSpec } from '../src/objects/object-create-spec';
 import { $createSpecMap } from '../src/objects/object-service';
 import { $objectSpecListId, HasObjectSpecList } from '../src/objects/object-spec-list';
 
@@ -79,7 +80,7 @@ window.addEventListener('load', () => {
         stagingService.setStaging(false);
       });
 
-  $createSpecMap.set(vine, () => new Map([
+  $createSpecMap.set(vine, () => new Map<string, ObjectCreateSpec<any>>([
     [ACTIVE_TYPE, renderActive],
     [ROOT_SLOT_TYPE, renderRootSlot],
     [SUPPLY_TYPE, renderSupply],
