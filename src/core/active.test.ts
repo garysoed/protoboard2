@@ -11,7 +11,7 @@ import { ContentSpec, IsContainer } from '../payload/is-container';
 import { $, $active, Active, ACTIVE_ID } from './active';
 
 
-test('@protoboard2/region/active', init => {
+test('@protoboard2/core/active', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {

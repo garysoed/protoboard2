@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
-import { Active } from '../src/region/active';
+import { Active } from '../src/core/active';
 
 import { Documentation } from './core/documentation';
 import { $drawer, Drawer } from './core/drawer';

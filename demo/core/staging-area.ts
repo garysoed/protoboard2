@@ -12,7 +12,7 @@ import { $objectSpecListId, HasObjectSpecList } from '../../src/objects/object-s
 import { ContentSpec, IsContainer } from '../../src/payload/is-container';
 import { IsMultifaced } from '../../src/payload/is-multifaced';
 import { IsRotatable } from '../../src/payload/is-rotatable';
-import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/region/active';
+import { ACTIVE_ID, ACTIVE_TYPE } from '../../src/core/active';
 
 import { PREVIEW_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './object-specs';
 import { PieceSpec } from './piece-spec';

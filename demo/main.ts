@@ -6,9 +6,9 @@ import { identity, json } from 'nabu';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
+import { ACTIVE_TYPE, renderActive } from '../src/core/active';
 import { $createSpecMap } from '../src/objects/object-service';
 import { $objectSpecListId, HasObjectSpecList } from '../src/objects/object-spec-list';
-import { ACTIVE_TYPE, renderActive } from '../src/region/active';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
@@ -70,6 +70,10 @@ window.addEventListener('load', () => {
           take(1),
       )
       .subscribe(([state, stateService, stagingService]) => {
+        if (!state) {
+          return;
+        }
+
         stateService.init(state);
         $objectSpecListId.set(vine, () => state.rootId as StateId<HasObjectSpecList>);
         stagingService.setStaging(false);

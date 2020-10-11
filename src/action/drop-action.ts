@@ -2,10 +2,10 @@ import { $stateService } from 'mask';
 import { EMPTY, Observable } from 'rxjs';
 import { switchMap, take, withLatestFrom } from 'rxjs/operators';
 
+import { ACTIVE_ID, ActivePayload } from '../core/active';
 import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
 import { IsContainer } from '../payload/is-container';
-import { ACTIVE_ID, ActivePayload } from '../region/active';
 
 import { moveObject } from './util/move-object';
 
