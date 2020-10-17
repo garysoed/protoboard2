@@ -52,9 +52,9 @@ export class Lens extends ThemedCustomElementCtrl {
   @cache()
   private get handleMouseEnter$(): Observable<unknown> {
     return this.declareInput($.host._.onMouseEnter).pipe(
-        withLatestFrom(this.declareInput($.details), this.lensService$),
-        tap(([, slotEl, lensService]) => {
-          const assignedNodes = slotEl.assignedNodes();
+        withLatestFrom(this.lensService$),
+        tap(([, lensService]) => {
+          const assignedNodes = $.details.getElement(this.context).assignedNodes();
           const documentFragment = document.createDocumentFragment();
           for (const node of assignedNodes) {
             documentFragment.appendChild(node.cloneNode(true));

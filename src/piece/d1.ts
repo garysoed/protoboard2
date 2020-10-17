@@ -1,9 +1,10 @@
+import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { host, PersonaContext, slotted, style } from 'persona';
+import { element, PersonaContext, slotted } from 'persona';
 
 import { RotateAction } from '../action/rotate-action';
-import { $baseComponent, BaseActionCtor, BaseComponent } from '../core/base-component';
-import { TriggerType, UnreservedTriggerSpec } from '../core/trigger-spec';
+import { $baseComponent, BaseComponent } from '../core/base-component';
+import { TriggerType } from '../core/trigger-spec';
 import { IsRotatable } from '../payload/is-rotatable';
 import { renderRotatable } from '../render/render-rotatable';
 
@@ -23,8 +24,8 @@ export const $d1 = {
 export type D1Payload = IsRotatable;
 
 const $ = {
-  slot: slotted('slot', {
-    styleTransform: style('transform'),
+  slot: element('slot', instanceofType(HTMLSlotElement), {
+    slotted: slotted(),
   }),
 };
 
@@ -58,6 +59,8 @@ export class D1 extends BaseComponent<D1Payload> {
         context,
     );
 
-    this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));
+    this.addSetup(
+        renderRotatable(this.objectPayload$, this.declareInput($.slot._.slotted), context),
+    );
   }
 }

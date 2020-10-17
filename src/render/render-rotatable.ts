@@ -1,7 +1,6 @@
 import { $stateService } from 'mask';
-import { PersonaContext } from 'persona';
-import { StyleOutput } from 'persona/export/internal';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { PersonaContext, style } from 'persona';
+import { combineLatest, EMPTY, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Logger } from 'santa';
 
@@ -13,10 +12,10 @@ const LOGGER = new Logger('protoboard2.renderRotatable');
 
 export function renderRotatable(
     isRotatable$: Observable<IsRotatable|null>,
-    output: StyleOutput<'transform'>,
+    slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
-  return combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
+  const rotation$ = combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
       switchMap(([stateService, isRotatable]) => {
         if (!isRotatable) {
           return observableOf(null);
@@ -25,6 +24,17 @@ export function renderRotatable(
         return stateService.get(isRotatable.$rotationDeg);
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
-      output.output(context),
+  );
+
+  return combineLatest([rotation$, slottedNodes$]).pipe(
+      switchMap(([rotation, slottedNodes]) => {
+        const targetEl = slottedNodes[0];
+        if (!(targetEl instanceof HTMLElement)) {
+          return EMPTY;
+        }
+
+        return observableOf(rotation)
+            .pipe(style('transform').resolve(() => targetEl).output(context));
+      }),
   );
 }

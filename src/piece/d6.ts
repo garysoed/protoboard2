@@ -1,6 +1,9 @@
+import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { attributeOut, element, host, PersonaContext, slotted, stringParser, style } from 'persona';
+import { EMPTY, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { FlipAction } from '../action/flip-action';
 import { RollAction } from '../action/roll-action';
@@ -30,10 +33,9 @@ export const $ = {
   host: host($d6.api),
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
+    slotted: slotted(),
   }),
-  slot: slotted('face', {
-    styleTransform: style('transform'),
-  }),
+  styleTransform: style('transform'),
 };
 
 export interface D6Payload extends IsMultifaced, IsRotatable {
@@ -79,6 +81,8 @@ export class D6 extends BaseComponent<D6Payload> {
         context,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
-    this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));
+    this.addSetup(
+        renderRotatable(this.objectPayload$, this.declareInput($.face._.slotted), context),
+    );
   }
 }

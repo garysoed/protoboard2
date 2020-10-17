@@ -4,13 +4,13 @@ import { Runnable } from 'gs-tools/export/rxjs';
 import { Converter } from 'nabu';
 import { host, onMutation, PersonaContext } from 'persona';
 import { Observable, Subject } from 'rxjs';
-import { map, scan, startWith, withLatestFrom } from 'rxjs/operators';
+import { map, scan, startWith } from 'rxjs/operators';
 
 import { ObjectSpec } from '../objects/object-spec';
 
 
 export interface ActionContext<P> {
-  readonly host$: Observable<Element>;
+  readonly host: Element;
   readonly personaContext: PersonaContext;
   readonly objectSpec$: Observable<ObjectSpec<P>|null>;
 }
@@ -83,8 +83,8 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
               $asSet(),
           );
         }),
-        withLatestFrom($host.getValue(this.context.personaContext)),
-        map(([changedAttributes, hostEl]) => {
+        map(changedAttributes => {
+          const hostEl = $host.getElement(this.context.personaContext);
           const changedConfig: Partial<C> = {};
           for (const attribute of changedAttributes) {
             const rawValue = hostEl.getAttribute(attribute);

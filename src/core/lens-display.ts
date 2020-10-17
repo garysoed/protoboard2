@@ -2,10 +2,11 @@ import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
 import { element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 import template from './lens-display.html';
 import { $lensService } from './lens-service';
+
 
 export const $lensDisplay = {
   tag: 'pb-lens-display',
@@ -30,8 +31,8 @@ export class LensDisplay extends ThemedCustomElementCtrl {
   private setupRenderContent(): Observable<unknown> {
     return $lensService.get(this.vine).pipe(
         switchMap(service => service.onNodes$),
-        withLatestFrom(this.declareInput($.root)),
-        tap(([nodes, rootEl]) => {
+        tap(nodes => {
+          const rootEl = $.root.getElement(this.context);
           rootEl.innerHTML = '';
           if (!nodes) {
             return;

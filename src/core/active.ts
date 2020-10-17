@@ -6,7 +6,6 @@ import { classToggle, element, host, multi, PersonaContext, renderCustomElement,
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
-import { Indexed } from '../coordinate/indexed';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { ObjectSpec } from '../objects/object-spec';
 import { IsContainer } from '../payload/is-container';
@@ -75,10 +74,9 @@ export class Active extends BaseComponent<ActivePayload> {
   private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
       .pipe(
           throttleTime(10),
-          withLatestFrom(this.declareInput($.root)),
-          map(([event, containerEl]) => ({
+          map(event => ({
             event,
-            rect: computeAllRects(containerEl),
+            rect: computeAllRects($.root.getElement(this.context)),
           })),
           share(),
       );

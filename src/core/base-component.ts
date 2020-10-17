@@ -1,6 +1,6 @@
 import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { _p, Keyboard, ThemedCustomElementCtrl } from 'mask';
+import { _p, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
 import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
 import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
@@ -51,7 +51,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   @cache()
   get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any>> {
     const actionContext = {
-      host$: host({}).getValue(this.context),
+      host: host({}).getElement(this.context),
       personaContext: this.context,
       objectSpec$: this.objectSpec$,
     };
@@ -112,7 +112,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   ): Observable<MouseEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     return onDom<MouseEvent>('click')
-        .resolve(context => targetEl.getValue(context))
+        .resolve(context => targetEl.getElement(context))
         .getValue(this.context)
         .pipe(
             map(event => {
@@ -126,13 +126,13 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   ): Observable<KeyboardEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     const onMouseLeave$ = onDom('mouseleave')
-        .resolve(context => targetEl.getValue(context))
+        .resolve(context => targetEl.getElement(context))
         .getValue(this.context);
     const onMouseEnter$ = onDom('mouseenter')
-        .resolve(context => targetEl.getValue(context))
+        .resolve(context => targetEl.getElement(context))
         .getValue(this.context);
     const onMouseMove$ = onDom<MouseEvent>('mousemove')
-        .resolve(context => targetEl.getValue(context))
+        .resolve(context => targetEl.getElement(context))
         .getValue(this.context);
     return merge(
         onMouseLeave$.pipe(mapTo(false)),

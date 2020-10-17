@@ -31,8 +31,8 @@ export const $ = {
   face: element('face', instanceofType(HTMLSlotElement), {
     name: attributeOut('name', stringParser()),
   }),
-  slot: slotted('face', {
-    styleTransform: style('transform'),
+  slot: element('face', instanceofType(HTMLSlotElement), {
+    slotted: slotted(),
   }),
 };
 
@@ -79,6 +79,8 @@ export class D2 extends BaseComponent<D2Payload> {
         context,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
-    this.addSetup(renderRotatable(this.objectPayload$, $.slot._.styleTransform, context));
+    this.addSetup(
+        renderRotatable(this.objectPayload$, this.declareInput($.slot._.slotted), context),
+    );
   }
 }
