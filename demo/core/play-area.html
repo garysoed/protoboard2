@@ -1,8 +1,11 @@
 <style>
   #main {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "small1 small2 side"
+                         "small3 small4 side"
+                         "small5 small6 side"
+                         "large  large  large"
+                         "large  large  large";
   }
 
   #main > div {

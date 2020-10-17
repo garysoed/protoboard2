@@ -1,7 +1,7 @@
 import { _p, ThemedCustomElementCtrl } from 'mask';
 
 import { Deck } from '../../src/region/deck';
-import { PieceTemplate } from '../template/piece-template';
+import { RegionTemplate } from '../template/region-template';
 
 import template from './deck.html';
 
@@ -15,7 +15,7 @@ export const $deckDemo = {
   template,
   dependencies: [
     Deck,
-    PieceTemplate,
+    RegionTemplate,
   ],
 })
 export class DeckDemo extends ThemedCustomElementCtrl {
