@@ -1,0 +1,65 @@
+<style>
+  #content, #noLayout {
+    padding: 4rem 1rem;
+  }
+
+  #x {
+    padding-right: .5rem;
+  }
+
+  #y {
+    padding-left: .5rem;
+  }
+
+  #rootContent.hasLayout #noLayout {
+    display: none;
+  }
+  #rootContent.hasLayout #content {
+    display: block;
+  }
+
+  #noLayout {
+    display: block;
+  }
+
+  #content {
+    display: none;
+  }
+</style>
+
+<pbd-documentation-template id="template">
+  <section id="rootContent" layout="column" slot="content">
+    <div id="noLayout" mk-body-1>
+      To start, select a layout.
+    </div>
+    <div id="content">
+      <div layout="row">
+        <mk-text-input
+            id="x"
+            flex
+            init-value="0"
+            label="X"
+            type="number"
+        ></mk-text-input>
+        <mk-text-input
+            id="y"
+            flex
+            init-value="0"
+            label="Y"
+            type="number"
+        ></mk-text-input>
+      </div>
+      <div id="layoutContent">
+        <!-- #content -->
+      </div>
+    </div>
+    <mk-text-icon-button
+        icon="add"
+        id="addButton"
+        label="Add Zone"
+    ></mk-text-icon-button>
+  </section>
+  <section slot="details">
+    <slot name="details"></slot>
+  </section>
+</pbd-documentation-template>
