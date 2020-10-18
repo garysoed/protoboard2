@@ -1,18 +1,19 @@
-import { source, stream } from 'grapevine';
+import { stream } from 'grapevine';
 import { StateId } from 'gs-tools/export/state';
 import { $rootId } from 'mask';
 
-import { EditorState } from '../editor-state';
-
+import { PieceEditorState } from './piece-editor-state';
 import { PlayState } from './play-state';
+import { RegionEditorState } from './region-editor-state';
 import { StagingState } from './staging-state';
 
 
 export interface DemoState {
-  readonly editorState: EditorState;
   readonly $isStaging: StateId<boolean>;
-  readonly stagingState: StagingState;
   readonly $playState: StateId<PlayState>;
+  readonly pieceEditorState: PieceEditorState;
+  readonly regionEditorState: RegionEditorState;
+  readonly stagingState: StagingState;
 }
 
 export const $demoStateId = stream<StateId<DemoState>|null>(

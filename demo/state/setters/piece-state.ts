@@ -4,10 +4,11 @@ import { $stateService } from 'mask';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { EditorState, PieceTypes } from '../editor-state';
 import { $demoState } from '../getters/demo-state';
 import { $editedFaces, $faceIcons, EditedFaces, FaceIcons } from '../getters/piece-state';
 import { DemoState } from '../types/demo-state';
+import { PieceEditorState } from '../types/piece-editor-state';
+import { PieceType } from '../types/piece-type';
 
 
 export const $setEditedFaces = stream(
@@ -19,9 +20,9 @@ export const $setEditedFaces = stream(
               return null;
             }
 
-            const d1 = setEditedFace.bind(undefined, stateService, demoState, PieceTypes.D1);
-            const d2 = setEditedFace.bind(undefined, stateService, demoState, PieceTypes.D2);
-            const d6 = setEditedFace.bind(undefined, stateService, demoState, PieceTypes.D6);
+            const d1 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D1);
+            const d2 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D2);
+            const d6 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D6);
             return {d1, d2, d6};
           }),
       );
@@ -31,10 +32,10 @@ export const $setEditedFaces = stream(
 function setEditedFace(
     stateService: StateService,
     demoState: DemoState,
-    pieceType: keyof EditorState,
+    pieceType: keyof PieceEditorState,
     selectedIndex: number,
 ): void {
-  stateService.set(demoState.editorState[pieceType].$editedFace, selectedIndex);
+  stateService.set(demoState.pieceEditorState[pieceType].$editedFace, selectedIndex);
 }
 
 export const $setFaces = stream(
@@ -55,13 +56,13 @@ export const $setFaces = stream(
             const boundSetFace = setFace.bind(
                 undefined,
                 editedFaces,
-                demoState.editorState,
+                demoState.pieceEditorState,
                 faceIcons,
                 stateService,
             );
-            const d1 = boundSetFace.bind(undefined, PieceTypes.D1);
-            const d2 = boundSetFace.bind(undefined, PieceTypes.D2);
-            const d6 = boundSetFace.bind(undefined, PieceTypes.D6);
+            const d1 = boundSetFace.bind(undefined, PieceType.D1);
+            const d2 = boundSetFace.bind(undefined, PieceType.D2);
+            const d6 = boundSetFace.bind(undefined, PieceType.D6);
             return {d1, d2, d6};
           }),
       );
@@ -70,10 +71,10 @@ export const $setFaces = stream(
 
 function setFace(
     editedFaces: EditedFaces,
-    editorState: EditorState,
+    editorState: PieceEditorState,
     faceIcons: FaceIcons,
     stateService: StateService,
-    pieceType: PieceTypes,
+    pieceType: PieceType,
     newFace: string,
 ): void {
   const newFaces = [...faceIcons[pieceType]];

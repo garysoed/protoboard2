@@ -10,11 +10,11 @@ import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { PieceTypes } from '../state/editor-state';
 import { $editedFaces, $faceIcons } from '../state/getters/piece-state';
 import { $setEditedFaces, $setFaces } from '../state/setters/piece-state';
 import { $addPieceSpecs } from '../state/setters/staging-state';
 import { FACE_ICONS } from '../state/types/piece-state';
+import { PieceType } from '../state/types/piece-type';
 
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
 import { $pieceButton, ClickEvent as ClickButtonEvent, PieceButton } from './piece-button';
@@ -30,7 +30,7 @@ export const $pieceTemplate = {
   api: {
     componentTag: attributeIn('component-tag', stringParser(), ''),
     label: attributeIn('label', stringParser(), ''),
-    pieceType: attributeIn('piece-type', enumParser<PieceTypes>(PieceTypes)),
+    pieceType: attributeIn('piece-type', enumParser<PieceType>(PieceType)),
   },
 };
 

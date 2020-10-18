@@ -1,4 +1,4 @@
-import { IsContainer } from '../../src/payload/is-container';
+import { StateId } from 'gs-tools/export/state';
 
 export enum GridArea {
   SMALL1 = 'small1',
@@ -11,6 +11,6 @@ export enum GridArea {
   LARGE = 'large',
 }
 
-export interface GenericRegionPayload extends IsContainer<any> {
-  readonly gridArea: GridArea;
+export interface RegionState {
+  readonly $targetArea: StateId<GridArea>;
 }

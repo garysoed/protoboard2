@@ -3,11 +3,11 @@ import { $stateService } from 'mask';
 import { combineLatest, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { EditorState } from '../editor-state';
+import { PieceEditorState } from '../types/piece-editor-state';
 
 import { $demoState } from './demo-state';
 
-export type EditedFaces = {readonly [K in keyof EditorState]: number};
+export type EditedFaces = {readonly [K in keyof PieceEditorState]: number};
 export const $editedFaces = stream<EditedFaces|null>(
     'editedFaces',
     vine => {
@@ -17,9 +17,9 @@ export const $editedFaces = stream<EditedFaces|null>(
               return observableOf(null);
             }
 
-            const d1$ = stateService.get(demoState.editorState.d1.$editedFace);
-            const d2$ = stateService.get(demoState.editorState.d2.$editedFace);
-            const d6$ = stateService.get(demoState.editorState.d6.$editedFace);
+            const d1$ = stateService.get(demoState.pieceEditorState.d1.$editedFace);
+            const d2$ = stateService.get(demoState.pieceEditorState.d2.$editedFace);
+            const d6$ = stateService.get(demoState.pieceEditorState.d6.$editedFace);
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
                   if (d1 === null || d2 === null || d6 === null) {
@@ -34,7 +34,7 @@ export const $editedFaces = stream<EditedFaces|null>(
     },
 );
 
-export type FaceIcons = {readonly [K in keyof EditorState]: readonly string[]};
+export type FaceIcons = {readonly [K in keyof PieceEditorState]: readonly string[]};
 export const $faceIcons = stream<FaceIcons|null>(
     'faceIcons',
     vine => {
@@ -44,9 +44,9 @@ export const $faceIcons = stream<FaceIcons|null>(
               return observableOf(null);
             }
 
-            const d1$ = stateService.get(demoState.editorState.d1.$faceIcons);
-            const d2$ = stateService.get(demoState.editorState.d2.$faceIcons);
-            const d6$ = stateService.get(demoState.editorState.d6.$faceIcons);
+            const d1$ = stateService.get(demoState.pieceEditorState.d1.$faceIcons);
+            const d2$ = stateService.get(demoState.pieceEditorState.d2.$faceIcons);
+            const d6$ = stateService.get(demoState.pieceEditorState.d6.$faceIcons);
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
                   if (d1 === null || d2 === null || d6 === null) {

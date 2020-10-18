@@ -1,9 +1,8 @@
-import { filterNonNull } from 'gs-tools/export/rxjs';
 import { Snapshot, StateId, StateService } from 'gs-tools/export/state';
 import { LocalStorage } from 'gs-tools/export/store';
-import { $saveConfig, $saveService, $stateService, PALETTE, registerSvg, start, Theme } from 'mask';
+import { $saveConfig, $saveService, PALETTE, registerSvg, start, Theme } from 'mask';
 import { identity, json } from 'nabu';
-import { switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
 import { ACTIVE_TYPE, renderActive } from '../src/core/active';
@@ -15,12 +14,14 @@ import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
 import { PREVIEW_TYPE, renderDemoPreview, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
 import { Root } from './root';
-import { PieceTypes } from './state/editor-state';
 import { $demoState } from './state/getters/demo-state';
 import { DemoState } from './state/types/demo-state';
 import { PieceSpec } from './state/types/piece-spec';
 import { FACE_ICONS } from './state/types/piece-state';
+import { PieceType } from './state/types/piece-type';
 import { PlayState } from './state/types/play-state';
+import { GridArea } from './state/types/region-state';
+import { RegionType } from './state/types/region-type';
 
 
 const iconConfigs: Map<string, string> = new Map([
@@ -89,21 +90,26 @@ function init(stateService: StateService): StateId<DemoState> {
   return stateService.add<DemoState>({
     $isStaging: stateService.add(true),
     $playState: stateService.add<PlayState>({objectSpecs: []}),
-    editorState: {
-      [PieceTypes.D1]: {
+    pieceEditorState: {
+      [PieceType.D1]: {
         length: 1,
         $editedFace: stateService.add<number>(0),
         $faceIcons: stateService.add<readonly string[]>(FACE_ICONS.slice(0, 1)),
       },
-      [PieceTypes.D2]: {
+      [PieceType.D2]: {
         length: 2,
         $editedFace: stateService.add<number>(0),
         $faceIcons: stateService.add<readonly string[]>(FACE_ICONS.slice(0, 2)),
       },
-      [PieceTypes.D6]: {
+      [PieceType.D6]: {
         length: 6,
         $editedFace: stateService.add<number>(0),
         $faceIcons: stateService.add<readonly string[]>([...FACE_ICONS, ...FACE_ICONS.slice(0, 2)]),
+      },
+    },
+    regionEditorState: {
+      [RegionType.DECK]: {
+        $targetArea: stateService.add(GridArea.LARGE),
       },
     },
     stagingState: {
