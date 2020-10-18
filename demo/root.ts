@@ -3,7 +3,7 @@ import { elementWithTagType, instanceofType } from 'gs-types';
 import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, classToggle, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { HelpOverlay } from '../src/action/help-overlay';
 import { Active } from '../src/core/active';
@@ -13,8 +13,8 @@ import { $drawer, Drawer } from './core/drawer';
 import { $locationService, Views } from './core/location-service';
 import { PlayArea } from './core/play-area';
 import { StagingArea } from './core/staging-area';
-import { $stagingService } from './core/staging-service';
 import template from './root.html';
+import { $isStaging } from './state/getters/demo-state';
 
 
 const $ = {
@@ -60,9 +60,6 @@ export class Root extends ThemedCustomElementCtrl {
 
   @cache()
   private get isPlaying$(): Observable<boolean> {
-    return $stagingService.get(this.vine).pipe(
-        switchMap(service => service.isStaging$),
-        map(isStaging => !isStaging),
-    );
+    return $isStaging.get(this.vine).pipe(map(isStaging => !isStaging));
   }
 }

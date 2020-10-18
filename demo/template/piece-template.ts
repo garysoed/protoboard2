@@ -1,16 +1,20 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, host, integerParser, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
-import { BehaviorSubject, combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { $stagingService } from '../core/staging-service';
+import { PieceTypes } from '../state/editor-state';
+import { $editedFaces, $faceIcons } from '../state/getters/piece-state';
+import { $setEditedFaces, $setFaces } from '../state/setters/piece-state';
+import { $addPieceSpecs } from '../state/setters/staging-state';
+import { FACE_ICONS } from '../state/types/piece-state';
 
 import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
 import { $pieceButton, ClickEvent as ClickButtonEvent, PieceButton } from './piece-button';
@@ -24,9 +28,9 @@ const LOGGER = new Logger('pbd.PieceTemplate');
 export const $pieceTemplate = {
   tag: 'pbd-piece-template',
   api: {
-    faceCount: attributeIn('face-count', integerParser()),
-    label: attributeIn('label', stringParser(), ''),
     componentTag: attributeIn('component-tag', stringParser(), ''),
+    label: attributeIn('label', stringParser(), ''),
+    pieceType: attributeIn('piece-type', enumParser<PieceTypes>(PieceTypes)),
   },
 };
 
@@ -43,8 +47,6 @@ const $ = {
   }),
   template: element('template', $documentationTemplate, {}),
 };
-
-const ICONS = ['meeple', 'coin', 'gem', 'card'];
 
 @_p.customElement({
   ...$pieceTemplate,
@@ -64,8 +66,6 @@ const ICONS = ['meeple', 'coin', 'gem', 'card'];
   template,
 })
 export class PieceTemplate extends ThemedCustomElementCtrl {
-  private readonly selectedIndex$ = new BehaviorSubject<number>(0);
-
   constructor(context: PersonaContext) {
     super(context);
 
@@ -78,15 +78,8 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get actualFaceCount$(): Observable<number> {
-    return this.declareInput($.host._.faceCount).pipe(
-        map(faceCount => faceCount ?? 0),
-    );
-  }
-
-  @cache()
   private get editorContents$(): Observable<readonly Node[]> {
-    const icon$List = ICONS.map(icon => renderCustomElement(
+    const icon$List = FACE_ICONS.map(icon => renderCustomElement(
         $pieceButton,
         {inputs: {icon: observableOf(icon)}},
         this.context,
@@ -99,18 +92,15 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   private get handleAdd$(): Observable<unknown> {
     return this.declareInput($.addButton._.actionEvent).pipe(
         withLatestFrom(
-            this.previewIcons$,
+            this.declareInput($.host._.pieceType),
             this.declareInput($.host._.componentTag),
-            $stagingService.get(this.vine),
+            $addPieceSpecs.get(this.vine),
         ),
-        switchMap(([, previewIcons, componentTag, stagingService]) => {
-          const icons = previewIcons.map(preview => preview.getValue());
-          return stagingService.addPiece(
-              {
-                componentTag,
-                icons,
-              },
-          );
+        tap(([, pieceType, componentTag, addPieceSpecFn]) => {
+          if (!addPieceSpecFn || !pieceType) {
+            return;
+          }
+          addPieceSpecFn[pieceType](componentTag);
         }),
     );
   }
@@ -119,9 +109,12 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   private get handleOnCustomizeClick$(): Observable<unknown> {
     return this.declareInput($.editors._.onClick)
         .pipe(
-            withLatestFrom(this.previewIcons$, this.selectedIndex$),
-            tap(([{payload}, previewIcons, selectedIcon]) => {
-              previewIcons[selectedIcon % previewIcons.length].next(payload.icon);
+            withLatestFrom(this.declareInput($.host._.pieceType), $setFaces.get(this.vine)),
+            tap(([{payload}, pieceType, setFace]) => {
+              if (!pieceType || !setFace) {
+                return;
+              }
+              setFace[pieceType](payload.icon);
             }),
         );
   }
@@ -129,8 +122,13 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   @cache()
   private get handlePreviewClick$(): Observable<unknown> {
     return this.declareInput($.previews._.onClick).pipe(
-        tap(event => {
-          this.selectedIndex$.next(event.payload.index);
+        withLatestFrom(this.declareInput($.host._.pieceType), $setEditedFaces.get(this.vine)),
+        tap(([event, pieceType, setSelectedFaces]) => {
+          if (!pieceType || !setSelectedFaces) {
+            return;
+          }
+
+          setSelectedFaces[pieceType](event.payload.index);
         }),
     );
   }
@@ -139,11 +137,11 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   private get previewContents$(): Observable<readonly Node[]> {
     return this.previewIcons$.pipe(
         switchMap(previewIcons => {
-          const node$List = previewIcons.map((icon$, index) => renderCustomElement(
+          const node$List = previewIcons.map((icon, index) => renderCustomElement(
               $piecePreview,
               {
                 inputs: {
-                  icon: icon$,
+                  icon: observableOf(icon),
                   index: observableOf(index),
                 },
                 attrs: new Map([
@@ -164,18 +162,32 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get previewIcons$(): Observable<ReadonlyArray<BehaviorSubject<string>>> {
-    return this.actualFaceCount$.pipe(
-        map(faceCount => {
-          const icons = [];
-          for (let i = 0; i < faceCount; i++) {
-            icons.push(new BehaviorSubject(ICONS[i % ICONS.length]));
+  private get previewIcons$(): Observable<readonly string[]> {
+    return combineLatest([$faceIcons.get(this.vine), this.declareInput($.host._.pieceType)]).pipe(
+        map(([faceIcons, pieceType]) => {
+          if (!faceIcons || !pieceType) {
+            return [];
           }
 
-          return icons;
+          return faceIcons[pieceType];
         }),
-        // Needed because of the BehaviorSubject.
-        shareReplay({bufferSize: 1, refCount: false}),
+    );
+  }
+
+  @cache()
+  private get selectedIndex$(): Observable<number|null> {
+    return combineLatest([
+      this.declareInput($.host._.pieceType),
+      $editedFaces.get(this.vine),
+    ])
+    .pipe(
+        map(([pieceType, selectedFaces]) => {
+          if (!pieceType || !selectedFaces) {
+            return null;
+          }
+
+          return selectedFaces[pieceType];
+        }),
     );
   }
 }

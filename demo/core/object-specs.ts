@@ -7,8 +7,7 @@ import { $baseComponent } from '../../src/core/base-component';
 import { ObjectSpec } from '../../src/objects/object-spec';
 import { IsContainer } from '../../src/payload/is-container';
 import { $slot } from '../../src/region/slot';
-
-import { GenericPiecePayload } from './payloads';
+import { PieceSpec } from '../state/types/piece-spec';
 
 
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
@@ -40,7 +39,7 @@ export function renderSupply(
 export const PREVIEW_TYPE = 'pbd.preview';
 
 export function renderDemoPreview(
-    state: ObjectSpec<GenericPiecePayload>,
+    state: ObjectSpec<PieceSpec>,
     context: PersonaContext,
 ): Observable<Node> {
   const icon$list = state.payload.icons.map((icon, index) => {
