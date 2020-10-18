@@ -20,7 +20,6 @@ import { PieceSpec } from './state/types/piece-spec';
 import { FACE_ICONS } from './state/types/piece-state';
 import { PieceType } from './state/types/piece-type';
 import { PlayState } from './state/types/play-state';
-import { GridArea } from './state/types/region-state';
 import { RegionType } from './state/types/region-type';
 
 
@@ -109,7 +108,7 @@ function init(stateService: StateService): StateId<DemoState> {
     },
     regionEditorState: {
       [RegionType.DECK]: {
-        $targetArea: stateService.add(GridArea.LARGE),
+        $targetArea: stateService.add(0),
       },
     },
     stagingState: {

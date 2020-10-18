@@ -14,7 +14,7 @@ import { ActionContext, BaseAction, TriggerEvent } from './base-action';
 import { DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec } from './trigger-spec';
 
 
-const LOG = new Logger('protoboard.core.BaseComponent');
+const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 

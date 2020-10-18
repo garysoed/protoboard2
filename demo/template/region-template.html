@@ -3,10 +3,10 @@
 
 <pbd-documentation-template id="template">
   <section id="rootContent" layout="column" slot="content">
-    <mk-button id="selectedArea">
+    <mk-button id="selectedArea" is-secondary>
       <mk-line-layout id="selectedAreaLabel"></mk-line-layout>
     </mk-button>
-    <mk-overlay-layout id="selectedAreaOverlay">
+    <mk-overlay-layout id="selectedAreaOverlay" target-id="selectedArea">
       <!-- #content -->
     </mk-overlay-layout>
     <mk-button id="addButton">

@@ -1,6 +1,6 @@
 import { cache } from 'gs-tools/export/data';
 import { elementWithTagType, instanceofType } from 'gs-types';
-import { $rootLayout, _p, RootLayout, ThemedCustomElementCtrl } from 'mask';
+import { $rootLayout, _p, Overlay, RootLayout, ThemedCustomElementCtrl } from 'mask';
 import { api, classToggle, element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
@@ -31,6 +31,7 @@ const $ = {
     Documentation,
     Drawer,
     HelpOverlay,
+    Overlay,
     PlayArea,
     RootLayout,
     StagingArea,

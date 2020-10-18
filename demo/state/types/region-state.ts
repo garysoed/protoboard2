@@ -12,5 +12,5 @@ export enum GridArea {
 }
 
 export interface RegionState {
-  readonly $targetArea: StateId<GridArea>;
+  readonly $targetArea: StateId<number>;
 }
