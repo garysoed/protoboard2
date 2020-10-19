@@ -7,8 +7,11 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { $objectService } from '../../../src/objects/object-service';
 import { $faceIcons } from '../getters/piece-state';
-import { $pieceSpecs, $stagingState } from '../getters/staging-state';
+import { $targetAreas } from '../getters/region-state';
+import { $pieceSpecs, $regionSpecs, $stagingState } from '../getters/staging-state';
 import { PieceSpec } from '../types/piece-spec';
+import { RegionSpec } from '../types/region-spec';
+import { GRID_AREAS } from '../types/region-state';
 import { StagingState } from '../types/staging-state';
 
 
@@ -50,13 +53,49 @@ function addPieceSpec(
     componentTag: string,
 ): void {
   const id = `object-${idGenerator.generate(objectIds)}`;
-  const pieceSpec: PieceSpec = {
-    id,
-    icons,
-    componentTag,
-  };
+  const pieceSpec: PieceSpec = {id, icons, componentTag};
   stateService.set(
       stagingState.$pieceSpecs,
       [...currentPieceSpecs, pieceSpec],
   );
+}
+
+export const $addRegionSpecs = stream(
+    'addRegionSpecs',
+    vine => {
+      const objectIds$ = $objectService.get(vine).pipe(switchMap(service => service.objectIds$));
+      return combineLatest([
+        objectIds$,
+        $regionSpecs.get(vine),
+        $stateService.get(vine),
+        $stagingState.get(vine),
+        $targetAreas.get(vine),
+      ])
+      .pipe(
+          map(([objectIds, regionSpecs, stateService, stagingState, targetAreas]) => {
+            if (!targetAreas || !stagingState) {
+              return null;
+            }
+            const boundAddPieceSpec = addRegionSpec
+                .bind(undefined, regionSpecs ?? [], objectIds)
+                .bind(undefined, stagingState, stateService);
+            const deck = boundAddPieceSpec.bind(undefined, targetAreas.deck);
+            return {deck};
+          }),
+      );
+
+    },
+);
+
+function addRegionSpec(
+    currentRegionSpecs: readonly RegionSpec[],
+    objectIds: ReadonlySet<string>,
+    stagingState: StagingState,
+    stateService: StateService,
+    targetArea: number,
+    componentTag: string,
+): void {
+  const id = `object-${idGenerator.generate(objectIds)}`;
+  const regionSpec: RegionSpec = {id, componentTag, gridArea: GRID_AREAS[targetArea]};
+  stateService.set(stagingState.$regionSpecs, [...currentRegionSpecs, regionSpec]);
 }

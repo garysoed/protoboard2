@@ -1,15 +1,15 @@
 import { $asArray, $map, $pipe, $zip, countableIterable } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { getAllValues } from 'gs-tools/export/typescript';
 import { $button, $lineLayout, $overlayLayout, $simpleRadioInput, _p, Button, LineLayout, OverlayLayout, SimpleRadioInput, ThemedCustomElementCtrl } from 'mask';
 import { attributeIn, element, enumParser, host, multi, PersonaContext, renderCustomElement, stringParser, textContent } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, mapTo, switchMap } from 'rxjs/operators';
+import { map, mapTo, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
 
 import { $demoState } from '../state/getters/demo-state';
 import { $targetAreas } from '../state/getters/region-state';
-import { GridArea } from '../state/types/region-state';
+import { $addRegionSpecs } from '../state/setters/staging-state';
+import { GRID_AREAS } from '../state/types/region-state';
 import { RegionType } from '../state/types/region-type';
 
 import { $documentationTemplate, DocumentationTemplate } from './documentation-template';
@@ -17,7 +17,6 @@ import template from './region-template.html';
 
 
 const LOGGER = new Logger('pbd.RegionTemplate');
-const GRID_AREAS = getAllValues<GridArea>(GridArea);
 
 
 const $$ = {
@@ -59,12 +58,31 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
+    this.addSetup(this.handleOnAddClick$);
     this.render($.template._.label, this.declareInput($.host._.label));
     this.render($.selectedAreaLabel._.text, this.selectedArea$);
     this.render($.selectedAreaOverlay._.contents, this.selectedAreaOptions$);
     this.render(
         $.selectedAreaOverlay._.showFn,
         this.declareInput($.selectedArea._.actionEvent).pipe(mapTo([])),
+    );
+  }
+
+  @cache()
+  private get handleOnAddClick$(): Observable<unknown> {
+    return this.declareInput($.addButton._.actionEvent).pipe(
+        withLatestFrom(
+            $addRegionSpecs.get(this.vine),
+            this.declareInput($.host._.componentTag),
+            this.declareInput($.host._.regionType),
+        ),
+        tap(([, addRegionSpec, componentTag, regionType]) => {
+          if (!addRegionSpec || !regionType || !componentTag) {
+            return;
+          }
+
+          addRegionSpec[regionType](componentTag);
+        }),
     );
   }
 

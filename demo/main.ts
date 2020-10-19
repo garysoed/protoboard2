@@ -20,6 +20,7 @@ import { PieceSpec } from './state/types/piece-spec';
 import { FACE_ICONS } from './state/types/piece-state';
 import { PieceType } from './state/types/piece-type';
 import { PlayState } from './state/types/play-state';
+import { RegionSpec } from './state/types/region-spec';
 import { RegionType } from './state/types/region-type';
 
 
@@ -113,6 +114,7 @@ function init(stateService: StateService): StateId<DemoState> {
     },
     stagingState: {
       $pieceSpecs: stateService.add<readonly PieceSpec[]>([]),
+      $regionSpecs: stateService.add<readonly RegionSpec[]>([]),
     },
   });
 }

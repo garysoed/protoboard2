@@ -23,3 +23,16 @@ export const $pieceSpecs = stream(
         }),
     ),
 );
+
+export const $regionSpecs = stream(
+    'regionSpecs',
+    vine => combineLatest([$stagingState.get(vine), $stateService.get(vine)]).pipe(
+      switchMap(([stagingState, stateService]) => {
+        if (!stagingState) {
+          return observableOf(null);
+        }
+
+        return stateService.get(stagingState.$regionSpecs);
+      }),
+    ),
+);

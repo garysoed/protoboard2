@@ -1,4 +1,5 @@
 import { StateId } from 'gs-tools/export/state';
+import { getAllValues } from 'gs-tools/export/typescript';
 
 export enum GridArea {
   SMALL1 = 'small1',
@@ -10,6 +11,7 @@ export enum GridArea {
   SIDE = 'side',
   LARGE = 'large',
 }
+export const GRID_AREAS = getAllValues<GridArea>(GridArea);
 
 export interface RegionState {
   readonly $targetArea: StateId<number>;

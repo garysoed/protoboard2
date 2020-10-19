@@ -6,7 +6,7 @@ import { element, multi, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { $pieceSpecs } from '../state/getters/staging-state';
+import { $pieceSpecs, $regionSpecs } from '../state/getters/staging-state';
 import { $setStaging } from '../state/setters/demo-state';
 
 import template from './staging-area.html';
@@ -19,7 +19,8 @@ export const $stagingArea = {
 
 const $ = {
   list: element('list', instanceofType(HTMLDivElement), {
-    content: multi('#content'),
+    pieces: multi('#pieces'),
+    regions: multi('#regions'),
   }),
   startButton: element('startButton', $button, {}),
 };
@@ -36,12 +37,27 @@ export class StagingArea extends ThemedCustomElementCtrl {
   constructor(context: PersonaContext) {
     super(context);
 
-    this.render($.list._.content, this.contentNodes$);
+    this.render($.list._.pieces, this.piecesNodes$);
+    this.render($.list._.regions, this.regionsNodes$);
     this.addSetup(this.handleStartAction$);
   }
 
   @cache()
-  private get contentNodes$(): Observable<readonly Node[]> {
+  private get handleStartAction$(): Observable<unknown> {
+    return this.declareInput($.startButton._.actionEvent).pipe(
+        withLatestFrom($setStaging.get(this.vine)),
+        tap(([, setStaging]) => {
+          if (!setStaging) {
+            return;
+          }
+
+          setStaging(false);
+        }),
+    );
+  }
+
+  @cache()
+  private get piecesNodes$(): Observable<readonly Node[]> {
     return $pieceSpecs.get(this.vine).pipe(
         switchMap(specs => {
           const node$List = $pipe(
@@ -64,15 +80,24 @@ export class StagingArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get handleStartAction$(): Observable<unknown> {
-    return this.declareInput($.startButton._.actionEvent).pipe(
-        withLatestFrom($setStaging.get(this.vine)),
-        tap(([, setStaging]) => {
-          if (!setStaging) {
-            return;
-          }
+  private get regionsNodes$(): Observable<readonly Node[]> {
+    return $regionSpecs.get(this.vine).pipe(
+        switchMap(specs => {
+          const node$List = $pipe(
+              specs || [],
+              $map(spec => {
+                const label = `${spec.componentTag.substr(3)}: ${spec.gridArea}`;
 
-          setStaging(false);
+                return renderCustomElement(
+                    $lineLayout,
+                    {textContent: observableOf(label)},
+                    this.context,
+                );
+              }),
+              $asArray(),
+          );
+
+          return node$List.length <= 0 ? observableOf([]) : combineLatest(node$List);
         }),
     );
   }
