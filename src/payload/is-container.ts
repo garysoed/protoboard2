@@ -15,6 +15,6 @@ export interface TypeCoordinateMapping {
 export type CoordinateTypes = keyof TypeCoordinateMapping;
 
 export interface IsContainer<T extends CoordinateTypes> {
-  readonly type: T;
+  readonly containerType: T;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<TypeCoordinateMapping[T]>>>;
 }

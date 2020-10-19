@@ -6,10 +6,10 @@ import { ReplaySubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { createIndexed, Indexed } from '../coordinate/indexed';
+import { ACTIVE_ID } from '../core/active';
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
-import { ACTIVE_ID } from '../core/active';
 
 import { PickAction } from './pick-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -57,7 +57,7 @@ test('@protoboard2/action/pick-action', init => {
       const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
       const objectSpec = builder.add({
         id: 'TARGET_ID',
-        payload: {type: 'indexed' as const, $contentSpecs: $targetContentSpecs},
+        payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentSpecs},
       });
       builder.build(_.stateService, _.personaContext.vine);
       _.objectSpec$.next(objectSpec);

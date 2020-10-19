@@ -51,23 +51,24 @@ export const $setStaging = stream(
 
 function setToStaging(
     demoState: DemoState,
-    objectSpecs: ReadonlyArray<ObjectSpec<Partial<PiecePayload&RegionPayload>>>,
+    objectSpecs: ReadonlyArray<ObjectSpec<PiecePayload|RegionPayload>>,
     stateService: StateService,
 ): void {
   // Delete the old play specs.
-  for (const spec of objectSpecs) {
-    if (spec.payload.$currentFaceIndex) {
-      stateService.delete(spec.payload.$currentFaceIndex);
-    }
-    if (spec.payload.$rotationDeg) {
-      stateService.delete(spec.payload.$rotationDeg);
-    }
-    if (spec.payload.$contentSpecs) {
-      stateService.delete(spec.payload.$contentSpecs);
+  for (const {payload} of objectSpecs) {
+    switch (payload.type) {
+      case 'piece':
+        stateService.delete(payload.$currentFaceIndex);
+        stateService.delete(payload.$rotationDeg);
+        break;
+      case 'region':
+        stateService.delete(payload.$contentSpecs);
+        break;
     }
   }
 
   stateService.set(demoState.stagingState.$pieceSpecs, []);
+  stateService.set(demoState.stagingState.$regionSpecs, []);
   stateService.set(demoState.$isStaging, true);
 }
 
@@ -86,7 +87,7 @@ function setToPlay(
     rootSlotObjectSpecs.push({
       id: `${ROOT_SLOT_PREFIX}${i}`,
       type: ROOT_SLOT_TYPE,
-      payload: {type: 'indexed', $contentSpecs},
+      payload: {type: 'region', containerType: 'indexed', $contentSpecs},
     });
   }
 
@@ -101,7 +102,7 @@ function setToPlay(
   const supplyObjectSpec: ObjectSpec<RegionPayload> = {
     id: SUPPLY_ID,
     type: SUPPLY_TYPE,
-    payload: {type: 'indexed', $contentSpecs: $supplyContentSpecs},
+    payload: {type: 'region', containerType: 'indexed', $contentSpecs: $supplyContentSpecs},
   };
 
   // Add the active specs.
@@ -109,7 +110,7 @@ function setToPlay(
   const activeObjectSpec: ObjectSpec<RegionPayload> = {
     id: ACTIVE_ID,
     type: ACTIVE_TYPE,
-    payload: {type: 'indexed', $contentSpecs: $activeContentIds},
+    payload: {type: 'region', containerType: 'indexed', $contentSpecs: $activeContentIds},
   };
 
   // User defined object specs.
@@ -119,6 +120,7 @@ function setToPlay(
     const $rotationDeg = stateService.add<number>(0);
     const payload: PiecePayload = {
       ...spec,
+      type: 'piece',
       $currentFaceIndex,
       $rotationDeg,
     };

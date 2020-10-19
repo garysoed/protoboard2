@@ -29,8 +29,8 @@ test('@protoboard2/action/util/move-object', () => {
     const toContentIds$ = createSpySubject(stateService.get($toContentSpecs));
 
     run(moveObject(
-        {type: 'indexed', $contentSpecs: $fromContentSpecs},
-        {type: 'indexed', $contentSpecs: $toContentSpecs},
+        {containerType: 'indexed', $contentSpecs: $fromContentSpecs},
+        {containerType: 'indexed', $contentSpecs: $toContentSpecs},
         movedSpec.objectId,
         {index: 2},
         vine,

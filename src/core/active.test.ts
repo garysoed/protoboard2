@@ -24,7 +24,7 @@ test('@protoboard2/core/active', init => {
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
     const builder = fakeObjectSpecListBuilder();
-    builder.add<IsContainer<'indexed'>>({id: ACTIVE_ID, payload: {type: 'indexed', $contentSpecs}});
+    builder.add<IsContainer<'indexed'>>({id: ACTIVE_ID, payload: {containerType: 'indexed', $contentSpecs}});
     const {$rootId, objectSpecList: root} = builder.build(stateService, tester.vine);
 
     // Need to add to body so the dimensions work.

@@ -40,7 +40,7 @@ export function renderContents(
               return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
             }),
             map(pairs => {
-              switch (isContainer.type) {
+              switch (isContainer.containerType) {
                 case 'indexed':
                   return renderIndexed(new Map(pairs));
               }

@@ -50,7 +50,7 @@ test('@protoboard2/render/render-contents', init => {
       builder.build(_.stateService, _.context.vine);
 
       const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-      _.isContainer$.next({type: 'indexed', $contentSpecs});
+      _.isContainer$.next({containerType: 'indexed', $contentSpecs});
 
       _.stateService.set($contentSpecs, []);
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
