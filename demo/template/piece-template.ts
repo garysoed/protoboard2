@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
+import { attributeIn, element, enumParser, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
@@ -78,10 +78,11 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get editorContents$(): Observable<readonly Node[]> {
+  private get editorContents$(): Observable<readonly NodeWithId[]> {
     const icon$List = FACE_ICONS.map(icon => renderCustomElement(
         $pieceButton,
         {inputs: {icon: observableOf(icon)}},
+        icon,
         this.context,
     ));
 
@@ -134,7 +135,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get previewContents$(): Observable<readonly Node[]> {
+  private get previewContents$(): Observable<readonly NodeWithId[]> {
     return this.previewIcons$.pipe(
         switchMap(previewIcons => {
           const node$List = previewIcons.map((icon, index) => renderCustomElement(
@@ -153,6 +154,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
                   ],
                 ]),
               },
+              index,
               this.context,
           ));
 

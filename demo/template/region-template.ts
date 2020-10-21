@@ -1,7 +1,7 @@
 import { $asArray, $map, $pipe, $zip, countableIterable } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { $button, $lineLayout, $overlayLayout, $simpleRadioInput, _p, Button, LineLayout, OverlayLayout, SimpleRadioInput, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, enumParser, host, multi, PersonaContext, renderCustomElement, stringParser, textContent } from 'persona';
+import { attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, mapTo, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Logger } from 'santa';
@@ -105,7 +105,7 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get selectedAreaOptions$(): Observable<readonly Node[]> {
+  private get selectedAreaOptions$(): Observable<readonly NodeWithId[]> {
     return combineLatest([
       $demoState.get(this.vine),
       this.declareInput($.host._.regionType),
@@ -136,6 +136,7 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
                         stateId: observableOf(stateId),
                       },
                     },
+                    index,
                     this.context,
                 );
               }),

@@ -1,7 +1,7 @@
 import { $asArray, $map, $pipe, $sort, normal, withMap } from 'gs-tools/export/collect';
 import { filterNonNull } from 'gs-tools/export/rxjs';
 import { $stateService } from 'mask';
-import { PersonaContext } from 'persona';
+import { NodeWithId, PersonaContext } from 'persona';
 import { MultiOutput } from 'persona/export/internal';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
@@ -51,7 +51,7 @@ export function renderContents(
   );
 }
 
-function renderIndexed(contents: ReadonlyMap<Indexed, Node>): readonly Node[] {
+function renderIndexed(contents: ReadonlyMap<Indexed, NodeWithId>): readonly NodeWithId[] {
   return $pipe(
       [...contents],
       $sort(withMap(([coordinate]) => coordinate.index, normal())),

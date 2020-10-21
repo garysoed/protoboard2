@@ -2,7 +2,7 @@ import { assert, run, should, test } from 'gs-testing';
 import { arrayFrom } from 'gs-tools/export/collect';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { host, multi } from 'persona';
+import { host, multi, setId } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { of as observableOf, ReplaySubject } from 'rxjs';
 
@@ -39,9 +39,9 @@ test('@protoboard2/render/render-contents', init => {
       const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
       const spec3 = {objectId: 'id3', coordinate: createIndexed(2)};
 
-      const el1 = document.createElement('div1');
-      const el2 = document.createElement('div2');
-      const el3 = document.createElement('div3');
+      const el1 = setId(document.createElement('div1'), {});
+      const el2 = setId(document.createElement('div2'), {});
+      const el3 = setId(document.createElement('div3'), {});
 
       const builder = fakeObjectSpecListBuilder();
       builder.add({id: spec1.objectId, payload: {}}, () => observableOf(el1));

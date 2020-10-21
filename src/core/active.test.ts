@@ -1,6 +1,7 @@
 import { assert, run, setThat, should, test } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService, _p } from 'mask';
+import { setId } from 'persona';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 
@@ -24,7 +25,10 @@ test('@protoboard2/core/active', init => {
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
     const builder = fakeObjectSpecListBuilder();
-    builder.add<IsContainer<'indexed'>>({id: ACTIVE_ID, payload: {containerType: 'indexed', $contentSpecs}});
+    builder.add<IsContainer<'indexed'>>({
+      id: ACTIVE_ID,
+      payload: {containerType: 'indexed', $contentSpecs},
+    });
     const {$rootId, objectSpecList: root} = builder.build(stateService, tester.vine);
 
     // Need to add to body so the dimensions work.
@@ -66,7 +70,7 @@ test('@protoboard2/core/active', init => {
     should(`render left correctly`, () => {
       const left = 123;
       const width = 456;
-      const content = document.createElement('div');
+      const content = setId(document.createElement('div'), {});
       content.style.display = 'block';
       content.style.width = `${width}px`;
 
@@ -117,7 +121,7 @@ test('@protoboard2/core/active', init => {
     should(`render top correctly`, () => {
       const top = 123;
       const height = 456;
-      const content = document.createElement('div');
+      const content = setId(document.createElement('div'), {});
       content.style.display = 'block';
       content.style.height = `${height}px`;
 
@@ -138,12 +142,12 @@ test('@protoboard2/core/active', init => {
     should(`use the largest width and height`, () => {
       const size = 123;
 
-      const content1 = document.createElement('div');
+      const content1 = setId(document.createElement('div'), {});
       content1.style.display = 'block';
       content1.style.width = `1px`;
       content1.style.height = `${size}px`;
 
-      const content2 = document.createElement('div');
+      const content2 = setId(document.createElement('div'), {});
       content2.style.display = 'block';
       content2.style.height = `1px`;
       content2.style.width = `${size}px`;

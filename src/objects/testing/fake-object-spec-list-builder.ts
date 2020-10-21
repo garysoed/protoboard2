@@ -1,5 +1,6 @@
 import { Vine } from 'grapevine';
 import { StateId, StateService } from 'gs-tools/export/state';
+import { setId } from 'persona';
 import { of as observableOf } from 'rxjs';
 
 import { ObjectCreateSpec } from '../object-create-spec';
@@ -23,7 +24,7 @@ class ObjectSpecListBuilder {
 
   add<T>(
       partial: PartialObjectSpec<T>,
-      createFn: ObjectCreateSpec<T> = () => observableOf(document.createElement('div')),
+      createFn: ObjectCreateSpec<T> = () => observableOf(setId(document.createElement('div'), {})),
   ): ObjectSpec<T> {
     const spec = {
       type: partial.id,

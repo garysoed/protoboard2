@@ -1,6 +1,7 @@
 import { assert, createSpy, fake, resetCalls, setThat, should, test } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
+import { NodeWithId, setId } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
 import { Observable, of as observableOf } from 'rxjs';
 
@@ -25,7 +26,7 @@ test('@protoboard2/objects/object-service', init => {
   test('getObject', () => {
     should(`create a new Node and emit it`, () => {
       const objectId = 'objectId';
-      const node = document.createElement('div');
+      const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
 
       const builder = fakeObjectSpecListBuilder();
@@ -37,9 +38,9 @@ test('@protoboard2/objects/object-service', init => {
 
     should(`reuse a previous Node if one already exist`, () => {
       const objectId = 'objectId';
-      const node = document.createElement('div');
+      const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
-      const createSpecSpy = createSpy<Observable<Node>, []>('createSpec');
+      const createSpecSpy = createSpy<Observable<NodeWithId>, []>('createSpec');
       fake(createSpecSpy).always().return(observableOf(node));
 
       const builder = fakeObjectSpecListBuilder();

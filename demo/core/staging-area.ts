@@ -2,7 +2,7 @@ import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
-import { element, multi, PersonaContext, renderCustomElement } from 'persona';
+import { element, multi, NodeWithId, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -57,7 +57,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get piecesNodes$(): Observable<readonly Node[]> {
+  private get piecesNodes$(): Observable<readonly NodeWithId[]> {
     return $pieceSpecs.get(this.vine).pipe(
         switchMap(specs => {
           const node$List = $pipe(
@@ -68,6 +68,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 return renderCustomElement(
                     $lineLayout,
                     {textContent: observableOf(label)},
+                    label,
                     this.context,
                 );
               }),
@@ -80,7 +81,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get regionsNodes$(): Observable<readonly Node[]> {
+  private get regionsNodes$(): Observable<readonly NodeWithId[]> {
     return $regionSpecs.get(this.vine).pipe(
         switchMap(specs => {
           const node$List = $pipe(
@@ -91,6 +92,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
                 return renderCustomElement(
                     $lineLayout,
                     {textContent: observableOf(label)},
+                    label,
                     this.context,
                 );
               }),

@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, host, PersonaContext, single, stringParser } from 'persona';
+import { attributeIn, element, host, PersonaContext, single, stringParser, NodeWithId } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -35,7 +35,7 @@ export class Render extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get object$(): Observable<Node|null> {
+  private get object$(): Observable<NodeWithId|null> {
     return combineLatest([
       this.declareInput($.host._.objectId),
       $objectService.get(this.vine),

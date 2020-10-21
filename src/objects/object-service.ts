@@ -1,7 +1,7 @@
 import { source, Vine } from 'grapevine';
 import { $asMap, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
-import { PersonaContext } from 'persona';
+import { NodeWithId, PersonaContext } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
@@ -11,14 +11,14 @@ import { $objectSpecMap } from './object-spec-list';
 
 
 class ObjectCache {
-  private object: Observable<Node>|null = null;
+  private object: Observable<NodeWithId>|null = null;
 
   constructor(
       private readonly fn: ObjectCreateSpec<object>,
       readonly state: ObjectSpec<object>,
   ) { }
 
-  getOrCreate(context: PersonaContext): Observable<Node> {
+  getOrCreate(context: PersonaContext): Observable<NodeWithId> {
     if (this.object) {
       return this.object;
     }
@@ -33,7 +33,7 @@ class ObjectCache {
 export class ObjectService {
   constructor(private readonly vine: Vine) { }
 
-  getObject(id: string, context: PersonaContext): Observable<Node|null> {
+  getObject(id: string, context: PersonaContext): Observable<NodeWithId|null> {
     return this.objectCachesMap$.pipe(
         switchMap(objectCachesMap => {
           const cache = objectCachesMap.get(id);

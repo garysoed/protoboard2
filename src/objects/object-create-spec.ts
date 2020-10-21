@@ -1,4 +1,4 @@
-import { PersonaContext } from 'persona';
+import { NodeWithId, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
 
 import { ObjectSpec } from './object-spec';
@@ -10,4 +10,4 @@ import { ObjectSpec } from './object-spec';
  * @thHidden
  */
 export type ObjectCreateSpec<P> =
-    (state: ObjectSpec<P>, context: PersonaContext) => Observable<Node>;
+    (state: ObjectSpec<P>, context: PersonaContext) => Observable<NodeWithId>;

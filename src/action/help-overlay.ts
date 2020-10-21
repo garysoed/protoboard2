@@ -2,7 +2,7 @@ import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $keyboard, _p, Keyboard, SpecialKeys, ThemedCustomElementCtrl } from 'mask';
-import { classToggle, element, multi, onDom, PersonaContext, renderCustomElement, renderElement } from 'persona';
+import { classToggle, element, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -59,7 +59,7 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get tableRows$(): Observable<readonly Node[]> {
+  private get tableRows$(): Observable<readonly NodeWithId[]> {
     return this.helpService$.pipe(
         switchMap(service => service.actions$),
         switchMap(actions => {
@@ -72,22 +72,26 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
                       attrs: new Map([['a', observableOf('test')]]),
                       inputs: {text: observableOf(triggerKeySpecToString(trigger))},
                     },
+                    {},
                     this.context,
                 );
                 const triggerEl$ = renderElement(
                     'td',
                     {children: combineLatest([keyboardEl$])},
+                    {},
                     this.context,
                 );
 
                 const actionEl$ = renderElement(
                     'td',
                     {textContent: observableOf(action.actionName)},
+                    {},
                     this.context,
                 );
                 return renderElement(
                     'tr',
                     {children: combineLatest([triggerEl$, actionEl$])},
+                    {},
                     this.context,
                 );
               }),

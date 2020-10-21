@@ -1,7 +1,7 @@
 import { assertByType, filterNonNull } from 'gs-tools/export/rxjs';
 import { enumType, instanceofType } from 'gs-types';
 import { $button, $lineLayout, _p, Icon, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement } from 'persona';
+import { attributeIn, booleanParser, element, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -72,7 +72,7 @@ export class Drawer extends ThemedCustomElementCtrl {
     this.addSetup(this.setupRootOnClick());
   }
 
-  private createNodes(linkConfig: readonly LinkConfig[]): Observable<readonly Node[]> {
+  private createNodes(linkConfig: readonly LinkConfig[]): Observable<readonly NodeWithId[]> {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement(
           $button,
@@ -83,10 +83,12 @@ export class Drawer extends ThemedCustomElementCtrl {
                   attrs: new Map([['path', observableOf(path)]]),
                   textContent: observableOf(label),
                 },
+                label,
                 this.context,
             ).pipe(map(node => [node])),
             inputs: {isSecondary: observableOf(true)},
           },
+          label,
           this.context,
       );
     });

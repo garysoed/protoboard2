@@ -1,5 +1,5 @@
 import { $icon } from 'mask';
-import { PersonaContext, renderCustomElement, renderElement } from 'persona';
+import { NodeWithId, PersonaContext, renderCustomElement, renderElement } from 'persona';
 import { combineLatest, Observable, of as observableOf } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,10 +15,11 @@ export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
 export function renderRootSlot(
     spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
-): Observable<Node> {
+): Observable<NodeWithId> {
   return renderCustomElement(
       $slot,
       {inputs: {objectId: observableOf(spec.id)}},
+      spec.id,
       context,
   );
 }
@@ -28,10 +29,11 @@ export const SUPPLY_TYPE = 'pbd.supply';
 export function renderSupply(
     spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
-): Observable<Node> {
+): Observable<NodeWithId> {
   return renderCustomElement(
       $slot,
       {inputs: {objectId: observableOf(spec.id)}},
+      spec.id,
       context,
   );
 }
@@ -41,7 +43,7 @@ export const PREVIEW_TYPE = 'pbd.preview';
 export function renderDemoPreview(
     state: ObjectSpec<PieceSpec>,
     context: PersonaContext,
-): Observable<Node> {
+): Observable<NodeWithId> {
   const icon$list = state.payload.icons.map((icon, index) => {
     const icon$ = renderCustomElement(
         $icon,
@@ -50,6 +52,7 @@ export function renderDemoPreview(
           attrs: new Map([
           ]),
         },
+        icon,
         context,
     );
     return renderElement(
@@ -61,6 +64,7 @@ export function renderDemoPreview(
           ]),
           children: icon$.pipe(map(icon => [icon])),
         },
+        index,
         context,
     );
   });
@@ -73,6 +77,7 @@ export function renderDemoPreview(
           [$baseComponent.api.objectId.attrName, observableOf(state.id)],
         ]),
       },
+      state.id,
       context,
   );
 }

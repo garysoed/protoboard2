@@ -2,7 +2,7 @@ import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { $stateService, _p } from 'mask';
-import { classToggle, element, host, multi, PersonaContext, renderCustomElement, style, textContent } from 'persona';
+import { classToggle, element, host, multi, NodeWithId, PersonaContext, renderCustomElement, style, textContent } from 'persona';
 import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
@@ -172,10 +172,11 @@ function computeRect(element: ElementWithRect): Rect {
 export function renderActive(
     spec: ObjectSpec<ActivePayload>,
     context: PersonaContext,
-): Observable<Node> {
+): Observable<NodeWithId> {
   return renderCustomElement(
       $active,
       {inputs: {objectId: observableOf(spec.id)}},
+      {},
       context,
   );
 }
