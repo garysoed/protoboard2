@@ -79,7 +79,7 @@ export const $addRegionSpecs = stream(
             const boundAddPieceSpec = addRegionSpec
                 .bind(undefined, regionSpecs ?? [], objectIds)
                 .bind(undefined, stagingState, stateService);
-            const deck = boundAddPieceSpec.bind(undefined, targetAreas.deck);
+            const deck = boundAddPieceSpec.bind(undefined, 'indexed', targetAreas.deck);
             return {deck};
           }),
       );
@@ -92,10 +92,16 @@ function addRegionSpec(
     objectIds: ReadonlySet<string>,
     stagingState: StagingState,
     stateService: StateService,
+    containerType: any,
     targetArea: number,
     componentTag: string,
 ): void {
   const id = `object-${idGenerator.generate(objectIds)}`;
-  const regionSpec: RegionSpec = {id, componentTag, gridArea: GRID_AREAS[targetArea]};
+  const regionSpec: RegionSpec = {
+    id,
+    componentTag,
+    containerType,
+    gridArea: GRID_AREAS[targetArea],
+  };
   stateService.set(stagingState.$regionSpecs, [...currentRegionSpecs, regionSpec]);
 }

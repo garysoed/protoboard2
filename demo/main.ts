@@ -12,7 +12,7 @@ import { $objectSpecListId } from '../src/objects/object-spec-list';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
-import { PREVIEW_TYPE, renderDemoPreview, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
+import { PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
 import { Root } from './root';
 import { $demoState } from './state/getters/demo-state';
 import { DemoState } from './state/types/demo-state';
@@ -82,7 +82,8 @@ window.addEventListener('load', () => {
     [ACTIVE_TYPE, renderActive],
     [ROOT_SLOT_TYPE, renderRootSlot],
     [SUPPLY_TYPE, renderSupply],
-    [PREVIEW_TYPE, renderDemoPreview],
+    [PIECE_TYPE, renderDemoPiece],
+    [REGION_TYPE, renderDemoRegion],
   ]));
 });
 

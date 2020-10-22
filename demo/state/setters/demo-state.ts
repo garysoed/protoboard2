@@ -10,16 +10,17 @@ import { ACTIVE_ID, ACTIVE_TYPE } from '../../../src/core/active';
 import { ObjectSpec } from '../../../src/objects/object-spec';
 import { $objectSpecListId } from '../../../src/objects/object-spec-list';
 import { ContentSpec } from '../../../src/payload/is-container';
-import { PREVIEW_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE } from '../../core/object-specs';
+import { PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE } from '../../core/object-specs';
 import { SUPPLY_ID } from '../../core/supply';
 import { $demoState } from '../getters/demo-state';
 import { $objectSpecs } from '../getters/play-state';
-import { $pieceSpecs } from '../getters/staging-state';
+import { $pieceSpecs, $regionSpecs } from '../getters/staging-state';
 import { DemoState } from '../types/demo-state';
 import { PiecePayload } from '../types/piece-payload';
 import { PieceSpec } from '../types/piece-spec';
 import { PlayState } from '../types/play-state';
 import { RegionPayload } from '../types/region-payload';
+import { RegionSpec } from '../types/region-spec';
 
 
 export const $setStaging = stream(
@@ -29,10 +30,11 @@ export const $setStaging = stream(
         $demoState.get(vine),
         $objectSpecs.get(vine),
         $pieceSpecs.get(vine),
+        $regionSpecs.get(vine),
         $stateService.get(vine),
       ])
       .pipe(
-          map(([demoState, objectSpecs, pieceSpecs, stateService]) => {
+          map(([demoState, objectSpecs, pieceSpecs, regionSpecs, stateService]) => {
             if (!demoState) {
               return null;
             }
@@ -41,7 +43,7 @@ export const $setStaging = stream(
               if (isStaging) {
                 setToStaging(demoState, objectSpecs, stateService);
               } else {
-                setToPlay(demoState, pieceSpecs ?? [], stateService, vine);
+                setToPlay(demoState, pieceSpecs ?? [], regionSpecs ?? [], stateService, vine);
               }
             };
           }),
@@ -77,19 +79,24 @@ export const ROOT_SLOT_PREFIX = 'pbd.root-slot';
 function setToPlay(
     demoState: DemoState,
     pieceSpecs: readonly PieceSpec[],
+    regionSpecs: readonly RegionSpec[],
     stateService: StateService,
     vine: Vine,
 ): void {
-  // Add the root slot specs.
-  const rootSlotObjectSpecs: Array<ObjectSpec<RegionPayload>> = [];
-  for (let i = 0; i < 9; i++) {
-    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-    rootSlotObjectSpecs.push({
-      id: `${ROOT_SLOT_PREFIX}${i}`,
-      type: ROOT_SLOT_TYPE,
-      payload: {type: 'region', containerType: 'indexed', $contentSpecs},
-    });
-  }
+  // // Add the root slot specs.
+  // const rootSlotObjectSpecs: Array<ObjectSpec<RegionPayload>> = [];
+  // for (let i = 0; i < 9; i++) {
+  //   const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
+  //   rootSlotObjectSpecs.push({
+  //     id: `${ROOT_SLOT_PREFIX}${i}`,
+  //     type: ROOT_SLOT_TYPE,
+  //     payload: {
+  //       type: 'region',
+  //       containerType: 'indexed',
+  //       $contentSpecs,
+  //     },
+  //   });
+  // }
 
   // Add the supply specs.
   const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
@@ -102,7 +109,12 @@ function setToPlay(
   const supplyObjectSpec: ObjectSpec<RegionPayload> = {
     id: SUPPLY_ID,
     type: SUPPLY_TYPE,
-    payload: {type: 'region', containerType: 'indexed', $contentSpecs: $supplyContentSpecs},
+    payload: {
+      type: 'region',
+      containerType: 'indexed',
+      $contentSpecs: $supplyContentSpecs,
+      gridArea: null,
+    },
   };
 
   // Add the active specs.
@@ -110,7 +122,12 @@ function setToPlay(
   const activeObjectSpec: ObjectSpec<RegionPayload> = {
     id: ACTIVE_ID,
     type: ACTIVE_TYPE,
-    payload: {type: 'region', containerType: 'indexed', $contentSpecs: $activeContentIds},
+    payload: {
+      type: 'region',
+      containerType: 'indexed',
+      $contentSpecs: $activeContentIds,
+      gridArea: null,
+    },
   };
 
   // User defined object specs.
@@ -124,15 +141,27 @@ function setToPlay(
       $currentFaceIndex,
       $rotationDeg,
     };
-    pieceObjectSpecs.push({...spec, type: PREVIEW_TYPE, payload});
+    pieceObjectSpecs.push({...spec, type: PIECE_TYPE, payload});
+  }
+
+  const regionObjectSpecs: Array<ObjectSpec<RegionPayload>> = [];
+  for (const spec of regionSpecs) {
+    const payload: RegionPayload = {
+      ...spec,
+      type: 'region',
+      containerType: spec.containerType,
+      $contentSpecs: stateService.add([]),
+      gridArea: spec.gridArea,
+    };
+    regionObjectSpecs.push({...spec, type: REGION_TYPE, payload});
   }
 
   const playState: PlayState = {
     objectSpecs: [
-      ...rootSlotObjectSpecs,
       supplyObjectSpec,
       activeObjectSpec,
       ...pieceObjectSpecs,
+      ...regionObjectSpecs,
     ],
   };
 

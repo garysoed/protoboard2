@@ -8,6 +8,7 @@ import { ObjectSpec } from '../../src/objects/object-spec';
 import { IsContainer } from '../../src/payload/is-container';
 import { $slot } from '../../src/region/slot';
 import { PieceSpec } from '../state/types/piece-spec';
+import { RegionSpec } from '../state/types/region-spec';
 
 
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
@@ -38,9 +39,10 @@ export function renderSupply(
   );
 }
 
-export const PREVIEW_TYPE = 'pbd.preview';
+export const PIECE_TYPE = 'pbd.piece';
+export const REGION_TYPE = 'pbd.region';
 
-export function renderDemoPreview(
+export function renderDemoPiece(
     state: ObjectSpec<PieceSpec>,
     context: PersonaContext,
 ): Observable<NodeWithId> {
@@ -77,6 +79,18 @@ export function renderDemoPreview(
           [$baseComponent.api.objectId.attrName, observableOf(state.id)],
         ]),
       },
+      state.id,
+      context,
+  );
+}
+
+export function renderDemoRegion(
+    state: ObjectSpec<RegionSpec>,
+    context: PersonaContext,
+): Observable<NodeWithId> {
+  return renderElement(
+      state.payload.componentTag,
+      {},
       state.id,
       context,
   );
