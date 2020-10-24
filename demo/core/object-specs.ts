@@ -90,7 +90,11 @@ export function renderDemoRegion(
 ): Observable<NodeWithId> {
   return renderElement(
       state.payload.componentTag,
-      {},
+      {
+        attrs: new Map([
+          [$baseComponent.api.objectId.attrName, observableOf(state.id)],
+        ]),
+      },
       state.id,
       context,
   );

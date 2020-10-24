@@ -43,8 +43,8 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
 
     return this.onTrigger$
         .pipe(
-            withLatestFrom(this.context.objectSpec$, activeState$, this.config$),
-            switchMap(([event, toState, activeState, config]) => {
+            withLatestFrom(this.context.objectSpec$, activeState$),
+            switchMap(([event, toState, activeState]) => {
               if (!toState || !activeState) {
                 return EMPTY;
               }

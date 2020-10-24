@@ -154,7 +154,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
                   ],
                 ]),
               },
-              index,
+              `${index}-${icon}`,
               this.context,
           ));
 

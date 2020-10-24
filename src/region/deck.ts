@@ -1,7 +1,7 @@
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { element, host, NodeWithId, PersonaContext, single } from 'persona';
+import { element, host, multi, NodeWithId, PersonaContext, single } from 'persona';
 import { Observable, of as observableOf } from 'rxjs';
 import { Logger } from 'santa';
 
@@ -11,6 +11,7 @@ import { ShuffleAction } from '../action/shuffle-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
 import { IsContainer } from '../payload/is-container';
+import { renderContents } from '../render/render-contents';
 
 import template from './deck.html';
 
@@ -24,11 +25,9 @@ export const $deck = {
 };
 
 export const $ = {
-  host: host($deck.api),
-  contents: element('contents', instanceofType(HTMLDivElement), {
-    contents: single('#contents'),
+  root: element('root', instanceofType(HTMLDivElement), {
+    contents: multi('#contents'),
   }),
-  target: element('target', instanceofType(HTMLDivElement), {}),
 };
 
 export type DeckPayload = IsContainer<'indexed'>;
@@ -48,25 +47,6 @@ export class Deck extends BaseComponent<DeckPayload> {
         context,
     );
 
-    this.render($.contents._.contents, this.contents$);
-  }
-
-  @cache()
-  private get contents$(): Observable<NodeWithId|null> {
-    // TODO
-    return observableOf(null);
-    // return this.objectSpec$.pipe(
-    //     switchMap(state => state?.payload.contentIds || observableOf([])),
-    //     withLatestFrom($objectService.get(this.vine)),
-    //     switchMap(([contentIds, renderableService]) => {
-    //       const [topId] = contentIds;
-    //       if (!topId) {
-    //         return observableOf(null);
-    //       }
-
-    //       return renderableService.getObject(topId, this.context);
-    //     }),
-    //     debug(LOGGER, 'node'),
-    // );
+    this.addSetup(renderContents(this.objectPayload$, $.root._.contents, this.context));
   }
 }

@@ -1,28 +1,8 @@
 <style>
-  /* :host {
-    --pbSlotBorderColor: var(--mkThemeActionFG2);
-  }
-
-  :host(:hover) {
-    --pbSlotBorderColor: var(--mkThemeActionFocusFG2);
-  }
-
-  #root {
-    border: 1px solid var(--pbSlotBorderColor);
-    border-radius: .5rem;
-    box-sizing: border-box;
-  }
-
-  ::slotted(*:not(:last-child)) {
+  #root > *:not(:last-child) {
     display: none;
-  } */
+  }
 </style>
-
 <div id="root" layout="row" fill-parent mk-action-2>
-  <div id="target">
-    <slot name="face-0"></slot>
-  </div>
-  <div id="contents">
-    <!-- #contents -->
-  </div>
+  <!-- #contents -->
 </div>

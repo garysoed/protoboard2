@@ -1,11 +1,9 @@
 import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
-import { element, host, multi, PersonaContext, setAttribute } from 'persona';
-import { of as observableOf } from 'rxjs';
+import { element, host, multi, PersonaContext } from 'persona';
 
 import { PickAction } from '../../export';
 import { DropAction } from '../action/drop-action';
-import { Indexed } from '../coordinate/indexed';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
 import { IsContainer } from '../payload/is-container';
@@ -24,7 +22,6 @@ export const $slot = {
 export const $ = {
   host: host({
     ...$slot.api,
-    action: setAttribute('mk-action-2'),
   }),
   root: element('root', instanceofType(HTMLDivElement), {
     content: multi('#content'),
@@ -48,6 +45,5 @@ export class Slot extends BaseComponent<SlotPayload> {
     );
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
-    this.render($.host._.action, observableOf(true));
   }
 }
