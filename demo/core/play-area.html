@@ -8,6 +8,38 @@
                          "large  large  large";
   }
 
+  #small1 {
+    grid-area: small1;
+  }
+
+  #small2 {
+    grid-area: small2;
+  }
+
+  #small3 {
+    grid-area: small3;
+  }
+
+  #small4 {
+    grid-area: small4;
+  }
+
+  #small5 {
+    grid-area: small5;
+  }
+
+  #small6 {
+    grid-area: small6;
+  }
+
+  #side {
+    grid-area: side;
+  }
+
+  #large {
+    grid-area: large;
+  }
+
   #main > div {
     position: relative;
   }
@@ -20,14 +52,14 @@
 <div id="root" layout="column" fill-parent>
   <div flex layout="row">
     <div flex id="main">
-      <div><pb-render id="renderSmall1"></pb-render></div>
-      <div><pb-render id="renderSmall2"></pb-render></div>
-      <div><pb-render id="renderSmall3"></pb-render></div>
-      <div><pb-render id="renderSmall4"></pb-render></div>
-      <div><pb-render id="renderSmall5"></pb-render></div>
-      <div><pb-render id="renderSmall6"></pb-render></div>
-      <div><pb-render id="renderSide"></pb-render></div>
-      <div><pb-render id="renderLarge"></pb-render></div>
+      <div id="small1"><pb-render id="renderSmall1"></pb-render></div>
+      <div id="small2"><pb-render id="renderSmall2"></pb-render></div>
+      <div id="small3"><pb-render id="renderSmall3"></pb-render></div>
+      <div id="small4"><pb-render id="renderSmall4"></pb-render></div>
+      <div id="small5"><pb-render id="renderSmall5"></pb-render></div>
+      <div id="small6"><pb-render id="renderSmall6"></pb-render></div>
+      <div id="side"><pb-render id="renderSide"></pb-render></div>
+      <div id="large"><pb-render id="renderLarge"></pb-render></div>
     </div>
     <div flex layout="column">
       <h3 mk-display>Pieces</h3>
