@@ -2,47 +2,47 @@ import { Vine } from 'grapevine';
 import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
 import { $stateService } from 'mask';
 import { combineLatest, Observable } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { CoordinateTypes, IsContainer, TypeCoordinateMapping } from '../../payload/is-container';
 
 
+type MoveObjectFn<T extends CoordinateTypes> =
+    (movedObjectId: string, toLocation: TypeCoordinateMapping[T]) => void;
 export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>(
     fromContainer: IsContainer<F>,
     toContainer: IsContainer<T>,
-    movedObjectId: string,
-    toLocation: TypeCoordinateMapping[T],
     vine: Vine,
-): Observable<unknown> {
+): Observable<MoveObjectFn<T>|null> {
   return $stateService.get(vine).pipe(
-      take(1),
       switchMap(stateService => {
         return combineLatest([
           stateService.get(fromContainer.$contentSpecs),
           stateService.get(toContainer.$contentSpecs),
         ])
         .pipe(
-            take(1),
-            tap(([fromContentSpecs, toContentSpecs]) => {
+            map(([fromContentSpecs, toContentSpecs]) => {
               if (!fromContentSpecs || !toContentSpecs) {
-                return;
+                return null;
               }
 
-              stateService.set(
-                  fromContainer.$contentSpecs,
-                  $pipe(
-                      fromContentSpecs,
-                      $filter(spec => spec.objectId !== movedObjectId),
-                      $asArray(),
-                  ),
-              );
+              return (movedObjectId: string, toLocation: TypeCoordinateMapping[T]) => {
+                stateService.set(
+                    fromContainer.$contentSpecs,
+                    $pipe(
+                        fromContentSpecs,
+                        $filter(spec => spec.objectId !== movedObjectId),
+                        $asArray(),
+                    ),
+                );
 
-              // Add the moved object to the destination.
-              const newToContentSpecs = [
-                ...toContentSpecs,
-                {objectId: movedObjectId, coordinate: toLocation},
-              ];
-              stateService.set(toContainer.$contentSpecs, newToContentSpecs);
+                // Add the moved object to the destination.
+                const newToContentSpecs = [
+                  ...toContentSpecs,
+                  {objectId: movedObjectId, coordinate: toLocation},
+                ];
+                stateService.set(toContainer.$contentSpecs, newToContentSpecs);
+              };
             }),
         );
       }),

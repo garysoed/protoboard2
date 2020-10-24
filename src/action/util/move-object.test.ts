@@ -2,6 +2,7 @@ import { Vine } from 'grapevine';
 import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
 import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
+import { tap } from 'rxjs/operators';
 
 import { createIndexed, Indexed } from '../../coordinate/indexed';
 import { ContentSpec } from '../../payload/is-container';
@@ -31,9 +32,10 @@ test('@protoboard2/action/util/move-object', () => {
     run(moveObject(
         {containerType: 'indexed', $contentSpecs: $fromContentSpecs},
         {containerType: 'indexed', $contentSpecs: $toContentSpecs},
-        movedSpec.objectId,
-        {index: 2},
         vine,
+    )
+    .pipe(
+        tap(fn => fn!(movedSpec.objectId, {index: 2})),
     ));
 
     assert(fromContentIds$).to.emitWith(

@@ -1,6 +1,6 @@
 import { $stateService } from 'mask';
-import { EMPTY, Observable } from 'rxjs';
-import { switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { ACTIVE_ID, ActivePayload } from '../core/active';
 import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
@@ -41,35 +41,52 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
         switchMap(service => service.getObjectSpec<ActivePayload>(ACTIVE_ID)),
     );
 
-    return this.onTrigger$
-        .pipe(
-            withLatestFrom(this.context.objectSpec$, activeState$),
-            switchMap(([event, toState, activeState]) => {
-              if (!toState || !activeState) {
-                return EMPTY;
+    const moveObjectFn$ = combineLatest([this.context.objectSpec$, activeState$]).pipe(
+      switchMap(([toState, activeState]) => {
+        if (!toState || !activeState) {
+          return observableOf(null);
+        }
+
+        return $stateService.get(this.context.personaContext.vine).pipe(
+            switchMap(service => service.get(activeState.payload.$contentSpecs)),
+            switchMap(activeContents => {
+              const normalizedActiveContents = activeContents ?? [];
+              const movedObjectSpec =
+                  normalizedActiveContents[normalizedActiveContents.length - 1];
+              if (!movedObjectSpec) {
+                return observableOf(null);
               }
 
-              return $stateService.get(this.context.personaContext.vine).pipe(
-                  take(1),
-                  switchMap(service => service.get(activeState.payload.$contentSpecs)),
-                  take(1),
-                  switchMap(activeContents => {
-                    const normalizedActiveContents = activeContents ?? [];
-                    const movedObjectSpec =
-                        normalizedActiveContents[normalizedActiveContents.length - 1];
-                    if (!movedObjectSpec) {
-                      return EMPTY;
+              return moveObject(
+                  activeState.payload,
+                  toState.payload,
+                  this.context.personaContext.vine,
+              )
+              .pipe(
+                  map(fn => {
+                    if (!fn) {
+                      return null;
                     }
 
-                    return moveObject(
-                        activeState.payload,
-                        toState.payload,
-                        movedObjectSpec.objectId,
-                        {index: this.locationFn(event)},
-                        this.context.personaContext.vine,
-                    );
+                    return (event: TriggerEvent) => {
+                      fn(movedObjectSpec.objectId, {index: this.locationFn(event)});
+                    };
                   }),
               );
+            }),
+        );
+      }),
+    );
+
+    return this.onTrigger$
+        .pipe(
+            withLatestFrom(moveObjectFn$),
+            tap(([event, moveObjectFn]) => {
+              if (!moveObjectFn) {
+                return;
+              }
+
+              moveObjectFn(event);
             }),
         );
   }
