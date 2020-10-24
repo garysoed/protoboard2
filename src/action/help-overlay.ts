@@ -59,7 +59,7 @@ export class HelpOverlay extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get tableRows$(): Observable<readonly NodeWithId[]> {
+  private get tableRows$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return this.helpService$.pipe(
         switchMap(service => service.actions$),
         switchMap(actions => {

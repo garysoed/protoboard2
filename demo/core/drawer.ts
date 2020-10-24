@@ -72,7 +72,9 @@ export class Drawer extends ThemedCustomElementCtrl {
     this.addSetup(this.setupRootOnClick());
   }
 
-  private createNodes(linkConfig: readonly LinkConfig[]): Observable<readonly NodeWithId[]> {
+  private createNodes(
+      linkConfig: readonly LinkConfig[],
+  ): Observable<ReadonlyArray<NodeWithId<Node>>> {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement(
           $button,

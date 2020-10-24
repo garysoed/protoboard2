@@ -51,7 +51,9 @@ export function renderContents(
   );
 }
 
-function renderIndexed(contents: ReadonlyMap<Indexed, NodeWithId>): readonly NodeWithId[] {
+function renderIndexed(
+    contents: ReadonlyMap<Indexed, NodeWithId<Node>>,
+): ReadonlyArray<NodeWithId<Node>> {
   return $pipe(
       [...contents],
       $sort(withMap(([coordinate]) => coordinate.index, normal())),

@@ -57,7 +57,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get piecesNodes$(): Observable<readonly NodeWithId[]> {
+  private get piecesNodes$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return $pieceSpecs.get(this.vine).pipe(
         switchMap(specs => {
           const node$List = $pipe(
@@ -81,7 +81,7 @@ export class StagingArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get regionsNodes$(): Observable<readonly NodeWithId[]> {
+  private get regionsNodes$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return $regionSpecs.get(this.vine).pipe(
         switchMap(specs => {
           const node$List = $pipe(

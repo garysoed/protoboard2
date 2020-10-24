@@ -78,7 +78,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get editorContents$(): Observable<readonly NodeWithId[]> {
+  private get editorContents$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     const icon$List = FACE_ICONS.map(icon => renderCustomElement(
         $pieceButton,
         {inputs: {icon: observableOf(icon)}},
@@ -135,7 +135,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get previewContents$(): Observable<readonly NodeWithId[]> {
+  private get previewContents$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return this.previewIcons$.pipe(
         switchMap(previewIcons => {
           const node$List = previewIcons.map((icon, index) => renderCustomElement(

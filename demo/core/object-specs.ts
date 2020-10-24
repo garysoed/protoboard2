@@ -16,7 +16,7 @@ export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
 export function renderRootSlot(
     spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
-): Observable<NodeWithId> {
+): Observable<NodeWithId<Element>> {
   return renderCustomElement(
       $slot,
       {inputs: {objectId: observableOf(spec.id)}},
@@ -30,7 +30,7 @@ export const SUPPLY_TYPE = 'pbd.supply';
 export function renderSupply(
     spec: ObjectSpec<IsContainer<'indexed'>>,
     context: PersonaContext,
-): Observable<NodeWithId> {
+): Observable<NodeWithId<Element>> {
   return renderCustomElement(
       $slot,
       {inputs: {objectId: observableOf(spec.id)}},
@@ -45,7 +45,7 @@ export const REGION_TYPE = 'pbd.region';
 export function renderDemoPiece(
     state: ObjectSpec<PieceSpec>,
     context: PersonaContext,
-): Observable<NodeWithId> {
+): Observable<NodeWithId<Element>> {
   const icon$list = state.payload.icons.map((icon, index) => {
     const icon$ = renderCustomElement(
         $icon,
@@ -87,7 +87,7 @@ export function renderDemoPiece(
 export function renderDemoRegion(
     state: ObjectSpec<RegionSpec>,
     context: PersonaContext,
-): Observable<NodeWithId> {
+): Observable<NodeWithId<Element>> {
   return renderElement(
       state.payload.componentTag,
       {

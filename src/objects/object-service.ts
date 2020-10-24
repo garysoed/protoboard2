@@ -11,14 +11,14 @@ import { $objectSpecMap } from './object-spec-list';
 
 
 class ObjectCache {
-  private object: Observable<NodeWithId>|null = null;
+  private object: Observable<NodeWithId<Element>>|null = null;
 
   constructor(
       private readonly fn: ObjectCreateSpec<object>,
       readonly state: ObjectSpec<object>,
   ) { }
 
-  getOrCreate(context: PersonaContext): Observable<NodeWithId> {
+  getOrCreate(context: PersonaContext): Observable<NodeWithId<Element>> {
     if (this.object) {
       return this.object;
     }
@@ -33,7 +33,7 @@ class ObjectCache {
 export class ObjectService {
   constructor(private readonly vine: Vine) { }
 
-  getObject(id: string, context: PersonaContext): Observable<NodeWithId|null> {
+  getObject(id: string, context: PersonaContext): Observable<NodeWithId<Element>|null> {
     return this.objectCachesMap$.pipe(
         switchMap(objectCachesMap => {
           const cache = objectCachesMap.get(id);

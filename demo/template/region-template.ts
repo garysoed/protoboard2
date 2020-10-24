@@ -105,7 +105,7 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get selectedAreaOptions$(): Observable<readonly NodeWithId[]> {
+  private get selectedAreaOptions$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return combineLatest([
       $demoState.get(this.vine),
       this.declareInput($.host._.regionType),

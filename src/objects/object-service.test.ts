@@ -40,7 +40,7 @@ test('@protoboard2/objects/object-service', init => {
       const objectId = 'objectId';
       const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
-      const createSpecSpy = createSpy<Observable<NodeWithId>, []>('createSpec');
+      const createSpecSpy = createSpy<Observable<NodeWithId<Element>>, []>('createSpec');
       fake(createSpecSpy).always().return(observableOf(node));
 
       const builder = fakeObjectSpecListBuilder();

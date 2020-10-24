@@ -172,7 +172,7 @@ function computeRect(element: ElementWithRect): Rect {
 export function renderActive(
     spec: ObjectSpec<ActivePayload>,
     context: PersonaContext,
-): Observable<NodeWithId> {
+): Observable<NodeWithId<Element>> {
   return renderCustomElement(
       $active,
       {inputs: {objectId: observableOf(spec.id)}},

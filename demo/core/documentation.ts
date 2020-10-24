@@ -46,7 +46,7 @@ export class Documentation extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get content$(): Observable<NodeWithId|null> {
+  private get content$(): Observable<NodeWithId<Node>|null> {
     return $locationService.get(this.vine)
         .pipe(
             switchMap(service => service.getLocation()),
