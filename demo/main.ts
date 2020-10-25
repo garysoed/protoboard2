@@ -51,11 +51,10 @@ window.addEventListener('load', () => {
       .pipe(switchMap(locationService => locationService.run()))
       .subscribe();
 
-  const storage = new LocalStorage<Snapshot<any>>(
+  const storage = new LocalStorage<Snapshot<DemoState>, any>(
       window,
       'pbd',
-      // TODO: Make this easier.
-      identity() as any,
+      identity(),
       json(),
   );
 
