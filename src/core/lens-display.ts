@@ -32,7 +32,7 @@ export class LensDisplay extends ThemedCustomElementCtrl {
     return $lensService.get(this.vine).pipe(
         switchMap(service => service.onNodes$),
         tap(nodes => {
-          const rootEl = $.root.getElement(this.context);
+          const rootEl = $.root.getSelectable(this.context);
           rootEl.innerHTML = '';
           if (!nodes) {
             return;

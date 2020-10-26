@@ -17,24 +17,23 @@ test('@protoboard2/util/lens-display', init => {
     return {el, tester};
   });
 
+  function getRenderedHtmls(rootEl: Element): readonly string[] {
+    const outerHtmls: string[] = [];
+    for (let i = 0; i < rootEl.children.length; i++) {
+      const el = rootEl.children.item(i);
+      if (!el) {
+        continue;
+      }
+
+      outerHtmls.push(el.outerHTML);
+    }
+    return outerHtmls;
+  }
+
   test('setupRenderContent', _, init => {
     const _ = init(_ => {
-      const outerHtmls$ = _.el.getElement($.root).pipe(
-          map(rootEl => {
-            const outerHtmls: string[] = [];
-            for (let i = 0; i < rootEl.children.length; i++) {
-              const el = rootEl.children.item(i);
-              if (!el) {
-                continue;
-              }
-
-              outerHtmls.push(el.outerHTML);
-            }
-
-            return outerHtmls;
-          }),
-      );
-      return {..._, outerHtmls$};
+      const rootEl = _.el.getElement($.root);
+      return {..._, rootEl};
     });
 
     should(`render copy of the elements correctly`, () => {
@@ -54,7 +53,7 @@ test('@protoboard2/util/lens-display', init => {
           }),
       ));
 
-      assert(_.outerHtmls$).to.emitWith(arrayThat<string>().haveExactElements([
+      assert(getRenderedHtmls(_.rootEl)).to.equal(arrayThat<string>().haveExactElements([
         '<div><span></span></div>',
         '<h1></h1>',
       ]));
@@ -74,7 +73,7 @@ test('@protoboard2/util/lens-display', init => {
           }),
       ));
 
-      assert(_.outerHtmls$).to.emitWith(arrayThat<string>().beEmpty());
+      assert(getRenderedHtmls(_.rootEl)).to.equal(arrayThat<string>().beEmpty());
     });
   });
 });

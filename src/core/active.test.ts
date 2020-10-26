@@ -18,7 +18,7 @@ test('@protoboard2/core/active', init => {
   const _ = init(() => {
     const tester = factory.build([Active], document);
     const el = tester.createElement($active.tag);
-    run(el.setAttribute($.host._.objectId, ACTIVE_ID));
+    el.setAttribute($.host._.objectId, ACTIVE_ID);
 
     const stateService = new StateService();
     $stateService.set(tester.vine, () => stateService);
@@ -41,13 +41,13 @@ test('@protoboard2/core/active', init => {
     should(`render the 0 item count correctly`, () => {
       _.stateService.set(_.$contentIds, []);
 
-      assert(_.el.getTextContent($.count)).to.emitWith('');
+      assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should(`render the 1 item count correctly`, () => {
       _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
-      assert(_.el.getTextContent($.count)).to.emitWith('');
+      assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should(`render the 3 items count correctly`, () => {
@@ -62,7 +62,7 @@ test('@protoboard2/core/active', init => {
           ],
       );
 
-      assert(_.el.getTextContent($.count)).to.emitWith('+2');
+      assert(_.el.getTextContent($.count)).to.equal('+2');
     });
   });
 
@@ -83,7 +83,7 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
-      assert(_.el.getStyle($.root._.left)).to.emitWith(`${left - width / 2}px`);
+      assert(_.el.getStyle($.root._.left)).to.equal(`${left - width / 2}px`);
     });
   });
 
@@ -91,13 +91,13 @@ test('@protoboard2/core/active', init => {
     should(`remove the multiple classname if there are 0 items`, () => {
       _.stateService.set(_.$contentIds, []);
 
-      assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
+      assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should(`remove the multiple classname if there is 1 item`, () => {
       _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
-      assert(_.el.getClassList($.root)).to.emitWith(setThat<string>().beEmpty());
+      assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should(`add the multiple classname if there are 3 items`, () => {
@@ -111,7 +111,7 @@ test('@protoboard2/core/active', init => {
           ],
       );
 
-      assert(_.el.getClassList($.root)).to.emitWith(
+      assert(_.el.getClassList($.root)).to.equal(
           setThat<string>().haveExactElements(new Set(['multiple'])),
       );
     });
@@ -134,7 +134,7 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
-      assert(_.el.getStyle($.root._.top)).to.emitWith(`${top - height / 2}px`);
+      assert(_.el.getStyle($.root._.top)).to.equal(`${top - height / 2}px`);
     });
   });
 
@@ -164,8 +164,8 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 
-      assert(_.el.getStyle($.root._.left)).to.emitWith(`${-size / 2}px`);
-      assert(_.el.getStyle($.root._.top)).to.emitWith(`${-size / 2}px`);
+      assert(_.el.getStyle($.root._.left)).to.equal(`${-size / 2}px`);
+      assert(_.el.getStyle($.root._.top)).to.equal(`${-size / 2}px`);
     });
   });
 });

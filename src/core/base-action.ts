@@ -84,7 +84,7 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
           );
         }),
         map(changedAttributes => {
-          const hostEl = $host.getElement(this.context.personaContext);
+          const hostEl = $host.getSelectable(this.context.personaContext);
           const changedConfig: Partial<C> = {};
           for (const attribute of changedAttributes) {
             const rawValue = hostEl.getAttribute(attribute);

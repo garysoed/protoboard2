@@ -39,7 +39,7 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('renderIsVisible', () => {
     should(`not add the isVisible class if there are no actions in the help service`, () => {
-      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(false);
     });
 
     should(`add the isVisible class if there is an action in the help service`, () => {
@@ -50,7 +50,7 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([true]);
+      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(true);
     });
   });
 
@@ -92,9 +92,9 @@ test('@protoboard2/action/help-overlay', init => {
           }),
       ));
 
-      run(_.el.dispatchEvent($.root._.click));
+      _.el.dispatchEvent($.root._.click);
 
-      assert(_.el.getHasClass($.root._.isVisibleClass)).to.emitSequence([false]);
+      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(false);
 
       const actionsLength$ = $helpService.get(_.tester.vine)
           .pipe(

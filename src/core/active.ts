@@ -76,7 +76,7 @@ export class Active extends BaseComponent<ActivePayload> {
           throttleTime(10),
           map(event => ({
             event,
-            rect: computeAllRects($.root.getElement(this.context)),
+            rect: computeAllRects($.root.getSelectable(this.context)),
           })),
           share(),
       );

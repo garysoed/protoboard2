@@ -51,7 +51,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   @cache()
   get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any>> {
     const actionContext = {
-      host: host({}).getElement(this.context),
+      host: host({}).getSelectable(this.context),
       personaContext: this.context,
       objectSpec$: this.objectSpec$,
     };
@@ -112,7 +112,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   ): Observable<MouseEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     return onDom<MouseEvent>('click')
-        .resolve(context => targetEl.getElement(context))
+        .resolve(context => targetEl.getSelectable(context))
         .getValue(this.context)
         .pipe(
             map(event => {
@@ -126,13 +126,13 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   ): Observable<KeyboardEvent&TriggerEvent> {
     const targetEl = triggerSpec.targetEl ?? host({});
     const onMouseLeave$ = onDom('mouseleave')
-        .resolve(context => targetEl.getElement(context))
+        .resolve(context => targetEl.getSelectable(context))
         .getValue(this.context);
     const onMouseEnter$ = onDom('mouseenter')
-        .resolve(context => targetEl.getElement(context))
+        .resolve(context => targetEl.getSelectable(context))
         .getValue(this.context);
     const onMouseMove$ = onDom<MouseEvent>('mousemove')
-        .resolve(context => targetEl.getElement(context))
+        .resolve(context => targetEl.getSelectable(context))
         .getValue(this.context);
     return merge(
         onMouseLeave$.pipe(mapTo(false)),

@@ -54,7 +54,7 @@ export class Lens extends ThemedCustomElementCtrl {
     return this.declareInput($.host._.onMouseEnter).pipe(
         withLatestFrom(this.lensService$),
         tap(([, lensService]) => {
-          const assignedNodes = $.details.getElement(this.context).assignedNodes();
+          const assignedNodes = $.details.getSelectable(this.context).assignedNodes();
           const documentFragment = document.createDocumentFragment();
           for (const node of assignedNodes) {
             documentFragment.appendChild(node.cloneNode(true));
