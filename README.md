@@ -54,18 +54,7 @@ A state changes its state using actions. Actions are triggered by objects, usual
 There are 4 classes of objects:
 
 -   **Region**: Denotes a region in a game that doesn't have a concrete representation.
--   **Layout**: Arranges the children in some predefined layout.
 -   **Piece**: Cannot contain other objects.
--   **Container**: Allows placing pieces in it.
-
-### Layout
-
-Layouts are easy ways to arrange objects together. Some example layouts:
-
--   **Inline**: Lays out all objects in one line.
--   **Pixel**: Lays out objects with pixel precision.
--   **Rect**: Lays out objects in rectangular grid.
--   **Hex**: Lays out object in hexagonal grid.
 
 ### Piece
 

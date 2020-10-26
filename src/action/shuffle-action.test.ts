@@ -1,4 +1,3 @@
-// TODO
 // import { arrayThat, assert, run, should, test } from 'gs-testing';
 // import { FakeSeed, fromSeed } from 'gs-tools/export/random';
 // import { _v } from 'mask';
