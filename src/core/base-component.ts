@@ -36,7 +36,6 @@ const $ = {
   host: host($baseComponent.api),
 };
 
-// TODO: Rename?
 @_p.baseCustomElement({})
 export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   constructor(
