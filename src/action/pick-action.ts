@@ -6,6 +6,7 @@ import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ACTIVE_ID, ActivePayload } from '../core/active';
 import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
 import { $objectService } from '../objects/object-service';
+import { HasParent } from '../payload/has-parent';
 import { IsContainer } from '../payload/is-container';
 
 import { moveObject } from './util/move-object';
@@ -18,13 +19,13 @@ interface Config { }
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
+export class PickAction extends BaseAction<HasParent, Config> {
   /**
    * @internal
    */
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<IsContainer<'indexed'>>,
+      context: ActionContext<HasParent>,
       defaultConfig: Config,
   ) {
     super(
@@ -44,21 +45,34 @@ export class PickAction extends BaseAction<IsContainer<'indexed'>, Config> {
         switchMap(service => service.getObjectSpec<ActivePayload>(ACTIVE_ID)),
     );
 
-    const moveFn$ = combineLatest([this.context.objectSpec$, activeState$]).pipe(
-        switchMap(([fromState, activeState]) => {
-          if (!fromState || !activeState) {
+    const fromObjectSpec$ = combineLatest([
+      this.context.objectSpec$,
+      $objectService.get(this.context.personaContext.vine),
+    ])
+    .pipe(
+        switchMap(([state, objectService]) => {
+          if (!state) {
+            return observableOf(null);
+          }
+
+          return objectService.getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
+        }),
+    );
+
+    const moveFn$ = combineLatest([this.context.objectSpec$, activeState$, fromObjectSpec$]).pipe(
+        switchMap(([fromState, activeState, fromObjectSpec]) => {
+          if (!fromState || !activeState || !fromObjectSpec) {
             return observableOf(null);
           }
 
           return $stateService.get(this.context.personaContext.vine).pipe(
               switchMap(service => combineLatest([
-                service.get(fromState.payload.$contentSpecs),
+                service.get(fromObjectSpec.payload.$contentSpecs),
                 service.get(activeState.payload.$contentSpecs),
               ])),
               switchMap(([fromContents, activeContents]) => {
-
                 return moveObject(
-                    fromState.payload,
+                    fromObjectSpec.payload,
                     activeState.payload,
                     this.context.personaContext.vine,
                 )

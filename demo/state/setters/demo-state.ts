@@ -137,6 +137,7 @@ function setToPlay(
     const $rotationDeg = stateService.add<number>(0);
     const payload: PiecePayload = {
       ...spec,
+      parentObjectId: SUPPLY_ID,
       type: 'piece',
       $currentFaceIndex,
       $rotationDeg,

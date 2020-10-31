@@ -2,9 +2,11 @@ import { instanceofType } from 'gs-types';
 import { _p } from 'mask';
 import { element, PersonaContext, slotted } from 'persona';
 
+import { PickAction } from '../action/pick-action';
 import { RotateAction } from '../action/rotate-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
+import { HasParent } from '../payload/has-parent';
 import { IsRotatable } from '../payload/is-rotatable';
 import { renderRotatable } from '../render/render-rotatable';
 
@@ -21,7 +23,7 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export type D1Payload = IsRotatable;
+export type D1Payload = IsRotatable & HasParent;
 
 const $ = {
   slot: element('slot', instanceofType(HTMLSlotElement), {
@@ -55,6 +57,7 @@ export class D1 extends BaseComponent<D1Payload> {
             trigger: {type: TriggerType.R},
             provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
           },
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
         ],
         context,
     );

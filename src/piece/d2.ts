@@ -3,11 +3,13 @@ import { _p } from 'mask';
 import { attributeOut, element, host, PersonaContext, slotted, stringParser, style } from 'persona';
 
 import { FlipAction } from '../action/flip-action';
+import { PickAction } from '../action/pick-action';
 import { RollAction } from '../action/roll-action';
 import { RotateAction } from '../action/rotate-action';
 import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
 import { TriggerType } from '../core/trigger-spec';
+import { HasParent } from '../payload/has-parent';
 import { IsMultifaced } from '../payload/is-multifaced';
 import { IsRotatable } from '../payload/is-rotatable';
 import { renderMultifaced } from '../render/render-multifaced';
@@ -36,7 +38,7 @@ export const $ = {
   }),
 };
 
-export interface D2Payload extends IsMultifaced, IsRotatable {
+export interface D2Payload extends HasParent, IsMultifaced, IsRotatable {
 
 }
 
@@ -75,6 +77,7 @@ export class D2 extends BaseComponent<D2Payload> {
             trigger: TriggerType.L,
             provider: context => new RollAction(context, {count: 2}),
           },
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
         ],
         context,
     );

@@ -9,7 +9,8 @@ import { createIndexed, Indexed } from '../coordinate/indexed';
 import { ACTIVE_ID } from '../core/active';
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { ContentSpec, IsContainer } from '../payload/is-container';
+import { HasParent } from '../payload/has-parent';
+import { ContentSpec } from '../payload/is-container';
 
 import { PickAction } from './pick-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -23,7 +24,7 @@ test('@protoboard2/action/pick-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectSpec$ = new ReplaySubject<ObjectSpec<IsContainer<'indexed'>>|null>(1);
+    const objectSpec$ = new ReplaySubject<ObjectSpec<HasParent>|null>(1);
 
     const action = new PickAction(
         () => 1,
@@ -55,9 +56,15 @@ test('@protoboard2/action/pick-action', init => {
       });
 
       const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
+      const parentObjectId = 'parentObjectId';
+      builder.add({
+        id: parentObjectId,
+        payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentSpecs},
+      });
+
       const objectSpec = builder.add({
         id: 'TARGET_ID',
-        payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentSpecs},
+        payload: {parentObjectId},
       });
       builder.build(_.stateService, _.personaContext.vine);
       _.objectSpec$.next(objectSpec);
