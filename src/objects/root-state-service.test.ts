@@ -4,11 +4,11 @@ import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 
 import { ObjectSpec } from './object-spec';
-import { $objectSpecMap } from './object-spec-list';
+import { $objectSpecMap } from './root-state-service';
 import { fakeObjectSpecListBuilder } from './testing/fake-object-spec-list-builder';
 
 
-test('@protoboard2/objects/object-spec-list', init => {
+test('@protoboard2/objects/root-state-service', init => {
   const _ = init(() => {
     const vine = new Vine('test');
     const stateService = new StateService();

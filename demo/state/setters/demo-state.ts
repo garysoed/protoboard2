@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { createIndexed, Indexed } from '../../../src/coordinate/indexed';
 import { ACTIVE_ID, ACTIVE_TYPE } from '../../../src/core/active';
 import { ObjectSpec } from '../../../src/objects/object-spec';
-import { $objectSpecListId } from '../../../src/objects/object-spec-list';
+import { $rootState } from '../../../src/objects/root-state-service';
 import { ContentSpec } from '../../../src/payload/is-container';
 import { PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE } from '../../core/object-specs';
 import { SUPPLY_ID } from '../../core/supply';
@@ -167,6 +167,6 @@ function setToPlay(
   };
 
   stateService.set(demoState.$playState, playState);
-  $objectSpecListId.set(vine, () => demoState.$playState);
+  $rootState.set(vine, () => demoState.$playState);
   stateService.set(demoState.$isStaging, false);
 }

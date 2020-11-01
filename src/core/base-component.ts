@@ -8,7 +8,7 @@ import { Logger } from 'santa';
 
 import { HelpAction } from '../action/help-action';
 import { ObjectSpec } from '../objects/object-spec';
-import { $objectSpecMap } from '../objects/object-spec-list';
+import { $objectSpecMap } from '../objects/root-state-service';
 
 import { ActionContext, BaseAction, TriggerEvent } from './base-action';
 import { DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec } from './trigger-spec';

@@ -6,14 +6,15 @@ import { of as observableOf } from 'rxjs';
 import { ObjectCreateSpec } from '../object-create-spec';
 import { $createSpecMap } from '../object-service';
 import { ObjectSpec } from '../object-spec';
-import { $objectSpecListId, HasObjectSpecList } from '../object-spec-list';
+import { RootState } from '../root-state';
+import { $rootState } from '../root-state-service';
 
 
 type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
 
 interface State {
-  readonly objectSpecList: HasObjectSpecList;
-  readonly $rootId: StateId<HasObjectSpecList>;
+  readonly objectSpecList: RootState;
+  readonly $rootId: StateId<RootState>;
 }
 
 class ObjectSpecListBuilder {
@@ -38,8 +39,8 @@ class ObjectSpecListBuilder {
 
   build(stateService: StateService, vine: Vine): State {
     const objectSpecList = {objectSpecs: [...this.specs]};
-    const $rootId = stateService.add<HasObjectSpecList>(objectSpecList);
-    $objectSpecListId.set(vine, () => $rootId);
+    const $rootId = stateService.add<RootState>(objectSpecList);
+    $rootState.set(vine, () => $rootId);
     $createSpecMap.set(vine, existing => new Map([...existing, ...this.createSpecMap]));
     return {$rootId, objectSpecList};
   }
@@ -47,7 +48,7 @@ class ObjectSpecListBuilder {
 
 
 export function fakeObjectSpecListBuilder(
-    baseHasObjectSpecList: HasObjectSpecList = {objectSpecs: []},
+    baseHasObjectSpecList: RootState = {objectSpecs: []},
 ): ObjectSpecListBuilder {
   return new ObjectSpecListBuilder(baseHasObjectSpecList.objectSpecs);
 }

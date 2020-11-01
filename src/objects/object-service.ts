@@ -7,7 +7,7 @@ import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { ObjectCreateSpec } from './object-create-spec';
 import { ObjectSpec } from './object-spec';
-import { $objectSpecMap } from './object-spec-list';
+import { $objectSpecMap } from './root-state-service';
 
 
 class ObjectCache {

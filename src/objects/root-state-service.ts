@@ -6,20 +6,16 @@ import { combineLatest, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { ObjectSpec } from './object-spec';
+import { RootState } from './root-state';
 
-
-export interface HasObjectSpecList {
-  readonly objectSpecs: ReadonlyArray<ObjectSpec<any>>;
-}
-
-export const $objectSpecListId = source<StateId<HasObjectSpecList>|null>(
+export const $rootState = source<StateId<RootState>|null>(
     'objectSpecListId',
     () => null,
 );
 
 export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>>(
     'objectSpecMap',
-    vine => combineLatest([$objectSpecListId.get(vine), $stateService.get(vine)]).pipe(
+    vine => combineLatest([$rootState.get(vine), $stateService.get(vine)]).pipe(
         switchMap(([objectSpecId, stateService]) => {
           if (!objectSpecId) {
             return observableOf(null);

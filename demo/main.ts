@@ -8,7 +8,7 @@ import { ON_LOG_$, WebConsoleDestination } from 'santa';
 import { ACTIVE_TYPE, renderActive } from '../src/core/active';
 import { ObjectCreateSpec } from '../src/objects/object-create-spec';
 import { $createSpecMap } from '../src/objects/object-service';
-import { $objectSpecListId } from '../src/objects/object-spec-list';
+import { $rootState } from '../src/objects/root-state-service';
 
 import protoboardSvg from './asset/icon.svg';
 import { $locationService } from './core/location-service';
@@ -74,7 +74,7 @@ window.addEventListener('load', () => {
   }));
 
   $demoState.get(vine).subscribe(demoState => {
-    $objectSpecListId.set(vine, () => demoState?.$playState ?? null);
+    $rootState.set(vine, () => demoState?.$playState ?? null);
   });
 
   $createSpecMap.set(vine, () => new Map<string, ObjectCreateSpec<any>>([
