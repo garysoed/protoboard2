@@ -1,15 +1,15 @@
-import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { createFakeContext } from 'persona/export/testing';
 import { ReplaySubject } from 'rxjs';
+import { StateService } from 'gs-tools/export/state';
+import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
+import { createFakeContext } from 'persona/export/testing';
 import { switchMap } from 'rxjs/operators';
 
-import { createIndexed, Indexed } from '../coordinate/indexed';
 import { ACTIVE_ID } from '../core/active';
+import { ContentSpec, IsContainer } from '../payload/is-container';
+import { Indexed, createIndexed } from '../coordinate/indexed';
 import { ObjectSpec } from '../objects/object-spec';
 import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { ContentSpec, IsContainer } from '../payload/is-container';
 
 import { DropAction } from './drop-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -42,7 +42,7 @@ test('@protoboard2/action/drop-action', init => {
   });
 
   test('onTrigger', () => {
-    should(`trigger correctly`, () => {
+    should('trigger correctly', () => {
       const otherSpec1 = {objectId: 'otherId1', coordinate: createIndexed(0)};
       const otherSpec2 = {objectId: 'otherId2', coordinate: createIndexed(1)};
 

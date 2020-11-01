@@ -1,5 +1,5 @@
-import { PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
+import { PersonaContext } from 'persona';
 
 import { ActionContext } from '../../core/base-action';
 import { ObjectSpec } from '../../objects/object-spec';

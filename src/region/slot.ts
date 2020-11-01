@@ -1,11 +1,11 @@
-import { instanceofType } from 'gs-types';
+import { PersonaContext, element, host, multi } from 'persona';
 import { _p } from 'mask';
-import { element, host, multi, PersonaContext } from 'persona';
+import { instanceofType } from 'gs-types';
 
-import { DropAction } from '../action/drop-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerType } from '../core/trigger-spec';
+import { DropAction } from '../action/drop-action';
 import { IsContainer } from '../payload/is-container';
+import { TriggerType } from '../core/trigger-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './slot.html';

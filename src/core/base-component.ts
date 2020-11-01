@@ -1,17 +1,17 @@
 import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
-import { cache } from 'gs-tools/export/data';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, host, onDom, PersonaContext, stringParser } from 'persona';
-import { combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf } from 'rxjs';
-import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
+import { EMPTY, Observable, combineLatest, fromEvent, merge, of as observableOf } from 'rxjs';
 import { Logger } from 'santa';
+import { PersonaContext, attributeIn, host, onDom, stringParser } from 'persona';
+import { ThemedCustomElementCtrl, _p } from 'mask';
+import { cache } from 'gs-tools/export/data';
+import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
+import { $objectSpecMap } from '../objects/root-state-service';
 import { HelpAction } from '../action/help-action';
 import { ObjectSpec } from '../objects/object-spec';
-import { $objectSpecMap } from '../objects/root-state-service';
 
 import { ActionContext, BaseAction, TriggerEvent } from './base-action';
-import { DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec } from './trigger-spec';
+import { DetailedTriggerSpec, TriggerSpec, TriggerType, UnreservedTriggerSpec, isKeyTrigger } from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -99,11 +99,11 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
       this.objectId$,
       $objectSpecMap.get(this.context.vine),
     ])
-    .pipe(
-        map(([objectId, objectSpecMap]) => {
-          return (objectSpecMap.get(objectId) || null) as ObjectSpec<P>|null;
-        }),
-    );
+        .pipe(
+            map(([objectId, objectSpecMap]) => {
+              return (objectSpecMap.get(objectId) || null) as ObjectSpec<P>|null;
+            }),
+        );
   }
 
   private createTriggerClick(
@@ -137,18 +137,18 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
         onMouseLeave$.pipe(mapTo(false)),
         onMouseEnter$.pipe(mapTo(true)),
     )
-    .pipe(
-        switchMap(hovered => {
-          return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
-        }),
-        withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
-        filter(([event]) => event.key === triggerSpec.type),
-        map(([keyboardEvent, mouseEvent]) => {
-          return Object.assign(
-              keyboardEvent,
-              {mouseX: mouseEvent.offsetX, mouseY: mouseEvent.offsetY});
-        }),
-    );
+        .pipe(
+            switchMap(hovered => {
+              return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
+            }),
+            withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
+            filter(([event]) => event.key === triggerSpec.type),
+            map(([keyboardEvent, mouseEvent]) => {
+              return Object.assign(
+                  keyboardEvent,
+                  {mouseX: mouseEvent.offsetX, mouseY: mouseEvent.offsetY});
+            }),
+        );
   }
 
   private setupActions(): void {
@@ -163,8 +163,8 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
       action: BaseAction<object>,
   ): Observable<unknown> {
     const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
-        this.createTriggerKey(triggerSpec) :
-        this.createTriggerClick(triggerSpec);
+      this.createTriggerKey(triggerSpec) :
+      this.createTriggerClick(triggerSpec);
     return trigger$
         .pipe(
             filter(event => {

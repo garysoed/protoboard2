@@ -1,12 +1,7 @@
-import { cache } from 'gs-tools/export/data';
-import { shuffle } from 'gs-tools/export/random';
-import { NEVER, Observable } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
-
 import { ActionContext, BaseAction } from '../core/base-action';
 import { IsContainer } from '../payload/is-container';
-
-import { $random } from './util/random';
+import { NEVER, Observable } from 'rxjs';
+import { cache } from 'gs-tools/export/data';
 
 
 export class ShuffleAction extends BaseAction<IsContainer<'indexed'>> {

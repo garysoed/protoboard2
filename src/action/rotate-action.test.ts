@@ -1,11 +1,11 @@
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
+import { StateService } from 'gs-tools/export/state';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { of as observableOf } from 'rxjs';
 
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { IsRotatable } from '../payload/is-rotatable';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { RotateAction } from './rotate-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -40,7 +40,7 @@ test('@protoboard2/action/rotate-action', init => {
   });
 
   test('handleTrigger$', () => {
-    should(`change the rotation to the next index`, () => {
+    should('change the rotation to the next index', () => {
       _.stateService.set(_.$rotationDeg, 1);
 
       _.action.trigger({mouseX: 0, mouseY: 0});
@@ -48,7 +48,7 @@ test('@protoboard2/action/rotate-action', init => {
       assert(_.stateService.get(_.$rotationDeg)).to.emitWith(22);
     });
 
-    should(`handle rotations that are more than 360`, () => {
+    should('handle rotations that are more than 360', () => {
       _.el.setAttribute('pb-rotate-stops', '[123 456 678]');
 
       _.stateService.set(_.$rotationDeg, 910);

@@ -1,10 +1,9 @@
-import { arrayThat, assert, run, should, test } from 'gs-testing';
-import { _p } from 'mask';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { map, take, tap } from 'rxjs/operators';
-
 import { $, $lensDisplay, LensDisplay } from './lens-display';
 import { $lensService } from './lens-service';
+import { PersonaTesterFactory } from 'persona/export/testing';
+import { _p } from 'mask';
+import { arrayThat, assert, run, should, test } from 'gs-testing';
+import { take, tap } from 'rxjs/operators';
 
 
 const TESTER_FACTORY = new PersonaTesterFactory(_p);
@@ -36,7 +35,7 @@ test('@protoboard2/util/lens-display', init => {
       return {..._, rootEl};
     });
 
-    should(`render copy of the elements correctly`, () => {
+    should('render copy of the elements correctly', () => {
       const el1 = document.createElement('div');
       const spanEl = document.createElement('span');
       el1.appendChild(spanEl);
@@ -59,7 +58,7 @@ test('@protoboard2/util/lens-display', init => {
       ]));
     });
 
-    should(`remove the content if the lens service emits null`, () => {
+    should('remove the content if the lens service emits null', () => {
       const el = document.createElement('div');
 
       const fragment = document.createDocumentFragment();

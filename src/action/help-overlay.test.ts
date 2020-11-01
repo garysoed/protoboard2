@@ -1,16 +1,16 @@
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { BrowserSnapshotsEnv } from 'gs-testing/export/browser';
+import { PersonaTesterFactory, createFakeContext } from 'persona/export/testing';
 import { _p } from 'mask';
-import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
 
 import { TriggerType } from '../core/trigger-spec';
 
+import * as snapshots from './snapshots.json';
 import { $, $helpOverlay, HelpOverlay } from './help-overlay';
 import { $helpService } from './help-service';
 import { PickAction } from './pick-action';
-import * as snapshots from './snapshots.json';
 import { createFakeActionContext } from './testing/fake-action-context';
 
 
@@ -38,11 +38,11 @@ test('@protoboard2/action/help-overlay', init => {
   });
 
   test('renderIsVisible', () => {
-    should(`not add the isVisible class if there are no actions in the help service`, () => {
+    should('not add the isVisible class if there are no actions in the help service', () => {
       assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(false);
     });
 
-    should(`add the isVisible class if there is an action in the help service`, () => {
+    should('add the isVisible class if there is an action in the help service', () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
@@ -55,7 +55,7 @@ test('@protoboard2/action/help-overlay', init => {
   });
 
   test('tableRows$', () => {
-    should(`render rows correctly`, () => {
+    should('render rows correctly', () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
@@ -69,7 +69,7 @@ test('@protoboard2/action/help-overlay', init => {
           .to.matchSnapshot('helpOverlay.render');
     });
 
-    should(`render deletion correctly`, () => {
+    should('render deletion correctly', () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {
@@ -84,7 +84,7 @@ test('@protoboard2/action/help-overlay', init => {
   });
 
   test('setupHandleClick', () => {
-    should(`hide the help when clicked`, () => {
+    should('hide the help when clicked', () => {
       run($helpService.get(_.tester.vine).pipe(
           take(1),
           tap(service => {

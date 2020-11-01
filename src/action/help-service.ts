@@ -1,5 +1,5 @@
-import { source } from 'grapevine';
 import { BehaviorSubject } from 'rxjs';
+import { source } from 'grapevine';
 
 import { BaseAction } from '../core/base-action';
 import { TriggerSpec } from '../core/trigger-spec';

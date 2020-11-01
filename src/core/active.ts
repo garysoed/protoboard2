@@ -1,14 +1,14 @@
 import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
+import { $stateService, _p } from 'mask';
+import { NodeWithId, PersonaContext, classToggle, element, host, multi, renderCustomElement, style, textContent } from 'persona';
+import { Observable, fromEvent, of as observableOf } from 'rxjs';
 import { cache } from 'gs-tools/export/data';
 import { instanceofType } from 'gs-types';
-import { $stateService, _p } from 'mask';
-import { classToggle, element, host, multi, NodeWithId, PersonaContext, renderCustomElement, style, textContent } from 'persona';
-import { fromEvent, Observable, of as observableOf } from 'rxjs';
 import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { ObjectSpec } from '../objects/object-spec';
 import { IsContainer } from '../payload/is-container';
+import { ObjectSpec } from '../objects/object-spec';
 import { renderContents } from '../render/render-contents';
 
 import template from './active.html';
@@ -56,7 +56,7 @@ export const $ = {
  * @thModule region
  */
 // tslint:disable-next-line: no-empty-interface
-export interface ActivePayload extends IsContainer<'indexed'> { }
+export type ActivePayload = IsContainer<'indexed'>
 
 /**
  * Represents a region containing objects that are actively manipulated.

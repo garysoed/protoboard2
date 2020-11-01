@@ -1,15 +1,13 @@
-import { assert, run, setThat, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
+import { $, $active, ACTIVE_ID, Active } from './active';
 import { $stateService, _p } from 'mask';
-import { setId } from 'persona';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
-
-import { createIndexed, Indexed } from '../coordinate/indexed';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
-
-import { $, $active, Active, ACTIVE_ID } from './active';
+import { Indexed, createIndexed } from '../coordinate/indexed';
+import { PersonaTesterFactory } from 'persona/export/testing';
+import { StateService } from 'gs-tools/export/state';
+import { assert, setThat, should, test } from 'gs-testing';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { of as observableOf } from 'rxjs';
+import { setId } from 'persona';
 
 
 test('@protoboard2/core/active', init => {
@@ -38,19 +36,19 @@ test('@protoboard2/core/active', init => {
   });
 
   test('itemCount$', _, () => {
-    should(`render the 0 item count correctly`, () => {
+    should('render the 0 item count correctly', () => {
       _.stateService.set(_.$contentIds, []);
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
-    should(`render the 1 item count correctly`, () => {
+    should('render the 1 item count correctly', () => {
       _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
-    should(`render the 3 items count correctly`, () => {
+    should('render the 3 items count correctly', () => {
       _.stateService.set(
           _.$contentIds,
           [
@@ -67,7 +65,7 @@ test('@protoboard2/core/active', init => {
   });
 
   test('left$', () => {
-    should(`render left correctly`, () => {
+    should('render left correctly', () => {
       const left = 123;
       const width = 456;
       const content = setId(document.createElement('div'), {});
@@ -88,19 +86,19 @@ test('@protoboard2/core/active', init => {
   });
 
   test('multipleItems$', _, () => {
-    should(`remove the multiple classname if there are 0 items`, () => {
+    should('remove the multiple classname if there are 0 items', () => {
       _.stateService.set(_.$contentIds, []);
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
-    should(`remove the multiple classname if there is 1 item`, () => {
+    should('remove the multiple classname if there is 1 item', () => {
       _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
-    should(`add the multiple classname if there are 3 items`, () => {
+    should('add the multiple classname if there are 3 items', () => {
       _.stateService.set(
           _.$contentIds,
           [
@@ -118,7 +116,7 @@ test('@protoboard2/core/active', init => {
   });
 
   test('top$', () => {
-    should(`render top correctly`, () => {
+    should('render top correctly', () => {
       const top = 123;
       const height = 456;
       const content = setId(document.createElement('div'), {});
@@ -139,17 +137,17 @@ test('@protoboard2/core/active', init => {
   });
 
   test('computeAllRects', () => {
-    should(`use the largest width and height`, () => {
+    should('use the largest width and height', () => {
       const size = 123;
 
       const content1 = setId(document.createElement('div'), {});
       content1.style.display = 'block';
-      content1.style.width = `1px`;
+      content1.style.width = '1px';
       content1.style.height = `${size}px`;
 
       const content2 = setId(document.createElement('div'), {});
       content2.style.display = 'block';
-      content2.style.height = `1px`;
+      content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
       const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};

@@ -1,15 +1,16 @@
+import { $stateService } from 'mask';
+import { Logger } from 'santa';
+import { Observable, of as observableOf } from 'rxjs';
 import { cache } from 'gs-tools/export/data';
 import { filterNonNull } from 'gs-tools/export/rxjs';
-import { $stateService } from 'mask';
 import { integerParser } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
 import { map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
-import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { IsMultifaced } from '../payload/is-multifaced';
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGER = new Logger('pb.FlipAction');
 
 

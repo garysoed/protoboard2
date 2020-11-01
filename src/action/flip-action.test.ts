@@ -1,11 +1,11 @@
-import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
+import { StateService } from 'gs-tools/export/state';
+import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
 import { of as observableOf } from 'rxjs';
 
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { IsMultifaced } from '../payload/is-multifaced';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { FlipAction } from './flip-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -44,7 +44,7 @@ test('@protoboard2/action/flip-action', init => {
   });
 
   test('handleTrigger', () => {
-    should(`increase the face by half the face count`, () => {
+    should('increase the face by half the face count', () => {
       _.stateService.set(_.$faceIndex, 1);
 
       _.action.trigger({mouseX: 0, mouseY: 0});
@@ -52,7 +52,7 @@ test('@protoboard2/action/flip-action', init => {
       assert(_.stateService.get(_.$faceIndex)).to.emitWith(3);
     });
 
-    should(`wrap the face index by the count`, () => {
+    should('wrap the face index by the count', () => {
       _.stateService.set(_.$faceIndex, 1);
 
       const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
@@ -63,7 +63,7 @@ test('@protoboard2/action/flip-action', init => {
       assert(faceIndex$).to.emitSequence([1, 3, 1]);
     });
 
-    should(`use the config object`, () => {
+    should('use the config object', () => {
       _.stateService.set(_.$faceIndex, 1);
 
       _.el.setAttribute('pb-flip-count', '6');

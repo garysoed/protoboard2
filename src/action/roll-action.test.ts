@@ -1,16 +1,16 @@
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
-import { FakeSeed, fromSeed } from 'gs-tools/export/random';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { FakeSeed, fromSeed } from 'gs-tools/export/random';
+import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
+import { StateService } from 'gs-tools/export/state';
+import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { of as observableOf } from 'rxjs';
 
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { IsMultifaced } from '../payload/is-multifaced';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
+import { $random } from './util/random';
 import { RollAction } from './roll-action';
 import { createFakeActionContext } from './testing/fake-action-context';
-import { $random } from './util/random';
 
 
 test('@protoboard2/action/roll-action', init => {
@@ -49,7 +49,7 @@ test('@protoboard2/action/roll-action', init => {
   });
 
   test('handleTrigger', () => {
-    should(`change the current face correctly`, () => {
+    should('change the current face correctly', () => {
       _.stateService.set(_.$faceIndex, 0);
       _.seed.values = [0.9];
 
@@ -58,7 +58,7 @@ test('@protoboard2/action/roll-action', init => {
       assert(_.stateService.get(_.$faceIndex)).to.emitWith(2);
     });
 
-    should(`use the config object`, () => {
+    should('use the config object', () => {
       _.stateService.set(_.$faceIndex, 0);
 
       _.el.setAttribute('pb-roll-count', '4');

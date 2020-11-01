@@ -1,11 +1,11 @@
-import { instanceofType } from 'gs-types';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, PersonaContext } from 'persona';
 import { Observable } from 'rxjs';
+import { PersonaContext, element } from 'persona';
+import { ThemedCustomElementCtrl, _p } from 'mask';
+import { instanceofType } from 'gs-types';
 import { switchMap, tap } from 'rxjs/operators';
 
-import template from './lens-display.html';
 import { $lensService } from './lens-service';
+import template from './lens-display.html';
 
 
 export const $lensDisplay = {

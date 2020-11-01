@@ -1,7 +1,7 @@
-import { source } from 'grapevine';
-import { OrderedMap, ReadonlyOrderedMap } from 'gs-tools/export/collect';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { OrderedMap, ReadonlyOrderedMap } from 'gs-tools/export/collect';
 import { map } from 'rxjs/operators';
+import { source } from 'grapevine';
 
 export class LensService {
   private readonly nodes$ =

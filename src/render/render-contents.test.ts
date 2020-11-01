@@ -1,14 +1,14 @@
-import { assert, run, should, test } from 'gs-testing';
-import { arrayFrom } from 'gs-tools/export/collect';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
-import { host, multi, setId } from 'persona';
+import { ReplaySubject, of as observableOf } from 'rxjs';
+import { StateService } from 'gs-tools/export/state';
+import { arrayFrom } from 'gs-tools/export/collect';
+import { assert, run, should, test } from 'gs-testing';
 import { createFakeContext } from 'persona/export/testing';
-import { of as observableOf, ReplaySubject } from 'rxjs';
+import { host, multi, setId } from 'persona';
 
-import { createIndexed, Indexed } from '../coordinate/indexed';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { ContentSpec, IsContainer } from '../payload/is-container';
+import { Indexed, createIndexed } from '../coordinate/indexed';
+import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { renderContents } from './render-contents';
 
@@ -34,7 +34,7 @@ test('@protoboard2/render/render-contents', init => {
   });
 
   test('contents$', () => {
-    should(`render the contents correctly`, () => {
+    should('render the contents correctly', () => {
       const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
       const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
       const spec3 = {objectId: 'id3', coordinate: createIndexed(2)};
@@ -74,7 +74,7 @@ test('@protoboard2/render/render-contents', init => {
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
     });
 
-    should(`render no children if state is null`, () => {
+    should('render no children if state is null', () => {
       _.isContainer$.next(null);
 
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);

@@ -1,10 +1,10 @@
+import { $stateService } from 'mask';
+import { StateService } from 'gs-tools/export/state';
 import { Vine } from 'grapevine';
 import { assert, mapThat, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
 
-import { ObjectSpec } from './object-spec';
 import { $objectSpecMap } from './root-state-service';
+import { ObjectSpec } from './object-spec';
 import { fakeObjectSpecListBuilder } from './testing/fake-object-spec-list-builder';
 
 
@@ -18,7 +18,7 @@ test('@protoboard2/objects/root-state-service', init => {
   });
 
   test('$objectSpecMap', () => {
-    should(`emit the correct map`, () => {
+    should('emit the correct map', () => {
       const object1 = 'object1';
       const object2 = 'object2';
       const object3 = 'object3';
@@ -38,7 +38,7 @@ test('@protoboard2/objects/root-state-service', init => {
       );
     });
 
-    should(`emit empty map if the objectSpecId is not in StateService`, () => {
+    should('emit empty map if the objectSpecId is not in StateService', () => {
       const builder = fakeObjectSpecListBuilder();
       builder.build(_.stateService, _.vine);
 

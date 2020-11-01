@@ -1,8 +1,8 @@
-import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { instanceofType } from 'gs-types';
-import { element, PersonaContext } from 'persona';
-import { createFakeContext } from 'persona/export/testing';
 import { Observable, ReplaySubject } from 'rxjs';
+import { PersonaContext, element } from 'persona';
+import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
+import { createFakeContext } from 'persona/export/testing';
+import { instanceofType } from 'gs-types';
 
 import { ActionContext, BaseAction, TriggerEvent } from './base-action';
 import { ActionSpec, BaseComponent } from './base-component';
@@ -63,7 +63,7 @@ test('@protoboard2/core/base-component', init => {
   });
 
   test('createTriggerClick', () => {
-    should(`trigger click based actions`, () => {
+    should('trigger click based actions', () => {
       const onTrigger$ = createSpySubject(
           [..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1].onTrigger$,
       );
@@ -85,7 +85,7 @@ test('@protoboard2/core/base-component', init => {
       };
     });
 
-    should(`emit when hovered and the correct key was pressed`, () => {
+    should('emit when hovered and the correct key was pressed', () => {
       // Hover over the element.
       _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
       _.targetEl.dispatchEvent(Object.assign(
@@ -100,7 +100,7 @@ test('@protoboard2/core/base-component', init => {
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
-    should(`not emit when the wrong key was pressed`, () => {
+    should('not emit when the wrong key was pressed', () => {
       // Hover over the element.
       _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
       _.targetEl.dispatchEvent(Object.assign(
@@ -114,7 +114,7 @@ test('@protoboard2/core/base-component', init => {
       assert(_.onTrigger$).toNot.emit();
     });
 
-    should(`not emit when not hovered`, () => {
+    should('not emit when not hovered', () => {
       // Hover over the element, then hover off.
       _.targetEl.dispatchEvent(new CustomEvent('mouseenter'));
       _.targetEl.dispatchEvent(new CustomEvent('mouseleave'));
@@ -127,7 +127,7 @@ test('@protoboard2/core/base-component', init => {
   });
 
   test('objectId$', () => {
-    should(`emit the object ID if exists`, () => {
+    should('emit the object ID if exists', () => {
       const objectId = 'objectId';
       _.el.setAttribute('object-id', objectId);
 
@@ -135,14 +135,14 @@ test('@protoboard2/core/base-component', init => {
       assert(objectId$).to.emitSequence([objectId]);
     });
 
-    should(`emit nothing if the object ID does not exist`, () => {
+    should('emit nothing if the object ID does not exist', () => {
       const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$).to.emitSequence([]);
     });
   });
 
   test('setupTrigger', _, () => {
-    should(`trigger if modifiers match`, () => {
+    should('trigger if modifiers match', () => {
       const component = new TestComponent(
           [
             {
@@ -180,7 +180,7 @@ test('@protoboard2/core/base-component', init => {
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
-    should(`default modifiers to false`, () => {
+    should('default modifiers to false', () => {
       const component = new TestComponent(
           [
             {

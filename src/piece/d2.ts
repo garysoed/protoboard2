@@ -1,20 +1,18 @@
-import { instanceofType } from 'gs-types';
-import { _p } from 'mask';
-import { attributeOut, element, host, PersonaContext, slotted, stringParser, style } from 'persona';
-
-import { FlipAction } from '../action/flip-action';
-import { PickAction } from '../action/pick-action';
-import { RollAction } from '../action/roll-action';
-import { RotateAction } from '../action/rotate-action';
-import { TurnAction } from '../action/turn-action';
 import { $baseComponent, BaseComponent } from '../core/base-component';
-import { TriggerType } from '../core/trigger-spec';
+import { FlipAction } from '../action/flip-action';
 import { HasParent } from '../payload/has-parent';
 import { IsMultifaced } from '../payload/is-multifaced';
 import { IsRotatable } from '../payload/is-rotatable';
+import { PersonaContext, attributeOut, element, host, slotted, stringParser } from 'persona';
+import { PickAction } from '../action/pick-action';
+import { RollAction } from '../action/roll-action';
+import { RotateAction } from '../action/rotate-action';
+import { TriggerType } from '../core/trigger-spec';
+import { TurnAction } from '../action/turn-action';
+import { _p } from 'mask';
+import { instanceofType } from 'gs-types';
 import { renderMultifaced } from '../render/render-multifaced';
 import { renderRotatable } from '../render/render-rotatable';
-
 import template from './d2.html';
 
 

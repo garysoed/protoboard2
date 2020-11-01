@@ -1,9 +1,9 @@
-import { assert, run, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
+import { ReplaySubject } from 'rxjs';
+import { StateService } from 'gs-tools/export/state';
+import { assert, run, should, test } from 'gs-testing';
 import { attributeOut, host, stringParser } from 'persona';
 import { createFakeContext } from 'persona/export/testing';
-import { ReplaySubject } from 'rxjs';
 
 import { IsMultifaced } from '../payload/is-multifaced';
 
@@ -25,7 +25,7 @@ test('@protoboard2/render/render-multifaced', init => {
     return {el, isMultifaced$, stateService};
   });
 
-  should(`render the face name correctly`, () => {
+  should('render the face name correctly', () => {
     const $currentFaceIndex = _.stateService.add(2);
     _.isMultifaced$.next({$currentFaceIndex});
 

@@ -1,9 +1,9 @@
-import { assert, createSpy, fake, resetCalls, setThat, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
 import { NodeWithId, setId } from 'persona';
-import { createFakeContext } from 'persona/export/testing';
 import { Observable, of as observableOf } from 'rxjs';
+import { StateService } from 'gs-tools/export/state';
+import { assert, createSpy, fake, resetCalls, setThat, should, test } from 'gs-testing';
+import { createFakeContext } from 'persona/export/testing';
 
 import { $objectService, ObjectService } from './object-service';
 import { fakeObjectSpecListBuilder } from './testing/fake-object-spec-list-builder';
@@ -24,7 +24,7 @@ test('@protoboard2/objects/object-service', init => {
   });
 
   test('getObject', () => {
-    should(`create a new Node and emit it`, () => {
+    should('create a new Node and emit it', () => {
       const objectId = 'objectId';
       const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
@@ -36,7 +36,7 @@ test('@protoboard2/objects/object-service', init => {
       assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(node);
     });
 
-    should(`reuse a previous Node if one already exist`, () => {
+    should('reuse a previous Node if one already exist', () => {
       const objectId = 'objectId';
       const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
@@ -55,7 +55,7 @@ test('@protoboard2/objects/object-service', init => {
       assert(createSpecSpy).toNot.haveBeenCalled();
     });
 
-    should(`emit null if object corresponding to the key does not exist`, () => {
+    should('emit null if object corresponding to the key does not exist', () => {
       const objectId = 'objectId';
 
       const builder = fakeObjectSpecListBuilder();
@@ -66,7 +66,7 @@ test('@protoboard2/objects/object-service', init => {
   });
 
   test('getObjectSpec', () => {
-    should(`emit the object spec`, () => {
+    should('emit the object spec', () => {
       const objectId = 'objectId';
       const payload = 'payload';
 
@@ -77,7 +77,7 @@ test('@protoboard2/objects/object-service', init => {
       assert(_.objectService.getObjectSpec<string>(objectId)).to.emitWith(objectSpy);
     });
 
-    should(`emit null if the spec corresponding to the key does not exist`, () => {
+    should('emit null if the spec corresponding to the key does not exist', () => {
       const builder = fakeObjectSpecListBuilder();
       builder.build(_.stateService, _.personaContext.vine);
 
@@ -86,7 +86,7 @@ test('@protoboard2/objects/object-service', init => {
   });
 
   test('objectId$', () => {
-    should(`emit the object IDs`, () => {
+    should('emit the object IDs', () => {
       const objectId1 = 'objectId1';
       const objectId2 = 'objectId2';
       const objectId3 = 'objectId3';

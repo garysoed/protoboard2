@@ -1,13 +1,13 @@
-import { source, Vine } from 'grapevine';
 import { $asMap, $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
-import { cache } from 'gs-tools/export/data';
 import { NodeWithId, PersonaContext } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable, combineLatest, of as observableOf } from 'rxjs';
+import { Vine, source } from 'grapevine';
+import { cache } from 'gs-tools/export/data';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
+import { $objectSpecMap } from './root-state-service';
 import { ObjectCreateSpec } from './object-create-spec';
 import { ObjectSpec } from './object-spec';
-import { $objectSpecMap } from './root-state-service';
 
 
 class ObjectCache {

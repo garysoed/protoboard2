@@ -1,16 +1,17 @@
 import { $asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap } from 'gs-tools/export/collect';
-import { cache } from 'gs-tools/export/data';
 import { $stateService } from 'mask';
+import { EMPTY, Observable } from 'rxjs';
+import { Logger } from 'santa';
+import { cache } from 'gs-tools/export/data';
 import { identity } from 'nabu';
 import { listParser } from 'persona';
-import { EMPTY, Observable } from 'rxjs';
 import { map, share, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
-import { Logger } from 'santa';
 
 import { ActionContext, BaseAction } from '../core/base-action';
 import { IsRotatable } from '../payload/is-rotatable';
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGER = new Logger('pb.RotateAction');
 
 

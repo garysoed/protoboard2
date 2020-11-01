@@ -1,12 +1,13 @@
 import { $stateService } from 'mask';
-import { PersonaContext, style } from 'persona';
-import { combineLatest, EMPTY, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { EMPTY, Observable, combineLatest, of as observableOf } from 'rxjs';
 import { Logger } from 'santa';
+import { PersonaContext, style } from 'persona';
+import { map, switchMap } from 'rxjs/operators';
 
 import { IsRotatable } from '../payload/is-rotatable';
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGER = new Logger('protoboard2.renderRotatable');
 
 

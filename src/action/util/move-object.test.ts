@@ -1,17 +1,17 @@
+import { $stateService } from 'mask';
+import { StateService } from 'gs-tools/export/state';
 import { Vine } from 'grapevine';
 import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { StateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
 import { take, tap } from 'rxjs/operators';
 
-import { createIndexed, Indexed } from '../../coordinate/indexed';
 import { ContentSpec } from '../../payload/is-container';
+import { Indexed, createIndexed } from '../../coordinate/indexed';
 
 import { moveObject } from './move-object';
 
 
 test('@protoboard2/action/util/move-object', () => {
-  should(`move the object correctly`, () => {
+  should('move the object correctly', () => {
     const fromSpec1 = {objectId: 'fromContentId1', coordinate: createIndexed(0)};
     const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
     const fromSpec2 = {objectId: 'fromContentId2', coordinate: createIndexed(2)};
@@ -34,10 +34,10 @@ test('@protoboard2/action/util/move-object', () => {
         {containerType: 'indexed', $contentSpecs: $toContentSpecs},
         vine,
     )
-    .pipe(
-        take(1),
-        tap(fn => fn!(movedSpec.objectId, {index: 2})),
-    ));
+        .pipe(
+            take(1),
+            tap(fn => fn!(movedSpec.objectId, {index: 2})),
+        ));
 
     assert(fromContentIds$).to.emitWith(
         arrayThat<ContentSpec<Indexed>>().haveExactElements([fromSpec1, fromSpec2]),

@@ -1,7 +1,7 @@
 import { $stateService } from 'mask';
-import { PersonaContext } from 'persona';
 import { AttributeOutput } from 'persona/export/internal';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable, combineLatest, of as observableOf } from 'rxjs';
+import { PersonaContext } from 'persona';
 import { map, switchMap } from 'rxjs/operators';
 
 import { IsMultifaced } from '../payload/is-multifaced';

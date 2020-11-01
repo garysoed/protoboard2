@@ -1,6 +1,6 @@
-import { assert, createSpyInstance, objectThat, should, test } from 'gs-testing';
-import { _p } from 'mask';
 import { PersonaTesterFactory } from 'persona/export/testing';
+import { _p } from 'mask';
+import { assert, createSpyInstance, objectThat, should, test } from 'gs-testing';
 
 import { $, $lens, Lens } from './lens';
 import { $lensService, LensService } from './lens-service';
@@ -19,8 +19,8 @@ test('@protoboard2/util/lens', init => {
     return {el, mockLensService, tester};
   });
 
-  test(`setupHandleMouseOut`, () => {
-    should(`hide the elements`, () => {
+  test('setupHandleMouseOut', () => {
+    should('hide the elements', () => {
       _.el.dispatchEvent($.host._.onMouseLeave);
 
       assert(_.mockLensService.hide).to.haveBeenCalledWith(objectThat<Lens>().beAnInstanceOf(Lens));
@@ -28,7 +28,7 @@ test('@protoboard2/util/lens', init => {
   });
 
   test('setupHandleMouseOver', () => {
-    should(`show the child elements`, () => {
+    should('show the child elements', () => {
       const spanEl = document.createElement('span');
       const divEl = document.createElement('div');
       divEl.appendChild(spanEl);

@@ -1,9 +1,9 @@
-import { source, stream } from 'grapevine';
 import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
-import { StateId } from 'gs-tools/export/state';
 import { $stateService } from 'mask';
+import { StateId } from 'gs-tools/export/state';
 import { combineLatest, of as observableOf } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { source, stream } from 'grapevine';
 
 import { ObjectSpec } from './object-spec';
 import { RootState } from './root-state';

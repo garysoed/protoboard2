@@ -1,17 +1,18 @@
-import { cache } from 'gs-tools/export/data';
 import { $stateService } from 'mask';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
+import { Observable, combineLatest, of as observableOf } from 'rxjs';
+import { cache } from 'gs-tools/export/data';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
+import { $objectService } from '../objects/object-service';
 import { ACTIVE_ID, ActivePayload } from '../core/active';
 import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
-import { $objectService } from '../objects/object-service';
 import { HasParent } from '../payload/has-parent';
 import { IsContainer } from '../payload/is-container';
 
 import { moveObject } from './util/move-object';
 
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Config { }
 
 /**
@@ -49,15 +50,15 @@ export class PickAction extends BaseAction<HasParent, Config> {
       this.context.objectSpec$,
       $objectService.get(this.context.personaContext.vine),
     ])
-    .pipe(
-        switchMap(([state, objectService]) => {
-          if (!state) {
-            return observableOf(null);
-          }
+        .pipe(
+            switchMap(([state, objectService]) => {
+              if (!state) {
+                return observableOf(null);
+              }
 
-          return objectService.getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
-        }),
-    );
+              return objectService.getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
+            }),
+        );
 
     const moveFn$ = combineLatest([this.context.objectSpec$, activeState$, fromObjectSpec$]).pipe(
         switchMap(([fromState, activeState, fromObjectSpec]) => {
@@ -76,22 +77,22 @@ export class PickAction extends BaseAction<HasParent, Config> {
                     activeState.payload,
                     this.context.personaContext.vine,
                 )
-                .pipe(
-                    map(fn => {
-                      if (!fn) {
-                        return null;
-                      }
+                    .pipe(
+                        map(fn => {
+                          if (!fn) {
+                            return null;
+                          }
 
-                      return (event: TriggerEvent) => {
-                        const movedObjectSpec = (fromContents ?? [])[this.locationFn(event)];
-                        if (!movedObjectSpec) {
-                          return;
-                        }
+                          return (event: TriggerEvent) => {
+                            const movedObjectSpec = (fromContents ?? [])[this.locationFn(event)];
+                            if (!movedObjectSpec) {
+                              return;
+                            }
 
-                        fn(movedObjectSpec.objectId, {index: activeContents?.length ?? 0});
-                      };
-                    }),
-                );
+                            fn(movedObjectSpec.objectId, {index: activeContents?.length ?? 0});
+                          };
+                        }),
+                    );
               }),
           );
         }),
