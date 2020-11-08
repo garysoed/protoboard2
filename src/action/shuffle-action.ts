@@ -29,7 +29,7 @@ export class ShuffleAction extends BaseAction<IsContainer<'indexed'>> {
     //         withLatestFrom(
     //             this.context.state$,
     //             contentIds$,
-    //             $random.get(this.context.personaContext.vine),
+    //             $random.get(this.vine),
     //         ),
     //         tap(([, state, contentIds, rng]) => {
     //           state.payload.contentIds.next(shuffle(contentIds, rng));

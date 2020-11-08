@@ -46,7 +46,7 @@ export class FlipAction extends BaseAction<IsMultifaced, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const stateService$ = $stateService.get(this.context.personaContext.vine);
+    const stateService$ = $stateService.get(this.vine);
     return this.onTrigger$.pipe(
         withLatestFrom(this.context.objectSpec$, this.faceCount$, stateService$),
         switchMap(([, objectSpec, faceCount, stateService]) => {

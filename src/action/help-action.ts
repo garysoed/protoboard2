@@ -24,7 +24,7 @@ export class HelpAction extends BaseAction<{}> {
   }
 
   private setupHandleTrigger(): Observable<unknown> {
-    const helpService$ = $helpService.get(this.context.personaContext.vine);
+    const helpService$ = $helpService.get(this.vine);
     return this.onTrigger$
         .pipe(
             withLatestFrom(helpService$),

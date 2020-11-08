@@ -44,7 +44,7 @@ export class RotateAction extends BaseAction<IsRotatable, Config> {
     return this.onTrigger$.pipe(
         withLatestFrom(
             this.context.objectSpec$,
-            $stateService.get(this.context.personaContext.vine),
+            $stateService.get(this.vine),
         ),
         switchMap(([, objectSpec, stateService]) => {
           if (!objectSpec) {

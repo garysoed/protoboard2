@@ -43,7 +43,7 @@ export class PickAction extends BaseAction<HasParent, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectSpec$,
-      $getObjectSpec.get(this.context.personaContext.vine),
+      $getObjectSpec.get(this.vine),
     ])
         .pipe(
             map(([state, getObjectSpec]) => {
@@ -57,7 +57,7 @@ export class PickAction extends BaseAction<HasParent, Config> {
 
     const moveFn$ = combineLatest([
       this.context.objectSpec$,
-      $activeState.get(this.context.personaContext.vine),
+      $activeState.get(this.vine),
       fromObjectSpec$,
     ])
         .pipe(
@@ -66,7 +66,7 @@ export class PickAction extends BaseAction<HasParent, Config> {
                 return observableOf(null);
               }
 
-              return $stateService.get(this.context.personaContext.vine).pipe(
+              return $stateService.get(this.vine).pipe(
                   switchMap(service => combineLatest([
                     service.get(fromObjectSpec.payload.$contentSpecs),
                     service.get(activeState.payload.$contentSpecs),
@@ -75,7 +75,7 @@ export class PickAction extends BaseAction<HasParent, Config> {
                     return moveObject(
                         fromObjectSpec.payload,
                         activeState.payload,
-                        this.context.personaContext.vine,
+                        this.vine,
                     )
                         .pipe(
                             map(fn => {

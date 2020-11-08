@@ -39,8 +39,8 @@ export class RollAction extends BaseAction<IsMultifaced, Config> {
         withLatestFrom(
             this.context.objectSpec$,
             this.faceCount$,
-            $stateService.get(this.context.personaContext.vine),
-            $random.get(this.context.personaContext.vine),
+            $stateService.get(this.vine),
+            $random.get(this.vine),
         ),
         tap(([, objectSpec, faceCount, stateService, random]) => {
           if (!objectSpec) {

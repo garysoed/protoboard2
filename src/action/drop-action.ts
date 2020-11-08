@@ -38,7 +38,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const moveObjectFn$ = combineLatest([
       this.context.objectSpec$,
-      $activeState.get(this.context.personaContext.vine),
+      $activeState.get(this.vine),
     ])
         .pipe(
             switchMap(([toState, activeState]) => {
@@ -46,7 +46,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
                 return observableOf(null);
               }
 
-              return $stateService.get(this.context.personaContext.vine).pipe(
+              return $stateService.get(this.vine).pipe(
                   switchMap(service => service.get(activeState.payload.$contentSpecs)),
                   switchMap(activeContents => {
                     const normalizedActiveContents = activeContents ?? [];
@@ -59,7 +59,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
                     return moveObject(
                         activeState.payload,
                         toState.payload,
-                        this.context.personaContext.vine,
+                        this.vine,
                     )
                         .pipe(
                             map(fn => {

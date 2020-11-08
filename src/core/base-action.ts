@@ -1,3 +1,4 @@
+import {Vine} from 'grapevine';
 import {$asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {Runnable} from 'gs-tools/export/rxjs';
@@ -107,6 +108,11 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
           };
         }),
     );
+  }
+
+  @cache()
+  get vine(): Vine {
+    return this.context.personaContext.vine;
   }
 
   /**
