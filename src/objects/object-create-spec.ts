@@ -1,7 +1,7 @@
-import { NodeWithId, PersonaContext } from 'persona';
-import { Observable } from 'rxjs';
+import {NodeWithId, PersonaContext} from 'persona';
+import {Observable} from 'rxjs';
 
-import { ObjectSpec } from './object-spec';
+import {ObjectSpec} from './object-spec';
 
 
 /**

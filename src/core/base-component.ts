@@ -1,17 +1,17 @@
-import { $asMap, $map, $pipe } from 'gs-tools/export/collect';
-import { EMPTY, Observable, combineLatest, fromEvent, merge, of as observableOf } from 'rxjs';
-import { Logger } from 'santa';
-import { PersonaContext, attributeIn, host, onDom, stringParser } from 'persona';
-import { ThemedCustomElementCtrl, _p } from 'mask';
-import { cache } from 'gs-tools/export/data';
-import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
+import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {ThemedCustomElementCtrl, _p} from 'mask';
+import {PersonaContext, attributeIn, host, onDom, stringParser} from 'persona';
+import {EMPTY, Observable, combineLatest, fromEvent, merge, of as observableOf} from 'rxjs';
+import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {Logger} from 'santa';
 
-import { $objectSpecMap } from '../objects/getters/root-state';
-import { HelpAction } from '../action/help-action';
-import { ObjectSpec } from '../objects/object-spec';
+import {HelpAction} from '../action/help-action';
+import {$objectSpecMap} from '../objects/getters/root-state';
+import {ObjectSpec} from '../objects/object-spec';
 
-import { ActionContext, BaseAction, TriggerEvent } from './base-action';
-import { DetailedTriggerSpec, TriggerSpec, TriggerType, UnreservedTriggerSpec, isKeyTrigger } from './trigger-spec';
+import {ActionContext, BaseAction, TriggerEvent} from './base-action';
+import {DetailedTriggerSpec, TriggerSpec, TriggerType, UnreservedTriggerSpec, isKeyTrigger} from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');

@@ -1,9 +1,9 @@
-import { stream } from 'grapevine';
-import { $stateService } from 'mask';
-import { combineLatest, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {stream} from 'grapevine';
+import {$stateService} from 'mask';
+import {combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import { $demoState } from '../getters/demo-state';
+import {$demoState} from '../getters/demo-state';
 
 
 export const $stagingState = stream(
@@ -27,12 +27,12 @@ export const $pieceSpecs = stream(
 export const $regionSpecs = stream(
     'regionSpecs',
     vine => combineLatest([$stagingState.get(vine), $stateService.get(vine)]).pipe(
-      switchMap(([stagingState, stateService]) => {
-        if (!stagingState) {
-          return observableOf(null);
-        }
+        switchMap(([stagingState, stateService]) => {
+          if (!stagingState) {
+            return observableOf(null);
+          }
 
-        return stateService.get(stagingState.$regionSpecs);
-      }),
+          return stateService.get(stagingState.$regionSpecs);
+        }),
     ),
 );

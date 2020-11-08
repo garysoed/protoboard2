@@ -1,11 +1,11 @@
-import { Observable } from 'rxjs';
-import { PersonaContext, element, host, onDom } from 'persona';
-import { ThemedCustomElementCtrl, _p } from 'mask';
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { tap, withLatestFrom } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {ThemedCustomElementCtrl, _p} from 'mask';
+import {PersonaContext, element, host, onDom} from 'persona';
+import {Observable} from 'rxjs';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
-import { $lensService } from './lens-service';
+import {$lensService} from './lens-service';
 import template from './lens.html';
 
 

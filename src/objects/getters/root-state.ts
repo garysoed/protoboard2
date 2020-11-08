@@ -1,11 +1,12 @@
-import {$$rootState} from '../root-state';
+import {stream} from 'grapevine';
 import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {$stateService} from 'mask';
-import {ActivePayload} from '../../core/active';
-import {ObjectSpec} from '../object-spec';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
-import {stream} from 'grapevine';
+
+import {ActivePayload} from '../../core/active';
+import {ObjectSpec} from '../object-spec';
+import {$$rootState} from '../root-state';
 
 export const $rootState = stream(
     'rootState',

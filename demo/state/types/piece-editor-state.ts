@@ -1,5 +1,5 @@
-import { PieceState } from './piece-state';
-import { PieceType } from './piece-type';
+import {PieceState} from './piece-state';
+import {PieceType} from './piece-type';
 
 export interface PieceEditorState {
   readonly [PieceType.D1]: PieceState<1>;

@@ -1,12 +1,12 @@
-import { $stateService } from 'mask';
-import { NodeWithId, setId } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
-import { StateService } from 'gs-tools/export/state';
-import { assert, createSpy, fake, resetCalls, setThat, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
+import {assert, createSpy, fake, resetCalls, setThat, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {NodeWithId, setId} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {Observable, of as observableOf} from 'rxjs';
 
-import { $objectService, ObjectService } from './object-service';
-import { FakeRootStateBuilder } from './testing/fake-object-spec-list-builder';
+import {$objectService, ObjectService} from './object-service';
+import {FakeRootStateBuilder} from './testing/fake-object-spec-list-builder';
 
 
 test('@protoboard2/objects/object-service', init => {

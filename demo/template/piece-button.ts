@@ -1,9 +1,9 @@
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { $icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser } from 'persona';
-import { Observable, of as observableOf } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {$icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl} from 'mask';
+import {attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser} from 'persona';
+import {Observable, of as observableOf} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import template from './piece-button.html';
 

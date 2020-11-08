@@ -1,18 +1,18 @@
-import { $asArray, $map, $pipe, $zip, countableIterable } from 'gs-tools/export/collect';
-import { cache } from 'gs-tools/export/data';
-import { $button, $lineLayout, $overlayLayout, $simpleRadioInput, _p, Button, LineLayout, OverlayLayout, SimpleRadioInput, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, mapTo, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { Logger } from 'santa';
+import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {$button, $lineLayout, $overlayLayout, $simpleRadioInput, _p, Button, LineLayout, OverlayLayout, SimpleRadioInput, ThemedCustomElementCtrl} from 'mask';
+import {attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {Logger} from 'santa';
 
-import { $demoState } from '../state/getters/demo-state';
-import { $targetAreas } from '../state/getters/region-state';
-import { $addRegionSpecs } from '../state/setters/staging-state';
-import { GRID_AREAS } from '../state/types/region-state';
-import { RegionType } from '../state/types/region-type';
+import {$demoState} from '../state/getters/demo-state';
+import {$targetAreas} from '../state/getters/region-state';
+import {$addRegionSpecs} from '../state/setters/staging-state';
+import {GRID_AREAS} from '../state/types/region-state';
+import {RegionType} from '../state/types/region-type';
 
-import { $documentationTemplate, DocumentationTemplate } from './documentation-template';
+import {$documentationTemplate, DocumentationTemplate} from './documentation-template';
 import template from './region-template.html';
 
 
@@ -92,16 +92,16 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
       $targetAreas.get(this.vine),
       this.declareInput($.host._.regionType),
     ])
-    .pipe(
-        map(([targetAreas, regionType]) => {
-          if (!targetAreas || !regionType) {
-            return null;
-          }
+        .pipe(
+            map(([targetAreas, regionType]) => {
+              if (!targetAreas || !regionType) {
+                return null;
+              }
 
-          return targetAreas[regionType];
-        }),
-        map(area => area === null ? 'Select grid area ...' : `Add to: ${GRID_AREAS[area]}`),
-    );
+              return targetAreas[regionType];
+            }),
+            map(area => area === null ? 'Select grid area ...' : `Add to: ${GRID_AREAS[area]}`),
+        );
   }
 
   @cache()
@@ -110,41 +110,41 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
       $demoState.get(this.vine),
       this.declareInput($.host._.regionType),
     ])
-    .pipe(
-        map(([demoState, regionType]) => {
-          if (!demoState || !regionType) {
-            return null;
-          }
+        .pipe(
+            map(([demoState, regionType]) => {
+              if (!demoState || !regionType) {
+                return null;
+              }
 
-          return demoState.regionEditorState[regionType].$targetArea;
-        }),
-        switchMap(stateId => {
-          if (!stateId) {
-            return observableOf([]);
-          }
+              return demoState.regionEditorState[regionType].$targetArea;
+            }),
+            switchMap(stateId => {
+              if (!stateId) {
+                return observableOf([]);
+              }
 
-          const gridArea$List = $pipe(
-              GRID_AREAS,
-              $zip(countableIterable()),
-              $map(([gridArea, index]) => {
-                return renderCustomElement(
-                    $simpleRadioInput,
-                    {
-                      inputs: {
-                        index: observableOf(index),
-                        label: observableOf(`${gridArea}`),
-                        stateId: observableOf(stateId),
-                      },
-                    },
-                    index,
-                    this.context,
-                );
-              }),
-              $asArray(),
-          );
+              const gridArea$List = $pipe(
+                  GRID_AREAS,
+                  $zip(countableIterable()),
+                  $map(([gridArea, index]) => {
+                    return renderCustomElement(
+                        $simpleRadioInput,
+                        {
+                          inputs: {
+                            index: observableOf(index),
+                            label: observableOf(`${gridArea}`),
+                            stateId: observableOf(stateId),
+                          },
+                        },
+                        index,
+                        this.context,
+                    );
+                  }),
+                  $asArray(),
+              );
 
-          return combineLatest(gridArea$List);
-        }),
-    );
+              return combineLatest(gridArea$List);
+            }),
+        );
   }
 }

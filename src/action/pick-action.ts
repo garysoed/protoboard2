@@ -1,15 +1,16 @@
-import { $activeState } from '../objects/getters/root-state';
-import { $objectService } from '../objects/object-service';
-import { $stateService } from 'mask';
-import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
-import { HasParent } from '../payload/has-parent';
-import { IsContainer } from '../payload/is-container';
-import { Observable, combineLatest, of as observableOf } from 'rxjs';
-import { cache } from 'gs-tools/export/data';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { moveObject } from './util/move-object';
+import {cache} from 'gs-tools/export/data';
+import {$stateService} from 'mask';
+import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {$activeState} from '../objects/getters/root-state';
+import {$objectService} from '../objects/object-service';
+import {HasParent} from '../payload/has-parent';
+import {IsContainer} from '../payload/is-container';
 
 
+import {moveObject} from './util/move-object';
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

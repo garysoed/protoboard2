@@ -1,4 +1,3 @@
-
 /**
  * State of a game during its runtime.
  *

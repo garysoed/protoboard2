@@ -1,26 +1,26 @@
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
-import { $stateService } from 'mask';
-import { StateService } from 'gs-tools/export/state';
-import { Vine, stream } from 'grapevine';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Vine, stream} from 'grapevine';
+import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {combineLatest} from 'rxjs';
+import {map} from 'rxjs/operators';
 
-import { $$rootState } from '../../../src/objects/root-state';
-import { $demoState } from '../getters/demo-state';
-import { $objectSpecs } from '../getters/play-state';
-import { $pieceSpecs, $regionSpecs } from '../getters/staging-state';
-import { ACTIVE_TYPE, ActivePayload } from '../../../src/core/active';
-import { ContentSpec } from '../../../src/payload/is-container';
-import { DemoState } from '../types/demo-state';
-import { Indexed, createIndexed } from '../../../src/coordinate/indexed';
-import { ObjectSpec } from '../../../src/objects/object-spec';
-import { PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE } from '../../core/object-specs';
-import { PiecePayload } from '../types/piece-payload';
-import { PieceSpec } from '../types/piece-spec';
-import { PlayState } from '../types/play-state';
-import { RegionPayload } from '../types/region-payload';
-import { RegionSpec } from '../types/region-spec';
-import { SUPPLY_ID } from '../../core/supply';
+import {Indexed, createIndexed} from '../../../src/coordinate/indexed';
+import {ACTIVE_TYPE, ActivePayload} from '../../../src/core/active';
+import {ObjectSpec} from '../../../src/objects/object-spec';
+import {$$rootState} from '../../../src/objects/root-state';
+import {ContentSpec} from '../../../src/payload/is-container';
+import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
+import {SUPPLY_ID} from '../../core/supply';
+import {$demoState} from '../getters/demo-state';
+import {$objectSpecs} from '../getters/play-state';
+import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';
+import {DemoState} from '../types/demo-state';
+import {PiecePayload} from '../types/piece-payload';
+import {PieceSpec} from '../types/piece-spec';
+import {PlayState} from '../types/play-state';
+import {RegionPayload} from '../types/region-payload';
+import {RegionSpec} from '../types/region-spec';
 
 
 export const $setStaging = stream(

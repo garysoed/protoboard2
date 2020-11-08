@@ -1,13 +1,13 @@
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { $button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
-import { element, multi, NodeWithId, PersonaContext, renderCustomElement } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {$button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl} from 'mask';
+import {element, multi, NodeWithId, PersonaContext, renderCustomElement} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import { $pieceSpecs, $regionSpecs } from '../state/getters/staging-state';
-import { $setStaging } from '../state/setters/demo-state';
+import {$pieceSpecs, $regionSpecs} from '../state/getters/staging-state';
+import {$setStaging} from '../state/setters/demo-state';
 
 import template from './staging-area.html';
 

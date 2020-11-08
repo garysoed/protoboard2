@@ -1,16 +1,16 @@
-import { $stateService } from 'mask';
-import { FakeSeed, fromSeed } from 'gs-tools/export/random';
-import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
-import { StateService } from 'gs-tools/export/state';
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
-import { of as observableOf } from 'rxjs';
+import {assert, run, runEnvironment, should, test} from 'gs-testing';
+import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
 
-import { IsMultifaced } from '../payload/is-multifaced';
-import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {IsMultifaced} from '../payload/is-multifaced';
 
-import { $random } from './util/random';
-import { RollAction } from './roll-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {RollAction} from './roll-action';
+import {createFakeActionContext} from './testing/fake-action-context';
+import {$random} from './util/random';
 
 
 test('@protoboard2/action/roll-action', init => {

@@ -1,11 +1,11 @@
-import { NodeWithId, PersonaContext, attributeIn, element, host, single, stringParser } from 'persona';
-import { Observable, combineLatest, of as observableOf } from 'rxjs';
-import { ThemedCustomElementCtrl, _p } from 'mask';
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { switchMap } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {ThemedCustomElementCtrl, _p} from 'mask';
+import {NodeWithId, PersonaContext, attributeIn, element, host, single, stringParser} from 'persona';
+import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
-import { $objectService } from './object-service';
+import {$objectService} from './object-service';
 import template from './render.html';
 
 

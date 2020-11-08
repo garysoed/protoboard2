@@ -1,10 +1,10 @@
-import { $asArray, $filter, $pipe } from 'gs-tools/export/collect';
-import { $stateService } from 'mask';
-import { Observable, combineLatest } from 'rxjs';
-import { Vine } from 'grapevine';
-import { map, switchMap } from 'rxjs/operators';
+import {Vine} from 'grapevine';
+import {$asArray, $filter, $pipe} from 'gs-tools/export/collect';
+import {$stateService} from 'mask';
+import {Observable, combineLatest} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import { CoordinateTypes, IsContainer, TypeCoordinateMapping } from '../../payload/is-container';
+import {CoordinateTypes, IsContainer, TypeCoordinateMapping} from '../../payload/is-container';
 
 
 type MoveObjectFn<T extends CoordinateTypes> =

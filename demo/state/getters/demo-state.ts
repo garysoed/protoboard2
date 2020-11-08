@@ -1,9 +1,9 @@
-import { stream } from 'grapevine';
-import { $stateService } from 'mask';
-import { combineLatest, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {stream} from 'grapevine';
+import {$stateService} from 'mask';
+import {combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import { $demoStateId, DemoState } from '../types/demo-state';
+import {$demoStateId, DemoState} from '../types/demo-state';
 
 
 export const $demoState = stream<DemoState|null>(

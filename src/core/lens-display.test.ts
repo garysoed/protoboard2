@@ -1,9 +1,10 @@
-import { $, $lensDisplay, LensDisplay } from './lens-display';
-import { $lensService } from './lens-service';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { _p } from 'mask';
-import { arrayThat, assert, run, should, test } from 'gs-testing';
-import { take, tap } from 'rxjs/operators';
+import {arrayThat, assert, run, should, test} from 'gs-testing';
+import {_p} from 'mask';
+import {PersonaTesterFactory} from 'persona/export/testing';
+import {take, tap} from 'rxjs/operators';
+
+import {$, $lensDisplay, LensDisplay} from './lens-display';
+import {$lensService} from './lens-service';
 
 
 const TESTER_FACTORY = new PersonaTesterFactory(_p);

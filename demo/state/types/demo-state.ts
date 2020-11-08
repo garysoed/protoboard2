@@ -1,11 +1,11 @@
-import { $rootId } from 'mask';
-import { StateId } from 'gs-tools/export/state';
-import { stream } from 'grapevine';
+import {stream} from 'grapevine';
+import {StateId} from 'gs-tools/export/state';
+import {$rootId} from 'mask';
 
-import { PieceEditorState } from './piece-editor-state';
-import { PlayState } from './play-state';
-import { RegionEditorState } from './region-editor-state';
-import { StagingState } from './staging-state';
+import {PieceEditorState} from './piece-editor-state';
+import {PlayState} from './play-state';
+import {RegionEditorState} from './region-editor-state';
+import {StagingState} from './staging-state';
 
 
 export interface DemoState {

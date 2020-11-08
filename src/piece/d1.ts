@@ -1,14 +1,14 @@
-import { PersonaContext, element, slotted } from 'persona';
-import { _p } from 'mask';
-import { instanceofType } from 'gs-types';
+import {instanceofType} from 'gs-types';
+import {_p} from 'mask';
+import {PersonaContext, element, slotted} from 'persona';
 
-import { $baseComponent, BaseComponent } from '../core/base-component';
-import { HasParent } from '../payload/has-parent';
-import { IsRotatable } from '../payload/is-rotatable';
-import { PickAction } from '../action/pick-action';
-import { RotateAction } from '../action/rotate-action';
-import { TriggerType } from '../core/trigger-spec';
-import { renderRotatable } from '../render/render-rotatable';
+import {PickAction} from '../action/pick-action';
+import {RotateAction} from '../action/rotate-action';
+import {$baseComponent, BaseComponent} from '../core/base-component';
+import {TriggerType} from '../core/trigger-spec';
+import {HasParent} from '../payload/has-parent';
+import {IsRotatable} from '../payload/is-rotatable';
+import {renderRotatable} from '../render/render-rotatable';
 
 import template from './d1.html';
 

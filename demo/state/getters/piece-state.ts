@@ -1,11 +1,11 @@
-import { stream } from 'grapevine';
-import { $stateService } from 'mask';
-import { combineLatest, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {stream} from 'grapevine';
+import {$stateService} from 'mask';
+import {combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import { PieceEditorState } from '../types/piece-editor-state';
+import {PieceEditorState} from '../types/piece-editor-state';
 
-import { $demoState } from './demo-state';
+import {$demoState} from './demo-state';
 
 export type EditedFaces = {readonly [K in keyof PieceEditorState]: number};
 export const $editedFaces = stream<EditedFaces|null>(

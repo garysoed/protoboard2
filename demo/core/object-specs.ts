@@ -1,14 +1,14 @@
-import { $icon } from 'mask';
-import { NodeWithId, PersonaContext, renderCustomElement, renderElement } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {$icon} from 'mask';
+import {NodeWithId, PersonaContext, renderCustomElement, renderElement} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map} from 'rxjs/operators';
 
-import { $baseComponent } from '../../src/core/base-component';
-import { ObjectSpec } from '../../src/objects/object-spec';
-import { IsContainer } from '../../src/payload/is-container';
-import { $slot } from '../../src/region/slot';
-import { PieceSpec } from '../state/types/piece-spec';
-import { RegionSpec } from '../state/types/region-spec';
+import {$baseComponent} from '../../src/core/base-component';
+import {ObjectSpec} from '../../src/objects/object-spec';
+import {IsContainer} from '../../src/payload/is-container';
+import {$slot} from '../../src/region/slot';
+import {PieceSpec} from '../state/types/piece-spec';
+import {RegionSpec} from '../state/types/region-spec';
 
 
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';

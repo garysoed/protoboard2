@@ -1,5 +1,5 @@
-import { StateId } from 'gs-tools/export/state';
-import { getAllValues } from 'gs-tools/export/typescript';
+import {StateId} from 'gs-tools/export/state';
+import {getAllValues} from 'gs-tools/export/typescript';
 
 export enum GridArea {
   SMALL1 = 'small1',

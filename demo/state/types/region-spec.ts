@@ -1,4 +1,4 @@
-import { GridArea } from './region-state';
+import {GridArea} from './region-state';
 
 export interface RegionSpec {
   readonly id: string;

@@ -1,15 +1,15 @@
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
-import { $keyboard, Keyboard, SpecialKeys, ThemedCustomElementCtrl, _p } from 'mask';
-import { NodeWithId, PersonaContext, classToggle, element, multi, onDom, renderCustomElement, renderElement } from 'persona';
-import { Observable, combineLatest, of as observableOf } from 'rxjs';
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {$keyboard, Keyboard, SpecialKeys, ThemedCustomElementCtrl, _p} from 'mask';
+import {NodeWithId, PersonaContext, classToggle, element, multi, onDom, renderCustomElement, renderElement} from 'persona';
+import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import { TriggerSpec, TriggerType } from '../core/trigger-spec';
+import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
-import { $helpService } from './help-service';
 import template from './help-overlay.html';
+import {$helpService} from './help-service';
 
 export const $helpOverlay = {
   tag: 'pb-help-overlay',

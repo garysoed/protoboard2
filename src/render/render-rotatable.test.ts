@@ -1,12 +1,12 @@
-import { $stateService } from 'mask';
-import { ReplaySubject } from 'rxjs';
-import { StateService } from 'gs-tools/export/state';
-import { assert, run, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
+import {assert, run, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject} from 'rxjs';
 
-import { IsRotatable } from '../payload/is-rotatable';
+import {IsRotatable} from '../payload/is-rotatable';
 
-import { renderRotatable } from './render-rotatable';
+import {renderRotatable} from './render-rotatable';
 
 
 test('@protoboard2/render/render-rotatable', init => {

@@ -1,14 +1,14 @@
-import { $stateService } from 'mask';
-import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
-import { StateService } from 'gs-tools/export/state';
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
-import { of as observableOf } from 'rxjs';
+import {assert, run, runEnvironment, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
 
-import { IsRotatable } from '../payload/is-rotatable';
-import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {IsRotatable} from '../payload/is-rotatable';
 
-import { RotateAction } from './rotate-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {RotateAction} from './rotate-action';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/rotate-action', init => {

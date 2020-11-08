@@ -1,7 +1,7 @@
-import { StateId } from 'gs-tools/export/state';
+import {StateId} from 'gs-tools/export/state';
 
-import { PieceSpec } from './piece-spec';
-import { RegionSpec } from './region-spec';
+import {PieceSpec} from './piece-spec';
+import {RegionSpec} from './region-spec';
 
 
 export interface StagingState {

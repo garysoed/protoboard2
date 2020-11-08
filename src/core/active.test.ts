@@ -1,13 +1,16 @@
-import { $, $active, Active } from './active';
-import { $stateService, _p } from 'mask';
-import { ContentSpec, IsContainer } from '../payload/is-container';
-import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { Indexed, createIndexed } from '../coordinate/indexed';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { StateService } from 'gs-tools/export/state';
-import { assert, setThat, should, test } from 'gs-testing';
-import { of as observableOf } from 'rxjs';
-import { setId } from 'persona';
+import {assert, setThat, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService, _p} from 'mask';
+import {setId} from 'persona';
+import {PersonaTesterFactory} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
+
+import {Indexed, createIndexed} from '../coordinate/indexed';
+import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {ContentSpec, IsContainer} from '../payload/is-container';
+
+
+import {$, $active, Active} from './active';
 
 
 test('@protoboard2/core/active', init => {

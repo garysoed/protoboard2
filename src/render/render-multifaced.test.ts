@@ -1,13 +1,13 @@
-import { $stateService } from 'mask';
-import { ReplaySubject } from 'rxjs';
-import { StateService } from 'gs-tools/export/state';
-import { assert, run, should, test } from 'gs-testing';
-import { attributeOut, host, stringParser } from 'persona';
-import { createFakeContext } from 'persona/export/testing';
+import {assert, run, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {attributeOut, host, stringParser} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject} from 'rxjs';
 
-import { IsMultifaced } from '../payload/is-multifaced';
+import {IsMultifaced} from '../payload/is-multifaced';
 
-import { renderMultifaced } from './render-multifaced';
+import {renderMultifaced} from './render-multifaced';
 
 test('@protoboard2/render/render-multifaced', init => {
   const _ = init(() => {

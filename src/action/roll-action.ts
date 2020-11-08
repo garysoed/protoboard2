@@ -1,13 +1,13 @@
-import { $stateService } from 'mask';
-import { Observable } from 'rxjs';
-import { cache } from 'gs-tools/export/data';
-import { integerParser } from 'persona';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {$stateService} from 'mask';
+import {integerParser} from 'persona';
+import {Observable} from 'rxjs';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import { ActionContext, BaseAction } from '../core/base-action';
-import { IsMultifaced } from '../payload/is-multifaced';
+import {ActionContext, BaseAction} from '../core/base-action';
+import {IsMultifaced} from '../payload/is-multifaced';
 
-import { $random } from './util/random';
+import {$random} from './util/random';
 
 
 interface Config {

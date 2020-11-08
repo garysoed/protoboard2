@@ -1,12 +1,12 @@
-import { $asSet, $filterNonNull, $map, $pipe } from 'gs-tools/export/collect';
-import { Converter } from 'nabu';
-import { Observable, Subject } from 'rxjs';
-import { PersonaContext, host, onMutation } from 'persona';
-import { Runnable } from 'gs-tools/export/rxjs';
-import { cache } from 'gs-tools/export/data';
-import { map, scan, startWith } from 'rxjs/operators';
+import {$asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {Runnable} from 'gs-tools/export/rxjs';
+import {Converter} from 'nabu';
+import {PersonaContext, host, onMutation} from 'persona';
+import {Observable, Subject} from 'rxjs';
+import {map, scan, startWith} from 'rxjs/operators';
 
-import { ObjectSpec } from '../objects/object-spec';
+import {ObjectSpec} from '../objects/object-spec';
 
 
 export interface ActionContext<P> {

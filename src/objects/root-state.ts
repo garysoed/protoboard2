@@ -1,7 +1,9 @@
-import { ActivePayload } from '../core/active';
-import { ObjectSpec } from './object-spec';
-import { StateId } from 'gs-tools/export/state';
-import { source } from 'grapevine';
+import {source} from 'grapevine';
+import {StateId} from 'gs-tools/export/state';
+
+import {ActivePayload} from '../core/active';
+
+import {ObjectSpec} from './object-spec';
 
 export interface RootState {
   readonly $activeId: StateId<ObjectSpec<ActivePayload>>;

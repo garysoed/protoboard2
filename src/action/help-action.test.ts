@@ -1,15 +1,15 @@
-import { EMPTY, Observable, of as observableOf } from 'rxjs';
-import { _v } from 'mask';
-import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
-import { switchMap } from 'rxjs/operators';
+import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {_v} from 'mask';
+import {createFakeContext} from 'persona/export/testing';
+import {EMPTY, Observable, of as observableOf} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
-import { ActionContext, BaseAction } from '../core/base-action';
-import { TriggerType } from '../core/trigger-spec';
+import {ActionContext, BaseAction} from '../core/base-action';
+import {TriggerType} from '../core/trigger-spec';
 
-import { $helpService, ActionTrigger } from './help-service';
-import { HelpAction } from './help-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {HelpAction} from './help-action';
+import {$helpService, ActionTrigger} from './help-service';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 class TestAction extends BaseAction<{}> {

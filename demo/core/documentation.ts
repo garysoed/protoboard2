@@ -1,20 +1,20 @@
-import { cache } from 'gs-tools/export/data';
-import { switchMapNonNull } from 'gs-tools/export/rxjs';
-import { assertUnreachable } from 'gs-tools/export/typescript';
-import { instanceofType } from 'gs-types';
-import { _p, ThemedCustomElementCtrl } from 'mask';
-import { element, NodeWithId, PersonaContext, renderCustomElement, single } from 'persona';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {switchMapNonNull} from 'gs-tools/export/rxjs';
+import {assertUnreachable} from 'gs-tools/export/typescript';
+import {instanceofType} from 'gs-types';
+import {_p, ThemedCustomElementCtrl} from 'mask';
+import {element, NodeWithId, PersonaContext, renderCustomElement, single} from 'persona';
+import {Observable} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import { $d1Demo, D1Demo } from '../piece/d1';
-import { $d2Demo, D2Demo } from '../piece/d2';
-import { $d6Demo, D6Demo } from '../piece/d6';
-import { $deckDemo, DeckDemo } from '../region/deck';
+import {$d1Demo, D1Demo} from '../piece/d1';
+import {$d2Demo, D2Demo} from '../piece/d2';
+import {$d6Demo, D6Demo} from '../piece/d6';
+import {$deckDemo, DeckDemo} from '../region/deck';
 
 import template from './documentation.html';
-import { $instruction, Instruction } from './instruction';
-import { $locationService, Views } from './location-service';
+import {$instruction, Instruction} from './instruction';
+import {$locationService, Views} from './location-service';
 
 
 const $documentation = {

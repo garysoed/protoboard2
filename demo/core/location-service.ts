@@ -1,6 +1,6 @@
-import { source } from 'grapevine';
-import { $window } from 'mask';
-import { fromPattern, LocationService } from 'persona';
+import {source} from 'grapevine';
+import {$window} from 'mask';
+import {fromPattern, LocationService} from 'persona';
 
 export enum Views {
   D1 = 'd1',

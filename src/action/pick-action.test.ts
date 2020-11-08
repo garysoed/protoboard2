@@ -1,18 +1,18 @@
-import { $stateService } from 'mask';
-import { ReplaySubject } from 'rxjs';
-import { StateService } from 'gs-tools/export/state';
-import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
-import { switchMap } from 'rxjs/operators';
+import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
-import { ContentSpec } from '../payload/is-container';
-import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
-import { HasParent } from '../payload/has-parent';
-import { Indexed, createIndexed } from '../coordinate/indexed';
-import { ObjectSpec } from '../objects/object-spec';
+import {Indexed, createIndexed} from '../coordinate/indexed';
+import {ObjectSpec} from '../objects/object-spec';
+import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {HasParent} from '../payload/has-parent';
+import {ContentSpec} from '../payload/is-container';
 
-import { PickAction } from './pick-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {PickAction} from './pick-action';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/pick-action', init => {

@@ -1,11 +1,12 @@
-import {$stateService} from 'mask';
-import {StateService} from 'gs-tools/export/state';
 import {Vine} from 'grapevine';
 import {assert, mapThat, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+
+import {ObjectSpec} from '../object-spec';
+import {FakeRootStateBuilder} from '../testing/fake-object-spec-list-builder';
 
 import {$objectSpecMap} from './root-state';
-import {FakeRootStateBuilder} from '../testing/fake-object-spec-list-builder';
-import {ObjectSpec} from '../object-spec';
 
 
 test('@protoboard2/objects/getters/root-state', init => {

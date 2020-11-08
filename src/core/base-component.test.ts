@@ -1,12 +1,12 @@
-import { Observable, ReplaySubject } from 'rxjs';
-import { PersonaContext, element } from 'persona';
-import { assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
-import { instanceofType } from 'gs-types';
+import {assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {instanceofType} from 'gs-types';
+import {PersonaContext, element} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {Observable, ReplaySubject} from 'rxjs';
 
-import { ActionContext, BaseAction, TriggerEvent } from './base-action';
-import { ActionSpec, BaseComponent } from './base-component';
-import { TriggerType } from './trigger-spec';
+import {ActionContext, BaseAction, TriggerEvent} from './base-action';
+import {ActionSpec, BaseComponent} from './base-component';
+import {TriggerType} from './trigger-spec';
 
 
 const ACTION_KEY = 'test';

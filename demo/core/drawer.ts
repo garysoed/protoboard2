@@ -1,14 +1,14 @@
-import { assertByType, filterNonNull } from 'gs-tools/export/rxjs';
-import { enumType, instanceofType } from 'gs-types';
-import { $button, $lineLayout, _p, Icon, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, booleanParser, element, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import {assertByType, filterNonNull} from 'gs-tools/export/rxjs';
+import {enumType, instanceofType} from 'gs-types';
+import {$button, $lineLayout, _p, Icon, LineLayout, registerSvg, ThemedCustomElementCtrl} from 'mask';
+import {attributeIn, booleanParser, element, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 
 import template from './drawer.html';
-import { $locationService, Views } from './location-service';
+import {$locationService, Views} from './location-service';
 
 
 export const $drawer = {

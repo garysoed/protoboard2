@@ -1,10 +1,12 @@
-import { $activeState } from '../objects/getters/root-state';
-import { $stateService } from 'mask';
-import { ActionContext, BaseAction, TriggerEvent } from '../core/base-action';
-import { IsContainer } from '../payload/is-container';
-import { Observable, combineLatest, of as observableOf } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { moveObject } from './util/move-object';
+import {$stateService} from 'mask';
+import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {$activeState} from '../objects/getters/root-state';
+import {IsContainer} from '../payload/is-container';
+
+import {moveObject} from './util/move-object';
 
 
 interface Config {

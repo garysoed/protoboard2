@@ -1,14 +1,14 @@
-import { $asArray, $map, $pipe, $sort, normal, withMap } from 'gs-tools/export/collect';
-import { $stateService } from 'mask';
-import { MultiOutput } from 'persona/export/internal';
-import { NodeWithId, PersonaContext } from 'persona';
-import { Observable, combineLatest, of as observableOf } from 'rxjs';
-import { filterNonNull } from 'gs-tools/export/rxjs';
-import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
+import {filterNonNull} from 'gs-tools/export/rxjs';
+import {$stateService} from 'mask';
+import {NodeWithId, PersonaContext} from 'persona';
+import {MultiOutput} from 'persona/export/internal';
+import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import { $objectService } from '../objects/object-service';
-import { CoordinateTypes, IsContainer } from '../payload/is-container';
-import { Indexed } from '../coordinate/indexed';
+import {Indexed} from '../coordinate/indexed';
+import {$objectService} from '../objects/object-service';
+import {CoordinateTypes, IsContainer} from '../payload/is-container';
 
 
 export function renderContents(

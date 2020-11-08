@@ -1,10 +1,10 @@
-import { Observable } from 'rxjs';
-import { tap, withLatestFrom } from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
-import { ActionContext, BaseAction } from '../core/base-action';
-import { TriggerSpec } from '../core/trigger-spec';
+import {ActionContext, BaseAction} from '../core/base-action';
+import {TriggerSpec} from '../core/trigger-spec';
 
-import { $helpService } from './help-service';
+import {$helpService} from './help-service';
 
 
 export class HelpAction extends BaseAction<{}> {

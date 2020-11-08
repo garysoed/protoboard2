@@ -1,10 +1,12 @@
-import { ActionContext, BaseAction } from './base-action';
-import { Observable, ReplaySubject, of as observableOf } from 'rxjs';
-import { PersonaTesterEnvironment, createFakeContext } from 'persona/export/testing';
-import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
-import { createFakeActionContext } from '../action/testing/fake-action-context';
-import { integerParser } from 'persona';
-import { tap } from 'rxjs/operators';
+import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
+import {integerParser} from 'persona';
+import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {Observable, ReplaySubject, of as observableOf} from 'rxjs';
+import {tap} from 'rxjs/operators';
+
+import {createFakeActionContext} from '../action/testing/fake-action-context';
+
+import {ActionContext, BaseAction} from './base-action';
 
 
 const ACTION_KEY = 'test';

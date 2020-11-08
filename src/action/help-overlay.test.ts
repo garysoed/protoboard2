@@ -1,17 +1,17 @@
-import { BrowserSnapshotsEnv } from 'gs-testing/export/browser';
-import { PersonaTesterFactory, createFakeContext } from 'persona/export/testing';
-import { _p } from 'mask';
-import { assert, run, runEnvironment, should, test } from 'gs-testing';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { of as observableOf } from 'rxjs';
+import {assert, run, runEnvironment, should, test} from 'gs-testing';
+import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
+import {_p} from 'mask';
+import {PersonaTesterFactory, createFakeContext} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
+import {map, switchMap, take, tap} from 'rxjs/operators';
 
-import { TriggerType } from '../core/trigger-spec';
+import {TriggerType} from '../core/trigger-spec';
 
+import {$, $helpOverlay, HelpOverlay} from './help-overlay';
+import {$helpService} from './help-service';
+import {PickAction} from './pick-action';
 import * as snapshots from './snapshots.json';
-import { $, $helpOverlay, HelpOverlay } from './help-overlay';
-import { $helpService } from './help-service';
-import { PickAction } from './pick-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 const testerFactory = new PersonaTesterFactory(_p);

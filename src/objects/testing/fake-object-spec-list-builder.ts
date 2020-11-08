@@ -1,13 +1,13 @@
-import { $$rootState, RootState } from '../root-state';
-import { $createSpecMap } from '../object-service';
-import { ACTIVE_TYPE, ActivePayload } from '../../core/active';
-import { ObjectCreateSpec } from '../object-create-spec';
-import { ObjectSpec } from '../object-spec';
-import { StateId, StateService } from 'gs-tools/export/state';
-import { Vine } from 'grapevine';
-import { of as observableOf } from 'rxjs';
-import { setId } from 'persona';
+import {Vine} from 'grapevine';
+import {StateId, StateService} from 'gs-tools/export/state';
+import {setId} from 'persona';
+import {of as observableOf} from 'rxjs';
 
+import {ACTIVE_TYPE, ActivePayload} from '../../core/active';
+import {ObjectCreateSpec} from '../object-create-spec';
+import {$createSpecMap} from '../object-service';
+import {ObjectSpec} from '../object-spec';
+import {$$rootState, RootState} from '../root-state';
 
 
 type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
@@ -60,7 +60,7 @@ export class FakeRootStateBuilder {
     const $rootId = stateService.add<RootState>(rootState);
     $$rootState.set(vine, () => $rootId);
     $createSpecMap.set(vine, existing => new Map([...existing, ...this.createSpecMap]));
-    return {$rootId, rootState: rootState};
+    return {$rootId, rootState};
   }
 
   setActivePayload(payload: ActivePayload): this {

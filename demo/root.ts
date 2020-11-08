@@ -1,20 +1,20 @@
-import { $rootLayout, Overlay, RootLayout, ThemedCustomElementCtrl, _p } from 'mask';
-import { Observable } from 'rxjs';
-import { PersonaContext, api, classToggle, element } from 'persona';
-import { cache } from 'gs-tools/export/data';
-import { elementWithTagType, instanceofType } from 'gs-types';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {elementWithTagType, instanceofType} from 'gs-types';
+import {$rootLayout, Overlay, RootLayout, ThemedCustomElementCtrl, _p} from 'mask';
+import {PersonaContext, api, classToggle, element} from 'persona';
+import {Observable} from 'rxjs';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import { Active } from '../src/core/active';
-import { HelpOverlay } from '../src/action/help-overlay';
+import {HelpOverlay} from '../src/action/help-overlay';
+import {Active} from '../src/core/active';
 
-import { $drawer, Drawer } from './core/drawer';
-import { $isStaging } from './state/getters/demo-state';
-import { $locationService, Views } from './core/location-service';
-import { Documentation } from './core/documentation';
-import { PlayArea } from './core/play-area';
-import { StagingArea } from './core/staging-area';
+import {Documentation} from './core/documentation';
+import {$drawer, Drawer} from './core/drawer';
+import {$locationService, Views} from './core/location-service';
+import {PlayArea} from './core/play-area';
+import {StagingArea} from './core/staging-area';
 import template from './root.html';
+import {$isStaging} from './state/getters/demo-state';
 
 
 const $ = {

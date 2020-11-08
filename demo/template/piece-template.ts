@@ -1,24 +1,24 @@
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { $button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl } from 'mask';
-import { attributeIn, element, enumParser, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, stringParser } from 'persona';
-import { combineLatest, Observable, of as observableOf } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { Logger } from 'santa';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {$button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl} from 'mask';
+import {attributeIn, element, enumParser, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, stringParser} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {Logger} from 'santa';
 
 import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
-import { $editedFaces, $faceIcons } from '../state/getters/piece-state';
-import { $setEditedFaces, $setFaces } from '../state/setters/piece-state';
-import { $addPieceSpecs } from '../state/setters/staging-state';
-import { FACE_ICONS } from '../state/types/piece-state';
-import { PieceType } from '../state/types/piece-type';
+import {$editedFaces, $faceIcons} from '../state/getters/piece-state';
+import {$setEditedFaces, $setFaces} from '../state/setters/piece-state';
+import {$addPieceSpecs} from '../state/setters/staging-state';
+import {FACE_ICONS} from '../state/types/piece-state';
+import {PieceType} from '../state/types/piece-type';
 
-import { $documentationTemplate as $documentationTemplate, DocumentationTemplate } from './documentation-template';
-import { $pieceButton, ClickEvent as ClickButtonEvent, PieceButton } from './piece-button';
-import { $piecePreview, ClickEvent as ClickPreviewEvent, PiecePreview } from './piece-preview';
+import {$documentationTemplate as $documentationTemplate, DocumentationTemplate} from './documentation-template';
+import {$pieceButton, ClickEvent as ClickButtonEvent, PieceButton} from './piece-button';
+import {$piecePreview, ClickEvent as ClickPreviewEvent, PiecePreview} from './piece-preview';
 import template from './piece-template.html';
 
 
@@ -182,14 +182,14 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
       this.declareInput($.host._.pieceType),
       $editedFaces.get(this.vine),
     ])
-    .pipe(
-        map(([pieceType, selectedFaces]) => {
-          if (!pieceType || !selectedFaces) {
-            return null;
-          }
+        .pipe(
+            map(([pieceType, selectedFaces]) => {
+              if (!pieceType || !selectedFaces) {
+                return null;
+              }
 
-          return selectedFaces[pieceType];
-        }),
-    );
+              return selectedFaces[pieceType];
+            }),
+        );
   }
 }

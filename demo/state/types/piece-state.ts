@@ -1,4 +1,4 @@
-import { StateId } from 'gs-tools/export/state';
+import {StateId} from 'gs-tools/export/state';
 
 export const FACE_ICONS = ['meeple', 'coin', 'gem', 'card'];
 

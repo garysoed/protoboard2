@@ -1,14 +1,14 @@
-import { cache } from 'gs-tools/export/data';
-import { $button, _p, Button, LineLayout, ThemedCustomElementCtrl } from 'mask';
-import { element, PersonaContext } from 'persona';
-import { Observable } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import {cache} from 'gs-tools/export/data';
+import {$button, _p, Button, LineLayout, ThemedCustomElementCtrl} from 'mask';
+import {element, PersonaContext} from 'persona';
+import {Observable} from 'rxjs';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import { $render, Render } from '../../src/objects/render';
-import { Slot } from '../../src/region/slot';
-import { $objectSpecs } from '../state/getters/play-state';
-import { $setStaging } from '../state/setters/demo-state';
-import { GridArea } from '../state/types/region-state';
+import {$render, Render} from '../../src/objects/render';
+import {Slot} from '../../src/region/slot';
+import {$objectSpecs} from '../state/getters/play-state';
+import {$setStaging} from '../state/setters/demo-state';
+import {GridArea} from '../state/types/region-state';
 
 import template from './play-area.html';
 

@@ -1,13 +1,13 @@
-import { $stateService } from 'mask';
-import { StateService } from 'gs-tools/export/state';
-import { Vine } from 'grapevine';
-import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { take, tap } from 'rxjs/operators';
+import {Vine} from 'grapevine';
+import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {take, tap} from 'rxjs/operators';
 
-import { ContentSpec } from '../../payload/is-container';
-import { Indexed, createIndexed } from '../../coordinate/indexed';
+import {Indexed, createIndexed} from '../../coordinate/indexed';
+import {ContentSpec} from '../../payload/is-container';
 
-import { moveObject } from './move-object';
+import {moveObject} from './move-object';
 
 
 test('@protoboard2/action/util/move-object', () => {

@@ -1,7 +1,7 @@
-import { _p, ThemedCustomElementCtrl } from 'mask';
+import {_p, ThemedCustomElementCtrl} from 'mask';
 
-import { Deck } from '../../src/region/deck';
-import { RegionTemplate } from '../template/region-template';
+import {Deck} from '../../src/region/deck';
+import {RegionTemplate} from '../template/region-template';
 
 import template from './deck.html';
 

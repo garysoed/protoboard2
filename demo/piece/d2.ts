@@ -1,8 +1,7 @@
-import { _p, Icon, ThemedCustomElementCtrl } from 'mask';
-import { element } from 'persona';
+import {Icon, ThemedCustomElementCtrl, _p} from 'mask';
 
-import { D2 } from '../../src/piece/d2';
-import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
+import {D2} from '../../src/piece/d2';
+import {PieceTemplate} from '../template/piece-template';
 
 import template from './d2.html';
 
@@ -10,10 +9,6 @@ import template from './d2.html';
 export const $d2Demo = {
   tag: 'pbd-d2',
   api: {},
-};
-
-const $ = {
-  template: element('template', $pieceTemplate, {}),
 };
 
 @_p.customElement({

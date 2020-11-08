@@ -1,14 +1,14 @@
-import { stream } from 'grapevine';
-import { StateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {stream} from 'grapevine';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {combineLatest} from 'rxjs';
+import {map} from 'rxjs/operators';
 
-import { $demoState } from '../getters/demo-state';
-import { $editedFaces, $faceIcons, EditedFaces, FaceIcons } from '../getters/piece-state';
-import { DemoState } from '../types/demo-state';
-import { PieceEditorState } from '../types/piece-editor-state';
-import { PieceType } from '../types/piece-type';
+import {$demoState} from '../getters/demo-state';
+import {$editedFaces, $faceIcons, EditedFaces, FaceIcons} from '../getters/piece-state';
+import {DemoState} from '../types/demo-state';
+import {PieceEditorState} from '../types/piece-editor-state';
+import {PieceType} from '../types/piece-type';
 
 
 export const $setEditedFaces = stream(
@@ -47,25 +47,25 @@ export const $setFaces = stream(
         $faceIcons.get(vine),
         $stateService.get(vine),
       ])
-      .pipe(
-          map(([demoState, editedFaces, faceIcons, stateService]) => {
-            if (!faceIcons || editedFaces === null || !demoState) {
-              return null;
-            }
+          .pipe(
+              map(([demoState, editedFaces, faceIcons, stateService]) => {
+                if (!faceIcons || editedFaces === null || !demoState) {
+                  return null;
+                }
 
-            const boundSetFace = setFace.bind(
-                undefined,
-                editedFaces,
-                demoState.pieceEditorState,
-                faceIcons,
-                stateService,
-            );
-            const d1 = boundSetFace.bind(undefined, PieceType.D1);
-            const d2 = boundSetFace.bind(undefined, PieceType.D2);
-            const d6 = boundSetFace.bind(undefined, PieceType.D6);
-            return {d1, d2, d6};
-          }),
-      );
+                const boundSetFace = setFace.bind(
+                    undefined,
+                    editedFaces,
+                    demoState.pieceEditorState,
+                    faceIcons,
+                    stateService,
+                );
+                const d1 = boundSetFace.bind(undefined, PieceType.D1);
+                const d2 = boundSetFace.bind(undefined, PieceType.D2);
+                const d6 = boundSetFace.bind(undefined, PieceType.D6);
+                return {d1, d2, d6};
+              }),
+          );
     },
 );
 

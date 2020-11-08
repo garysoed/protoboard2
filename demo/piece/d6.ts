@@ -1,8 +1,7 @@
-import { _p, Icon, ThemedCustomElementCtrl } from 'mask';
-import { element } from 'persona';
+import {Icon, ThemedCustomElementCtrl, _p} from 'mask';
 
-import { D6 } from '../../src/piece/d6';
-import { $pieceTemplate, PieceTemplate } from '../template/piece-template';
+import {D6} from '../../src/piece/d6';
+import {PieceTemplate} from '../template/piece-template';
 
 import template from './d6.html';
 
@@ -10,10 +9,6 @@ import template from './d6.html';
 export const $d6Demo = {
   tag: 'pbd-d6',
   api: {},
-};
-
-const $ = {
-  template: element('template', $pieceTemplate, {}),
 };
 
 @_p.customElement({

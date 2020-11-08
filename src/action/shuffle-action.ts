@@ -1,7 +1,8 @@
-import { ActionContext, BaseAction } from '../core/base-action';
-import { IsContainer } from '../payload/is-container';
-import { NEVER, Observable } from 'rxjs';
-import { cache } from 'gs-tools/export/data';
+import {cache} from 'gs-tools/export/data';
+import {NEVER, Observable} from 'rxjs';
+
+import {ActionContext, BaseAction} from '../core/base-action';
+import {IsContainer} from '../payload/is-container';
 
 
 export class ShuffleAction extends BaseAction<IsContainer<'indexed'>> {

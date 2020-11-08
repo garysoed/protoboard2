@@ -1,4 +1,4 @@
-import { Selector } from 'persona';
+import {Selector} from 'persona';
 
 export enum TriggerType {
   A = 'a',

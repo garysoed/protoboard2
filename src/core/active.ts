@@ -1,15 +1,15 @@
-import { $asArray, $map, $pipe } from 'gs-tools/export/collect';
-import { $stateService, _p } from 'mask';
-import { NodeWithId, PersonaContext, classToggle, element, host, multi, renderCustomElement, style, textContent } from 'persona';
-import { Observable, fromEvent, of as observableOf } from 'rxjs';
-import { cache } from 'gs-tools/export/data';
-import { instanceofType } from 'gs-types';
-import { map, share, switchMap, throttleTime, withLatestFrom } from 'rxjs/operators';
+import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
+import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
+import {$stateService, _p} from 'mask';
+import {NodeWithId, PersonaContext, classToggle, element, host, multi, renderCustomElement, style, textContent} from 'persona';
+import {Observable, fromEvent, of as observableOf} from 'rxjs';
+import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
-import { $baseComponent, BaseComponent } from '../core/base-component';
-import { IsContainer } from '../payload/is-container';
-import { ObjectSpec } from '../objects/object-spec';
-import { renderContents } from '../render/render-contents';
+import {$baseComponent, BaseComponent} from '../core/base-component';
+import {ObjectSpec} from '../objects/object-spec';
+import {IsContainer} from '../payload/is-container';
+import {renderContents} from '../render/render-contents';
 
 import template from './active.html';
 

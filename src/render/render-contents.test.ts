@@ -1,16 +1,16 @@
-import { $stateService } from 'mask';
-import { ReplaySubject, of as observableOf } from 'rxjs';
-import { StateService } from 'gs-tools/export/state';
-import { arrayFrom } from 'gs-tools/export/collect';
-import { assert, run, should, test } from 'gs-testing';
-import { createFakeContext } from 'persona/export/testing';
-import { host, multi, setId } from 'persona';
+import {assert, run, should, test} from 'gs-testing';
+import {arrayFrom} from 'gs-tools/export/collect';
+import {StateService} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
+import {host, multi, setId} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject, of as observableOf} from 'rxjs';
 
-import { ContentSpec, IsContainer } from '../payload/is-container';
-import { Indexed, createIndexed } from '../coordinate/indexed';
-import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import {Indexed, createIndexed} from '../coordinate/indexed';
+import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {ContentSpec, IsContainer} from '../payload/is-container';
 
-import { renderContents } from './render-contents';
+import {renderContents} from './render-contents';
 
 
 test('@protoboard2/render/render-contents', init => {
