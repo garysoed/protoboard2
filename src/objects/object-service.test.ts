@@ -6,7 +6,7 @@ import { assert, createSpy, fake, resetCalls, setThat, should, test } from 'gs-t
 import { createFakeContext } from 'persona/export/testing';
 
 import { $objectService, ObjectService } from './object-service';
-import { fakeObjectSpecListBuilder } from './testing/fake-object-spec-list-builder';
+import { FakeRootStateBuilder } from './testing/fake-object-spec-list-builder';
 
 
 test('@protoboard2/objects/object-service', init => {
@@ -29,7 +29,7 @@ test('@protoboard2/objects/object-service', init => {
       const node = setId(document.createElement('div'), objectId);
       const payload = 'payload';
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.add({id: objectId, payload}, () => observableOf(node));
       builder.build(_.stateService, _.personaContext.vine);
 
@@ -43,7 +43,7 @@ test('@protoboard2/objects/object-service', init => {
       const createSpecSpy = createSpy<Observable<NodeWithId<Element>>, []>('createSpec');
       fake(createSpecSpy).always().return(observableOf(node));
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.add({id: objectId, payload}, createSpecSpy);
       builder.build(_.stateService, _.personaContext.vine);
 
@@ -58,7 +58,7 @@ test('@protoboard2/objects/object-service', init => {
     should('emit null if object corresponding to the key does not exist', () => {
       const objectId = 'objectId';
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.build(_.stateService, _.personaContext.vine);
 
       assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(null);
@@ -70,7 +70,7 @@ test('@protoboard2/objects/object-service', init => {
       const objectId = 'objectId';
       const payload = 'payload';
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       const objectSpy = builder.add({id: objectId, payload});
       builder.build(_.stateService, _.personaContext.vine);
 
@@ -78,7 +78,7 @@ test('@protoboard2/objects/object-service', init => {
     });
 
     should('emit null if the spec corresponding to the key does not exist', () => {
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.build(_.stateService, _.personaContext.vine);
 
       assert(_.objectService.getObjectSpec<string>('objectId')).to.emitWith(null);
@@ -92,7 +92,7 @@ test('@protoboard2/objects/object-service', init => {
       const objectId3 = 'objectId3';
       const payload = 'payload';
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.add({id: objectId1, payload});
       builder.add({id: objectId2, payload});
       builder.add({id: objectId3, payload});

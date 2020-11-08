@@ -1,11 +1,11 @@
-import { $, $active, ACTIVE_ID, Active } from './active';
+import { $, $active, Active } from './active';
 import { $stateService, _p } from 'mask';
 import { ContentSpec, IsContainer } from '../payload/is-container';
+import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { Indexed, createIndexed } from '../coordinate/indexed';
 import { PersonaTesterFactory } from 'persona/export/testing';
 import { StateService } from 'gs-tools/export/state';
 import { assert, setThat, should, test } from 'gs-testing';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { of as observableOf } from 'rxjs';
 import { setId } from 'persona';
 
@@ -14,6 +14,7 @@ test('@protoboard2/core/active', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
+    const ACTIVE_ID = 'ACTIVE_ID';
     const tester = factory.build([Active], document);
     const el = tester.createElement($active.tag);
     el.setAttribute($.host._.objectId, ACTIVE_ID);
@@ -22,12 +23,12 @@ test('@protoboard2/core/active', init => {
     $stateService.set(tester.vine, () => stateService);
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-    const builder = fakeObjectSpecListBuilder();
+    const builder = new FakeRootStateBuilder({});
     builder.add<IsContainer<'indexed'>>({
       id: ACTIVE_ID,
       payload: {containerType: 'indexed', $contentSpecs},
     });
-    const {$rootId, objectSpecList: root} = builder.build(stateService, tester.vine);
+    const {$rootId, rootState: root} = builder.build(stateService, tester.vine);
 
     // Need to add to body so the dimensions work.
     document.body.appendChild(el.element);
@@ -73,7 +74,7 @@ test('@protoboard2/core/active', init => {
       content.style.width = `${width}px`;
 
       const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
-      const builder = fakeObjectSpecListBuilder(_.root);
+      const builder = new FakeRootStateBuilder(_.root);
       builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
 
@@ -124,7 +125,7 @@ test('@protoboard2/core/active', init => {
       content.style.height = `${height}px`;
 
       const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
-      const builder = fakeObjectSpecListBuilder(_.root);
+      const builder = new FakeRootStateBuilder(_.root);
       builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
       builder.build(_.stateService, _.tester.vine);
 
@@ -153,7 +154,7 @@ test('@protoboard2/core/active', init => {
       const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
       const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
 
-      const builder = fakeObjectSpecListBuilder(_.root);
+      const builder = new FakeRootStateBuilder(_.root);
       builder.add({id: spec1.objectId, payload: {}}, () => observableOf(content1));
       builder.add({id: spec2.objectId, payload: {}}, () => observableOf(content2));
       builder.build(_.stateService, _.tester.vine);

@@ -5,7 +5,7 @@ import { assert, run, runEnvironment, should, test } from 'gs-testing';
 import { of as observableOf } from 'rxjs';
 
 import { IsRotatable } from '../payload/is-rotatable';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { RotateAction } from './rotate-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -22,7 +22,7 @@ test('@protoboard2/action/rotate-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const builder = fakeObjectSpecListBuilder();
+    const builder = new FakeRootStateBuilder({});
     const $rotationDeg = stateService.add(2);
     const objectSpec = builder.add<IsRotatable>({id: 'TARGET_ID', payload: {$rotationDeg}});
     builder.build(stateService, personaContext.vine);

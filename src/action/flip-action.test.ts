@@ -5,7 +5,7 @@ import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-
 import { of as observableOf } from 'rxjs';
 
 import { IsMultifaced } from '../payload/is-multifaced';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { FlipAction } from './flip-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -22,7 +22,7 @@ test('@protoboard2/action/flip-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const builder = fakeObjectSpecListBuilder();
+    const builder = new FakeRootStateBuilder({});
     const $faceIndex = stateService.add(2);
     const objectSpec = builder.add<IsMultifaced>({
       id: 'TARGET_ID',

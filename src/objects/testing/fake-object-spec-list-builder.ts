@@ -1,27 +1,35 @@
+import { $$rootState, RootState } from '../root-state';
+import { $createSpecMap } from '../object-service';
+import { ACTIVE_TYPE, ActivePayload } from '../../core/active';
+import { ObjectCreateSpec } from '../object-create-spec';
+import { ObjectSpec } from '../object-spec';
 import { StateId, StateService } from 'gs-tools/export/state';
 import { Vine } from 'grapevine';
 import { of as observableOf } from 'rxjs';
 import { setId } from 'persona';
 
-import { $createSpecMap } from '../object-service';
-import { $rootState } from '../root-state-service';
-import { ObjectCreateSpec } from '../object-create-spec';
-import { ObjectSpec } from '../object-spec';
-import { RootState } from '../root-state';
 
 
 type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
 
 interface State {
-  readonly objectSpecList: RootState;
   readonly $rootId: StateId<RootState>;
+  readonly rootState: RootState;
 }
 
-class ObjectSpecListBuilder {
-  private readonly specs: Array<ObjectSpec<any>> = [...this.baseObjectSpecs];
+interface Config {
+  readonly activePayload?: ActivePayload;
+  readonly objectSpecs?: ReadonlyArray<ObjectSpec<any>>;
+}
+
+export class FakeRootStateBuilder {
+  private activePayload = this.config.activePayload ?? null;
+  private readonly specs: Array<ObjectSpec<any>> = [...(this.config.objectSpecs ?? [])];
   private readonly createSpecMap = new Map<string, ObjectCreateSpec<any>>();
 
-  constructor(private readonly baseObjectSpecs: ReadonlyArray<ObjectSpec<any>>) { }
+  constructor(
+      private readonly config: Config,
+  ) { }
 
   add<T>(
       partial: PartialObjectSpec<T>,
@@ -38,17 +46,25 @@ class ObjectSpecListBuilder {
   }
 
   build(stateService: StateService, vine: Vine): State {
-    const objectSpecList = {objectSpecs: [...this.specs]};
-    const $rootId = stateService.add<RootState>(objectSpecList);
-    $rootState.set(vine, () => $rootId);
+    const rootState = {
+      $activeId: stateService.add<ObjectSpec<ActivePayload>>({
+        id: 'ACTIVE',
+        type: ACTIVE_TYPE,
+        payload: this.activePayload ?? {
+          containerType: 'indexed',
+          $contentSpecs: stateService.add([]),
+        },
+      }),
+      objectSpecs: [...this.specs],
+    };
+    const $rootId = stateService.add<RootState>(rootState);
+    $$rootState.set(vine, () => $rootId);
     $createSpecMap.set(vine, existing => new Map([...existing, ...this.createSpecMap]));
-    return {$rootId, objectSpecList};
+    return {$rootId, rootState: rootState};
   }
-}
 
-
-export function fakeObjectSpecListBuilder(
-    baseHasObjectSpecList: RootState = {objectSpecs: []},
-): ObjectSpecListBuilder {
-  return new ObjectSpecListBuilder(baseHasObjectSpecList.objectSpecs);
+  setActivePayload(payload: ActivePayload): this {
+    this.activePayload = payload;
+    return this;
+  }
 }

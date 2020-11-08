@@ -8,7 +8,7 @@ import { host, multi, setId } from 'persona';
 
 import { ContentSpec, IsContainer } from '../payload/is-container';
 import { Indexed, createIndexed } from '../coordinate/indexed';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
+import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { renderContents } from './render-contents';
 
@@ -43,7 +43,7 @@ test('@protoboard2/render/render-contents', init => {
       const el2 = setId(document.createElement('div2'), {});
       const el3 = setId(document.createElement('div3'), {});
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.add({id: spec1.objectId, payload: {}}, () => observableOf(el1));
       builder.add({id: spec2.objectId, payload: {}}, () => observableOf(el2));
       builder.add({id: spec3.objectId, payload: {}}, () => observableOf(el3));

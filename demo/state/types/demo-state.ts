@@ -1,6 +1,6 @@
-import { stream } from 'grapevine';
-import { StateId } from 'gs-tools/export/state';
 import { $rootId } from 'mask';
+import { StateId } from 'gs-tools/export/state';
+import { stream } from 'grapevine';
 
 import { PieceEditorState } from './piece-editor-state';
 import { PlayState } from './play-state';

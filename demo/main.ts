@@ -1,27 +1,27 @@
-import { Snapshot, StateId, StateService } from 'gs-tools/export/state';
+import { $saveConfig, $saveService, PALETTE, Theme, registerSvg, start } from 'mask';
 import { LocalStorage } from 'gs-tools/export/store';
-import { $saveConfig, $saveService, PALETTE, registerSvg, start, Theme } from 'mask';
+import { ON_LOG_$, WebConsoleDestination } from 'santa';
+import { Snapshot, StateId, StateService } from 'gs-tools/export/state';
 import { identity, json } from 'nabu';
 import { switchMap, tap } from 'rxjs/operators';
-import { ON_LOG_$, WebConsoleDestination } from 'santa';
 
+import { $$rootState } from '../src/objects/root-state';
+import { $createSpecMap } from '../src/objects/object-service';
 import { ACTIVE_TYPE, renderActive } from '../src/core/active';
 import { ObjectCreateSpec } from '../src/objects/object-create-spec';
-import { $createSpecMap } from '../src/objects/object-service';
-import { $rootState } from '../src/objects/root-state-service';
 
-import protoboardSvg from './asset/icon.svg';
-import { $locationService } from './core/location-service';
-import { PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
-import { Root } from './root';
 import { $demoState } from './state/getters/demo-state';
+import { $locationService } from './core/location-service';
 import { DemoState } from './state/types/demo-state';
-import { PieceSpec } from './state/types/piece-spec';
 import { FACE_ICONS } from './state/types/piece-state';
+import { PIECE_TYPE, REGION_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply } from './core/object-specs';
+import { PieceSpec } from './state/types/piece-spec';
 import { PieceType } from './state/types/piece-type';
 import { PlayState } from './state/types/play-state';
 import { RegionSpec } from './state/types/region-spec';
 import { RegionType } from './state/types/region-type';
+import { Root } from './root';
+import protoboardSvg from './asset/icon.svg';
 
 
 const iconConfigs: Map<string, string> = new Map([
@@ -74,7 +74,7 @@ window.addEventListener('load', () => {
   }));
 
   $demoState.get(vine).subscribe(demoState => {
-    $rootState.set(vine, () => demoState?.$playState ?? null);
+    $$rootState.set(vine, () => demoState?.$playState ?? null);
   });
 
   $createSpecMap.set(vine, () => new Map<string, ObjectCreateSpec<any>>([
@@ -89,7 +89,17 @@ window.addEventListener('load', () => {
 function init(stateService: StateService): StateId<DemoState> {
   return stateService.add<DemoState>({
     $isStaging: stateService.add(true),
-    $playState: stateService.add<PlayState>({objectSpecs: []}),
+    $playState: stateService.add<PlayState>({
+      $activeId: stateService.add({
+        id: 'ACTIVE_ID',
+        type: ACTIVE_TYPE,
+        payload: {
+          containerType: 'indexed',
+          $contentSpecs: stateService.add([]),
+        },
+      }),
+      objectSpecs: [],
+    }),
     pieceEditorState: {
       [PieceType.D1]: {
         length: 1,

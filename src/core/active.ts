@@ -16,13 +16,6 @@ import template from './active.html';
 
 const COUNT_THRESHOLD = 3;
 
-/**
- * ID of the object representing the active region.
- *
- * @thModule region
- */
-export const ACTIVE_ID = 'pb.active';
-
 export const ACTIVE_TYPE = 'pb.active';
 
 /**
@@ -120,6 +113,11 @@ export class Active extends BaseComponent<ActivePayload> {
   @cache()
   private get left$(): Observable<string> {
     return this.mouseEvent$.pipe(map(({event, rect}) => `${event.x - rect.width / 2}px`));
+  }
+
+  @cache()
+  get objectId$(): Observable<string> {
+    return observableOf('ACTIVE_ID');
   }
 
   @cache()

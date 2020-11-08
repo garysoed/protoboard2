@@ -6,7 +6,7 @@ import { ThemedCustomElementCtrl, _p } from 'mask';
 import { cache } from 'gs-tools/export/data';
 import { filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom } from 'rxjs/operators';
 
-import { $objectSpecMap } from '../objects/root-state-service';
+import { $objectSpecMap } from '../objects/getters/root-state';
 import { HelpAction } from '../action/help-action';
 import { ObjectSpec } from '../objects/object-spec';
 

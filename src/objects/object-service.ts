@@ -5,7 +5,7 @@ import { Vine, source } from 'grapevine';
 import { cache } from 'gs-tools/export/data';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 
-import { $objectSpecMap } from './root-state-service';
+import { $objectSpecMap } from './getters/root-state';
 import { ObjectCreateSpec } from './object-create-spec';
 import { ObjectSpec } from './object-spec';
 

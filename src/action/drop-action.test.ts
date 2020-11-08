@@ -5,11 +5,10 @@ import { arrayThat, assert, createSpySubject, objectThat, run, should, test } fr
 import { createFakeContext } from 'persona/export/testing';
 import { switchMap } from 'rxjs/operators';
 
-import { ACTIVE_ID } from '../core/active';
 import { ContentSpec, IsContainer } from '../payload/is-container';
+import { FakeRootStateBuilder } from '../objects/testing/fake-object-spec-list-builder';
 import { Indexed, createIndexed } from '../coordinate/indexed';
 import { ObjectSpec } from '../objects/object-spec';
-import { fakeObjectSpecListBuilder } from '../objects/testing/fake-object-spec-list-builder';
 
 import { DropAction } from './drop-action';
 import { createFakeActionContext } from './testing/fake-action-context';
@@ -49,11 +48,9 @@ test('@protoboard2/action/drop-action', init => {
       const otherActiveSpec = {objectId: 'otherActiveId', coordinate: createIndexed(0)};
       const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
 
-      const builder = fakeObjectSpecListBuilder();
       const $activeContentIds = _.stateService.add([otherActiveSpec, movedSpec]);
-      builder.add({
-        id: ACTIVE_ID,
-        payload: {type: 'indexed' as const, $contentSpecs: $activeContentIds},
+      const builder = new FakeRootStateBuilder({
+        activePayload: {containerType: 'indexed', $contentSpecs: $activeContentIds},
       });
 
       const $targetContentIds = _.stateService.add([otherSpec1, otherSpec2]);

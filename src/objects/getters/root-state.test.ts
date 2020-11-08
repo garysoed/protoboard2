@@ -1,14 +1,14 @@
-import { $stateService } from 'mask';
-import { StateService } from 'gs-tools/export/state';
-import { Vine } from 'grapevine';
-import { assert, mapThat, should, test } from 'gs-testing';
+import {$stateService} from 'mask';
+import {StateService} from 'gs-tools/export/state';
+import {Vine} from 'grapevine';
+import {assert, mapThat, should, test} from 'gs-testing';
 
-import { $objectSpecMap } from './root-state-service';
-import { ObjectSpec } from './object-spec';
-import { fakeObjectSpecListBuilder } from './testing/fake-object-spec-list-builder';
+import {$objectSpecMap} from './root-state';
+import {FakeRootStateBuilder} from '../testing/fake-object-spec-list-builder';
+import {ObjectSpec} from '../object-spec';
 
 
-test('@protoboard2/objects/root-state-service', init => {
+test('@protoboard2/objects/getters/root-state', init => {
   const _ = init(() => {
     const vine = new Vine('test');
     const stateService = new StateService();
@@ -23,7 +23,7 @@ test('@protoboard2/objects/root-state-service', init => {
       const object2 = 'object2';
       const object3 = 'object3';
 
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       const objectSpec1 = builder.add({id: object1, payload: 'object1Payload'});
       const objectSpec2 = builder.add({id: object2, payload: 'object2Payload'});
       const objectSpec3 = builder.add({id: object3, payload: 'object3Payload'});
@@ -39,7 +39,7 @@ test('@protoboard2/objects/root-state-service', init => {
     });
 
     should('emit empty map if the objectSpecId is not in StateService', () => {
-      const builder = fakeObjectSpecListBuilder();
+      const builder = new FakeRootStateBuilder({});
       builder.build(_.stateService, _.vine);
 
       assert($objectSpecMap.get(_.vine)).to.emitWith(
