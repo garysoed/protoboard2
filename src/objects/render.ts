@@ -1,11 +1,11 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {ThemedCustomElementCtrl, _p} from 'mask';
-import {NodeWithId, PersonaContext, attributeIn, element, host, single, stringParser} from 'persona';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {attributeIn, element, host, NodeWithId, PersonaContext, single, stringParser} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {$objectService} from './object-service';
+import {$getObjectNode} from './object-service';
 import template from './render.html';
 
 
@@ -38,14 +38,14 @@ export class Render extends ThemedCustomElementCtrl {
   private get object$(): Observable<NodeWithId<Node>|null> {
     return combineLatest([
       this.declareInput($.host._.objectId),
-      $objectService.get(this.vine),
+      $getObjectNode.get(this.vine),
     ])
         .pipe(
-            switchMap(([objectId, renderableService]) => {
+            switchMap(([objectId, getObjectNode]) => {
               if (!objectId) {
                 return observableOf(null);
               }
-              return renderableService.getObject(objectId, this.context) || observableOf(null);
+              return getObjectNode(objectId, this.context);
             }),
         );
   }

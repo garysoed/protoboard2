@@ -3,9 +3,9 @@ import {SimpleIdGenerator} from 'gs-tools/export/random';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
-import {$objectService} from '../../../src/objects/object-service';
+import {$objectSpecIds} from '../../../src/objects/getters/root-state';
 import {$faceIcons} from '../getters/piece-state';
 import {$targetAreas} from '../getters/region-state';
 import {$pieceSpecs, $regionSpecs, $stagingState} from '../getters/staging-state';
@@ -19,10 +19,9 @@ const idGenerator = new SimpleIdGenerator();
 export const $addPieceSpecs = stream(
     'addPieceSpecs',
     vine => {
-      const objectIds$ = $objectService.get(vine).pipe(switchMap(service => service.objectIds$));
       return combineLatest([
         $faceIcons.get(vine),
-        objectIds$,
+        $objectSpecIds.get(vine),
         $pieceSpecs.get(vine),
         $stateService.get(vine),
         $stagingState.get(vine),
@@ -63,9 +62,8 @@ function addPieceSpec(
 export const $addRegionSpecs = stream(
     'addRegionSpecs',
     vine => {
-      const objectIds$ = $objectService.get(vine).pipe(switchMap(service => service.objectIds$));
       return combineLatest([
-        objectIds$,
+        $objectSpecIds.get(vine),
         $regionSpecs.get(vine),
         $stateService.get(vine),
         $stagingState.get(vine),

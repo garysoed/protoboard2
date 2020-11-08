@@ -1,11 +1,12 @@
-import {assert, createSpy, fake, resetCalls, setThat, should, test} from 'gs-testing';
+import {assert, createSpy, fake, resetCalls, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {NodeWithId, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {Observable, of as observableOf} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
-import {$objectService, ObjectService} from './object-service';
+import {$getObjectNode} from './object-service';
 import {FakeRootStateBuilder} from './testing/fake-object-spec-list-builder';
 
 
@@ -17,13 +18,10 @@ test('@protoboard2/objects/object-service', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectService = new ObjectService(personaContext.vine);
-    $objectService.set(personaContext.vine, () => objectService);
-
-    return {objectService, personaContext, stateService};
+    return {personaContext, stateService};
   });
 
-  test('getObject', () => {
+  test('$getObjectNode', () => {
     should('create a new Node and emit it', () => {
       const objectId = 'objectId';
       const node = setId(document.createElement('div'), objectId);
@@ -33,7 +31,9 @@ test('@protoboard2/objects/object-service', init => {
       builder.add({id: objectId, payload}, () => observableOf(node));
       builder.build(_.stateService, _.personaContext.vine);
 
-      assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(node);
+      assert($getObjectNode.get(_.personaContext.vine).pipe(
+          switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
+      )).to.emitWith(node);
     });
 
     should('reuse a previous Node if one already exist', () => {
@@ -47,11 +47,16 @@ test('@protoboard2/objects/object-service', init => {
       builder.add({id: objectId, payload}, createSpecSpy);
       builder.build(_.stateService, _.personaContext.vine);
 
-      assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(node);
+
+      assert($getObjectNode.get(_.personaContext.vine).pipe(
+          switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
+      )).to.emitWith(node);
 
       // Reset, then call again.
       resetCalls(createSpecSpy);
-      assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(node);
+      assert($getObjectNode.get(_.personaContext.vine).pipe(
+          switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
+      )).to.emitWith(node);
       assert(createSpecSpy).toNot.haveBeenCalled();
     });
 
@@ -61,46 +66,10 @@ test('@protoboard2/objects/object-service', init => {
       const builder = new FakeRootStateBuilder({});
       builder.build(_.stateService, _.personaContext.vine);
 
-      assert(_.objectService.getObject(objectId, _.personaContext)).to.emitWith(null);
-    });
-  });
 
-  test('getObjectSpec', () => {
-    should('emit the object spec', () => {
-      const objectId = 'objectId';
-      const payload = 'payload';
-
-      const builder = new FakeRootStateBuilder({});
-      const objectSpy = builder.add({id: objectId, payload});
-      builder.build(_.stateService, _.personaContext.vine);
-
-      assert(_.objectService.getObjectSpec<string>(objectId)).to.emitWith(objectSpy);
-    });
-
-    should('emit null if the spec corresponding to the key does not exist', () => {
-      const builder = new FakeRootStateBuilder({});
-      builder.build(_.stateService, _.personaContext.vine);
-
-      assert(_.objectService.getObjectSpec<string>('objectId')).to.emitWith(null);
-    });
-  });
-
-  test('objectId$', () => {
-    should('emit the object IDs', () => {
-      const objectId1 = 'objectId1';
-      const objectId2 = 'objectId2';
-      const objectId3 = 'objectId3';
-      const payload = 'payload';
-
-      const builder = new FakeRootStateBuilder({});
-      builder.add({id: objectId1, payload});
-      builder.add({id: objectId2, payload});
-      builder.add({id: objectId3, payload});
-      builder.build(_.stateService, _.personaContext.vine);
-
-      assert(_.objectService.objectIds$).to.emitWith(
-          setThat<string>().haveExactElements(new Set([objectId1, objectId2, objectId3])),
-      );
+      assert($getObjectNode.get(_.personaContext.vine).pipe(
+          switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
+      )).to.emitWith(null);
     });
   });
 });

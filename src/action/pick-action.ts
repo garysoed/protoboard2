@@ -1,14 +1,12 @@
 import {cache} from 'gs-tools/export/data';
 import {$stateService} from 'mask';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {$activeState} from '../objects/getters/root-state';
-import {$objectService} from '../objects/object-service';
+import {$activeState, $getObjectSpec} from '../objects/getters/root-state';
 import {HasParent} from '../payload/has-parent';
 import {IsContainer} from '../payload/is-container';
-
 
 import {moveObject} from './util/move-object';
 
@@ -45,15 +43,15 @@ export class PickAction extends BaseAction<HasParent, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectSpec$,
-      $objectService.get(this.context.personaContext.vine),
+      $getObjectSpec.get(this.context.personaContext.vine),
     ])
         .pipe(
-            switchMap(([state, objectService]) => {
+            map(([state, getObjectSpec]) => {
               if (!state) {
-                return observableOf(null);
+                return null;
               }
 
-              return objectService.getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
+              return getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
             }),
         );
 

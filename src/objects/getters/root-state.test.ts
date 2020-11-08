@@ -1,12 +1,13 @@
 import {Vine} from 'grapevine';
-import {assert, mapThat, should, test} from 'gs-testing';
+import {assert, mapThat, setThat, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
+import {map} from 'rxjs/operators';
 
 import {ObjectSpec} from '../object-spec';
 import {FakeRootStateBuilder} from '../testing/fake-object-spec-list-builder';
 
-import {$objectSpecMap} from './root-state';
+import {$getObjectSpec, $objectSpecIds, $objectSpecMap} from './root-state';
 
 
 test('@protoboard2/objects/getters/root-state', init => {
@@ -16,6 +17,47 @@ test('@protoboard2/objects/getters/root-state', init => {
     $stateService.set(vine, () => stateService);
 
     return {stateService, vine};
+  });
+
+  test('$getObjectSpec', () => {
+    should('emit the object spec', () => {
+      const objectId = 'objectId';
+      const payload = 'payload';
+
+      const builder = new FakeRootStateBuilder({});
+      const objectSpy = builder.add({id: objectId, payload});
+      builder.build(_.stateService, _.vine);
+
+      assert($getObjectSpec.get(_.vine).pipe(map(getObjectSpec => getObjectSpec(objectId))))
+          .to.emitWith(objectSpy);
+    });
+
+    should('emit null if the spec corresponding to the key does not exist', () => {
+      const builder = new FakeRootStateBuilder({});
+      builder.build(_.stateService, _.vine);
+
+      assert($getObjectSpec.get(_.vine).pipe(map(getObjectSpec => getObjectSpec('objectId'))))
+          .to.emitWith(null);
+    });
+  });
+
+  test('$objectSpecIds', () => {
+    should('emit the object IDs', () => {
+      const objectId1 = 'objectId1';
+      const objectId2 = 'objectId2';
+      const objectId3 = 'objectId3';
+      const payload = 'payload';
+
+      const builder = new FakeRootStateBuilder({});
+      builder.add({id: objectId1, payload});
+      builder.add({id: objectId2, payload});
+      builder.add({id: objectId3, payload});
+      builder.build(_.stateService, _.vine);
+
+      assert($objectSpecIds.get(_.vine)).to.emitWith(
+          setThat<string>().haveExactElements(new Set([objectId1, objectId2, objectId3])),
+      );
+    });
   });
 
   test('$objectSpecMap', () => {

@@ -40,6 +40,24 @@ export const $activeState = stream<ObjectSpec<ActivePayload>|null>(
     ),
 );
 
+type GetObjectSpec = <P>(id: string) => ObjectSpec<P>|null;
+export const $getObjectSpec = stream<GetObjectSpec>(
+    'getObjectSpec',
+    vine => $objectSpecMap.get(vine).pipe(
+        map(objectSpecMap => {
+          return (id: string) => {
+            return objectSpecMap.get(id) ?? null;
+          };
+        }),
+    ),
+);
+
+export const $objectSpecIds = stream<ReadonlySet<string>>(
+    'objectSpecIds',
+    vine => $objectSpecMap.get(vine)
+        .pipe(map(objectSpecMap => new Set([...objectSpecMap.keys()]))),
+);
+
 export const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>>(
     'objectSpecMap',
     vine => $rootState.get(vine).pipe(

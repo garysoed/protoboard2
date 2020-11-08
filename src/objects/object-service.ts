@@ -1,9 +1,8 @@
-import {Vine, source} from 'grapevine';
-import {$asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
-import {cache} from 'gs-tools/export/data';
+import {source, stream} from 'grapevine';
+import {$asMap, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {NodeWithId, PersonaContext} from 'persona';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, shareReplay} from 'rxjs/operators';
 
 import {$objectSpecMap} from './getters/root-state';
 import {ObjectCreateSpec} from './object-create-spec';
@@ -30,33 +29,14 @@ class ObjectCache {
 }
 
 
-export class ObjectService {
-  constructor(private readonly vine: Vine) { }
+export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
+    'createSpecMap',
+    () => new Map(),
+);
 
-  getObject(id: string, context: PersonaContext): Observable<NodeWithId<Element>|null> {
-    return this.objectCachesMap$.pipe(
-        switchMap(objectCachesMap => {
-          const cache = objectCachesMap.get(id);
-          if (!cache) {
-            return observableOf(null);
-          }
-
-          return cache.getOrCreate(context);
-        }),
-    );
-  }
-
-  getObjectSpec<P>(id: string): Observable<ObjectSpec<P>|null> {
-    return this.objectCachesMap$.pipe(
-        map(cache => {
-          return (cache.get(id)?.state || null) as ObjectSpec<P>|null;
-        }),
-    );
-  }
-
-  @cache()
-  private get objectCachesMap$(): Observable<ReadonlyMap<string, ObjectCache>> {
-    return combineLatest([$objectSpecMap.get(this.vine), $createSpecMap.get(this.vine)])
+export const $objectNodeCacheMap = stream<ReadonlyMap<string, ObjectCache>>(
+    'objectNodeCacheMap',
+    vine => combineLatest([$objectSpecMap.get(vine), $createSpecMap.get(vine)])
         .pipe(
             map(([objectSpecMap, createSpecMap]) => {
               return $pipe(
@@ -74,20 +54,22 @@ export class ObjectService {
               );
             }),
             shareReplay({bufferSize: 1, refCount: true}),
-        );
-  }
+        ),
+);
 
-  @cache()
-  get objectIds$(): Observable<ReadonlySet<string>> {
-    return this.objectCachesMap$.pipe(
-        map(objectCachesMap => $pipe(objectCachesMap, $map(([id]) => id), $asSet())),
-    );
-  }
-}
+type GetObjectNode = (id: string, context: PersonaContext) => Observable<NodeWithId<Element>|null>;
+export const $getObjectNode = stream<GetObjectNode>(
+    'getObjectNode',
+    vine => $objectNodeCacheMap.get(vine).pipe(
+        map(objectNodeCacheMap => {
+          return (id: string, context: PersonaContext) => {
+            const cache = objectNodeCacheMap.get(id);
+            if (!cache) {
+              return observableOf(null);
+            }
 
-export const $objectService = source('ObjectService', vine => new ObjectService(vine));
-
-export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
-    'createSpecMap',
-    () => new Map(),
+            return cache.getOrCreate(context);
+          };
+        }),
+    ),
 );

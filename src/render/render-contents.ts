@@ -7,7 +7,7 @@ import {Observable, combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {Indexed} from '../coordinate/indexed';
-import {$objectService} from '../objects/object-service';
+import {$getObjectNode} from '../objects/object-service';
 import {CoordinateTypes, IsContainer} from '../payload/is-container';
 
 
@@ -23,12 +23,12 @@ export function renderContents(
         }
 
         return stateService.get(isContainer.$contentSpecs).pipe(
-            withLatestFrom($objectService.get(context.vine)),
-            switchMap(([contentIds, renderableService]) => {
+            withLatestFrom($getObjectNode.get(context.vine)),
+            switchMap(([contentIds, getObjectNode]) => {
               const node$list = $pipe(
                   contentIds ?? [],
                   $map(({objectId, coordinate}) => {
-                    return renderableService.getObject(objectId, context).pipe(
+                    return getObjectNode(objectId, context).pipe(
                         take(1),
                         filterNonNull(),
                         map(node => [coordinate, node] as const),
