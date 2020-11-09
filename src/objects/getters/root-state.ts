@@ -1,12 +1,15 @@
 import {stream} from 'grapevine';
-import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $asMap, $filter, $map, $pipe} from 'gs-tools/export/collect';
+import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {ActivePayload} from '../../core/active';
+import {IsContainer} from '../../payload/is-container';
 import {ObjectSpec} from '../object-spec';
 import {$$rootState} from '../root-state';
+
 
 export const $rootState = stream(
     'rootState',
@@ -38,6 +41,40 @@ export const $activeState = stream<ObjectSpec<ActivePayload>|null>(
           return stateService.get(rootState.$activeId);
         }),
     ),
+);
+
+type IsContainerSpec = ObjectSpec<IsContainer<any>>;
+export const $containerMap = stream<ReadonlyMap<StateId<IsContainerSpec>, IsContainerSpec>>(
+    'containerIds',
+    vine => combineLatest([
+      $rootState.get(vine),
+      $stateService.get(vine),
+    ])
+        .pipe(
+            switchMap(([rootState, stateService]) => {
+              const containerEntries = $pipe(
+                  rootState?.$containers ?? [],
+                  $map(containerId => stateService.get(containerId).pipe(
+                      map(state => [containerId, state] as const),
+                  )),
+                  $asArray(),
+              );
+
+              if (containerEntries.length <= 0) {
+                return observableOf(new Map());
+              }
+
+              return combineLatest(containerEntries).pipe(
+                  map(entries => $pipe(
+                      entries,
+                      $filter((pair): pair is [StateId<IsContainerSpec>, IsContainerSpec] => {
+                        return !!pair[1];
+                      }),
+                      $asMap(),
+                  )),
+              );
+            }),
+        ),
 );
 
 type GetObjectSpec = <P>(id: string) => ObjectSpec<P>|null;

@@ -6,7 +6,6 @@ import {PickAction} from '../action/pick-action';
 import {RotateAction} from '../action/rotate-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
-import {HasParent} from '../payload/has-parent';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
 
@@ -23,7 +22,7 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export type D1Payload = IsRotatable & HasParent;
+export type D1Payload = IsRotatable;
 
 const $ = {
   slot: element('slot', instanceofType(HTMLSlotElement), {

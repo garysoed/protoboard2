@@ -4,8 +4,7 @@ import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {$activeState, $getObjectSpec} from '../objects/getters/root-state';
-import {HasParent} from '../payload/has-parent';
+import {$activeState, $contentMap, $getObjectSpec} from '../objects/getters/root-state';
 import {IsContainer} from '../payload/is-container';
 
 import {moveObject} from './util/move-object';
@@ -19,13 +18,13 @@ interface Config { }
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<HasParent, Config> {
+export class PickAction extends BaseAction<{}, Config> {
   /**
    * @internal
    */
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<HasParent>,
+      context: ActionContext<{}>,
       defaultConfig: Config,
   ) {
     super(
@@ -43,15 +42,26 @@ export class PickAction extends BaseAction<HasParent, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectSpec$,
-      $getObjectSpec.get(this.vine),
+      $contentMap.get(this.vine),
     ])
         .pipe(
-            map(([state, getObjectSpec]) => {
+            map(([state, contentMap]) => {
               if (!state) {
                 return null;
               }
+              const entry = [...contentMap].find(([, contentSet]) => contentSet.has(state.id));
+              if (!entry) {
+                return null;
+              }
 
-              return getObjectSpec<IsContainer<'indexed'>>(state.payload.parentObjectId);
+              return entry[0];
+            }),
+            withLatestFrom($getObjectSpec.get(this.vine)),
+            map(([fromObjectId, getObjectSpec]) => {
+              if (!fromObjectId) {
+                return null;
+              }
+              return getObjectSpec<IsContainer<any>>(fromObjectId);
             }),
         );
 
