@@ -8,7 +8,6 @@ import {switchMap} from 'rxjs/operators';
 import {Indexed, createIndexed} from '../coordinate/indexed';
 import {ObjectSpec} from '../objects/object-spec';
 import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
-import {HasParent} from '../payload/has-parent';
 import {ContentSpec} from '../payload/is-container';
 
 import {PickAction} from './pick-action';
@@ -23,7 +22,7 @@ test('@protoboard2/action/pick-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectSpec$ = new ReplaySubject<ObjectSpec<HasParent>|null>(1);
+    const objectSpec$ = new ReplaySubject<ObjectSpec<{}>|null>(1);
 
     const action = new PickAction(
         () => 1,
@@ -41,8 +40,9 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
+      const movedId = 'movedId';
       const otherSpec1 = {objectId: 'otherId1', coordinate: createIndexed(0)};
-      const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
+      const movedSpec = {objectId: movedId, coordinate: createIndexed(1)};
       const otherSpec2 = {objectId: 'otherId2', coordinate: createIndexed(2)};
 
       const otherActiveSpec = {objectId: 'otherActiveId', coordinate: createIndexed(0)};
@@ -54,13 +54,13 @@ test('@protoboard2/action/pick-action', init => {
 
       const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
       const parentObjectId = 'parentObjectId';
-      builder.add({
+      builder.addContainer({
         id: parentObjectId,
         payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentSpecs},
       });
 
       const objectSpec = builder.add({
-        id: 'TARGET_ID',
+        id: movedId,
         payload: {parentObjectId},
       });
       builder.build(_.stateService, _.personaContext.vine);

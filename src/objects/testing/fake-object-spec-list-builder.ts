@@ -3,7 +3,8 @@ import {StateId, StateService} from 'gs-tools/export/state';
 import {setId} from 'persona';
 import {of as observableOf} from 'rxjs';
 
-import {ACTIVE_TYPE, ActivePayload} from '../../core/active';
+import {ActivePayload, ACTIVE_TYPE} from '../../core/active';
+import {CoordinateTypes, IsContainer} from '../../payload/is-container';
 import {ObjectCreateSpec} from '../object-create-spec';
 import {$createSpecMap} from '../object-service';
 import {ObjectSpec} from '../object-spec';
@@ -24,6 +25,7 @@ interface Config {
 
 export class FakeRootStateBuilder {
   private activePayload = this.config.activePayload ?? null;
+  private readonly containerSpecs: Array<ObjectSpec<IsContainer<any>>> = [];
   private readonly specs: Array<ObjectSpec<any>> = [...(this.config.objectSpecs ?? [])];
   private readonly createSpecMap = new Map<string, ObjectCreateSpec<any>>();
 
@@ -45,6 +47,15 @@ export class FakeRootStateBuilder {
     return spec;
   }
 
+  addContainer<C extends CoordinateTypes>(
+      partial: PartialObjectSpec<IsContainer<C>>,
+      createFn: ObjectCreateSpec<IsContainer<C>> = () => observableOf(setId(document.createElement('div'), {})),
+  ): ObjectSpec<IsContainer<C>> {
+    const spec = this.add<IsContainer<C>>(partial, createFn);
+    this.containerSpecs.push(spec);
+    return spec;
+  }
+
   build(stateService: StateService, vine: Vine): State {
     const rootState = {
       $activeId: stateService.add<ObjectSpec<ActivePayload>>({
@@ -55,6 +66,7 @@ export class FakeRootStateBuilder {
           $contentSpecs: stateService.add([]),
         },
       }),
+      containers: [...this.containerSpecs],
       objectSpecs: [...this.specs],
     };
     const $rootId = stateService.add<RootState>(rootState);

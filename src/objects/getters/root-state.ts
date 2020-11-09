@@ -1,12 +1,10 @@
 import {stream} from 'grapevine';
-import {$asArray, $asMap, $filter, $map, $pipe} from 'gs-tools/export/collect';
-import {StateId} from 'gs-tools/export/state';
+import {$asArray, $asMap, $asSet, $map, $pipe} from 'gs-tools/export/collect';
 import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {ActivePayload} from '../../core/active';
-import {IsContainer} from '../../payload/is-container';
 import {ObjectSpec} from '../object-spec';
 import {$$rootState} from '../root-state';
 
@@ -43,35 +41,45 @@ export const $activeState = stream<ObjectSpec<ActivePayload>|null>(
     ),
 );
 
-type IsContainerSpec = ObjectSpec<IsContainer<any>>;
-export const $containerMap = stream<ReadonlyMap<StateId<IsContainerSpec>, IsContainerSpec>>(
-    'containerIds',
+type ContainerMap = ReadonlyMap<
+    string,
+    ReadonlySet<string>
+>;
+export const $contentMap = stream<ContainerMap>(
+    'contentMap',
     vine => combineLatest([
       $rootState.get(vine),
       $stateService.get(vine),
     ])
         .pipe(
             switchMap(([rootState, stateService]) => {
-              const containerEntries = $pipe(
-                  rootState?.$containers ?? [],
-                  $map(containerId => stateService.get(containerId).pipe(
-                      map(state => [containerId, state] as const),
-                  )),
+              const contentEntries = $pipe(
+                  rootState?.containers ?? [],
+                  $map(containerSpec => {
+                    return stateService.get(containerSpec.payload.$contentSpecs).pipe(
+                        map(contentSpecs => {
+                          if (!contentSpecs) {
+                            return new Set<string>();
+                          }
+
+                          return $pipe(
+                              contentSpecs,
+                              $map(contentSpec => contentSpec.objectId),
+                              $asSet(),
+                          );
+                        }),
+                        map(contentSet => [containerSpec.id, contentSet] as const),
+                    );
+                  }),
                   $asArray(),
               );
 
-              if (containerEntries.length <= 0) {
-                return observableOf(new Map());
+              if (contentEntries.length <= 0) {
+                return observableOf(new Map() as ContainerMap);
               }
 
-              return combineLatest(containerEntries).pipe(
-                  map(entries => $pipe(
-                      entries,
-                      $filter((pair): pair is [StateId<IsContainerSpec>, IsContainerSpec] => {
-                        return !!pair[1];
-                      }),
-                      $asMap(),
-                  )),
+              return combineLatest(contentEntries).pipe(
+                  map(entries => new Map(entries)),
               );
             }),
         ),

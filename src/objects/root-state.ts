@@ -6,9 +6,12 @@ import {IsContainer} from '../payload/is-container';
 
 import {ObjectSpec} from './object-spec';
 
+
 export interface RootState {
   readonly $activeId: StateId<ObjectSpec<ActivePayload>>;
-  readonly $containers: ReadonlyArray<StateId<ObjectSpec<IsContainer<any>>>>;
+  // TODO: Switch to StateId
+  readonly containers: ReadonlyArray<ObjectSpec<IsContainer<any>>>;
+  // TODO: Switch to StateId
   readonly objectSpecs: ReadonlyArray<ObjectSpec<any>>;
 }
 

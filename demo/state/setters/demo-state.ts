@@ -156,6 +156,7 @@ function setToPlay(
 
   const playState: PlayState = {
     $activeId,
+    containers: [...regionObjectSpecs],
     objectSpecs: [
       supplyObjectSpec,
       ...pieceObjectSpecs,

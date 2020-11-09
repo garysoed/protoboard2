@@ -98,6 +98,7 @@ function init(stateService: StateService): StateId<DemoState> {
           $contentSpecs: stateService.add([]),
         },
       }),
+      containers: [],
       objectSpecs: [],
     }),
     pieceEditorState: {
