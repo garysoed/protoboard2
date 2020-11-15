@@ -2,10 +2,12 @@ import {Vine} from 'grapevine';
 import {$asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {Runnable} from 'gs-tools/export/rxjs';
+import {StateId} from 'gs-tools/export/state';
+import {$stateService} from 'mask';
 import {Converter} from 'nabu';
 import {PersonaContext, host, onMutation} from 'persona';
-import {Observable, Subject} from 'rxjs';
-import {map, scan, startWith} from 'rxjs/operators';
+import {Observable, Subject, of as observableOf} from 'rxjs';
+import {map, scan, startWith, withLatestFrom, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../objects/object-spec';
 
@@ -13,7 +15,7 @@ import {ObjectSpec} from '../objects/object-spec';
 export interface ActionContext<P> {
   readonly host: Element;
   readonly personaContext: PersonaContext;
-  readonly objectSpec$: Observable<ObjectSpec<P>|null>;
+  readonly objectId$: Observable<StateId<ObjectSpec<P>>|null>;
 }
 
 export interface TriggerEvent {
@@ -106,6 +108,20 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
             ...this.defaultConfig,
             ...(config || {}),
           };
+        }),
+    );
+  }
+
+  @cache()
+  get objectSpec$(): Observable<ObjectSpec<P>|null> {
+    return this.context.objectId$.pipe(
+        withLatestFrom($stateService.get(this.vine)),
+        switchMap(([objectId, stateService]) => {
+          if (!objectId) {
+            return observableOf(null);
+          }
+
+          return stateService.get(objectId);
         }),
     );
   }

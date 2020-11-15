@@ -1,3 +1,4 @@
+import {StateId} from 'gs-tools/export/state';
 import {NodeWithId, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
@@ -9,5 +10,7 @@ import {ObjectSpec} from './object-spec';
  *
  * @thHidden
  */
-export type ObjectCreateSpec<P> =
-    (state: ObjectSpec<P>, context: PersonaContext) => Observable<NodeWithId<Element>>;
+export type ObjectCreateSpec<P> = (
+    objectId: StateId<ObjectSpec<P>>,
+    context: PersonaContext,
+) => Observable<NodeWithId<Element>|null>;

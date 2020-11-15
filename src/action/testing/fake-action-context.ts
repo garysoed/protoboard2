@@ -1,3 +1,4 @@
+import {StateId} from 'gs-tools/export/state';
 import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
@@ -6,7 +7,7 @@ import {ObjectSpec} from '../../objects/object-spec';
 
 
 type PartialActionContext<P> = Partial<ActionContext<P>> &
-    {readonly personaContext: PersonaContext; objectSpec$: Observable<ObjectSpec<P>|null>};
+    {readonly personaContext: PersonaContext; objectId$: Observable<StateId<ObjectSpec<P>>|null>};
 
 export function createFakeActionContext<P>(context: PartialActionContext<P>): ActionContext<P> {
   return {

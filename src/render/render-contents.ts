@@ -3,12 +3,16 @@ import {filterNonNull} from 'gs-tools/export/rxjs';
 import {$stateService} from 'mask';
 import {NodeWithId, PersonaContext} from 'persona';
 import {MultiOutput} from 'persona/export/internal';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
+import {Logger} from 'santa';
 
 import {Indexed} from '../coordinate/indexed';
 import {$getObjectNode} from '../objects/object-service';
 import {CoordinateTypes, IsContainer} from '../payload/is-container';
+
+
+const LOGGER = new Logger('protoboard2.renderContents');
 
 
 export function renderContents(

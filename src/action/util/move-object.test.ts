@@ -12,16 +12,30 @@ import {moveObject} from './move-object';
 
 test('@protoboard2/action/util/move-object', () => {
   should('move the object correctly', () => {
-    const fromSpec1 = {objectId: 'fromContentId1', coordinate: createIndexed(0)};
-    const movedSpec = {objectId: 'movedId', coordinate: createIndexed(1)};
-    const fromSpec2 = {objectId: 'fromContentId2', coordinate: createIndexed(2)};
-    const toSpec1 = {objectId: 'toContentId1', coordinate: createIndexed(0)};
-    const toSpec2 = {objectId: 'toContentId2', coordinate: createIndexed(1)};
-
     const vine = new Vine('test');
-
     const stateService = new StateService();
     $stateService.set(vine, () => stateService);
+
+    const fromSpec1 = {
+      objectId: stateService.add({id: 'fromContentId1', type: 'test', payload: {}}),
+      coordinate: createIndexed(0),
+    };
+    const movedSpec = {
+      objectId: stateService.add({id: 'movedId', type: 'test', payload: {}}),
+      coordinate: createIndexed(1),
+    };
+    const fromSpec2 = {
+      objectId: stateService.add({id: 'fromContentId2', type: 'test', payload: {}}),
+      coordinate: createIndexed(2),
+    };
+    const toSpec1 = {
+      objectId: stateService.add({id: 'toContentId1', type: 'test', payload: {}}),
+      coordinate: createIndexed(0),
+    };
+    const toSpec2 = {
+      objectId: stateService.add({id: 'toContentId2', type: 'test', payload: {}}),
+      coordinate: createIndexed(1),
+    };
 
     const $fromContentSpecs = stateService.add([fromSpec1, movedSpec, fromSpec2]);
     const $toContentSpecs = stateService.add([toSpec1, toSpec2]);

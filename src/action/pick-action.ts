@@ -4,7 +4,7 @@ import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {$activeState, $contentMap, $getObjectSpec} from '../objects/getters/root-state';
+import {$activeState, $getContainerOf, $getObjectSpec} from '../objects/getters/root-state';
 import {IsContainer} from '../payload/is-container';
 
 import {moveObject} from './util/move-object';
@@ -41,20 +41,15 @@ export class PickAction extends BaseAction<{}, Config> {
   @cache()
   private get handleTrigger$(): Observable<unknown> {
     const fromObjectSpec$ = combineLatest([
-      this.context.objectSpec$,
-      $contentMap.get(this.vine),
+      this.context.objectId$,
+      $getContainerOf.get(this.vine),
     ])
         .pipe(
-            map(([state, contentMap]) => {
-              if (!state) {
+            map(([objectId, getContainerOf]) => {
+              if (!objectId) {
                 return null;
               }
-              const entry = [...contentMap].find(([, contentSet]) => contentSet.has(state.id));
-              if (!entry) {
-                return null;
-              }
-
-              return entry[0];
+              return getContainerOf(objectId);
             }),
             withLatestFrom($getObjectSpec.get(this.vine)),
             map(([fromObjectId, getObjectSpec]) => {
@@ -66,7 +61,7 @@ export class PickAction extends BaseAction<{}, Config> {
         );
 
     const moveFn$ = combineLatest([
-      this.context.objectSpec$,
+      this.objectSpec$,
       $activeState.get(this.vine),
       fromObjectSpec$,
     ])

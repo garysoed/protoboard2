@@ -6,7 +6,12 @@ import {createFakeContext} from 'persona/export/testing';
 import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {$getObjectNode} from './object-service';
+import {ActivePayload} from '../core/active';
+
+import {$createSpecMap, $getObjectNode} from './object-service';
+import {ObjectSpec} from './object-spec';
+import {$$rootState, RootState} from './root-state';
+import {fakeObjectSpec} from './testing/fake-object-spec';
 import {FakeRootStateBuilder} from './testing/fake-object-spec-list-builder';
 
 
@@ -23,13 +28,24 @@ test('@protoboard2/objects/object-service', init => {
 
   test('$getObjectNode', () => {
     should('create a new Node and emit it', () => {
-      const objectId = 'objectId';
+      const testType = 'testType';
+      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
-      const payload = 'payload';
-
-      const builder = new FakeRootStateBuilder({});
-      builder.add({id: objectId, payload}, () => observableOf(node));
-      builder.build(_.stateService, _.personaContext.vine);
+      $createSpecMap.set(_.personaContext.vine, map => new Map([
+        ...map,
+        [testType, () => observableOf(node)],
+      ]));
+      const $root = _.stateService.add<RootState>({
+        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+          payload: {
+            containerType: 'indexed',
+            $contentSpecs: _.stateService.add([]),
+          },
+        })),
+        containerIds: [],
+        objectSpecIds: [objectId],
+      });
+      $$rootState.set(_.personaContext.vine, () => $root);
 
       assert($getObjectNode.get(_.personaContext.vine).pipe(
           switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
@@ -37,16 +53,26 @@ test('@protoboard2/objects/object-service', init => {
     });
 
     should('reuse a previous Node if one already exist', () => {
-      const objectId = 'objectId';
+      const testType = 'testType';
+      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
-      const payload = 'payload';
       const createSpecSpy = createSpy<Observable<NodeWithId<Element>>, []>('createSpec');
       fake(createSpecSpy).always().return(observableOf(node));
-
-      const builder = new FakeRootStateBuilder({});
-      builder.add({id: objectId, payload}, createSpecSpy);
-      builder.build(_.stateService, _.personaContext.vine);
-
+      $createSpecMap.set(_.personaContext.vine, map => new Map([
+        ...map,
+        [testType, createSpecSpy],
+      ]));
+      const $root = _.stateService.add<RootState>({
+        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+          payload: {
+            containerType: 'indexed',
+            $contentSpecs: _.stateService.add([]),
+          },
+        })),
+        containerIds: [],
+        objectSpecIds: [objectId],
+      });
+      $$rootState.set(_.personaContext.vine, () => $root);
 
       assert($getObjectNode.get(_.personaContext.vine).pipe(
           switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),
@@ -61,11 +87,19 @@ test('@protoboard2/objects/object-service', init => {
     });
 
     should('emit null if object corresponding to the key does not exist', () => {
-      const objectId = 'objectId';
-
-      const builder = new FakeRootStateBuilder({});
-      builder.build(_.stateService, _.personaContext.vine);
-
+      const testType = 'testType';
+      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const $root = _.stateService.add<RootState>({
+        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+          payload: {
+            containerType: 'indexed',
+            $contentSpecs: _.stateService.add([]),
+          },
+        })),
+        containerIds: [],
+        objectSpecIds: [objectId],
+      });
+      $$rootState.set(_.personaContext.vine, () => $root);
 
       assert($getObjectNode.get(_.personaContext.vine).pipe(
           switchMap(getObjectNode => getObjectNode(objectId, _.personaContext)),

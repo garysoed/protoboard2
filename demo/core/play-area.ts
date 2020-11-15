@@ -1,12 +1,15 @@
 import {cache} from 'gs-tools/export/data';
+import {StateId} from 'gs-tools/export/state';
 import {$button, _p, Button, LineLayout, ThemedCustomElementCtrl} from 'mask';
 import {element, PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, combineLatest} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
+import {$getObjectSpec} from '../../src/objects/getters/root-state';
+import {ObjectSpec} from '../../src/objects/object-spec';
 import {$render, Render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
-import {$objectSpecs} from '../state/getters/play-state';
+import {$objectSpecIds} from '../state/getters/play-state';
 import {$setStaging} from '../state/setters/demo-state';
 import {GridArea} from '../state/types/region-state';
 
@@ -51,7 +54,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
     this.render($.renderLarge._.objectId, this.getObjectIdAt(GridArea.LARGE));
   }
 
-  private getObjectIdAt(gridArea: GridArea): Observable<string|undefined> {
+  private getObjectIdAt(gridArea: GridArea): Observable<StateId<ObjectSpec<any>>|undefined> {
     return this.objectSpecMap$.pipe(map(specMap => specMap.get(gridArea)));
   }
 
@@ -69,11 +72,16 @@ export class PlayArea extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, string>> {
-    return $objectSpecs.get(this.vine).pipe(
-        map(specs => {
-          const objectSpecMap = new Map<GridArea, string>();
-          for (const spec of specs) {
+  private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, StateId<ObjectSpec<any>>>> {
+    return combineLatest([$objectSpecIds.get(this.vine), $getObjectSpec.get(this.vine)]).pipe(
+        map(([specIds, getObjectSpec]) => {
+          const objectSpecMap = new Map<GridArea, StateId<ObjectSpec<any>>>();
+          for (const specId of specIds) {
+            const spec = getObjectSpec(specId);
+            if (!spec) {
+              continue;
+            }
+
             if (spec.payload.type !== 'region') {
               continue;
             }
@@ -82,7 +90,7 @@ export class PlayArea extends ThemedCustomElementCtrl {
               continue;
             }
 
-            objectSpecMap.set(spec.payload.gridArea, spec.id);
+            objectSpecMap.set(spec.payload.gridArea, specId);
           }
 
           return objectSpecMap;

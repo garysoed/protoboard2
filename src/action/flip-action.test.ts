@@ -33,7 +33,7 @@ test('@protoboard2/action/flip-action', init => {
     const action = new FlipAction(
         createFakeActionContext({
           personaContext,
-          objectSpec$: observableOf(objectSpec),
+          objectId$: observableOf(stateService.add(objectSpec)),
         }),
         {count: 4},
     );

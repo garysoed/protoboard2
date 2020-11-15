@@ -1,18 +1,19 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {ThemedCustomElementCtrl, _p} from 'mask';
-import {attributeIn, element, host, NodeWithId, PersonaContext, single, stringParser} from 'persona';
+import {stateIdParser, ThemedCustomElementCtrl, _p} from 'mask';
+import {attributeIn, element, host, NodeWithId, PersonaContext, single} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {$getObjectNode} from './object-service';
+import {ObjectSpec} from './object-spec';
 import template from './render.html';
 
 
 export const $render = {
   tag: 'pb-render',
   api: {
-    objectId: attributeIn('object-id', stringParser()),
+    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<any>>()),
   },
 };
 

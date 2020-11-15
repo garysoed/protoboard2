@@ -1,14 +1,16 @@
 import {Vine} from 'grapevine';
 import {$asArray, $filter, $pipe} from 'gs-tools/export/collect';
+import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {Observable, combineLatest} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
+import {ObjectSpec} from '../../objects/object-spec';
 import {CoordinateTypes, IsContainer, TypeCoordinateMapping} from '../../payload/is-container';
 
 
 type MoveObjectFn<T extends CoordinateTypes> =
-    (movedObjectId: string, toLocation: TypeCoordinateMapping[T]) => void;
+    (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => void;
 export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>(
     fromContainer: IsContainer<F>,
     toContainer: IsContainer<T>,
@@ -26,12 +28,12 @@ export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>
                     return null;
                   }
 
-                  return (movedObjectId: string, toLocation: TypeCoordinateMapping[T]) => {
+                  return (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => {
                     stateService.set(
                         fromContainer.$contentSpecs,
                         $pipe(
                             fromContentSpecs,
-                            $filter(spec => spec.objectId !== movedObjectId),
+                            $filter(spec => spec.objectId.id !== movedObjectId.id),
                             $asArray(),
                         ),
                     );

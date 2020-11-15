@@ -35,7 +35,7 @@ test('@protoboard2/action/help-action', init => {
     const vine = _v.build('test');
     const context = createFakeActionContext<{}>({
       personaContext: createFakeContext({shadowRoot, vine}),
-      objectSpec$: observableOf(null),
+      objectId$: observableOf(null),
     });
     const testAction = new TestAction(context);
 

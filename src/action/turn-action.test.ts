@@ -1,11 +1,10 @@
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 
-import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
-import {IsMultifaced} from '../payload/is-multifaced';
+import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 
 import {createFakeActionContext} from './testing/fake-action-context';
 import {TurnAction} from './turn-action';
@@ -22,19 +21,16 @@ test('@protoboard2/action/turn-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const builder = new FakeRootStateBuilder({});
     const $faceIndex = stateService.add(2);
-    const objectSpec = builder.add<IsMultifaced>({
+    const objectId = stateService.add(fakeObjectSpec({
       id: 'TARGET_ID',
       payload: {$currentFaceIndex: $faceIndex},
-    });
-
-    builder.build(stateService, personaContext.vine);
+    }));
 
     const action = new TurnAction(
         createFakeActionContext({
           personaContext,
-          objectSpec$: observableOf(objectSpec),
+          objectId$: observableOf(objectId),
         }),
         {count: 2},
     );

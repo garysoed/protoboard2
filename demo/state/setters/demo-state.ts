@@ -1,19 +1,20 @@
 import {Vine, stream} from 'grapevine';
-import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
-import {StateService} from 'gs-tools/export/state';
+import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {Indexed, createIndexed} from '../../../src/coordinate/indexed';
 import {ACTIVE_TYPE, ActivePayload} from '../../../src/core/active';
+import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {ObjectSpec} from '../../../src/objects/object-spec';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {SUPPLY_ID} from '../../core/supply';
 import {$demoState} from '../getters/demo-state';
-import {$objectSpecs} from '../getters/play-state';
+import {$objectSpecIds} from '../getters/play-state';
 import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';
 import {DemoState} from '../types/demo-state';
 import {PiecePayload} from '../types/piece-payload';
@@ -28,16 +29,31 @@ export const $setStaging = stream(
     vine => {
       return combineLatest([
         $demoState.get(vine),
-        $objectSpecs.get(vine),
+        $objectSpecIds.get(vine),
+        $getObjectSpec.get(vine),
         $pieceSpecs.get(vine),
         $regionSpecs.get(vine),
         $stateService.get(vine),
       ])
           .pipe(
-              map(([demoState, objectSpecs, pieceSpecs, regionSpecs, stateService]) => {
+              map(([
+                demoState,
+                objectSpecIds,
+                getObjectSpec,
+                pieceSpecs,
+                regionSpecs,
+                stateService,
+              ]) => {
                 if (!demoState) {
                   return null;
                 }
+
+                const objectSpecs = $pipe(
+                    objectSpecIds,
+                    $map(id => getObjectSpec(id)),
+                    $filterNonNull(),
+                    $asArray(),
+                );
 
                 return (isStaging: boolean) => {
                   if (isStaging) {
@@ -98,25 +114,6 @@ function setToPlay(
   //   });
   // }
 
-  // Add the supply specs.
-  const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
-      $pipe(
-          pieceSpecs,
-          $map(({id}) => ({objectId: id, coordinate: createIndexed(0)})),
-          $asArray(),
-      ),
-  );
-  const supplyObjectSpec: ObjectSpec<RegionPayload> = {
-    id: SUPPLY_ID,
-    type: SUPPLY_TYPE,
-    payload: {
-      type: 'region',
-      containerType: 'indexed',
-      $contentSpecs: $supplyContentSpecs,
-      gridArea: null,
-    },
-  };
-
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
   const $activeId = stateService.add<ObjectSpec<ActivePayload>>({
@@ -129,7 +126,7 @@ function setToPlay(
   });
 
   // User defined object specs.
-  const pieceObjectSpecs: Array<ObjectSpec<PiecePayload>> = [];
+  const pieceObjectSpecIds: Array<StateId<ObjectSpec<PiecePayload>>> = [];
   for (const spec of pieceSpecs) {
     const $currentFaceIndex = stateService.add<number>(0);
     const $rotationDeg = stateService.add<number>(0);
@@ -139,10 +136,11 @@ function setToPlay(
       $currentFaceIndex,
       $rotationDeg,
     };
-    pieceObjectSpecs.push({...spec, type: PIECE_TYPE, payload});
+
+    pieceObjectSpecIds.push(stateService.add({...spec, id: 'PIECE', type: PIECE_TYPE, payload}));
   }
 
-  const regionObjectSpecs: Array<ObjectSpec<RegionPayload>> = [];
+  const regionObjectSpecIds: Array<StateId<ObjectSpec<RegionPayload>>> = [];
   for (const spec of regionSpecs) {
     const payload: RegionPayload = {
       ...spec,
@@ -151,16 +149,35 @@ function setToPlay(
       $contentSpecs: stateService.add([]),
       gridArea: spec.gridArea,
     };
-    regionObjectSpecs.push({...spec, type: REGION_TYPE, payload});
+    regionObjectSpecIds.push(stateService.add({...spec, id: 'REGION', type: REGION_TYPE, payload}));
   }
+
+  // Add the supply specs.
+  const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
+      $pipe(
+          pieceObjectSpecIds,
+          $map(objectId => ({objectId, coordinate: createIndexed(0)})),
+          $asArray(),
+      ),
+  );
+  const supplyObjectId = stateService.add<ObjectSpec<RegionPayload>>({
+    id: SUPPLY_ID,
+    type: SUPPLY_TYPE,
+    payload: {
+      type: 'region',
+      containerType: 'indexed',
+      $contentSpecs: $supplyContentSpecs,
+      gridArea: null,
+    },
+  });
 
   const playState: PlayState = {
     $activeId,
-    containers: [...regionObjectSpecs],
-    objectSpecs: [
-      supplyObjectSpec,
-      ...pieceObjectSpecs,
-      ...regionObjectSpecs,
+    containerIds: [...regionObjectSpecIds],
+    objectSpecIds: [
+      supplyObjectId,
+      ...pieceObjectSpecIds,
+      ...regionObjectSpecIds,
     ],
   };
 

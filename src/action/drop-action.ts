@@ -37,7 +37,7 @@ export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
 
   private get handleTrigger$(): Observable<unknown> {
     const moveObjectFn$ = combineLatest([
-      this.context.objectSpec$,
+      this.objectSpec$,
       $activeState.get(this.vine),
     ])
         .pipe(

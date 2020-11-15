@@ -37,7 +37,7 @@ export class RollAction extends BaseAction<IsMultifaced, Config> {
   private get handleTrigger$(): Observable<unknown> {
     return this.onTrigger$.pipe(
         withLatestFrom(
-            this.context.objectSpec$,
+            this.objectSpec$,
             this.faceCount$,
             $stateService.get(this.vine),
             $random.get(this.vine),

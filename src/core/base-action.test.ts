@@ -1,7 +1,7 @@
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {integerParser} from 'persona';
-import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
-import {Observable, ReplaySubject, of as observableOf} from 'rxjs';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
+import {Observable, of as observableOf, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createFakeActionContext} from '../action/testing/fake-action-context';
@@ -51,7 +51,7 @@ test('@protoboard2/core/base-action', init => {
 
     const action = new TestAction(createFakeActionContext({
       personaContext,
-      objectSpec$: observableOf(null),
+      objectId$: observableOf(null),
     }));
     const onTrigger$ = createSpySubject(action.onTriggerOut$);
     run(action.run());

@@ -4,63 +4,90 @@ import {$stateService, _p} from 'mask';
 import {setId} from 'persona';
 import {PersonaTesterFactory} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
+import {WebConsoleDestination, ON_LOG_$} from 'santa';
 
-import {Indexed, createIndexed} from '../coordinate/indexed';
-import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
-import {ContentSpec, IsContainer} from '../payload/is-container';
+import {createIndexed, Indexed} from '../coordinate/indexed';
+import {$createSpecMap} from '../objects/object-service';
+import {ObjectSpec} from '../objects/object-spec';
+import {$$rootState, RootState} from '../objects/root-state';
+import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {ContentSpec} from '../payload/is-container';
 
-
-import {$, $active, Active} from './active';
+import {$, $active, Active, ActivePayload} from './active';
+const dest = new WebConsoleDestination({installTrigger: true});
+ON_LOG_$.subscribe(event => dest.log(event));
 
 
 test('@protoboard2/core/active', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
-    const ACTIVE_ID = 'ACTIVE_ID';
     const tester = factory.build([Active], document);
-    const el = tester.createElement($active.tag);
-    el.setAttribute($.host._.objectId, ACTIVE_ID);
-
     const stateService = new StateService();
     $stateService.set(tester.vine, () => stateService);
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-    const builder = new FakeRootStateBuilder({});
-    builder.add<IsContainer<'indexed'>>({
-      id: ACTIVE_ID,
-      payload: {containerType: 'indexed', $contentSpecs},
-    });
-    const {$rootId, rootState: root} = builder.build(stateService, tester.vine);
+
+    const $activeSpec = stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+      payload: {
+        containerType: 'indexed' as const,
+        $contentSpecs,
+      },
+    }));
+    const root = {
+      $activeId: $activeSpec,
+      containerIds: [],
+      objectSpecIds: [$activeSpec],
+    };
+    const $rootState = stateService.add<RootState>(root);
+    $$rootState.set(tester.vine, () => $rootState);
 
     // Need to add to body so the dimensions work.
+    const el = tester.createElement($active.tag);
+    el.setAttribute($.host._.objectId, $activeSpec);
     document.body.appendChild(el.element);
 
-    return {$contentIds: $contentSpecs, $rootId, el, root, stateService, tester};
+    return {$contentSpecs, $rootState, el, root, stateService, tester};
   });
 
   test('itemCount$', _, () => {
     should('render the 0 item count correctly', () => {
-      _.stateService.set(_.$contentIds, []);
+      _.stateService.set(_.$contentSpecs, []);
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 1 item count correctly', () => {
-      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
+      const objectId = _.stateService.add(fakeObjectSpec({payload: {}}));
+      _.stateService.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]);
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 3 items count correctly', () => {
       _.stateService.set(
-          _.$contentIds,
+          _.$contentSpecs,
           [
-            {objectId: 'id1', coordinate: createIndexed(0)},
-            {objectId: 'id2', coordinate: createIndexed(1)},
-            {objectId: 'id3', coordinate: createIndexed(2)},
-            {objectId: 'id4', coordinate: createIndexed(3)},
-            {objectId: 'id5', coordinate: createIndexed(4)},
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(0),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(1),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(2),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(3),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(4),
+            },
           ],
       );
 
@@ -70,18 +97,26 @@ test('@protoboard2/core/active', init => {
 
   test('left$', () => {
     should('render left correctly', () => {
+      const testType = 'testType';
       const left = 123;
       const width = 456;
       const content = setId(document.createElement('div'), {});
       content.style.display = 'block';
       content.style.width = `${width}px`;
+      $createSpecMap.set(_.tester.vine, map => new Map([
+        ...map,
+        [testType, () => observableOf(content)],
+      ]));
 
-      const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
-      const builder = new FakeRootStateBuilder(_.root);
-      builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
-      builder.build(_.stateService, _.tester.vine);
-
-      _.stateService.set(_.$contentIds, [contentSpec]);
+      // TODO: RootStateBuilder
+      const $objectSpec = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const contentSpec = {
+        objectId: $objectSpec,
+        coordinate: createIndexed(0),
+      };
+      const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
+      _.stateService.set(_.$rootState, root);
+      _.stateService.set(_.$contentSpecs, [contentSpec]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
@@ -91,25 +126,43 @@ test('@protoboard2/core/active', init => {
 
   test('multipleItems$', _, () => {
     should('remove the multiple classname if there are 0 items', () => {
-      _.stateService.set(_.$contentIds, []);
+      _.stateService.set(_.$contentSpecs, []);
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should('remove the multiple classname if there is 1 item', () => {
-      _.stateService.set(_.$contentIds, [{objectId: 'id', coordinate: createIndexed(0)}]);
+      _.stateService.set(
+          _.$contentSpecs,
+          [{
+            objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+            coordinate: createIndexed(0),
+          },
+          ]);
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should('add the multiple classname if there are 3 items', () => {
       _.stateService.set(
-          _.$contentIds,
+          _.$contentSpecs,
           [
-            {objectId: 'id1', coordinate: createIndexed(0)},
-            {objectId: 'id2', coordinate: createIndexed(1)},
-            {objectId: 'id3', coordinate: createIndexed(2)},
-            {objectId: 'id4', coordinate: createIndexed(3)},
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(0),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(1),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(2),
+            },
+            {
+              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              coordinate: createIndexed(3),
+            },
           ],
       );
 
@@ -123,16 +176,24 @@ test('@protoboard2/core/active', init => {
     should('render top correctly', () => {
       const top = 123;
       const height = 456;
+      const testType = 'testType';
       const content = setId(document.createElement('div'), {});
       content.style.display = 'block';
       content.style.height = `${height}px`;
+      $createSpecMap.set(_.tester.vine, map => new Map([
+        ...map,
+        [testType, () => observableOf(content)],
+      ]));
 
-      const contentSpec = {objectId: 'contentId', coordinate: createIndexed(0)};
-      const builder = new FakeRootStateBuilder(_.root);
-      builder.add({id: contentSpec.objectId, payload: {}}, () => observableOf(content));
-      builder.build(_.stateService, _.tester.vine);
-
-      _.stateService.set(_.$contentIds, [contentSpec]);
+      // TODO: RootStateBuilder
+      const $objectSpec = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const contentSpec = {
+        objectId: $objectSpec,
+        coordinate: createIndexed(0),
+      };
+      const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
+      _.stateService.set(_.$rootState, root);
+      _.stateService.set(_.$contentSpecs, [contentSpec]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
@@ -143,6 +204,8 @@ test('@protoboard2/core/active', init => {
   test('computeAllRects', () => {
     should('use the largest width and height', () => {
       const size = 123;
+      const testType1 = 'testType1';
+      const testType2 = 'testType2';
 
       const content1 = setId(document.createElement('div'), {});
       content1.style.display = 'block';
@@ -154,15 +217,30 @@ test('@protoboard2/core/active', init => {
       content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
-      const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
-      const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
+      $createSpecMap.set(_.tester.vine, map => new Map([
+        ...map,
+        [testType1, () => observableOf(content1)],
+        [testType2, () => observableOf(content2)],
+      ]));
 
-      const builder = new FakeRootStateBuilder(_.root);
-      builder.add({id: spec1.objectId, payload: {}}, () => observableOf(content1));
-      builder.add({id: spec2.objectId, payload: {}}, () => observableOf(content2));
-      builder.build(_.stateService, _.tester.vine);
+      const $objectSpec1 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType1}));
+      const spec1 = {
+        objectId: $objectSpec1,
+        coordinate: createIndexed(0),
+      };
+      const $objectSpec2 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType2}));
+      const spec2 = {
+        objectId: $objectSpec2,
+        coordinate: createIndexed(1),
+      };
 
-      _.stateService.set(_.$contentIds, [spec1, spec2]);
+      // TODO: RootStateBuilder
+      const root = {
+        ..._.root,
+        objectSpecIds: [..._.root.objectSpecIds, $objectSpec1, $objectSpec2],
+      };
+      _.stateService.set(_.$rootState, root);
+      _.stateService.set(_.$contentSpecs, [spec1, spec2]);
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 

@@ -30,7 +30,7 @@ test('@protoboard2/action/help-overlay', init => {
         () => 0,
         createFakeActionContext({
           personaContext,
-          objectSpec$: observableOf(null),
+          objectId$: observableOf(null),
         }),
         {},
     );

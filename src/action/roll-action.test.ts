@@ -2,11 +2,10 @@ import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 
-import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
-import {IsMultifaced} from '../payload/is-multifaced';
+import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 
 import {RollAction} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -27,18 +26,15 @@ test('@protoboard2/action/roll-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const builder = new FakeRootStateBuilder({});
     const $faceIndex = stateService.add(2);
-    const objectSpec = builder.add<IsMultifaced>({
-      id: 'TARGET_ID',
+    const objectId = stateService.add(fakeObjectSpec({
       payload: {$currentFaceIndex: $faceIndex},
-    });
-    builder.build(stateService, personaContext.vine);
+    }));
 
     const action = new RollAction(
         createFakeActionContext({
           personaContext,
-          objectSpec$: observableOf(objectSpec),
+          objectId$: observableOf(objectId),
         }),
         {count: 3},
     );

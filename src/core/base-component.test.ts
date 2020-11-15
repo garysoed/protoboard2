@@ -1,11 +1,15 @@
 import {assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {PersonaContext, element} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {Observable, ReplaySubject} from 'rxjs';
+import {map} from 'rxjs/operators';
+
+import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
-import {ActionSpec, BaseComponent} from './base-component';
+import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
 
@@ -128,16 +132,12 @@ test('@protoboard2/core/base-component', init => {
 
   test('objectId$', () => {
     should('emit the object ID if exists', () => {
-      const objectId = 'objectId';
-      _.el.setAttribute('object-id', objectId);
+      const stateService = new StateService();
+      const objectId = stateService.add(fakeObjectSpec({payload: {}}));
+      _.el.setAttribute('object-id', $baseComponent.api.objectId.createAttributePair(objectId)[1]);
 
       const objectId$ = createSpySubject(_.component.objectId$);
-      assert(objectId$).to.emitSequence([objectId]);
-    });
-
-    should('emit nothing if the object ID does not exist', () => {
-      const objectId$ = createSpySubject(_.component.objectId$);
-      assert(objectId$).to.emitSequence([]);
+      assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectId.id]);
     });
   });
 

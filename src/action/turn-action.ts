@@ -45,7 +45,7 @@ export class TurnAction extends BaseAction<IsMultifaced, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const stateService$ = $stateService.get(this.vine);
     return this.onTrigger$.pipe(
-        withLatestFrom(this.context.objectSpec$, this.faceCount$, stateService$),
+        withLatestFrom(this.objectSpec$, this.faceCount$, stateService$),
         switchMap(([, objectSpec, faceCount, stateService]) => {
           if (!objectSpec) {
             return observableOf(null);

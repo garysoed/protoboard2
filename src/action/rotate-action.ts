@@ -43,7 +43,7 @@ export class RotateAction extends BaseAction<IsRotatable, Config> {
   private get handleTrigger$(): Observable<unknown> {
     return this.onTrigger$.pipe(
         withLatestFrom(
-            this.context.objectSpec$,
+            this.objectSpec$,
             $stateService.get(this.vine),
         ),
         switchMap(([, objectSpec, stateService]) => {

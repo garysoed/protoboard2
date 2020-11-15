@@ -1,5 +1,7 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
+import {filterNonNull} from 'gs-tools/export/rxjs';
+import {StateId} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {$stateService, _p} from 'mask';
 import {NodeWithId, PersonaContext, classToggle, element, host, multi, renderCustomElement, style, textContent} from 'persona';
@@ -7,6 +9,7 @@ import {Observable, fromEvent, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
+import {$rootState} from '../objects/getters/root-state';
 import {ObjectSpec} from '../objects/object-spec';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
@@ -85,15 +88,15 @@ export class Active extends BaseComponent<ActivePayload> {
   }
 
   @cache()
-  private get contentIds$(): Observable<readonly string[]> {
+  private get contentIds$(): Observable<ReadonlyArray<StateId<ObjectSpec<any>>>> {
     return this.objectSpec$.pipe(
         withLatestFrom($stateService.get(this.vine)),
-        switchMap(([state, stateService]) => {
-          if (!state) {
+        switchMap(([spec, stateService]) => {
+          if (!spec) {
             return observableOf(null);
           }
 
-          return stateService.get(state.payload.$contentSpecs);
+          return stateService.get(spec.payload.$contentSpecs);
         }),
         map(ids => $pipe(
             ids ?? [],
@@ -113,11 +116,6 @@ export class Active extends BaseComponent<ActivePayload> {
   @cache()
   private get left$(): Observable<string> {
     return this.mouseEvent$.pipe(map(({event, rect}) => `${event.x - rect.width / 2}px`));
-  }
-
-  @cache()
-  get objectId$(): Observable<string> {
-    return observableOf('ACTIVE_ID');
   }
 
   @cache()
@@ -168,12 +166,12 @@ function computeRect(element: ElementWithRect): Rect {
 }
 
 export function renderActive(
-    spec: ObjectSpec<ActivePayload>,
+    objectId: StateId<ObjectSpec<ActivePayload>>,
     context: PersonaContext,
 ): Observable<NodeWithId<Element>> {
   return renderCustomElement(
       $active,
-      {inputs: {objectId: observableOf(spec.id)}},
+      {inputs: {objectId: observableOf(objectId)}},
       {},
       context,
   );

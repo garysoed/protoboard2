@@ -1,17 +1,18 @@
 import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {ThemedCustomElementCtrl, _p} from 'mask';
-import {PersonaContext, attributeIn, host, onDom, stringParser} from 'persona';
-import {EMPTY, Observable, combineLatest, fromEvent, merge, of as observableOf} from 'rxjs';
+import {StateId} from 'gs-tools/export/state';
+import {stateIdParser, ThemedCustomElementCtrl, _p} from 'mask';
+import {attributeIn, host, onDom, PersonaContext} from 'persona';
+import {combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
 import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {HelpAction} from '../action/help-action';
-import {$objectSpecMap} from '../objects/getters/root-state';
+import {$getObjectSpec} from '../objects/getters/root-state';
 import {ObjectSpec} from '../objects/object-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
-import {DetailedTriggerSpec, TriggerSpec, TriggerType, UnreservedTriggerSpec, isKeyTrigger} from './trigger-spec';
+import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -28,7 +29,7 @@ export interface ActionSpec<P> {
 
 export const $baseComponent = {
   api: {
-    objectId: attributeIn('object-id', stringParser()),
+    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<any>>()),
   },
 };
 
@@ -52,7 +53,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
     const actionContext = {
       host: host({}).getSelectable(this.context),
       personaContext: this.context,
-      objectSpec$: this.objectSpec$,
+      objectId$: this.declareInput($.host._.objectId).pipe(map(id => id ?? null)),
     };
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = $pipe(
         this.triggerActions,
@@ -75,7 +76,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
    */
   @cache()
-  get objectId$(): Observable<string> {
+  get objectId$(): Observable<StateId<ObjectSpec<any>>> {
     return $.host._.objectId.getValue(this.context).pipe(
         switchMap(objectId => {
           if (!objectId) {
@@ -97,11 +98,11 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
   get objectSpec$(): Observable<ObjectSpec<P>|null> {
     return combineLatest([
       this.objectId$,
-      $objectSpecMap.get(this.context.vine),
+      $getObjectSpec.get(this.context.vine),
     ])
         .pipe(
-            map(([objectId, objectSpecMap]) => {
-              return (objectSpecMap.get(objectId) || null) as ObjectSpec<P>|null;
+            map(([objectId, getObjectSpec]) => {
+              return (getObjectSpec(objectId) || null) as ObjectSpec<P>|null;
             }),
         );
   }

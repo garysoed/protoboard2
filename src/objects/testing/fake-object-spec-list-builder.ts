@@ -66,8 +66,8 @@ export class FakeRootStateBuilder {
           $contentSpecs: stateService.add([]),
         },
       }),
-      containers: [...this.containerSpecs],
-      objectSpecs: [...this.specs],
+      containerIds: [...this.containerSpecs].map(spec => stateService.add(spec)),
+      objectSpecIds: [...this.specs].map(spec => stateService.add(spec)),
     };
     const $rootId = stateService.add<RootState>(rootState);
     $$rootState.set(vine, () => $rootId);

@@ -6,8 +6,12 @@ import {host, multi, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject, of as observableOf} from 'rxjs';
 
-import {Indexed, createIndexed} from '../coordinate/indexed';
-import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
+import {createIndexed, Indexed} from '../coordinate/indexed';
+import {ActivePayload} from '../core/active';
+import {$createSpecMap} from '../objects/object-service';
+import {ObjectSpec} from '../objects/object-spec';
+import {$$rootState, RootState} from '../objects/root-state';
+import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 
 import {renderContents} from './render-contents';
@@ -35,19 +39,39 @@ test('@protoboard2/render/render-contents', init => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      const spec1 = {objectId: 'id1', coordinate: createIndexed(0)};
-      const spec2 = {objectId: 'id2', coordinate: createIndexed(1)};
-      const spec3 = {objectId: 'id3', coordinate: createIndexed(2)};
+      const testType1 = 'testType1';
+      const $object1 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType1}));
+      const spec1 = {objectId: $object1, coordinate: createIndexed(0)};
+
+      const testType2 = 'testType2';
+      const $object2 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType2}));
+      const spec2 = {objectId: $object2, coordinate: createIndexed(1)};
+
+      const testType3 = 'testType3';
+      const $object3 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType3}));
+      const spec3 = {objectId: $object3, coordinate: createIndexed(2)};
 
       const el1 = setId(document.createElement('div1'), {});
       const el2 = setId(document.createElement('div2'), {});
       const el3 = setId(document.createElement('div3'), {});
+      $createSpecMap.set(_.context.vine, map => new Map([
+        ...map,
+        [testType1, () => observableOf(el1)],
+        [testType2, () => observableOf(el2)],
+        [testType3, () => observableOf(el3)],
+      ]));
 
-      const builder = new FakeRootStateBuilder({});
-      builder.add({id: spec1.objectId, payload: {}}, () => observableOf(el1));
-      builder.add({id: spec2.objectId, payload: {}}, () => observableOf(el2));
-      builder.add({id: spec3.objectId, payload: {}}, () => observableOf(el3));
-      builder.build(_.stateService, _.context.vine);
+      const $root = _.stateService.add<RootState>({
+        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+          payload: {
+            containerType: 'indexed',
+            $contentSpecs: _.stateService.add([]),
+          },
+        })),
+        containerIds: [],
+        objectSpecIds: [$object1, $object2, $object3],
+      });
+      $$rootState.set(_.context.vine, () => $root);
 
       const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
       _.isContainer$.next({containerType: 'indexed', $contentSpecs});

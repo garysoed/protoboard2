@@ -1,3 +1,5 @@
+import {StateId} from 'gs-tools/export/state';
+
 import {ObjectSpec} from '../../../src/objects/object-spec';
 import {RootState} from '../../../src/objects/root-state';
 
@@ -6,5 +8,5 @@ import {RegionPayload} from './region-payload';
 
 
 export interface PlayState extends RootState {
-  readonly objectSpecs: ReadonlyArray<ObjectSpec<PiecePayload|RegionPayload>>;
+  readonly objectSpecIds: ReadonlyArray<StateId<ObjectSpec<PiecePayload|RegionPayload>>>;
 }

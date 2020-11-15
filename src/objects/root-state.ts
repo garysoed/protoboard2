@@ -8,11 +8,10 @@ import {ObjectSpec} from './object-spec';
 
 
 export interface RootState {
+  // TODO: Rename to $activeSpec
   readonly $activeId: StateId<ObjectSpec<ActivePayload>>;
-  // TODO: Switch to StateId
-  readonly containers: ReadonlyArray<ObjectSpec<IsContainer<any>>>;
-  // TODO: Switch to StateId
-  readonly objectSpecs: ReadonlyArray<ObjectSpec<any>>;
+  readonly containerIds: ReadonlyArray<StateId<ObjectSpec<IsContainer<any>>>>;
+  readonly objectSpecIds: ReadonlyArray<StateId<ObjectSpec<any>>>;
 }
 
 export const $$rootState = source<StateId<RootState>|null>(
