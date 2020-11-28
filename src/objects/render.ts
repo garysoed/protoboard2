@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {stateIdParser, ThemedCustomElementCtrl, _p} from 'mask';
+import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, element, host, NodeWithId, PersonaContext, single} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
@@ -28,17 +28,21 @@ const $ = {
   ...$render,
   template,
 })
-export class Render extends ThemedCustomElementCtrl {
+export class Render extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
-
-    this.render($.root._.content, this.object$);
+    super(context, $);
   }
 
   @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.root.content(this.object$),
+    ];
+  }
+  @cache()
   private get object$(): Observable<NodeWithId<Node>|null> {
     return combineLatest([
-      this.declareInput($.host._.objectId),
+      this.inputs.host.objectId,
       $getObjectNode.get(this.vine),
     ])
         .pipe(

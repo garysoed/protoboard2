@@ -1,15 +1,13 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {filterNonNull} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {$stateService, _p} from 'mask';
-import {NodeWithId, PersonaContext, classToggle, element, host, multi, renderCustomElement, style, textContent} from 'persona';
-import {Observable, fromEvent, of as observableOf} from 'rxjs';
+import {classToggle, element, host, multi, NodeWithId, PersonaContext, renderCustomElement, style, textContent} from 'persona';
+import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {$rootState} from '../objects/getters/root-state';
 import {ObjectSpec} from '../objects/object-spec';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
@@ -66,25 +64,21 @@ export type ActivePayload = IsContainer<'indexed'>
   ...$active,
   template,
 })
-export class Active extends BaseComponent<ActivePayload> {
-  private readonly mouseEvent$ = fromEvent<MouseEvent>(window, 'mousemove')
-      .pipe(
-          throttleTime(10),
-          map(event => ({
-            event,
-            rect: computeAllRects($.root.getSelectable(this.context)),
-          })),
-          share(),
-      );
-
+export class Active extends BaseComponent<ActivePayload, typeof $> {
   constructor(context: PersonaContext) {
-    super([], context);
+    super([], context, $);
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
-    this.render($.count._.text, this.itemCount$);
-    this.render($.root._.classMultiple, this.multipleItems$);
-    this.render($.root._.left, this.left$);
-    this.render($.root._.top, this.top$);
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.count.text(this.itemCount$),
+      this.renderers.root.classMultiple(this.multipleItems$),
+      this.renderers.root.left(this.left$),
+      this.renderers.root.top(this.top$),
+    ];
   }
 
   @cache()
@@ -116,6 +110,19 @@ export class Active extends BaseComponent<ActivePayload> {
   @cache()
   private get left$(): Observable<string> {
     return this.mouseEvent$.pipe(map(({event, rect}) => `${event.x - rect.width / 2}px`));
+  }
+
+  @cache()
+  private get mouseEvent$(): Observable<{readonly event: MouseEvent, readonly rect: Rect}> {
+    return fromEvent<MouseEvent>(window, 'mousemove')
+        .pipe(
+            throttleTime(10),
+            map(event => ({
+              event,
+              rect: computeAllRects($.root.getSelectable(this.context)),
+            })),
+            share(),
+        );
   }
 
   @cache()

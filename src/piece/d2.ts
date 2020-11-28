@@ -1,6 +1,8 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {PersonaContext, attributeOut, element, host, slotted, stringParser} from 'persona';
+import {Observable} from 'rxjs';
 
 import {FlipAction} from '../action/flip-action';
 import {PickAction} from '../action/pick-action';
@@ -56,7 +58,7 @@ export interface D2Payload extends IsMultifaced, IsRotatable {
   ...$d2,
   template,
 })
-export class D2 extends BaseComponent<D2Payload> {
+export class D2 extends BaseComponent<D2Payload, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -79,10 +81,16 @@ export class D2 extends BaseComponent<D2Payload> {
           {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
         ],
         context,
+        $,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(
-        renderRotatable(this.objectPayload$, this.declareInput($.slot._.slotted), context),
+        renderRotatable(this.objectPayload$, this.inputs.slot.slotted, context),
     );
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }

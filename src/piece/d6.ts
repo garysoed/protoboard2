@@ -1,6 +1,8 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {PersonaContext, attributeOut, element, host, slotted, stringParser, style} from 'persona';
+import {Observable} from 'rxjs';
 
 import {FlipAction} from '../action/flip-action';
 import {RollAction} from '../action/roll-action';
@@ -54,7 +56,7 @@ export interface D6Payload extends IsMultifaced, IsRotatable {
   ...$d6,
   template,
 })
-export class D6 extends BaseComponent<D6Payload> {
+export class D6 extends BaseComponent<D6Payload, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -76,10 +78,16 @@ export class D6 extends BaseComponent<D6Payload> {
           },
         ],
         context,
+        $,
     );
     this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
     this.addSetup(
-        renderRotatable(this.objectPayload$, this.declareInput($.face._.slotted), context),
+        renderRotatable(this.objectPayload$, this.inputs.face.slotted, context),
     );
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }

@@ -1,6 +1,8 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {PersonaContext, element, multi} from 'persona';
+import {PersonaContext, element, multi, host} from 'persona';
+import {Observable} from 'rxjs';
 import {Logger} from 'santa';
 
 import {DropAction} from '../action/drop-action';
@@ -23,6 +25,7 @@ export const $deck = {
 };
 
 export const $ = {
+  host: host($deck.api),
   root: element('root', instanceofType(HTMLDivElement), {
     contents: multi('#contents'),
   }),
@@ -34,7 +37,7 @@ export type DeckPayload = IsContainer<'indexed'>;
   ...$deck,
   template,
 })
-export class Deck extends BaseComponent<DeckPayload> {
+export class Deck extends BaseComponent<DeckPayload, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -42,8 +45,14 @@ export class Deck extends BaseComponent<DeckPayload> {
           {trigger: TriggerType.S, provider: context => new ShuffleAction(context)},
         ],
         context,
+        $,
     );
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.contents, this.context));
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }

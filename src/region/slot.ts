@@ -1,6 +1,8 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {PersonaContext, element, host, multi} from 'persona';
+import {Observable} from 'rxjs';
 
 import {DropAction} from '../action/drop-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
@@ -33,15 +35,21 @@ export type SlotPayload = IsContainer<'indexed'>;
   ...$slot,
   template,
 })
-export class Slot extends BaseComponent<SlotPayload> {
+export class Slot extends BaseComponent<SlotPayload, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
           {trigger: TriggerType.D, provider: context => new DropAction(() => 0, context, {})},
         ],
         context,
+        $,
     );
 
     this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }

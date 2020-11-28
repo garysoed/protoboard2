@@ -1,15 +1,16 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$keyboard, Keyboard, SpecialKeys, ThemedCustomElementCtrl, _p} from 'mask';
-import {NodeWithId, PersonaContext, classToggle, element, multi, onDom, renderCustomElement, renderElement} from 'persona';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {$keyboard, BaseThemedCtrl, Keyboard, SpecialKeys, _p} from 'mask';
+import {classToggle, element, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, renderElement} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
 import template from './help-overlay.html';
 import {$helpService} from './help-service';
+
 
 export const $helpOverlay = {
   tag: 'pb-help-overlay',
@@ -32,35 +33,38 @@ export const $ = {
   template,
   dependencies: [Keyboard],
 })
-export class HelpOverlay extends ThemedCustomElementCtrl {
-  private readonly helpService$ = $helpService.get(this.vine);
-  private readonly onRootClick$ = this.declareInput($.root._.click);
-
+export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
-    this.render($.root._.isVisibleClass, this.renderIsVisible());
-    this.render($.content._.rows, this.tableRows$);
+    super(context, $);
     this.addSetup(this.setupHandleClick());
   }
 
-  private renderIsVisible(): Observable<boolean> {
-    return this.helpService$.pipe(
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.root.isVisibleClass(this.isVisible$),
+      this.renderers.content.rows(this.tableRows$),
+    ];
+  }
+
+  private get isVisible$(): Observable<boolean> {
+    return $helpService.get(this.vine).pipe(
         switchMap(service => service.actions$),
         map(actions => actions.length > 0),
     );
   }
 
   private setupHandleClick(): Observable<unknown> {
-    return this.onRootClick$
+    return this.inputs.root.click
         .pipe(
-            withLatestFrom(this.helpService$),
+            withLatestFrom($helpService.get(this.vine)),
             tap(([, service]) => service.hide()),
         );
   }
 
   @cache()
   private get tableRows$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
-    return this.helpService$.pipe(
+    return $helpService.get(this.vine).pipe(
         switchMap(service => service.actions$),
         switchMap(actions => {
           const rows$list = $pipe(

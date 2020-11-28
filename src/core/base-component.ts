@@ -1,8 +1,8 @@
 import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {stateIdParser, ThemedCustomElementCtrl, _p} from 'mask';
-import {attributeIn, host, onDom, PersonaContext} from 'persona';
+import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
+import {attributeIn, host, InputsOf, onDom, PersonaContext} from 'persona';
 import {combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
 import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -38,14 +38,20 @@ const $ = {
 };
 
 @_p.baseCustomElement({})
-export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
+export abstract class BaseComponent<P, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
       private readonly triggerActions: ReadonlyArray<ActionSpec<P>>,
       context: PersonaContext,
+      spec: S,
   ) {
-    super(context);
+    super(context, spec);
 
     this.setupActions();
+  }
+
+  @cache()
+  private get baseInputs(): InputsOf<typeof $> {
+    return this.inputs;
   }
 
   @cache()
@@ -53,7 +59,7 @@ export abstract class BaseComponent<P> extends ThemedCustomElementCtrl {
     const actionContext = {
       host: host({}).getSelectable(this.context),
       personaContext: this.context,
-      objectId$: this.declareInput($.host._.objectId).pipe(map(id => id ?? null)),
+      objectId$: this.baseInputs.host.objectId.pipe(map(id => id ?? null)),
     };
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = $pipe(
         this.triggerActions,

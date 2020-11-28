@@ -1,6 +1,7 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {ThemedCustomElementCtrl, _p} from 'mask';
-import {PersonaContext, element} from 'persona';
+import {BaseThemedCtrl, _p} from 'mask';
+import {element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap, tap} from 'rxjs/operators';
 
@@ -21,11 +22,16 @@ export const $ = {
   ...$lensDisplay,
   template,
 })
-export class LensDisplay extends ThemedCustomElementCtrl {
+export class LensDisplay extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
 
     this.addSetup(this.setupRenderContent());
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 
   private setupRenderContent(): Observable<unknown> {

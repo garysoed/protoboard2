@@ -1,7 +1,8 @@
 import {assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
-import {PersonaContext, element} from 'persona';
+import {PersonaContext, element, host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -27,12 +28,21 @@ class TestAction extends BaseAction<{}> {
   }
 }
 
-class TestComponent extends BaseComponent<{}> {
+const $ = {
+  host: host($baseComponent.api),
+};
+
+class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
       triggerActionMap: ReadonlyArray<ActionSpec<{}>>,
       context: PersonaContext,
   ) {
-    super(triggerActionMap, context);
+    super(triggerActionMap, context, $);
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }
 

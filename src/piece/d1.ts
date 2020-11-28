@@ -1,6 +1,8 @@
+import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {PersonaContext, element, slotted} from 'persona';
+import {PersonaContext, element, slotted, host} from 'persona';
+import {Observable} from 'rxjs';
 
 import {PickAction} from '../action/pick-action';
 import {RotateAction} from '../action/rotate-action';
@@ -25,6 +27,7 @@ export const $d1 = {
 export type D1Payload = IsRotatable;
 
 const $ = {
+  host: host($d1.api),
   slot: element('slot', instanceofType(HTMLSlotElement), {
     slotted: slotted(),
   }),
@@ -45,7 +48,7 @@ const $ = {
   template,
   api: {},
 })
-export class D1 extends BaseComponent<D1Payload> {
+export class D1 extends BaseComponent<D1Payload, typeof $> {
   /**
    * @internal
    */
@@ -59,10 +62,16 @@ export class D1 extends BaseComponent<D1Payload> {
           {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
         ],
         context,
+        $,
     );
 
     this.addSetup(
-        renderRotatable(this.objectPayload$, this.declareInput($.slot._.slotted), context),
+        renderRotatable(this.objectPayload$, this.inputs.slot.slotted, context),
     );
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
   }
 }
