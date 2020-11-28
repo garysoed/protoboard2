@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl} from 'mask';
+import {$icon, ActionEvent, ACTION_EVENT, BaseThemedCtrl, _p} from 'mask';
 import {attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -33,19 +33,24 @@ const $ = {
   ...$pieceButton,
   template,
 })
-export class PieceButton extends ThemedCustomElementCtrl {
+export class PieceButton extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
+  }
 
-    this.render($.icon._.icon, this.declareInput($.host._.icon));
-    this.render($.host._.onClick, this.onClick$);
-    this.render($.host._.mkAction, observableOf(true));
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.icon.icon(this.inputs.host.icon),
+      this.renderers.host.onClick(this.onClick$),
+      this.renderers.host.mkAction(observableOf(true)),
+    ];
   }
 
   @cache()
   private get onClick$(): Observable<ClickEvent> {
-    return this.declareInput($.root._.onClick).pipe(
-        withLatestFrom(this.declareInput($.host._.icon)),
+    return this.inputs.root.onClick.pipe(
+        withLatestFrom(this.inputs.host.icon),
         map(([, icon]) => new ActionEvent({icon})),
     );
   }

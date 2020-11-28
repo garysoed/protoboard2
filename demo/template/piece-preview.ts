@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$icon, _p, ACTION_EVENT, ActionEvent, ThemedCustomElementCtrl} from 'mask';
+import {$icon, ActionEvent, ACTION_EVENT, BaseThemedCtrl, _p} from 'mask';
 import {attributeIn, dispatcher, element, host, integerParser, onDom, PersonaContext, stringParser} from 'persona';
 import {EMPTY, Observable, of as observableOf} from 'rxjs';
 import {switchMap, withLatestFrom} from 'rxjs/operators';
@@ -31,18 +31,23 @@ const $ = {
   ...$piecePreview,
   template,
 })
-export class PiecePreview extends ThemedCustomElementCtrl {
+export class PiecePreview extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
+  }
 
-    this.render($.icon._.icon, this.declareInput($.host._.icon));
-    this.render($.host._.onClick, this.onClick$);
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.icon.icon(this.inputs.host.icon),
+      this.renderers.host.onClick(this.onClick$),
+    ];
   }
 
   @cache()
   private get onClick$(): Observable<ClickEvent> {
-    return this.declareInput($.root._.onClick).pipe(
-        withLatestFrom(this.declareInput($.host._.index)),
+    return this.inputs.root.onClick.pipe(
+        withLatestFrom(this.inputs.host.index),
         switchMap(([, index]) => {
           if (index === undefined) {
             return EMPTY;

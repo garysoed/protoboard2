@@ -1,7 +1,7 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$button, $lineLayout, _p, Button, LineLayout, ThemedCustomElementCtrl} from 'mask';
+import {$button, $lineLayout, BaseThemedCtrl, Button, LineLayout, _p} from 'mask';
 import {element, multi, NodeWithId, PersonaContext, renderCustomElement} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -33,18 +33,23 @@ const $ = {
   ],
   template,
 })
-export class StagingArea extends ThemedCustomElementCtrl {
+export class StagingArea extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
-
-    this.render($.list._.pieces, this.piecesNodes$);
-    this.render($.list._.regions, this.regionsNodes$);
+    super(context, $);
     this.addSetup(this.handleStartAction$);
   }
 
   @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.list.pieces(this.piecesNodes$),
+      this.renderers.list.regions(this.regionsNodes$),
+    ];
+  }
+
+  @cache()
   private get handleStartAction$(): Observable<unknown> {
-    return this.declareInput($.startButton._.actionEvent).pipe(
+    return this.inputs.startButton.actionEvent.pipe(
         withLatestFrom($setStaging.get(this.vine)),
         tap(([, setStaging]) => {
           if (!setStaging) {

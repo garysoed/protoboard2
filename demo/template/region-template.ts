@@ -1,6 +1,6 @@
 import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {$button, $lineLayout, $overlayLayout, $simpleRadioInput, _p, Button, LineLayout, OverlayLayout, SimpleRadioInput, ThemedCustomElementCtrl} from 'mask';
+import {$button, $lineLayout, $overlayLayout, $simpleRadioInput, BaseThemedCtrl, Button, LineLayout, OverlayLayout, SimpleRadioInput, _p} from 'mask';
 import {attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -53,28 +53,31 @@ const $ = {
   ],
   template,
 })
-export class RegionTemplate extends ThemedCustomElementCtrl {
-
+export class RegionTemplate extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
 
     this.addSetup(this.handleOnAddClick$);
-    this.render($.template._.label, this.declareInput($.host._.label));
-    this.render($.selectedAreaLabel._.text, this.selectedArea$);
-    this.render($.selectedAreaOverlay._.contents, this.selectedAreaOptions$);
-    this.render(
-        $.selectedAreaOverlay._.showFn,
-        this.declareInput($.selectedArea._.actionEvent).pipe(mapTo([])),
-    );
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.template.label(this.inputs.host.label),
+      this.renderers.selectedAreaLabel.text(this.selectedArea$),
+      this.renderers.selectedAreaOverlay.contents(this.selectedAreaOptions$),
+      this.renderers.selectedAreaOverlay
+          .showFn(this.inputs.selectedArea.actionEvent.pipe(mapTo([]))),
+    ];
   }
 
   @cache()
   private get handleOnAddClick$(): Observable<unknown> {
-    return this.declareInput($.addButton._.actionEvent).pipe(
+    return this.inputs.addButton.actionEvent.pipe(
         withLatestFrom(
             $addRegionSpecs.get(this.vine),
-            this.declareInput($.host._.componentTag),
-            this.declareInput($.host._.regionType),
+            this.inputs.host.componentTag,
+            this.inputs.host.regionType,
         ),
         tap(([, addRegionSpec, componentTag, regionType]) => {
           if (!addRegionSpec || !regionType || !componentTag) {
@@ -90,7 +93,7 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
   private get selectedArea$(): Observable<string> {
     return combineLatest([
       $targetAreas.get(this.vine),
-      this.declareInput($.host._.regionType),
+      this.inputs.host.regionType,
     ])
         .pipe(
             map(([targetAreas, regionType]) => {
@@ -108,7 +111,7 @@ export class RegionTemplate extends ThemedCustomElementCtrl {
   private get selectedAreaOptions$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
     return combineLatest([
       $demoState.get(this.vine),
-      this.declareInput($.host._.regionType),
+      this.inputs.host.regionType,
     ])
         .pipe(
             map(([demoState, regionType]) => {

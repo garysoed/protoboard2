@@ -1,6 +1,6 @@
 import {assertByType, filterNonNull} from 'gs-tools/export/rxjs';
 import {enumType, instanceofType} from 'gs-types';
-import {$button, $lineLayout, _p, Icon, LineLayout, registerSvg, ThemedCustomElementCtrl} from 'mask';
+import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
 import {attributeIn, booleanParser, element, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
@@ -60,16 +60,19 @@ const PIECE_LINK_CONFIGS: LinkConfig[] = [
   ],
   template,
 })
-export class Drawer extends ThemedCustomElementCtrl {
-  private readonly onRootClick$ = this.declareInput($.root._.onClick);
-
+export class Drawer extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
 
-    this.render($.root._.layouts, this.createNodes(LAYOUT_LINK_CONFIGS));
-    this.render($.root._.pieces, this.createNodes(PIECE_LINK_CONFIGS));
-    this.render($.root._.containers, this.createNodes(CONTAINER_LINK_CONFIGS));
     this.addSetup(this.setupRootOnClick());
+  }
+
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.root.layouts(this.createNodes(LAYOUT_LINK_CONFIGS)),
+      this.renderers.root.pieces(this.createNodes(PIECE_LINK_CONFIGS)),
+      this.renderers.root.containers(this.createNodes(CONTAINER_LINK_CONFIGS)),
+    ];
   }
 
   private createNodes(
@@ -99,7 +102,7 @@ export class Drawer extends ThemedCustomElementCtrl {
   }
 
   private setupRootOnClick(): Observable<unknown> {
-    return this.onRootClick$
+    return this.inputs.root.onClick
         .pipe(
             map(event => {
               if (!(event.target instanceof HTMLElement)) {

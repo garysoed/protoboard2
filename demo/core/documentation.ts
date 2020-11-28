@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {switchMapNonNull} from 'gs-tools/export/rxjs';
 import {assertUnreachable} from 'gs-tools/export/typescript';
 import {instanceofType} from 'gs-types';
-import {_p, ThemedCustomElementCtrl} from 'mask';
+import {BaseThemedCtrl, _p} from 'mask';
 import {element, NodeWithId, PersonaContext, renderCustomElement, single} from 'persona';
 import {Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -39,10 +39,16 @@ const $ = {
   ],
   template,
 })
-export class Documentation extends ThemedCustomElementCtrl {
+export class Documentation extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
-    this.render($.root._.content, this.content$);
+    super(context, $);
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.root.content(this.content$),
+    ];
   }
 
   @cache()

@@ -1,9 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$button, $drawerLayout, $icon, Button, DrawerLayout, Icon, ListItemLayout, registerSvg, ThemedCustomElementCtrl, _p} from 'mask';
+import {$button, $drawerLayout, $icon, BaseThemedCtrl, Button, DrawerLayout, Icon, ListItemLayout, registerSvg, ThemedCustomElementCtrl, _p} from 'mask';
 import {attributeIn, element, host, PersonaContext, stringParser, textContent} from 'persona';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap, withLatestFrom, scan, startWith} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 import chevronUpSvg from '../asset/chevron_up.svg';
@@ -42,16 +42,18 @@ const $ = {
   ],
   template,
 })
-export class DocumentationTemplate extends ThemedCustomElementCtrl {
-  private readonly drawerExpanded$ = new BehaviorSubject(false);
-
+export class DocumentationTemplate extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
+  }
 
-    this.render($.drawer._.expanded, this.drawerExpanded$);
-    this.render($.drawerIcon._.icon, this.drawerIcon$);
-    this.render($.title._.text, this.declareInput($.host._.label));
-    this.addSetup(this.handleDrawerIconClick$);
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.drawer.expanded(this.drawerExpanded$),
+      this.renderers.drawerIcon.icon(this.drawerIcon$),
+      this.renderers.title.text(this.inputs.host.label),
+    ];
   }
 
   @cache()
@@ -60,11 +62,11 @@ export class DocumentationTemplate extends ThemedCustomElementCtrl {
   }
 
   @cache()
-  private get handleDrawerIconClick$(): Observable<unknown> {
-    return this.declareInput($.drawerButton._.actionEvent)
+  private get drawerExpanded$(): Observable<boolean> {
+    return this.inputs.drawerButton.actionEvent
         .pipe(
-            withLatestFrom(this.drawerExpanded$),
-            tap(([, expanded]) => this.drawerExpanded$.next(!expanded)),
+            scan(acc => !acc, false),
+            startWith(false),
         );
   }
 }

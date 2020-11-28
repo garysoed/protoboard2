@@ -1,4 +1,6 @@
-import {Icon, ThemedCustomElementCtrl, _p} from 'mask';
+import {BaseThemedCtrl, Icon, _p} from 'mask';
+import {PersonaContext} from 'persona';
+import {Observable} from 'rxjs';
 
 import {D2} from '../../src/piece/d2';
 import {PieceTemplate} from '../template/piece-template';
@@ -20,5 +22,12 @@ export const $d2Demo = {
   ],
   template,
 })
-export class D2Demo extends ThemedCustomElementCtrl {
+export class D2Demo extends BaseThemedCtrl<{}> {
+  constructor(context: PersonaContext) {
+    super(context, {});
+  }
+
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [];
+  }
 }

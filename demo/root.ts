@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {elementWithTagType, instanceofType} from 'gs-types';
-import {$rootLayout, Overlay, RootLayout, ThemedCustomElementCtrl, _p} from 'mask';
-import {PersonaContext, api, classToggle, element} from 'persona';
+import {$rootLayout, BaseThemedCtrl, Overlay, RootLayout, _p} from 'mask';
+import {api, classToggle, element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -40,17 +40,23 @@ const $ = {
   template,
   api: {},
 })
-export class Root extends ThemedCustomElementCtrl {
+export class Root extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
     this.addSetup(this.handleOnRootActive$);
-    this.render($.drawer._.drawerExpanded, this.declareInput($.root._.drawerExpanded));
-    this.render($.main._.isPlaying, this.isPlaying$);
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.drawer.drawerExpanded(this.inputs.root.drawerExpanded),
+      this.renderers.main.isPlaying(this.isPlaying$),
+    ];
   }
 
   @cache()
   private get handleOnRootActive$(): Observable<unknown> {
-    return this.declareInput($.root._.onTitleClick)
+    return this.inputs.root.onTitleClick
         .pipe(
             withLatestFrom($locationService.get(this.vine)),
             tap(([, service]) => {

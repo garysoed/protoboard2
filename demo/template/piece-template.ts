@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
-import {$button, _p, ACTION_EVENT, Button, LineLayout, registerSvg, ThemedCustomElementCtrl} from 'mask';
+import {$button, ACTION_EVENT, BaseThemedCtrl, Button, LineLayout, registerSvg, _p} from 'mask';
 import {attributeIn, element, enumParser, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, stringParser} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -65,16 +65,22 @@ const $ = {
   ],
   template,
 })
-export class PieceTemplate extends ThemedCustomElementCtrl {
+export class PieceTemplate extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context);
+    super(context, $);
 
     this.addSetup(this.handleOnCustomizeClick$);
     this.addSetup(this.handlePreviewClick$);
     this.addSetup(this.handleAdd$);
-    this.render($.template._.label, this.declareInput($.host._.label));
-    this.render($.previews._.content, this.previewContents$);
-    this.render($.editors._.content, this.editorContents$);
+  }
+
+  @cache()
+  protected get renders(): ReadonlyArray<Observable<unknown>> {
+    return [
+      this.renderers.template.label(this.inputs.host.label),
+      this.renderers.previews.content(this.previewContents$),
+      this.renderers.editors.content(this.editorContents$),
+    ];
   }
 
   @cache()
@@ -91,10 +97,10 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleAdd$(): Observable<unknown> {
-    return this.declareInput($.addButton._.actionEvent).pipe(
+    return this.inputs.addButton.actionEvent.pipe(
         withLatestFrom(
-            this.declareInput($.host._.pieceType),
-            this.declareInput($.host._.componentTag),
+            this.inputs.host.pieceType,
+            this.inputs.host.componentTag,
             $addPieceSpecs.get(this.vine),
         ),
         tap(([, pieceType, componentTag, addPieceSpecFn]) => {
@@ -108,9 +114,9 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get handleOnCustomizeClick$(): Observable<unknown> {
-    return this.declareInput($.editors._.onClick)
+    return this.inputs.editors.onClick
         .pipe(
-            withLatestFrom(this.declareInput($.host._.pieceType), $setFaces.get(this.vine)),
+            withLatestFrom(this.inputs.host.pieceType, $setFaces.get(this.vine)),
             tap(([{payload}, pieceType, setFace]) => {
               if (!pieceType || !setFace) {
                 return;
@@ -122,8 +128,8 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get handlePreviewClick$(): Observable<unknown> {
-    return this.declareInput($.previews._.onClick).pipe(
-        withLatestFrom(this.declareInput($.host._.pieceType), $setEditedFaces.get(this.vine)),
+    return this.inputs.previews.onClick.pipe(
+        withLatestFrom(this.inputs.host.pieceType, $setEditedFaces.get(this.vine)),
         tap(([event, pieceType, setSelectedFaces]) => {
           if (!pieceType || !setSelectedFaces) {
             return;
@@ -165,7 +171,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
 
   @cache()
   private get previewIcons$(): Observable<readonly string[]> {
-    return combineLatest([$faceIcons.get(this.vine), this.declareInput($.host._.pieceType)]).pipe(
+    return combineLatest([$faceIcons.get(this.vine), this.inputs.host.pieceType]).pipe(
         map(([faceIcons, pieceType]) => {
           if (!faceIcons || !pieceType) {
             return [];
@@ -179,7 +185,7 @@ export class PieceTemplate extends ThemedCustomElementCtrl {
   @cache()
   private get selectedIndex$(): Observable<number|null> {
     return combineLatest([
-      this.declareInput($.host._.pieceType),
+      this.inputs.host.pieceType,
       $editedFaces.get(this.vine),
     ])
         .pipe(

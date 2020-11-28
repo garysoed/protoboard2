@@ -1,17 +1,18 @@
-Actions:
-  ☐ Shuffle Action
+1.0:
+  Actions:
+    ☐ Shuffle Action
 
-Pieces:
-  ☐ DN
+  Pieces:
+    ☐ DN
 
-Regions:
-  ☐ Bag
-  ☐ Chute
-  ☐ Hand
-  ☐ Surface
-  ☐ Replace slot with surface
+  Regions:
+    ☐ Bag
+    ☐ Chute
+    ☐ Hand
+    ☐ Surface
+    ☐ Replace slot with surface
 
-Demo:
-  ☐ Switch the supply to surface
+  Demo:
+    ☐ Switch the supply to surface
 
-☐ Test `render.ts`
+  ☐ Test `render.ts`
