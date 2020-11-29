@@ -1,6 +1,6 @@
 import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {$button, $lineLayout, $overlayLayout, $simpleRadioInput, BaseThemedCtrl, Button, LineLayout, OverlayLayout, SimpleRadioInput, _p} from 'mask';
+import {$button, $lineLayout, $overlayLayout, $radioInput, BaseThemedCtrl, Button, LineLayout, OverlayLayout, RadioInput, _p} from 'mask';
 import {attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -49,7 +49,7 @@ const $ = {
     DocumentationTemplate,
     LineLayout,
     OverlayLayout,
-    SimpleRadioInput,
+    RadioInput,
   ],
   template,
 })
@@ -131,7 +131,7 @@ export class RegionTemplate extends BaseThemedCtrl<typeof $> {
                   $zip(countableIterable()),
                   $map(([gridArea, index]) => {
                     return renderCustomElement(
-                        $simpleRadioInput,
+                        $radioInput,
                         {
                           inputs: {
                             index: observableOf(index),

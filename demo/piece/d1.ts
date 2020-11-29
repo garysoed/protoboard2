@@ -1,4 +1,4 @@
-import {BaseThemedCtrl, Icon, ThemedCustomElementCtrl, _p} from 'mask';
+import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
