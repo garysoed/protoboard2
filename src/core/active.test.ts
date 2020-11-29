@@ -9,7 +9,7 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$createSpecMap} from '../objects/object-service';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeActiveSpec, fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakeActiveSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ActiveSpec} from '../types/active-spec';
 
@@ -60,7 +60,7 @@ test('@protoboard2/core/active', init => {
     });
 
     should('render the 1 item count correctly', () => {
-      const objectId = _.stateService.add(fakeObjectSpec({payload: {}}));
+      const objectId = _.stateService.add(fakePieceSpec({payload: {}}));
       _.stateService.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]);
 
       assert(_.el.getTextContent($.count)).to.equal('');
@@ -71,23 +71,23 @@ test('@protoboard2/core/active', init => {
           _.$contentSpecs,
           [
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(0),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(1),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(2),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(3),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(4),
             },
           ],
@@ -111,7 +111,7 @@ test('@protoboard2/core/active', init => {
       ]));
 
       // TODO: RootStateBuilder
-      const $objectSpec = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const $objectSpec = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
@@ -137,7 +137,7 @@ test('@protoboard2/core/active', init => {
       _.stateService.set(
           _.$contentSpecs,
           [{
-            objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+            objectId: _.stateService.add(fakePieceSpec({payload: {}})),
             coordinate: createIndexed(0),
           },
           ]);
@@ -150,19 +150,19 @@ test('@protoboard2/core/active', init => {
           _.$contentSpecs,
           [
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(0),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(1),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(2),
             },
             {
-              objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(3),
             },
           ],
@@ -188,7 +188,7 @@ test('@protoboard2/core/active', init => {
       ]));
 
       // TODO: RootStateBuilder
-      const $objectSpec = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const $objectSpec = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
@@ -225,12 +225,12 @@ test('@protoboard2/core/active', init => {
         [testType2, () => observableOf(content2)],
       ]));
 
-      const $objectSpec1 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType1}));
+      const $objectSpec1 = _.stateService.add(fakePieceSpec({payload: {}, type: testType1}));
       const spec1 = {
         objectId: $objectSpec1,
         coordinate: createIndexed(0),
       };
-      const $objectSpec2 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType2}));
+      const $objectSpec2 = _.stateService.add(fakePieceSpec({payload: {}, type: testType2}));
       const spec2 = {
         objectId: $objectSpec2,
         coordinate: createIndexed(1),

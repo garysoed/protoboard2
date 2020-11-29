@@ -7,7 +7,7 @@ import {createFakeContext} from 'persona/export/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
@@ -144,7 +144,7 @@ test('@protoboard2/core/base-component', init => {
   test('objectId$', () => {
     should('emit the object ID if exists', () => {
       const stateService = new StateService();
-      const objectId = stateService.add(fakeObjectSpec({payload: {}}));
+      const objectId = stateService.add(fakePieceSpec({payload: {}}));
       _.el.setAttribute('object-id', $baseComponent.api.objectId.createAttributePair(objectId)[1]);
 
       const objectId$ = createSpySubject(_.component.objectId$);

@@ -7,7 +7,7 @@ import {switchMap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeActiveSpec, fakeContainerSpec, fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -42,20 +42,20 @@ test('@protoboard2/action/drop-action', init => {
   test('onTrigger', () => {
     should('trigger correctly', () => {
       const otherSpec1 = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(1),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(1),
       };
 
@@ -78,11 +78,11 @@ test('@protoboard2/action/drop-action', init => {
 
       _.objectId$.next($objectSpec);
 
-      const activeIds$ = createSpySubject(
+      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($activeContentIds))),
       );
-      const targetIds$ = createSpySubject(
+      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($targetContentIds))),
       );
