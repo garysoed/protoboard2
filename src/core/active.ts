@@ -8,8 +8,8 @@ import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
+import {ActiveSpec} from '../types/active-spec';
 import {ObjectSpec} from '../types/object-spec';
 
 import template from './active.html';
@@ -45,14 +45,6 @@ export const $ = {
 };
 
 /**
- * Payload of the active region.
- *
- * @thModule region
- */
-// tslint:disable-next-line: no-empty-interface
-export type ActivePayload = IsContainer<'indexed'>
-
-/**
  * Represents a region containing objects that are actively manipulated.
  *
  * @remarks
@@ -64,11 +56,11 @@ export type ActivePayload = IsContainer<'indexed'>
   ...$active,
   template,
 })
-export class Active extends BaseComponent<ActivePayload, typeof $> {
+export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
     super([], context, $);
 
-    this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
+    this.addSetup(renderContents(this.objectSpec$, $.root._.content, context));
   }
 
   @cache()
@@ -173,7 +165,7 @@ function computeRect(element: ElementWithRect): Rect {
 }
 
 export function renderActive(
-    objectId: StateId<ObjectSpec<ActivePayload>>,
+    objectId: StateId<ActiveSpec>,
     context: PersonaContext,
 ): Observable<NodeWithId<Element>> {
   return renderCustomElement(

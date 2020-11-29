@@ -9,24 +9,29 @@ import {Logger} from 'santa';
 
 import {Indexed} from '../coordinate/indexed';
 import {$getObjectNode} from '../objects/object-service';
-import {CoordinateTypes, IsContainer} from '../payload/is-container';
+import {IsContainer} from '../payload/is-container';
 
 
 const LOGGER = new Logger('protoboard2.renderContents');
 
 
+interface ContainerSpecLike {
+  readonly payload: IsContainer<'indexed'>;
+}
+
+
 export function renderContents(
-    isContainer$: Observable<IsContainer<CoordinateTypes>|null>,
+    containerSpec$: Observable<ContainerSpecLike|null>,
     output: MultiOutput,
     context: PersonaContext,
 ): Observable<unknown> {
-  return combineLatest([$stateService.get(context.vine), isContainer$]).pipe(
-      switchMap(([stateService, isContainer]) => {
-        if (!isContainer) {
+  return combineLatest([$stateService.get(context.vine), containerSpec$]).pipe(
+      switchMap(([stateService, containerSpec]) => {
+        if (!containerSpec) {
           return observableOf([]);
         }
 
-        return stateService.get(isContainer.$contentSpecs).pipe(
+        return stateService.get(containerSpec.payload.$contentSpecs).pipe(
             withLatestFrom($getObjectNode.get(context.vine)),
             switchMap(([contentIds, getObjectNode]) => {
               const node$list = $pipe(
@@ -44,7 +49,7 @@ export function renderContents(
               return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
             }),
             map(pairs => {
-              switch (isContainer.containerType) {
+              switch (containerSpec.payload.containerType) {
                 case 'indexed':
                   return renderIndexed(new Map(pairs));
               }

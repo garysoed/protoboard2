@@ -3,10 +3,11 @@ import {BehaviorSubject} from 'rxjs';
 
 import {BaseAction} from '../core/base-action';
 import {TriggerSpec} from '../core/trigger-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 
 export interface ActionTrigger {
-  readonly action: BaseAction<object, unknown>;
+  readonly action: BaseAction<ObjectSpec<any>, unknown>;
   readonly trigger: TriggerSpec;
 }
 

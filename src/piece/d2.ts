@@ -15,6 +15,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderMultifaced} from '../render/render-multifaced';
 import {renderRotatable} from '../render/render-rotatable';
+import {PieceSpec} from '../types/piece-spec';
 
 import template from './d2.html';
 
@@ -58,7 +59,7 @@ export interface D2Payload extends IsMultifaced, IsRotatable {
   ...$d2,
   template,
 })
-export class D2 extends BaseComponent<D2Payload, typeof $> {
+export class D2 extends BaseComponent<PieceSpec<D2Payload>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -83,9 +84,9 @@ export class D2 extends BaseComponent<D2Payload, typeof $> {
         context,
         $,
     );
-    this.addSetup(renderMultifaced(this.objectPayload$, $.face._.name, context));
+    this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(
-        renderRotatable(this.objectPayload$, this.inputs.slot.slotted, context),
+        renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context),
     );
   }
 

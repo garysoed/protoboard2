@@ -5,6 +5,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {IsRotatable} from '../payload/is-rotatable';
+import {PieceSpec} from '../types/piece-spec';
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,17 +13,17 @@ const LOGGER = new Logger('protoboard2.renderRotatable');
 
 
 export function renderRotatable(
-    isRotatable$: Observable<IsRotatable|null>,
+    isRotatable$: Observable<PieceSpec<IsRotatable>|null>,
     slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
   const rotation$ = combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
-      switchMap(([stateService, isRotatable]) => {
-        if (!isRotatable) {
+      switchMap(([stateService, pieceSpec]) => {
+        if (!pieceSpec) {
           return observableOf(null);
         }
 
-        return stateService.get(isRotatable.$rotationDeg);
+        return stateService.get(pieceSpec.payload.$rotationDeg);
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );

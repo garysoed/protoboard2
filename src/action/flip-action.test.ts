@@ -1,11 +1,11 @@
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {PersonaTesterEnvironment, createFakeContext} from 'persona/export/testing';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
-import {IsMultifaced} from '../payload/is-multifaced';
 
 import {FlipAction} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -24,10 +24,9 @@ test('@protoboard2/action/flip-action', init => {
 
     const builder = new FakeRootStateBuilder({});
     const $faceIndex = stateService.add(2);
-    const objectSpec = builder.add<IsMultifaced>({
-      id: 'TARGET_ID',
+    const objectSpec = builder.add(fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
-    });
+    }));
     builder.build(stateService, personaContext.vine);
 
     const action = new FlipAction(

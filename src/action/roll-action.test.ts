@@ -5,7 +5,7 @@ import {$stateService} from 'mask';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
 import {RollAction} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -27,7 +27,7 @@ test('@protoboard2/action/roll-action', init => {
     $stateService.set(personaContext.vine, () => stateService);
 
     const $faceIndex = stateService.add(2);
-    const objectId = stateService.add(fakeObjectSpec({
+    const objectId = stateService.add(fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
     }));
 

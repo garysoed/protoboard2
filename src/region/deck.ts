@@ -11,6 +11,7 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
+import {ContainerSpec} from '../types/container-spec';
 
 import template from './deck.html';
 
@@ -37,7 +38,7 @@ export type DeckPayload = IsContainer<'indexed'>;
   ...$deck,
   template,
 })
-export class Deck extends BaseComponent<DeckPayload, typeof $> {
+export class Deck extends BaseComponent<ContainerSpec<'indexed'>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -48,7 +49,7 @@ export class Deck extends BaseComponent<DeckPayload, typeof $> {
         $,
     );
 
-    this.addSetup(renderContents(this.objectPayload$, $.root._.contents, this.context));
+    this.addSetup(renderContents(this.objectSpec$, $.root._.contents, this.context));
   }
 
   @cache()

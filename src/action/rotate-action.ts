@@ -9,6 +9,7 @@ import {Logger} from 'santa';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
+import {PieceSpec} from '../types/piece-spec';
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,9 +25,9 @@ interface Config {
  *
  * @thModule action
  */
-export class RotateAction extends BaseAction<IsRotatable, Config> {
+export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor(
-      context: ActionContext<IsRotatable>,
+      context: ActionContext<PieceSpec<IsRotatable>>,
       defaultConfig: Config,
   ) {
     super(

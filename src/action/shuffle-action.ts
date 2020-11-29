@@ -2,11 +2,11 @@ import {cache} from 'gs-tools/export/data';
 import {NEVER, Observable} from 'rxjs';
 
 import {ActionContext, BaseAction} from '../core/base-action';
-import {IsContainer} from '../payload/is-container';
+import {ContainerSpec} from '../types/container-spec';
 
 
-export class ShuffleAction extends BaseAction<IsContainer<'indexed'>> {
-  constructor(context: ActionContext<IsContainer<'indexed'>>) {
+export class ShuffleAction extends BaseAction<ContainerSpec<'indexed'>> {
+  constructor(context: ActionContext<ContainerSpec<'indexed'>>) {
     super(
         'shuffle',
         'Shuffle',

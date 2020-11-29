@@ -6,6 +6,7 @@ import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {$activeState, $getContainerOf, $getObjectSpec} from '../objects/getters/root-state';
 import {IsContainer} from '../payload/is-container';
+import {PieceSpec} from '../types/piece-spec';
 
 import {moveObject} from './util/move-object';
 
@@ -18,13 +19,13 @@ interface Config { }
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<{}, Config> {
+export class PickAction extends BaseAction<PieceSpec<any>, Config> {
   /**
    * @internal
    */
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<{}>,
+      context: ActionContext<PieceSpec<any>>,
       defaultConfig: Config,
   ) {
     super(

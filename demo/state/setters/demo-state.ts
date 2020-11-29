@@ -6,10 +6,11 @@ import {combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../../../src/coordinate/indexed';
-import {ActivePayload, ACTIVE_TYPE} from '../../../src/core/active';
+import {ACTIVE_TYPE} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
+import {ActiveSpec} from '../../../src/types/active-spec';
 import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
@@ -115,7 +116,7 @@ function setToPlay(
 
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-  const $activeId = stateService.add<ObjectSpec<ActivePayload>>({
+  const $activeId = stateService.add<ActiveSpec>({
     objectClass: ObjectClass.ACTIVE,
     type: ACTIVE_TYPE,
     payload: {

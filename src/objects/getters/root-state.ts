@@ -5,8 +5,8 @@ import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {ActivePayload} from '../../core/active';
 import {CoordinateTypes, IsContainer} from '../../payload/is-container';
+import {ActiveSpec} from '../../types/active-spec';
 import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState} from '../root-state';
 
@@ -29,7 +29,7 @@ export const $rootState = stream(
     },
 );
 
-export const $activeState = stream<ObjectSpec<ActivePayload>|null>(
+export const $activeState = stream<ActiveSpec|null>(
     'activeState',
     vine => $rootState.get(vine).pipe(
         withLatestFrom($stateService.get(vine)),

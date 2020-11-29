@@ -6,13 +6,11 @@ import {createFakeContext} from 'persona/export/testing';
 import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {ActivePayload} from '../core/active';
-import {ObjectSpec} from '../types/object-spec';
+import {ActiveSpec} from '../types/active-spec';
 
 import {$createSpecMap, $getObjectNode} from './object-service';
 import {$$rootState, RootState} from './root-state';
-import {fakeObjectSpec} from './testing/fake-object-spec';
-import {FakeRootStateBuilder} from './testing/fake-object-spec-list-builder';
+import {fakeActiveSpec, fakePieceSpec} from './testing/fake-object-spec';
 
 
 test('@protoboard2/objects/object-service', init => {
@@ -29,14 +27,14 @@ test('@protoboard2/objects/object-service', init => {
   test('$getObjectNode', () => {
     should('create a new Node and emit it', () => {
       const testType = 'testType';
-      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
       $createSpecMap.set(_.personaContext.vine, map => new Map([
         ...map,
         [testType, () => observableOf(node)],
       ]));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
           payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([]),
@@ -54,7 +52,7 @@ test('@protoboard2/objects/object-service', init => {
 
     should('reuse a previous Node if one already exist', () => {
       const testType = 'testType';
-      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
       const createSpecSpy = createSpy<Observable<NodeWithId<Element>>, []>('createSpec');
       fake(createSpecSpy).always().return(observableOf(node));
@@ -63,7 +61,7 @@ test('@protoboard2/objects/object-service', init => {
         [testType, createSpecSpy],
       ]));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
           payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([]),
@@ -88,9 +86,9 @@ test('@protoboard2/objects/object-service', init => {
 
     should('emit null if object corresponding to the key does not exist', () => {
       const testType = 'testType';
-      const objectId = _.stateService.add(fakeObjectSpec({payload: {}, type: testType}));
+      const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
           payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([]),

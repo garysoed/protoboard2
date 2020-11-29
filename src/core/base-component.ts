@@ -19,16 +19,17 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export type BaseActionCtor<P> =
-    (context: ActionContext<P>) => BaseAction<any>;
+export type BaseActionCtor<O extends ObjectSpec<any>> =
+    (context: ActionContext<O>) => BaseAction<any>;
 
-export interface ActionSpec<P> {
+export interface ActionSpec<O extends ObjectSpec<any>> {
   readonly trigger: UnreservedTriggerSpec;
-  readonly provider: BaseActionCtor<P>;
+  readonly provider: BaseActionCtor<O>;
 }
 
 export const $baseComponent = {
   api: {
+    // TODO: Move to ctor
     objectId: attributeIn('object-id', stateIdParser<ObjectSpec<any>>()),
   },
 };
@@ -38,9 +39,9 @@ const $ = {
 };
 
 @_p.baseCustomElement({})
-export abstract class BaseComponent<P, S extends typeof $> extends BaseThemedCtrl<S> {
+export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<P>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<O>>,
       context: PersonaContext,
       spec: S,
   ) {
@@ -59,7 +60,8 @@ export abstract class BaseComponent<P, S extends typeof $> extends BaseThemedCtr
     const actionContext = {
       host: host({}).getSelectable(this.context),
       personaContext: this.context,
-      objectId$: this.baseInputs.host.objectId.pipe(map(id => id ?? null)),
+      objectId$: (this.baseInputs.host.objectId as Observable<StateId<O>>)
+          .pipe(map(id => id ?? null)),
     };
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = $pipe(
         this.triggerActions,
@@ -96,19 +98,14 @@ export abstract class BaseComponent<P, S extends typeof $> extends BaseThemedCtr
   }
 
   @cache()
-  get objectPayload$(): Observable<P|null> {
-    return this.objectSpec$.pipe(map(objectSpec => objectSpec?.payload ?? null));
-  }
-
-  @cache()
-  get objectSpec$(): Observable<ObjectSpec<P>|null> {
+  get objectSpec$(): Observable<O|null> {
     return combineLatest([
       this.objectId$,
       $getObjectSpec.get(this.context.vine),
     ])
         .pipe(
             map(([objectId, getObjectSpec]) => {
-              return (getObjectSpec(objectId) || null) as ObjectSpec<P>|null;
+              return (getObjectSpec(objectId) || null) as O|null;
             }),
         );
   }
@@ -167,7 +164,7 @@ export abstract class BaseComponent<P, S extends typeof $> extends BaseThemedCtr
 
   private setupTrigger(
       triggerSpec: DetailedTriggerSpec<TriggerType>,
-      action: BaseAction<object>,
+      action: BaseAction<O>,
   ): Observable<unknown> {
     const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
       this.createTriggerKey(triggerSpec) :

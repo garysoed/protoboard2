@@ -12,10 +12,10 @@ import {map, scan, startWith, withLatestFrom, switchMap} from 'rxjs/operators';
 import {ObjectSpec} from '../types/object-spec';
 
 
-export interface ActionContext<P> {
+export interface ActionContext<O extends ObjectSpec<any>> {
   readonly host: Element;
   readonly personaContext: PersonaContext;
-  readonly objectId$: Observable<StateId<ObjectSpec<P>>|null>;
+  readonly objectId$: Observable<StateId<O>|null>;
 }
 
 export interface TriggerEvent {
@@ -39,7 +39,7 @@ export type ConverterOf<O> = {
  * @typeParam C - The configuration object.
  * @thModule action
  */
-export abstract class BaseAction<P, C = {}> extends Runnable {
+export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runnable {
   readonly #onTrigger$ = new Subject<TriggerEvent>();
 
   /**
@@ -113,7 +113,7 @@ export abstract class BaseAction<P, C = {}> extends Runnable {
   }
 
   @cache()
-  get objectSpec$(): Observable<ObjectSpec<P>|null> {
+  get objectSpec$(): Observable<P|null> {
     return this.context.objectId$.pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([objectId, stateService]) => {

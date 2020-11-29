@@ -7,9 +7,9 @@ import {switchMap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakeActiveSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {ObjectSpec} from '../types/object-spec';
+import {PieceSpec} from '../types/piece-spec';
 
 import {PickAction} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -23,7 +23,7 @@ test('@protoboard2/action/pick-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectId$ = new ReplaySubject<StateId<ObjectSpec<{}>>|null>(1);
+    const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
 
     const action = new PickAction(
         () => 1,
@@ -41,10 +41,9 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const movedId = _.stateService.add(fakeObjectSpec({payload: {}}));
-      console.log(`movedId: ${movedId}`);
+      const movedId = _.stateService.add(fakePieceSpec({payload: {}}));
       const otherSpec1 = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
@@ -52,25 +51,25 @@ test('@protoboard2/action/pick-action', init => {
         coordinate: createIndexed(1),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(2),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
+        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
 
       const $activeContentIds = _.stateService.add([otherActiveSpec]);
       const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
-      const $container = _.stateService.add(fakeObjectSpec({
+      const $container = _.stateService.add(fakePieceSpec({
         payload: {
           containerType: 'indexed' as const,
           $contentSpecs: $targetContentSpecs,
         },
       }));
       const $rootState = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeObjectSpec({
+        $activeId: _.stateService.add(fakeActiveSpec({
           payload: {containerType: 'indexed' as const, $contentSpecs: $activeContentIds},
         })),
         containerIds: [$container],
@@ -79,11 +78,11 @@ test('@protoboard2/action/pick-action', init => {
       $$rootState.set(_.personaContext.vine, () => $rootState);
       _.objectId$.next(movedId);
 
-      const activeIds$ = createSpySubject(
+      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($activeContentIds))),
       );
-      const targetIds$ = createSpySubject(
+      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($targetContentSpecs))),
       );

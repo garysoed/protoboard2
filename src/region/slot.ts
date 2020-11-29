@@ -9,6 +9,7 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
+import {ContainerSpec} from '../types/container-spec';
 
 import template from './slot.html';
 
@@ -29,13 +30,14 @@ export const $ = {
   }),
 };
 
+// TODO: Replace with SlotSpec.
 export type SlotPayload = IsContainer<'indexed'>;
 
 @_p.customElement({
   ...$slot,
   template,
 })
-export class Slot extends BaseComponent<SlotPayload, typeof $> {
+export class Slot extends BaseComponent<ContainerSpec<'indexed'>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
@@ -45,7 +47,7 @@ export class Slot extends BaseComponent<SlotPayload, typeof $> {
         $,
     );
 
-    this.addSetup(renderContents(this.objectPayload$, $.root._.content, context));
+    this.addSetup(renderContents(this.objectSpec$, $.root._.content, context));
   }
 
   @cache()

@@ -3,15 +3,17 @@ import {StateId, StateService} from 'gs-tools/export/state';
 import {setId} from 'persona';
 import {of as observableOf} from 'rxjs';
 
-import {ActivePayload, ACTIVE_TYPE} from '../../core/active';
-import {CoordinateTypes, IsContainer} from '../../payload/is-container';
+import {ACTIVE_TYPE} from '../../core/active';
+import {CoordinateTypes} from '../../payload/is-container';
+import {ActiveSpec} from '../../types/active-spec';
+import {ContainerSpec} from '../../types/container-spec';
 import {ObjectClass, ObjectSpec} from '../../types/object-spec';
 import {ObjectCreateSpec} from '../object-create-spec';
 import {$createSpecMap} from '../object-service';
 import {$$rootState, RootState} from '../root-state';
 
 
-type PartialObjectSpec<T> = Partial<ObjectSpec<T>> & {readonly id: string; readonly payload: T};
+type PartialObjectSpec<O extends ObjectSpec<any>> = Partial<O> & {readonly payload: object};
 
 interface State {
   readonly $rootId: StateId<RootState>;
@@ -19,13 +21,14 @@ interface State {
 }
 
 interface Config {
-  readonly activePayload?: ActivePayload;
+  readonly activePayload?: ActiveSpec;
   readonly objectSpecs?: ReadonlyArray<ObjectSpec<any>>;
 }
 
+// TODO: Delete this.
 export class FakeRootStateBuilder {
   private activePayload = this.config.activePayload ?? null;
-  private readonly containerSpecs: Array<ObjectSpec<IsContainer<any>>> = [];
+  private readonly containerSpecs: Array<ContainerSpec<any>> = [];
   private readonly specs: Array<ObjectSpec<any>> = [...(this.config.objectSpecs ?? [])];
   private readonly createSpecMap = new Map<string, ObjectCreateSpec<any>>();
 
@@ -33,36 +36,36 @@ export class FakeRootStateBuilder {
       private readonly config: Config,
   ) { }
 
-  add<T>(
+  add<T extends ObjectSpec<any>>(
       partial: PartialObjectSpec<T>,
       createFn: ObjectCreateSpec<T> = () => observableOf(setId(document.createElement('div'), {})),
-  ): ObjectSpec<T> {
+  ): T {
     const spec = {
       objectClass: ObjectClass.PIECE,
-      type: partial.id,
+      type: 'TEST',
       ...partial,
     };
     this.specs.push(spec);
     this.createSpecMap.set(spec.type, createFn);
 
-    return spec;
+    return spec as T;
   }
 
   addContainer<C extends CoordinateTypes>(
-      partial: PartialObjectSpec<IsContainer<C>>,
-      createFn: ObjectCreateSpec<IsContainer<C>> = () => observableOf(setId(document.createElement('div'), {})),
-  ): ObjectSpec<IsContainer<C>> {
-    const spec = this.add<IsContainer<C>>(partial, createFn);
+      partial: PartialObjectSpec<ContainerSpec<C>>,
+      createFn: ObjectCreateSpec<ContainerSpec<C>> = () => observableOf(setId(document.createElement('div'), {})),
+  ): ContainerSpec<C> {
+    const spec = this.add<ContainerSpec<C>>(partial, createFn);
     this.containerSpecs.push(spec);
     return spec;
   }
 
   build(stateService: StateService, vine: Vine): State {
     const rootState = {
-      $activeId: stateService.add<ObjectSpec<ActivePayload>>({
+      $activeId: stateService.add<ActiveSpec>({
         objectClass: ObjectClass.ACTIVE,
         type: ACTIVE_TYPE,
-        payload: this.activePayload ?? {
+        payload: this.activePayload?.payload ?? {
           containerType: 'indexed',
           $contentSpecs: stateService.add([]),
         },
@@ -76,7 +79,7 @@ export class FakeRootStateBuilder {
     return {$rootId, rootState};
   }
 
-  setActivePayload(payload: ActivePayload): this {
+  setActivePayload(payload: ActiveSpec): this {
     this.activePayload = payload;
     return this;
   }

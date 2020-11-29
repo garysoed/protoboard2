@@ -8,6 +8,7 @@ import {Logger} from 'santa';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
+import {PieceSpec} from '../types/piece-spec';
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,9 +26,9 @@ export const KEY = 'turn';
  *
  * @thModule action
  */
-export class TurnAction extends BaseAction<IsMultifaced, Config> {
+export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<IsMultifaced>,
+      context: ActionContext<PieceSpec<IsMultifaced>>,
       defaultConfig: Config,
   ) {
     super(

@@ -10,7 +10,7 @@ import {ObjectSpec} from '../types/object-spec';
  *
  * @thHidden
  */
-export type ObjectCreateSpec<P> = (
-    objectId: StateId<ObjectSpec<P>>,
+export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
+    objectId: StateId<O>,
     context: PersonaContext,
 ) => Observable<NodeWithId<Element>|null>;

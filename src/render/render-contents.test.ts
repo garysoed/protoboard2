@@ -4,15 +4,15 @@ import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {host, multi, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, of as observableOf} from 'rxjs';
+import {of as observableOf, ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
-import {ActivePayload} from '../core/active';
 import {$createSpecMap} from '../objects/object-service';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
-import {ContentSpec, IsContainer} from '../payload/is-container';
-import {ObjectSpec} from '../types/object-spec';
+import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {ContentSpec} from '../payload/is-container';
+import {ActiveSpec} from '../types/active-spec';
+import {ContainerSpec} from '../types/container-spec';
 
 import {renderContents} from './render-contents';
 
@@ -27,28 +27,28 @@ test('@protoboard2/render/render-contents', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const context = createFakeContext({shadowRoot});
     const $ = host({content: multi(slotName)});
-    const isContainer$ = new ReplaySubject<IsContainer<'indexed'>|null>(1);
+    const containerSpec$ = new ReplaySubject<ContainerSpec<'indexed'>|null>(1);
 
     const stateService = new StateService();
     $stateService.set(context.vine, () => stateService);
 
-    run(renderContents(isContainer$, $._.content, context));
+    run(renderContents(containerSpec$, $._.content, context));
 
-    return {context, el, isContainer$, stateService};
+    return {context, el, isContainer$: containerSpec$, stateService};
   });
 
   test('contents$', () => {
     should('render the contents correctly', () => {
       const testType1 = 'testType1';
-      const $object1 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType1}));
+      const $object1 = _.stateService.add(fakePieceSpec({payload: {}, type: testType1}));
       const spec1 = {objectId: $object1, coordinate: createIndexed(0)};
 
       const testType2 = 'testType2';
-      const $object2 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType2}));
+      const $object2 = _.stateService.add(fakePieceSpec({payload: {}, type: testType2}));
       const spec2 = {objectId: $object2, coordinate: createIndexed(1)};
 
       const testType3 = 'testType3';
-      const $object3 = _.stateService.add(fakeObjectSpec({payload: {}, type: testType3}));
+      const $object3 = _.stateService.add(fakePieceSpec({payload: {}, type: testType3}));
       const spec3 = {objectId: $object3, coordinate: createIndexed(2)};
 
       const el1 = setId(document.createElement('div1'), {});
@@ -62,7 +62,7 @@ test('@protoboard2/render/render-contents', init => {
       ]));
 
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
           payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([]),
@@ -74,7 +74,7 @@ test('@protoboard2/render/render-contents', init => {
       $$rootState.set(_.context.vine, () => $root);
 
       const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-      _.isContainer$.next({containerType: 'indexed', $contentSpecs});
+      _.isContainer$.next(fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}}));
 
       _.stateService.set($contentSpecs, []);
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);

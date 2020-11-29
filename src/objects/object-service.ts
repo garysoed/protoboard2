@@ -15,7 +15,7 @@ class ObjectCache {
   private object: Observable<NodeWithId<Element>|null>|null = null;
 
   constructor(
-      private readonly fn: ObjectCreateSpec<object>,
+      private readonly fn: ObjectCreateSpec<ObjectSpec<object>>,
       readonly objectId: StateId<ObjectSpec<object>>,
   ) { }
 

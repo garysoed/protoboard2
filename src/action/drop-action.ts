@@ -1,10 +1,10 @@
 import {$stateService} from 'mask';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {$activeState} from '../objects/getters/root-state';
-import {IsContainer} from '../payload/is-container';
+import {ContainerSpec} from '../types/container-spec';
 
 import {moveObject} from './util/move-object';
 
@@ -18,10 +18,10 @@ interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<IsContainer<'indexed'>, Config> {
+export class DropAction extends BaseAction<ContainerSpec<'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<IsContainer<'indexed'>>,
+      context: ActionContext<ContainerSpec<'indexed'>>,
       defaultConfig: Config,
   ) {
     super(

@@ -2,13 +2,12 @@ import {Vine} from 'grapevine';
 import {assert, setThat, should, test} from 'gs-testing';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {IsContainer} from '../../payload/is-container';
 import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState, RootState} from '../root-state';
-import {fakeObjectSpec} from '../testing/fake-object-spec';
+import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../testing/fake-object-spec';
 
 import {$getContainerOf, $getObjectSpec, $objectSpecIds} from './root-state';
 
@@ -24,15 +23,15 @@ test('@protoboard2/objects/getters/root-state', init => {
 
   test('$getContainerOf', () => {
     should('return the correct container state ID', () => {
-      const $content = _.stateService.add(fakeObjectSpec({payload: {}}));
+      const $content = _.stateService.add(fakePieceSpec({payload: {}}));
       const $container = _.stateService.add<ObjectSpec<IsContainer<'indexed'>>>(
-          fakeObjectSpec({payload: {
+          fakeContainerSpec({payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([{objectId: $content, coordinate: {index: 0}}]),
           }}),
       );
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeObjectSpec({
+        $activeId: _.stateService.add(fakeActiveSpec({
           payload: {containerType: 'indexed', $contentSpecs: _.stateService.add([])},
         })),
         containerIds: [$container],
@@ -45,9 +44,9 @@ test('@protoboard2/objects/getters/root-state', init => {
     });
 
     should('return null if the ID has no container', () => {
-      const $content = _.stateService.add(fakeObjectSpec({payload: {}}));
+      const $content = _.stateService.add(fakePieceSpec({payload: {}}));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeObjectSpec({
+        $activeId: _.stateService.add(fakeActiveSpec({
           payload: {containerType: 'indexed', $contentSpecs: _.stateService.add([])},
         })),
         containerIds: [],
@@ -62,10 +61,10 @@ test('@protoboard2/objects/getters/root-state', init => {
 
   test('$getObjectSpec', () => {
     should('emit the object spec', () => {
-      const objectSpec = fakeObjectSpec({payload: {}});
+      const objectSpec = fakePieceSpec({payload: {}});
       const objectId = _.stateService.add(objectSpec);
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeObjectSpec({
+        $activeId: _.stateService.add(fakeActiveSpec({
           payload: {containerType: 'indexed', $contentSpecs: _.stateService.add([])},
         })),
         containerIds: [],
@@ -80,11 +79,11 @@ test('@protoboard2/objects/getters/root-state', init => {
 
   test('$objectSpecIds', () => {
     should('emit the object IDs', () => {
-      const objectId1 = _.stateService.add(fakeObjectSpec({payload: {}}));
-      const objectId2 = _.stateService.add(fakeObjectSpec({payload: {}}));
-      const objectId3 = _.stateService.add(fakeObjectSpec({payload: {}}));
+      const objectId1 = _.stateService.add(fakePieceSpec({payload: {}}));
+      const objectId2 = _.stateService.add(fakePieceSpec({payload: {}}));
+      const objectId3 = _.stateService.add(fakePieceSpec({payload: {}}));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeObjectSpec({
+        $activeId: _.stateService.add(fakeActiveSpec({
           payload: {containerType: 'indexed', $contentSpecs: _.stateService.add([])},
         })),
         containerIds: [],

@@ -6,6 +6,7 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
+import {PieceSpec} from '../types/piece-spec';
 
 import {$random} from './util/random';
 
@@ -17,9 +18,9 @@ interface Config {
 /**
  * Lets the user pick a random face of the object
  */
-export class RollAction extends BaseAction<IsMultifaced, Config> {
+export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<IsMultifaced>,
+      context: ActionContext<PieceSpec<IsMultifaced>>,
       defaultConfig: Config,
   ) {
     super(

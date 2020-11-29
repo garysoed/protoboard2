@@ -4,16 +4,18 @@ import {$stateService, _p} from 'mask';
 import {setId} from 'persona';
 import {PersonaTesterFactory} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
-import {WebConsoleDestination, ON_LOG_$} from 'santa';
+import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$createSpecMap} from '../objects/object-service';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakeActiveSpec, fakeObjectSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {ObjectSpec} from '../types/object-spec';
+import {ActiveSpec} from '../types/active-spec';
 
-import {$, $active, Active, ActivePayload} from './active';
+import {$, $active, Active} from './active';
+
+
 const dest = new WebConsoleDestination({installTrigger: true});
 ON_LOG_$.subscribe(event => dest.log(event));
 
@@ -28,7 +30,7 @@ test('@protoboard2/core/active', init => {
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
 
-    const $activeSpec = stateService.add<ObjectSpec<ActivePayload>>(fakeObjectSpec({
+    const $activeSpec = stateService.add<ActiveSpec>(fakeActiveSpec({
       payload: {
         containerType: 'indexed' as const,
         $contentSpecs,

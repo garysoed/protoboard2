@@ -10,6 +10,7 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
+import {PieceSpec} from '../types/piece-spec';
 
 import template from './d1.html';
 
@@ -48,7 +49,7 @@ const $ = {
   template,
   api: {},
 })
-export class D1 extends BaseComponent<D1Payload, typeof $> {
+export class D1 extends BaseComponent<PieceSpec<D1Payload>, typeof $> {
   /**
    * @internal
    */
@@ -65,9 +66,7 @@ export class D1 extends BaseComponent<D1Payload, typeof $> {
         $,
     );
 
-    this.addSetup(
-        renderRotatable(this.objectPayload$, this.inputs.slot.slotted, context),
-    );
+    this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context));
   }
 
   @cache()

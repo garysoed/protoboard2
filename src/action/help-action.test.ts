@@ -6,14 +6,15 @@ import {switchMap} from 'rxjs/operators';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {TriggerType} from '../core/trigger-spec';
+import {PieceSpec} from '../types/piece-spec';
 
 import {HelpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
-class TestAction extends BaseAction<{}> {
-  constructor(context: ActionContext<{}>) {
+class TestAction extends BaseAction<PieceSpec<{}>> {
+  constructor(context: ActionContext<PieceSpec<{}>>) {
     super('test', 'test', {}, context, {});
   }
 
@@ -33,7 +34,7 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = _v.build('test');
-    const context = createFakeActionContext<{}>({
+    const context = createFakeActionContext<PieceSpec<{}>>({
       personaContext: createFakeContext({shadowRoot, vine}),
       objectId$: observableOf(null),
     });

@@ -8,6 +8,7 @@ import {Observable, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
 import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
@@ -16,10 +17,10 @@ import {TriggerType} from './trigger-spec';
 
 const ACTION_KEY = 'test';
 
-class TestAction extends BaseAction<{}> {
+class TestAction extends BaseAction<PieceSpec<{}>> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: ActionContext<{}>) {
+  constructor(context: ActionContext<PieceSpec<{}>>) {
     super(ACTION_KEY, 'Test', {}, context, {});
   }
 
@@ -32,9 +33,9 @@ const $ = {
   host: host($baseComponent.api),
 };
 
-class TestComponent extends BaseComponent<{}, typeof $> {
+class TestComponent extends BaseComponent<PieceSpec<{}>, typeof $> {
   constructor(
-      triggerActionMap: ReadonlyArray<ActionSpec<{}>>,
+      triggerActionMap: ReadonlyArray<ActionSpec<PieceSpec<{}>>>,
       context: PersonaContext,
   ) {
     super(triggerActionMap, context, $);

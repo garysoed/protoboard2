@@ -4,7 +4,7 @@ import {$stateService} from 'mask';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 
-import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
 import {RotateAction} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -22,7 +22,7 @@ test('@protoboard2/action/rotate-action', init => {
     $stateService.set(personaContext.vine, () => stateService);
 
     const $rotationDeg = stateService.add(2);
-    const objectId = stateService.add(fakeObjectSpec({payload: {$rotationDeg}}));
+    const objectId = stateService.add(fakePieceSpec({payload: {$rotationDeg}}));
 
     const action = new RotateAction(
         createFakeActionContext({

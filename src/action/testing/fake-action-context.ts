@@ -6,10 +6,10 @@ import {ActionContext} from '../../core/base-action';
 import {ObjectSpec} from '../../types/object-spec';
 
 
-type PartialActionContext<P> = Partial<ActionContext<P>> &
-    {readonly personaContext: PersonaContext; objectId$: Observable<StateId<ObjectSpec<P>>|null>};
+type PartialActionContext<O extends ObjectSpec<any>> = Partial<ActionContext<O>> &
+    {readonly personaContext: PersonaContext; objectId$: Observable<StateId<O>|null>};
 
-export function createFakeActionContext<P>(context: PartialActionContext<P>): ActionContext<P> {
+export function createFakeActionContext<O extends ObjectSpec<any>>(context: PartialActionContext<O>): ActionContext<O> {
   return {
     host: document.createElement('div'),
     ...context,

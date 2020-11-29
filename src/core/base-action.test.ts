@@ -5,6 +5,7 @@ import {Observable, of as observableOf, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createFakeActionContext} from '../action/testing/fake-action-context';
+import {ObjectSpec} from '../types/object-spec';
 
 import {ActionContext, BaseAction} from './base-action';
 
@@ -16,10 +17,10 @@ interface ActionConfig {
   readonly value: number;
 }
 
-class TestAction extends BaseAction<{}, ActionConfig> {
+class TestAction extends BaseAction<ObjectSpec<{}>, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: ActionContext<{}>) {
+  constructor(context: ActionContext<ObjectSpec<{}>>) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
 
     this.addSetup(this.setupConfig());
