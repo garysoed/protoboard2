@@ -4,7 +4,7 @@ import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
-import {ObjectSpec} from '../../../src/objects/object-spec';
+import {ObjectSpec} from '../../../src/types/object-spec';
 import {PiecePayload} from '../types/piece-payload';
 import {RegionPayload} from '../types/region-payload';
 

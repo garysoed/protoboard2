@@ -8,9 +8,9 @@ import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {ObjectSpec} from '../objects/object-spec';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
+import {ObjectSpec} from '../types/object-spec';
 
 import template from './active.html';
 

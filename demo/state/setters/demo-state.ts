@@ -1,18 +1,17 @@
-import {Vine, stream} from 'grapevine';
+import {stream, Vine} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {Indexed, createIndexed} from '../../../src/coordinate/indexed';
-import {ACTIVE_TYPE, ActivePayload} from '../../../src/core/active';
+import {createIndexed, Indexed} from '../../../src/coordinate/indexed';
+import {ActivePayload, ACTIVE_TYPE} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
-import {ObjectSpec} from '../../../src/objects/object-spec';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
+import {ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
-import {SUPPLY_ID} from '../../core/supply';
 import {$demoState} from '../getters/demo-state';
 import {$objectSpecIds} from '../getters/play-state';
 import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';

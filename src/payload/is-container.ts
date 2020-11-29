@@ -2,7 +2,7 @@ import {StateId} from 'gs-tools/export/state';
 
 import {Coordinate} from '../coordinate/coordinate';
 import {Indexed} from '../coordinate/indexed';
-import {ObjectSpec} from '../objects/object-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 export interface ContentSpec<C extends Coordinate> {
   readonly objectId: StateId<ObjectSpec<any>>;

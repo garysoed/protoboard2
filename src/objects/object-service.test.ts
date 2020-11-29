@@ -7,9 +7,9 @@ import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {ActivePayload} from '../core/active';
+import {ObjectSpec} from '../types/object-spec';
 
 import {$createSpecMap, $getObjectNode} from './object-service';
-import {ObjectSpec} from './object-spec';
 import {$$rootState, RootState} from './root-state';
 import {fakeObjectSpec} from './testing/fake-object-spec';
 import {FakeRootStateBuilder} from './testing/fake-object-spec-list-builder';

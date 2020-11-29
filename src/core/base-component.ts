@@ -9,7 +9,7 @@ import {Logger} from 'santa';
 
 import {HelpAction} from '../action/help-action';
 import {$getObjectSpec} from '../objects/getters/root-state';
-import {ObjectSpec} from '../objects/object-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';

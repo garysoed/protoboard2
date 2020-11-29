@@ -6,7 +6,7 @@ import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {IsContainer} from '../../payload/is-container';
-import {ObjectSpec} from '../object-spec';
+import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState, RootState} from '../root-state';
 import {fakeObjectSpec} from '../testing/fake-object-spec';
 

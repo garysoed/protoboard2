@@ -9,10 +9,10 @@ import {ReplaySubject, of as observableOf} from 'rxjs';
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {ActivePayload} from '../core/active';
 import {$createSpecMap} from '../objects/object-service';
-import {ObjectSpec} from '../objects/object-spec';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
+import {ObjectSpec} from '../types/object-spec';
 
 import {renderContents} from './render-contents';
 

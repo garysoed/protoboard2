@@ -5,9 +5,9 @@ import {of as observableOf} from 'rxjs';
 
 import {ActivePayload, ACTIVE_TYPE} from '../../core/active';
 import {CoordinateTypes, IsContainer} from '../../payload/is-container';
+import {ObjectSpec} from '../../types/object-spec';
 import {ObjectCreateSpec} from '../object-create-spec';
 import {$createSpecMap} from '../object-service';
-import {ObjectSpec} from '../object-spec';
 import {$$rootState, RootState} from '../root-state';
 
 

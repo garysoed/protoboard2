@@ -3,7 +3,7 @@ import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
 import {ActionContext} from '../../core/base-action';
-import {ObjectSpec} from '../../objects/object-spec';
+import {ObjectSpec} from '../../types/object-spec';
 
 
 type PartialActionContext<P> = Partial<ActionContext<P>> &

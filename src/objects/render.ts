@@ -5,8 +5,9 @@ import {attributeIn, element, host, NodeWithId, PersonaContext, single} from 'pe
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
+import {ObjectSpec} from '../types/object-spec';
+
 import {$getObjectNode} from './object-service';
-import {ObjectSpec} from './object-spec';
 import template from './render.html';
 
 

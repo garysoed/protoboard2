@@ -2,7 +2,7 @@ import {StateId} from 'gs-tools/export/state';
 import {NodeWithId, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
-import {ObjectSpec} from './object-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 
 /**

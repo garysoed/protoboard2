@@ -5,8 +5,8 @@ import {$stateService} from 'mask';
 import {Observable, combineLatest} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
-import {ObjectSpec} from '../../objects/object-spec';
 import {CoordinateTypes, IsContainer, TypeCoordinateMapping} from '../../payload/is-container';
+import {ObjectSpec} from '../../types/object-spec';
 
 
 type MoveObjectFn<T extends CoordinateTypes> =

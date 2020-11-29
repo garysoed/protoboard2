@@ -6,9 +6,9 @@ import {map, switchMap} from 'rxjs/operators';
 
 import {$baseComponent} from '../../src/core/base-component';
 import {$getObjectSpec} from '../../src/objects/getters/root-state';
-import {ObjectSpec} from '../../src/objects/object-spec';
 import {IsContainer} from '../../src/payload/is-container';
 import {$slot} from '../../src/region/slot';
+import {ObjectSpec} from '../../src/types/object-spec';
 import {PieceSpec} from '../state/types/piece-spec';
 import {RegionSpec} from '../state/types/region-spec';
 

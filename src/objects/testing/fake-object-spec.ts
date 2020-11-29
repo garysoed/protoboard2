@@ -1,4 +1,4 @@
-import {ObjectSpec} from '../object-spec';
+import {ObjectSpec} from '../../types/object-spec';
 
 type PartialObject<P> = Partial<ObjectSpec<P>> & {payload: P};
 

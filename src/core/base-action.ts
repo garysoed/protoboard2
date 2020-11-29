@@ -9,7 +9,7 @@ import {PersonaContext, host, onMutation} from 'persona';
 import {Observable, Subject, of as observableOf} from 'rxjs';
 import {map, scan, startWith, withLatestFrom, switchMap} from 'rxjs/operators';
 
-import {ObjectSpec} from '../objects/object-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 
 export interface ActionContext<P> {

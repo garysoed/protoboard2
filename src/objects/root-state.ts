@@ -3,8 +3,7 @@ import {StateId} from 'gs-tools/export/state';
 
 import {ActivePayload} from '../core/active';
 import {IsContainer} from '../payload/is-container';
-
-import {ObjectSpec} from './object-spec';
+import {ObjectSpec} from '../types/object-spec';
 
 
 export interface RootState {

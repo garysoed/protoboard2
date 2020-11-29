@@ -6,9 +6,9 @@ import {combineLatest, Observable} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$getObjectSpec} from '../../src/objects/getters/root-state';
-import {ObjectSpec} from '../../src/objects/object-spec';
 import {$render, Render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
+import {ObjectSpec} from '../../src/types/object-spec';
 import {$objectSpecIds} from '../state/getters/play-state';
 import {$setStaging} from '../state/setters/demo-state';
 import {GridArea} from '../state/types/region-state';

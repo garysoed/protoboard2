@@ -7,7 +7,7 @@ import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {ActivePayload} from '../../core/active';
 import {CoordinateTypes, IsContainer} from '../../payload/is-container';
-import {ObjectSpec} from '../object-spec';
+import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState} from '../root-state';
 
 

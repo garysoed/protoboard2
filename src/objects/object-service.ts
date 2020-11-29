@@ -5,9 +5,10 @@ import {NodeWithId, PersonaContext} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 
+import {ObjectSpec} from '../types/object-spec';
+
 import {$getObjectSpec, $objectSpecIds} from './getters/root-state';
 import {ObjectCreateSpec} from './object-create-spec';
-import {ObjectSpec} from './object-spec';
 
 
 class ObjectCache {

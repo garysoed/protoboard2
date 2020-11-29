@@ -6,10 +6,10 @@ import {ReplaySubject} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
-import {ObjectSpec} from '../objects/object-spec';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
+import {ObjectSpec} from '../types/object-spec';
 
 import {DropAction} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
