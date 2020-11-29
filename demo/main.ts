@@ -9,6 +9,7 @@ import {ACTIVE_TYPE, renderActive} from '../src/core/active';
 import {ObjectCreateSpec} from '../src/objects/object-create-spec';
 import {$createSpecMap} from '../src/objects/object-service';
 import {$$rootState} from '../src/objects/root-state';
+import {ObjectClass} from '../src/types/object-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
@@ -91,7 +92,7 @@ function init(stateService: StateService): StateId<DemoState> {
     $isStaging: stateService.add(true),
     $playState: stateService.add<PlayState>({
       $activeId: stateService.add({
-        id: 'ACTIVE_ID',
+        objectClass: ObjectClass.ACTIVE,
         type: ACTIVE_TYPE,
         payload: {
           containerType: 'indexed',

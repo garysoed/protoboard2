@@ -9,7 +9,7 @@ import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeObjectSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
-import {ObjectSpec} from '../types/object-spec';
+import {ObjectClass, ObjectSpec} from '../types/object-spec';
 
 import {DropAction} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -42,20 +42,20 @@ test('@protoboard2/action/drop-action', init => {
   test('onTrigger', () => {
     should('trigger correctly', () => {
       const otherSpec1 = {
-        objectId: _.stateService.add({type: 'test', payload: {}}),
+        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add({type: 'test', payload: {}}),
+        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
         coordinate: createIndexed(1),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add({type: 'test', payload: {}}),
+        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
-        objectId: _.stateService.add({type: 'test', payload: {}}),
+        objectId: _.stateService.add(fakeObjectSpec({payload: {}})),
         coordinate: createIndexed(1),
       };
 

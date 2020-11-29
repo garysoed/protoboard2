@@ -4,7 +4,8 @@ import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {take, tap} from 'rxjs/operators';
 
-import {Indexed, createIndexed} from '../../coordinate/indexed';
+import {createIndexed, Indexed} from '../../coordinate/indexed';
+import {fakeObjectSpec} from '../../objects/testing/fake-object-spec';
 import {ContentSpec} from '../../payload/is-container';
 
 import {moveObject} from './move-object';
@@ -17,23 +18,23 @@ test('@protoboard2/action/util/move-object', () => {
     $stateService.set(vine, () => stateService);
 
     const fromSpec1 = {
-      objectId: stateService.add({type: 'test', payload: {}}),
+      objectId: stateService.add(fakeObjectSpec({payload: {}})),
       coordinate: createIndexed(0),
     };
     const movedSpec = {
-      objectId: stateService.add({type: 'test', payload: {}}),
+      objectId: stateService.add(fakeObjectSpec({payload: {}})),
       coordinate: createIndexed(1),
     };
     const fromSpec2 = {
-      objectId: stateService.add({type: 'test', payload: {}}),
+      objectId: stateService.add(fakeObjectSpec({payload: {}})),
       coordinate: createIndexed(2),
     };
     const toSpec1 = {
-      objectId: stateService.add({type: 'test', payload: {}}),
+      objectId: stateService.add(fakeObjectSpec({payload: {}})),
       coordinate: createIndexed(0),
     };
     const toSpec2 = {
-      objectId: stateService.add({type: 'test', payload: {}}),
+      objectId: stateService.add(fakeObjectSpec({payload: {}})),
       coordinate: createIndexed(1),
     };
 

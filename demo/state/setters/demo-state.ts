@@ -10,7 +10,7 @@ import {ActivePayload, ACTIVE_TYPE} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
-import {ObjectSpec} from '../../../src/types/object-spec';
+import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
 import {$objectSpecIds} from '../getters/play-state';
@@ -116,6 +116,7 @@ function setToPlay(
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
   const $activeId = stateService.add<ObjectSpec<ActivePayload>>({
+    objectClass: ObjectClass.ACTIVE,
     type: ACTIVE_TYPE,
     payload: {
       containerType: 'indexed',
@@ -135,7 +136,12 @@ function setToPlay(
       $rotationDeg,
     };
 
-    pieceObjectSpecIds.push(stateService.add({...spec, id: 'PIECE', type: PIECE_TYPE, payload}));
+    pieceObjectSpecIds.push(stateService.add({
+      ...spec,
+      objectClass: ObjectClass.PIECE,
+      type: PIECE_TYPE,
+      payload,
+    }));
   }
 
   const regionObjectSpecIds: Array<StateId<ObjectSpec<RegionPayload>>> = [];
@@ -147,7 +153,12 @@ function setToPlay(
       $contentSpecs: stateService.add([]),
       gridArea: spec.gridArea,
     };
-    regionObjectSpecIds.push(stateService.add({...spec, id: 'REGION', type: REGION_TYPE, payload}));
+    regionObjectSpecIds.push(stateService.add({
+      ...spec,
+      objectClass: ObjectClass.CONTAINER,
+      type: REGION_TYPE,
+      payload,
+    }));
   }
 
   // Add the supply specs.
@@ -159,6 +170,7 @@ function setToPlay(
       ),
   );
   const supplyObjectId = stateService.add<ObjectSpec<RegionPayload>>({
+    objectClass: ObjectClass.CONTAINER,
     type: SUPPLY_TYPE,
     payload: {
       type: 'region',

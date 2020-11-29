@@ -5,7 +5,7 @@ import {of as observableOf} from 'rxjs';
 
 import {ActivePayload, ACTIVE_TYPE} from '../../core/active';
 import {CoordinateTypes, IsContainer} from '../../payload/is-container';
-import {ObjectSpec} from '../../types/object-spec';
+import {ObjectClass, ObjectSpec} from '../../types/object-spec';
 import {ObjectCreateSpec} from '../object-create-spec';
 import {$createSpecMap} from '../object-service';
 import {$$rootState, RootState} from '../root-state';
@@ -38,6 +38,7 @@ export class FakeRootStateBuilder {
       createFn: ObjectCreateSpec<T> = () => observableOf(setId(document.createElement('div'), {})),
   ): ObjectSpec<T> {
     const spec = {
+      objectClass: ObjectClass.PIECE,
       type: partial.id,
       ...partial,
     };
@@ -59,6 +60,7 @@ export class FakeRootStateBuilder {
   build(stateService: StateService, vine: Vine): State {
     const rootState = {
       $activeId: stateService.add<ObjectSpec<ActivePayload>>({
+        objectClass: ObjectClass.ACTIVE,
         type: ACTIVE_TYPE,
         payload: this.activePayload ?? {
           containerType: 'indexed',
