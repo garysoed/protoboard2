@@ -5,11 +5,6 @@
  */
 export interface ObjectSpec<P> {
   /**
-   * Identifies the object. Must be globally unique.
-   */
-  readonly id: string;
-
-  /**
    * Type of the object. Identifies how to render the object.
    */
   readonly type: string;

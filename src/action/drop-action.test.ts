@@ -42,20 +42,20 @@ test('@protoboard2/action/drop-action', init => {
   test('onTrigger', () => {
     should('trigger correctly', () => {
       const otherSpec1 = {
-        objectId: _.stateService.add({id: 'otherId1', type: 'test', payload: {}}),
+        objectId: _.stateService.add({type: 'test', payload: {}}),
         coordinate: createIndexed(0),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add({id: 'otherId2', type: 'test', payload: {}}),
+        objectId: _.stateService.add({type: 'test', payload: {}}),
         coordinate: createIndexed(1),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add({id: 'otherActiveId', type: 'test', payload: {}}),
+        objectId: _.stateService.add({type: 'test', payload: {}}),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
-        objectId: _.stateService.add({id: 'movedId', type: 'test', payload: {}}),
+        objectId: _.stateService.add({type: 'test', payload: {}}),
         coordinate: createIndexed(1),
       };
 

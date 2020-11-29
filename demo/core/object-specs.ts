@@ -85,10 +85,10 @@ export function renderDemoPiece(
             {
               children: icon$list.length <= 0 ? observableOf([]) : combineLatest(icon$list),
               attrs: new Map([
-                [$baseComponent.api.objectId.attrName, observableOf(state.id)],
+                [$baseComponent.api.objectId.attrName, observableOf(objectId.id)],
               ]),
             },
-            state.id,
+            objectId.id,
             context,
         );
       }),
@@ -109,10 +109,10 @@ export function renderDemoRegion(
             state.payload.componentTag,
             {
               attrs: new Map([
-                [$baseComponent.api.objectId.attrName, observableOf(state.id)],
+                [$baseComponent.api.objectId.attrName, observableOf(objectId.id)],
               ]),
             },
-            state.id,
+            objectId.id,
             context,
         );
       }),

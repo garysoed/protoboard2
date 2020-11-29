@@ -117,7 +117,6 @@ function setToPlay(
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
   const $activeId = stateService.add<ObjectSpec<ActivePayload>>({
-    id: 'ACTIVE_ID',
     type: ACTIVE_TYPE,
     payload: {
       containerType: 'indexed',
@@ -161,7 +160,6 @@ function setToPlay(
       ),
   );
   const supplyObjectId = stateService.add<ObjectSpec<RegionPayload>>({
-    id: SUPPLY_ID,
     type: SUPPLY_TYPE,
     payload: {
       type: 'region',

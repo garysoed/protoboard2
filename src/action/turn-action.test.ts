@@ -23,7 +23,6 @@ test('@protoboard2/action/turn-action', init => {
 
     const $faceIndex = stateService.add(2);
     const objectId = stateService.add(fakeObjectSpec({
-      id: 'TARGET_ID',
       payload: {$currentFaceIndex: $faceIndex},
     }));
 

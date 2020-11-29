@@ -17,23 +17,23 @@ test('@protoboard2/action/util/move-object', () => {
     $stateService.set(vine, () => stateService);
 
     const fromSpec1 = {
-      objectId: stateService.add({id: 'fromContentId1', type: 'test', payload: {}}),
+      objectId: stateService.add({type: 'test', payload: {}}),
       coordinate: createIndexed(0),
     };
     const movedSpec = {
-      objectId: stateService.add({id: 'movedId', type: 'test', payload: {}}),
+      objectId: stateService.add({type: 'test', payload: {}}),
       coordinate: createIndexed(1),
     };
     const fromSpec2 = {
-      objectId: stateService.add({id: 'fromContentId2', type: 'test', payload: {}}),
+      objectId: stateService.add({type: 'test', payload: {}}),
       coordinate: createIndexed(2),
     };
     const toSpec1 = {
-      objectId: stateService.add({id: 'toContentId1', type: 'test', payload: {}}),
+      objectId: stateService.add({type: 'test', payload: {}}),
       coordinate: createIndexed(0),
     };
     const toSpec2 = {
-      objectId: stateService.add({id: 'toContentId2', type: 'test', payload: {}}),
+      objectId: stateService.add({type: 'test', payload: {}}),
       coordinate: createIndexed(1),
     };
 

@@ -59,7 +59,6 @@ export class FakeRootStateBuilder {
   build(stateService: StateService, vine: Vine): State {
     const rootState = {
       $activeId: stateService.add<ObjectSpec<ActivePayload>>({
-        id: 'ACTIVE',
         type: ACTIVE_TYPE,
         payload: this.activePayload ?? {
           containerType: 'indexed',
