@@ -61,11 +61,11 @@ test('@protoboard2/action/drop-action', init => {
 
       const $activeContentIds = _.stateService.add([otherActiveSpec, movedSpec]);
       const $rootState = _.stateService.add<RootState>({
-        $activeId: _.stateService.add(fakeActiveSpec({
-          payload: {containerType: 'indexed', $contentSpecs: $activeContentIds},
-        })),
-        containerIds: [],
-        objectSpecIds: [],
+        objectSpecIds: [
+          _.stateService.add(fakeActiveSpec({
+            payload: {containerType: 'indexed', $contentSpecs: $activeContentIds},
+          })),
+        ],
       });
       $$rootState.set(_.personaContext.vine, () => $rootState);
 

@@ -91,16 +91,16 @@ function init(stateService: StateService): StateId<DemoState> {
   return stateService.add<DemoState>({
     $isStaging: stateService.add(true),
     $playState: stateService.add<PlayState>({
-      $activeId: stateService.add({
-        objectClass: ObjectClass.ACTIVE,
-        type: ACTIVE_TYPE,
-        payload: {
-          containerType: 'indexed',
-          $contentSpecs: stateService.add([]),
-        },
-      }),
-      containerIds: [],
-      objectSpecIds: [],
+      objectSpecIds: [
+        stateService.add({
+          objectClass: ObjectClass.ACTIVE,
+          type: ACTIVE_TYPE,
+          payload: {
+            containerType: 'indexed',
+            $contentSpecs: stateService.add([]),
+          },
+        }),
+      ],
     }),
     pieceEditorState: {
       [PieceType.D1]: {

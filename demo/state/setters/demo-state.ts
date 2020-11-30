@@ -116,7 +116,7 @@ function setToPlay(
 
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
-  const $activeId = stateService.add<ActiveSpec>({
+  const $activeState = stateService.add<ActiveSpec>({
     objectClass: ObjectClass.ACTIVE,
     type: ACTIVE_TYPE,
     payload: {
@@ -182,9 +182,8 @@ function setToPlay(
   });
 
   const playState: PlayState = {
-    $activeId,
-    containerIds: [...regionObjectSpecIds],
     objectSpecIds: [
+      $activeState,
       supplyObjectId,
       ...pieceObjectSpecIds,
       ...regionObjectSpecIds,

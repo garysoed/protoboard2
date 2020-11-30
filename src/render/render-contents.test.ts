@@ -62,14 +62,17 @@ test('@protoboard2/render/render-contents', init => {
       ]));
 
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
-          payload: {
-            containerType: 'indexed',
-            $contentSpecs: _.stateService.add([]),
-          },
-        })),
-        containerIds: [],
-        objectSpecIds: [$object1, $object2, $object3],
+        objectSpecIds: [
+          $object1,
+          $object2,
+          $object3,
+          _.stateService.add<ActiveSpec>(fakeActiveSpec({
+            payload: {
+              containerType: 'indexed',
+              $contentSpecs: _.stateService.add([]),
+            },
+          })),
+        ],
       });
       $$rootState.set(_.context.vine, () => $root);
 

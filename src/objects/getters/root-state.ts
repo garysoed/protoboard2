@@ -1,5 +1,5 @@
 import {stream} from 'grapevine';
-import {$asArray, $asMap, $asSet, $filter, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $asMap, $asSet, $filter, $find, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
@@ -7,7 +7,8 @@ import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {CoordinateTypes, IsContainer} from '../../payload/is-container';
 import {ActiveSpec} from '../../types/active-spec';
-import {ObjectSpec} from '../../types/object-spec';
+import {ContainerSpec} from '../../types/container-spec';
+import {ObjectClass, ObjectSpec} from '../../types/object-spec';
 import {$$rootState} from '../root-state';
 
 
@@ -31,14 +32,14 @@ export const $rootState = stream(
 
 export const $activeState = stream<ActiveSpec|null>(
     'activeState',
-    vine => $rootState.get(vine).pipe(
-        withLatestFrom($stateService.get(vine)),
-        switchMap(([rootState, stateService]) => {
-          if (!rootState) {
-            return observableOf(null);
-          }
-
-          return stateService.get(rootState.$activeId);
+    vine => $objectSpecMap.get(vine).pipe(
+        map(objectSpecMap => {
+          return $pipe(
+              objectSpecMap,
+              $find((pair): pair is [StateId<ActiveSpec>, ActiveSpec] => {
+                return pair[1].objectClass === ObjectClass.ACTIVE;
+              }),
+          )?.[1] ?? null;
         }),
     ),
 );
@@ -48,15 +49,18 @@ type GetContainerOf = (id: StateId<ObjectSpec<any>>) =>
 export const $getContainerOf = stream<GetContainerOf>(
     'getContainerOf',
     vine => combineLatest([
-      $rootState.get(vine),
       $stateService.get(vine),
+      $objectSpecMap.get(vine),
     ])
         .pipe(
             // Map of container ID to content IDs.
-            switchMap(([rootState, stateService]) => {
+            switchMap(([stateService, objectSpecMap]) => {
               const contentEntries = $pipe(
-                  rootState?.containerIds ?? [],
-                  $map(containerSpecId => {
+                  objectSpecMap,
+                  $filter((pair): pair is [StateId<ContainerSpec<CoordinateTypes>>, ContainerSpec<CoordinateTypes>] => {
+                    return pair[1].objectClass === ObjectClass.CONTAINER;
+                  }),
+                  $map(([containerSpecId]) => {
                     return stateService.get(containerSpecId).pipe(
                         switchMap(containerSpec => {
                           if (!containerSpec) {
@@ -110,7 +114,7 @@ export const $getObjectSpec = stream<GetObjectSpec>(
         map(objectSpecMap => {
           return <P>(id: StateId<ObjectSpec<P>>) => {
             for (const [specId, spec] of objectSpecMap) {
-              if (specId === id.id) {
+              if (specId.id === id.id) {
                 return spec;
               }
             }
@@ -134,19 +138,19 @@ export const $objectSpecIds = stream<ReadonlySet<StateId<ObjectSpec<any>>>>(
     ),
 );
 
-const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>>(
+const $objectSpecMap = stream<ReadonlyMap<StateId<ObjectSpec<any>>, ObjectSpec<any>>>(
     'objectSpecMap',
     vine => $rootState.get(vine).pipe(
         withLatestFrom($stateService.get(vine)),
         switchMap(([rootState, stateService]) => {
           if (!rootState) {
-            return observableOf(new Map<string, ObjectSpec<any>>());
+            return observableOf(new Map<StateId<ObjectSpec<any>>, ObjectSpec<any>>());
           }
 
           const objectSpecEntries$List = $pipe(
               rootState.objectSpecIds,
               $map(id => {
-                return stateService.get(id).pipe(map(state => [id.id, state] as const));
+                return stateService.get(id).pipe(map(state => [id, state] as const));
               }),
               $asArray(),
           );
@@ -154,7 +158,7 @@ const $objectSpecMap = stream<ReadonlyMap<string, ObjectSpec<any>>>(
           return combineLatest(objectSpecEntries$List).pipe(
               map(entries => $pipe(
                   entries,
-                  $filter((entry): entry is [string, ObjectSpec<any>] => {
+                  $filter((entry): entry is [StateId<ObjectSpec<any>>, ObjectSpec<any>] => {
                     return !!entry[1];
                   }),
                   $asMap(),

@@ -34,14 +34,15 @@ test('@protoboard2/objects/object-service', init => {
         [testType, () => observableOf(node)],
       ]));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
-          payload: {
-            containerType: 'indexed',
-            $contentSpecs: _.stateService.add([]),
-          },
-        })),
-        containerIds: [],
-        objectSpecIds: [objectId],
+        objectSpecIds: [
+          objectId,
+          _.stateService.add<ActiveSpec>(fakeActiveSpec({
+            payload: {
+              containerType: 'indexed',
+              $contentSpecs: _.stateService.add([]),
+            },
+          })),
+        ],
       });
       $$rootState.set(_.personaContext.vine, () => $root);
 
@@ -61,14 +62,15 @@ test('@protoboard2/objects/object-service', init => {
         [testType, createSpecSpy],
       ]));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
-          payload: {
-            containerType: 'indexed',
-            $contentSpecs: _.stateService.add([]),
-          },
-        })),
-        containerIds: [],
-        objectSpecIds: [objectId],
+        objectSpecIds: [
+          objectId,
+          _.stateService.add<ActiveSpec>(fakeActiveSpec({
+            payload: {
+              containerType: 'indexed',
+              $contentSpecs: _.stateService.add([]),
+            },
+          })),
+        ],
       });
       $$rootState.set(_.personaContext.vine, () => $root);
 
@@ -88,14 +90,15 @@ test('@protoboard2/objects/object-service', init => {
       const testType = 'testType';
       const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const $root = _.stateService.add<RootState>({
-        $activeId: _.stateService.add<ActiveSpec>(fakeActiveSpec({
-          payload: {
-            containerType: 'indexed',
-            $contentSpecs: _.stateService.add([]),
-          },
-        })),
-        containerIds: [],
-        objectSpecIds: [objectId],
+        objectSpecIds: [
+          objectId,
+          _.stateService.add<ActiveSpec>(fakeActiveSpec({
+            payload: {
+              containerType: 'indexed',
+              $contentSpecs: _.stateService.add([]),
+            },
+          })),
+        ],
       });
       $$rootState.set(_.personaContext.vine, () => $root);
 
