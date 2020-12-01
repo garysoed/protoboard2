@@ -2,10 +2,10 @@ import {stream} from 'grapevine';
 import {$asArray, $asMap, $asSet, $filter, $find, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, of as observableOf, EMPTY} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {CoordinateTypes, IsContainer} from '../../payload/is-container';
+import {CoordinateTypes} from '../../payload/is-container';
 import {ActiveSpec} from '../../types/active-spec';
 import {ContainerSpec} from '../../types/container-spec';
 import {ObjectClass, ObjectSpec} from '../../types/object-spec';
@@ -30,7 +30,7 @@ export const $rootState = stream(
     },
 );
 
-export const $activeState = stream<ActiveSpec|null>(
+export const $activeId = stream<StateId<ActiveSpec>|null>(
     'activeState',
     vine => $objectSpecMap.get(vine).pipe(
         map(objectSpecMap => {
@@ -39,13 +39,23 @@ export const $activeState = stream<ActiveSpec|null>(
               $find((pair): pair is [StateId<ActiveSpec>, ActiveSpec] => {
                 return pair[1].objectClass === ObjectClass.ACTIVE;
               }),
-          )?.[1] ?? null;
+          )?.[0] ?? null;
+        }),
+    ),
+);
+
+// TODO: Rename to $activeSpec
+export const $activeState = stream<ActiveSpec|null>(
+    'activeState',
+    vine => combineLatest([$activeId.get(vine), $getObjectSpec.get(vine)]).pipe(
+        map(([activeId, getObjectSpec]) => {
+          return activeId ? getObjectSpec(activeId) : null;
         }),
     ),
 );
 
 type GetContainerOf = (id: StateId<ObjectSpec<any>>) =>
-    StateId<ObjectSpec<IsContainer<CoordinateTypes>>>|null;
+    StateId<ContainerSpec<CoordinateTypes>>|null;
 export const $getContainerOf = stream<GetContainerOf>(
     'getContainerOf',
     vine => combineLatest([
@@ -88,12 +98,12 @@ export const $getContainerOf = stream<GetContainerOf>(
 
               if (contentEntries.length <= 0) {
                 return observableOf(
-                    new Map<StateId<ObjectSpec<any>>, ReadonlySet<string>>(),
+                    new Map<StateId<ContainerSpec<CoordinateTypes>>, ReadonlySet<string>>(),
                 );
               }
 
               return combineLatest(contentEntries).pipe(
-                  map(entries => new Map<StateId<ObjectSpec<any>>, ReadonlySet<string>>(entries)),
+                  map(entries => new Map<StateId<ContainerSpec<CoordinateTypes>>, ReadonlySet<string>>(entries)),
               );
             }),
             map(containerMap => {
@@ -107,15 +117,15 @@ export const $getContainerOf = stream<GetContainerOf>(
         ),
 );
 
-type GetObjectSpec = <P>(id: StateId<ObjectSpec<P>>) => ObjectSpec<P>|null;
+type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => O|null;
 export const $getObjectSpec = stream<GetObjectSpec>(
     'getObjectSpec',
     vine => $objectSpecMap.get(vine).pipe(
         map(objectSpecMap => {
-          return <P>(id: StateId<ObjectSpec<P>>) => {
+          return <O extends ObjectSpec<any>>(id: StateId<O>) => {
             for (const [specId, spec] of objectSpecMap) {
               if (specId.id === id.id) {
-                return spec;
+                return spec as O;
               }
             }
             return null;
@@ -154,6 +164,10 @@ const $objectSpecMap = stream<ReadonlyMap<StateId<ObjectSpec<any>>, ObjectSpec<a
               }),
               $asArray(),
           );
+
+          if (objectSpecEntries$List.length <= 0) {
+            return observableOf(new Map<StateId<ObjectSpec<any>>, ObjectSpec<any>>());
+          }
 
           return combineLatest(objectSpecEntries$List).pipe(
               map(entries => $pipe(

@@ -27,6 +27,7 @@ export const ACTIVE_TYPE = 'pb.active';
 export const $active = {
   tag: 'pb-active',
   api: {
+    // TODO: Should not require object-id
     ...$baseComponent.api,
   },
 };

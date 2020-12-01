@@ -5,7 +5,8 @@ import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {$activeState, $getContainerOf, $getObjectSpec} from '../objects/getters/root-state';
-import {IsContainer} from '../payload/is-container';
+import {CoordinateTypes} from '../payload/is-container';
+import {ContainerSpec} from '../types/container-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {moveObject} from './util/move-object';
@@ -57,7 +58,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               if (!fromObjectId) {
                 return null;
               }
-              return getObjectSpec<IsContainer<any>>(fromObjectId);
+              return getObjectSpec<ContainerSpec<CoordinateTypes>>(fromObjectId);
             }),
         );
 

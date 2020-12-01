@@ -9,6 +9,7 @@ import {$getObjectSpec} from '../../src/objects/getters/root-state';
 import {$render, Render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
 import {ObjectSpec} from '../../src/types/object-spec';
+import {$supplyId} from '../state/getters/demo-state';
 import {$objectSpecIds} from '../state/getters/play-state';
 import {$setStaging} from '../state/setters/demo-state';
 import {GridArea} from '../state/types/region-state';
@@ -26,6 +27,7 @@ const $ = {
   renderSmall6: element('renderSmall6', $render, {}),
   renderSide: element('renderSide', $render, {}),
   renderLarge: element('renderLarge', $render, {}),
+  supply: element('supply', $render, {}),
 };
 
 @_p.customElement({
@@ -56,6 +58,7 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
       this.renderers.renderSmall6.objectId(this.getObjectIdAt(GridArea.SMALL6)),
       this.renderers.renderSide.objectId(this.getObjectIdAt(GridArea.SIDE)),
       this.renderers.renderLarge.objectId(this.getObjectIdAt(GridArea.LARGE)),
+      this.renderers.supply.objectId($supplyId.get(this.vine).pipe(map(id => id ?? undefined))),
     ];
   }
 

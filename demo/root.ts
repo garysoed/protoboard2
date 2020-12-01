@@ -6,7 +6,8 @@ import {Observable} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {HelpOverlay} from '../src/action/help-overlay';
-import {Active} from '../src/core/active';
+import {$active, Active} from '../src/core/active';
+import {$activeId} from '../src/objects/getters/root-state';
 
 import {Documentation} from './core/documentation';
 import {$drawer, Drawer} from './core/drawer';
@@ -18,6 +19,7 @@ import {$isStaging} from './state/getters/demo-state';
 
 
 const $ = {
+  active: element('active', $active, {}),
   drawer: element('drawer', $drawer, {}),
   main: element('main', instanceofType(HTMLDivElement), {
     isPlaying: classToggle('isPlaying'),
@@ -49,6 +51,7 @@ export class Root extends BaseThemedCtrl<typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
+      this.renderers.active.objectId($activeId.get(this.vine).pipe(map(id => id ?? undefined))),
       this.renderers.drawer.drawerExpanded(this.inputs.root.drawerExpanded),
       this.renderers.main.isPlaying(this.isPlaying$),
     ];
