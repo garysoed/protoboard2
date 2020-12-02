@@ -35,7 +35,7 @@ ON_LOG_$.subscribe(log => {
 });
 
 window.addEventListener('load', () => {
-  const theme = new Theme(document, PALETTE.GREY, PALETTE.LIME);
+  const theme = new Theme(document, PALETTE.AMBER, PALETTE.LIME);
   const {vine} = start(
       'protoboard',
       [Root],

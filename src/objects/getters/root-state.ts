@@ -2,7 +2,7 @@ import {stream} from 'grapevine';
 import {$asArray, $asMap, $asSet, $filter, $find, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf, EMPTY} from 'rxjs';
+import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {CoordinateTypes} from '../../payload/is-container';
