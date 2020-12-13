@@ -5,7 +5,6 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of as observableOf} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {FakeRootStateBuilder} from '../objects/testing/fake-object-spec-list-builder';
 
 import {FlipAction} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -22,12 +21,10 @@ test('@protoboard2/action/flip-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const builder = new FakeRootStateBuilder({});
     const $faceIndex = stateService.add(2);
-    const objectSpec = builder.add(fakePieceSpec({
+    const objectSpec = fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
-    }));
-    builder.build(stateService, personaContext.vine);
+    });
 
     const action = new FlipAction(
         createFakeActionContext({

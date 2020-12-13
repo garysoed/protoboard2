@@ -1,8 +1,10 @@
 import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
 import {filterNonNull} from 'gs-tools/export/rxjs';
 import {$stateService} from 'mask';
-import {NodeWithId, PersonaContext} from 'persona';
+import {NodeWithId, PersonaContext, renderNode, RenderSpec} from 'persona';
 import {MultiOutput} from 'persona/export/internal';
+// TODO: Remove these.
+import {__id} from 'persona/src/render/node-with-id';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -62,11 +64,11 @@ export function renderContents(
 
 function renderIndexed(
     contents: ReadonlyMap<Indexed, NodeWithId<Node>>,
-): ReadonlyArray<NodeWithId<Node>> {
+): readonly RenderSpec[] {
   return $pipe(
       [...contents],
       $sort(withMap(([coordinate]) => coordinate.index, normal())),
-      $map(([, node]) => node),
+      $map(([, node]) => renderNode({node, id: node[__id]})),
       $asArray(),
   );
 }

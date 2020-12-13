@@ -1,5 +1,5 @@
 import {StateId} from 'gs-tools/export/state';
-import {NodeWithId, PersonaContext} from 'persona';
+import {PersonaContext, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
 
 import {ObjectSpec} from '../types/object-spec';
@@ -13,4 +13,4 @@ import {ObjectSpec} from '../types/object-spec';
 export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
     objectId: StateId<O>,
     context: PersonaContext,
-) => Observable<NodeWithId<Element>|null>;
+) => Observable<RenderSpec|null>;

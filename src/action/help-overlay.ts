@@ -2,8 +2,8 @@ import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {$keyboard, BaseThemedCtrl, Keyboard, SpecialKeys, _p} from 'mask';
-import {classToggle, element, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, renderElement} from 'persona';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {classToggle, element, multi, onDom, PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
+import {Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerSpec, TriggerType} from '../core/trigger-spec';
@@ -63,50 +63,44 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get tableRows$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
+  private get tableRows$(): Observable<readonly RenderSpec[]> {
     return $helpService.get(this.vine).pipe(
         switchMap(service => service.actions$),
-        switchMap(actions => {
+        map(actions => {
           const rows$list = $pipe(
               actions,
               $map(({action, trigger}) => {
-                const keyboardEl$ = renderCustomElement(
-                    $keyboard,
-                    {
-                      attrs: new Map([['a', observableOf('test')]]),
-                      inputs: {text: observableOf(triggerKeySpecToString(trigger))},
-                    },
-                    {},
-                    this.context,
-                );
-                const triggerEl$ = renderElement(
-                    'td',
-                    {children: combineLatest([keyboardEl$])},
-                    {},
-                    this.context,
-                );
+                const keyboardEl$ = renderCustomElement({
+                  spec: $keyboard,
+                  attrs: new Map([['a', observableOf('test')]]),
+                  inputs: {text: observableOf(triggerKeySpecToString(trigger))},
+                  id: {},
+                });
+                const triggerEl$ = renderElement({
+                  tag: 'td',
+                  children: [keyboardEl$],
+                  id: {},
+                });
 
-                const actionEl$ = renderElement(
-                    'td',
-                    {textContent: observableOf(action.actionName)},
-                    {},
-                    this.context,
-                );
-                return renderElement(
-                    'tr',
-                    {children: combineLatest([triggerEl$, actionEl$])},
-                    {},
-                    this.context,
-                );
+                const actionEl$ = renderElement({
+                  tag: 'td',
+                  textContent: action.actionName,
+                  id: {},
+                });
+                return renderElement({
+                  tag: 'tr',
+                  children: [triggerEl$, actionEl$],
+                  id: {},
+                });
               }),
               $asArray(),
           );
 
           if (rows$list.length <= 0) {
-            return observableOf([]);
+            return [];
           }
 
-          return combineLatest(rows$list);
+          return rows$list;
         }),
     );
   }

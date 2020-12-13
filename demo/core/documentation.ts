@@ -1,9 +1,8 @@
 import {cache} from 'gs-tools/export/data';
-import {switchMapNonNull} from 'gs-tools/export/rxjs';
 import {assertUnreachable} from 'gs-tools/export/typescript';
 import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
-import {element, NodeWithId, PersonaContext, renderCustomElement, single} from 'persona';
+import {element, PersonaContext, renderCustomElement, RenderSpec, single} from 'persona';
 import {Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
@@ -52,7 +51,7 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get content$(): Observable<NodeWithId<Node>|null> {
+  private get content$(): Observable<RenderSpec|null> {
     return $locationService.get(this.vine)
         .pipe(
             switchMap(service => service.getLocation()),
@@ -72,7 +71,7 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
                   assertUnreachable(location.type);
               }
             }),
-            switchMapNonNull(spec => renderCustomElement(spec, {}, {}, this.context)),
+            map(spec => renderCustomElement({spec, id: {}})),
         );
   }
 }

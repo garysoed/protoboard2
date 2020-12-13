@@ -1,7 +1,7 @@
 import {assert, createSpy, fake, resetCalls, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {NodeWithId, setId} from 'persona';
+import {renderNode, RenderSpec, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
@@ -29,9 +29,10 @@ test('@protoboard2/objects/object-service', init => {
       const testType = 'testType';
       const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
+      const nodeSpec = renderNode({node, id: {}});
       $createSpecMap.set(_.personaContext.vine, map => new Map([
         ...map,
-        [testType, () => observableOf(node)],
+        [testType, () => observableOf(nodeSpec)],
       ]));
       const $root = _.stateService.add<RootState>({
         objectSpecIds: [
@@ -55,8 +56,9 @@ test('@protoboard2/objects/object-service', init => {
       const testType = 'testType';
       const objectId = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
       const node = setId(document.createElement('div'), objectId);
-      const createSpecSpy = createSpy<Observable<NodeWithId<Element>>, []>('createSpec');
-      fake(createSpecSpy).always().return(observableOf(node));
+      const nodeSpec = renderNode({node, id: {}});
+      const createSpecSpy = createSpy<Observable<RenderSpec>, []>('createSpec');
+      fake(createSpecSpy).always().return(observableOf(nodeSpec));
       $createSpecMap.set(_.personaContext.vine, map => new Map([
         ...map,
         [testType, createSpecSpy],

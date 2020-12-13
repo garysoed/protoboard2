@@ -2,7 +2,7 @@ import {assert, run, should, test} from 'gs-testing';
 import {arrayFrom} from 'gs-tools/export/collect';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {host, multi, setId} from 'persona';
+import {host, multi, renderNode, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf, ReplaySubject} from 'rxjs';
 
@@ -56,9 +56,9 @@ test('@protoboard2/render/render-contents', init => {
       const el3 = setId(document.createElement('div3'), {});
       $createSpecMap.set(_.context.vine, map => new Map([
         ...map,
-        [testType1, () => observableOf(el1)],
-        [testType2, () => observableOf(el2)],
-        [testType3, () => observableOf(el3)],
+        [testType1, () => observableOf(renderNode({node: el1, id: el1}))],
+        [testType2, () => observableOf(renderNode({node: el2, id: el2}))],
+        [testType3, () => observableOf(renderNode({node: el3, id: el3}))],
       ]));
 
       const $root = _.stateService.add<RootState>({

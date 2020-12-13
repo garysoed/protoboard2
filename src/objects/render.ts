@@ -1,9 +1,10 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, element, host, NodeWithId, PersonaContext, single} from 'persona';
+import {attributeIn, element, host, PersonaContext, renderNode, RenderSpec, single} from 'persona';
+import {__id} from 'persona/src/render/node-with-id';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -41,7 +42,7 @@ export class Render extends BaseThemedCtrl<typeof $> {
     ];
   }
   @cache()
-  private get object$(): Observable<NodeWithId<Node>|null> {
+  private get object$(): Observable<RenderSpec|null> {
     return combineLatest([
       this.inputs.host.objectId,
       $getObjectNode.get(this.vine),
@@ -52,6 +53,10 @@ export class Render extends BaseThemedCtrl<typeof $> {
                 return observableOf(null);
               }
               return getObjectNode(objectId, this.context);
+            }),
+            map(node => {
+              // TODO: Remove the [__id], make RenderSpec accept NodeWithId.
+              return node ? renderNode({node, id: node[__id]}) : null;
             }),
         );
   }

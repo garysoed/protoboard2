@@ -1,9 +1,9 @@
 import {source, stream} from 'grapevine';
 import {$asMap, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
-import {NodeWithId, PersonaContext} from 'persona';
+import {NodeWithId, PersonaContext, render} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, shareReplay} from 'rxjs/operators';
+import {map, shareReplay, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -12,20 +12,25 @@ import {ObjectCreateSpec} from './object-create-spec';
 
 
 class ObjectCache {
-  private object: Observable<NodeWithId<Element>|null>|null = null;
+  private object: Observable<NodeWithId<Node>|null>|null = null;
 
   constructor(
       private readonly fn: ObjectCreateSpec<ObjectSpec<object>>,
       readonly objectId: StateId<ObjectSpec<object>>,
   ) { }
 
-  getOrCreate(context: PersonaContext): Observable<NodeWithId<Element>|null> {
+  getOrCreate(context: PersonaContext): Observable<NodeWithId<Node>|null> {
     if (this.object) {
       return this.object;
     }
 
     const object = this.fn(this.objectId, context)
-        .pipe(shareReplay({bufferSize: 1, refCount: true}));
+        .pipe(
+            switchMap(spec => {
+              return spec ? render(spec, context) : observableOf(null);
+            }),
+            shareReplay({bufferSize: 1, refCount: true}),
+        );
     this.object = object;
     return object;
   }
@@ -69,7 +74,7 @@ const $objectNodeCacheMap = stream<ReadonlyMap<string, ObjectCache>>(
         ),
 );
 
-type GetObjectNode = (id: StateId<ObjectSpec<any>>, context: PersonaContext) => Observable<NodeWithId<Element>|null>;
+type GetObjectNode = (id: StateId<ObjectSpec<any>>, context: PersonaContext) => Observable<NodeWithId<Node>|null>;
 export const $getObjectNode = stream<GetObjectNode>(
     'getObjectNode',
     vine => $objectNodeCacheMap.get(vine).pipe(

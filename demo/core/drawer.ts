@@ -1,8 +1,8 @@
 import {assertByType, filterNonNull} from 'gs-tools/export/rxjs';
 import {enumType, instanceofType} from 'gs-types';
 import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
-import {attributeIn, booleanParser, element, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement} from 'persona';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
+import {Observable, of as observableOf} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -77,28 +77,22 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
 
   private createNodes(
       linkConfig: readonly LinkConfig[],
-  ): Observable<ReadonlyArray<NodeWithId<Node>>> {
+  ): Observable<readonly RenderSpec[]> {
     const node$list = linkConfig.map(({label, path}) => {
-      return renderCustomElement(
-          $button,
-          {
-            children: renderCustomElement(
-                $lineLayout,
-                {
-                  attrs: new Map([['path', observableOf(path)]]),
-                  textContent: observableOf(label),
-                },
-                label,
-                this.context,
-            ).pipe(map(node => [node])),
-            inputs: {isSecondary: observableOf(true)},
-          },
-          label,
-          this.context,
-      );
+      return renderCustomElement({
+        spec: $button,
+        children: [renderCustomElement({
+          spec: $lineLayout,
+          attrs: new Map([['path', path]]),
+          textContent: label,
+          id: label,
+        })],
+        inputs: {isSecondary: true},
+        id: label,
+      });
     });
 
-    return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+    return observableOf(node$list);
   }
 
   private setupRootOnClick(): Observable<unknown> {

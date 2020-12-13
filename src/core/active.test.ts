@@ -1,7 +1,7 @@
 import {assert, setThat, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService, _p} from 'mask';
-import {setId} from 'persona';
+import {renderNode, setId} from 'persona';
 import {PersonaTesterFactory} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
@@ -102,12 +102,13 @@ test('@protoboard2/core/active', init => {
       const testType = 'testType';
       const left = 123;
       const width = 456;
-      const content = setId(document.createElement('div'), {});
+      const id = {};
+      const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.width = `${width}px`;
       $createSpecMap.set(_.tester.vine, map => new Map([
         ...map,
-        [testType, () => observableOf(content)],
+        [testType, () => observableOf(renderNode({node: content, id}))],
       ]));
 
       // TODO: RootStateBuilder
@@ -179,12 +180,13 @@ test('@protoboard2/core/active', init => {
       const top = 123;
       const height = 456;
       const testType = 'testType';
-      const content = setId(document.createElement('div'), {});
+      const id = {};
+      const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.height = `${height}px`;
       $createSpecMap.set(_.tester.vine, map => new Map([
         ...map,
-        [testType, () => observableOf(content)],
+        [testType, () => observableOf(renderNode({node: content, id}))],
       ]));
 
       // TODO: RootStateBuilder
@@ -209,20 +211,22 @@ test('@protoboard2/core/active', init => {
       const testType1 = 'testType1';
       const testType2 = 'testType2';
 
-      const content1 = setId(document.createElement('div'), {});
+      const id1 = {};
+      const content1 = setId(document.createElement('div'), id1);
       content1.style.display = 'block';
       content1.style.width = '1px';
       content1.style.height = `${size}px`;
 
-      const content2 = setId(document.createElement('div'), {});
+      const id2 = {};
+      const content2 = setId(document.createElement('div'), id2);
       content2.style.display = 'block';
       content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
       $createSpecMap.set(_.tester.vine, map => new Map([
         ...map,
-        [testType1, () => observableOf(content1)],
-        [testType2, () => observableOf(content2)],
+        [testType1, () => observableOf(renderNode({node: content1, id: id1}))],
+        [testType2, () => observableOf(renderNode({node: content2, id: id2}))],
       ]));
 
       const $objectSpec1 = _.stateService.add(fakePieceSpec({payload: {}, type: testType1}));

@@ -3,7 +3,7 @@ import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {$stateService, _p} from 'mask';
-import {classToggle, element, host, multi, NodeWithId, PersonaContext, renderCustomElement, style, textContent} from 'persona';
+import {classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
@@ -167,12 +167,10 @@ function computeRect(element: ElementWithRect): Rect {
 
 export function renderActive(
     objectId: StateId<ActiveSpec>,
-    context: PersonaContext,
-): Observable<NodeWithId<Element>> {
-  return renderCustomElement(
-      $active,
-      {inputs: {objectId: observableOf(objectId)}},
-      {},
-      context,
-  );
+): Observable<RenderSpec> {
+  return observableOf(renderCustomElement({
+    spec: $active,
+    inputs: {objectId},
+    id: {},
+  }));
 }

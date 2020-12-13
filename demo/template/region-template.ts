@@ -1,9 +1,9 @@
 import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {$button, $lineLayout, $overlayLayout, $radioInput, BaseThemedCtrl, Button, LineLayout, OverlayLayout, RadioInput, _p} from 'mask';
-import {attributeIn, element, enumParser, host, multi, NodeWithId, PersonaContext, renderCustomElement, stringParser, textContent} from 'persona';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, mapTo, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {attributeIn, element, enumParser, host, multi, PersonaContext, renderCustomElement, RenderSpec, stringParser, textContent} from 'persona';
+import {combineLatest, Observable} from 'rxjs';
+import {map, mapTo, tap, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {$demoState} from '../state/getters/demo-state';
@@ -108,7 +108,7 @@ export class RegionTemplate extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get selectedAreaOptions$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
+  private get selectedAreaOptions$(): Observable<readonly RenderSpec[]> {
     return combineLatest([
       $demoState.get(this.vine),
       this.inputs.host.regionType,
@@ -121,32 +121,27 @@ export class RegionTemplate extends BaseThemedCtrl<typeof $> {
 
               return demoState.regionEditorState[regionType].$targetArea;
             }),
-            switchMap(stateId => {
+            map(stateId => {
               if (!stateId) {
-                return observableOf([]);
+                return [];
               }
 
-              const gridArea$List = $pipe(
+              return $pipe(
                   GRID_AREAS,
                   $zip(countableIterable()),
                   $map(([gridArea, index]) => {
-                    return renderCustomElement(
-                        $radioInput,
-                        {
-                          inputs: {
-                            index: observableOf(index),
-                            label: observableOf(`${gridArea}`),
-                            stateId: observableOf(stateId),
-                          },
-                        },
+                    return renderCustomElement({
+                      spec: $radioInput,
+                      inputs: {
                         index,
-                        this.context,
-                    );
+                        label: `${gridArea}`,
+                        stateId,
+                      },
+                      id: index,
+                    });
                   }),
                   $asArray(),
               );
-
-              return combineLatest(gridArea$List);
             }),
         );
   }

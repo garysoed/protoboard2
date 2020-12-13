@@ -1,9 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {$button, ACTION_EVENT, BaseThemedCtrl, Button, LineLayout, registerSvg, _p} from 'mask';
-import {attributeIn, element, enumParser, host, multi, NodeWithId, onDom, PersonaContext, renderCustomElement, stringParser} from 'persona';
+import {attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec, stringParser} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import cardFront from '../asset/card_front.svg';
@@ -84,15 +84,14 @@ export class PieceTemplate extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get editorContents$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
-    const icon$List = FACE_ICONS.map(icon => renderCustomElement(
-        $pieceButton,
-        {inputs: {icon: observableOf(icon)}},
-        icon,
-        this.context,
-    ));
+  private get editorContents$(): Observable<readonly RenderSpec[]> {
+    const icon$List = FACE_ICONS.map(icon => renderCustomElement({
+      spec: $pieceButton,
+      inputs: {icon},
+      id: icon,
+    }));
 
-    return icon$List.length <= 0 ? observableOf([]) : combineLatest(icon$List);
+    return observableOf(icon$List);
   }
 
   @cache()
@@ -141,30 +140,25 @@ export class PieceTemplate extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get previewContents$(): Observable<ReadonlyArray<NodeWithId<Node>>> {
+  private get previewContents$(): Observable<readonly RenderSpec[]> {
     return this.previewIcons$.pipe(
-        switchMap(previewIcons => {
-          const node$List = previewIcons.map((icon, index) => renderCustomElement(
-              $piecePreview,
-              {
-                inputs: {
-                  icon: observableOf(icon),
-                  index: observableOf(index),
-                },
-                attrs: new Map([
-                  [
-                    'mk-theme-highlight',
-                    this.selectedIndex$.pipe(
-                        map(selectedIndex => selectedIndex === index ? '' : null),
-                    ),
-                  ],
-                ]),
-              },
-              `${index}-${icon}`,
-              this.context,
-          ));
-
-          return node$List.length <= 0 ? observableOf([]) : combineLatest(node$List);
+        map(previewIcons => {
+          return previewIcons.map((icon, index) => renderCustomElement({
+            spec: $piecePreview,
+            inputs: {
+              icon,
+              index,
+            },
+            attrs: new Map([
+              [
+                'mk-theme-highlight',
+                this.selectedIndex$.pipe(
+                    map(selectedIndex => selectedIndex === index ? '' : undefined),
+                ),
+              ],
+            ]),
+            id: `${index}-${icon}`,
+          }));
         }),
     );
   }
