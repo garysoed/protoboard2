@@ -69,7 +69,7 @@ test('@protoboard2/objects/getters/root-state', init => {
   test('$getContainerOf', () => {
     should('return the correct container state ID', () => {
       const $content = _.stateService.add(fakePieceSpec({payload: {}}));
-      const $container = _.stateService.add<ContainerSpec<'indexed'>>(
+      const $container = _.stateService.add<ContainerSpec<unknown, 'indexed'>>(
           fakeContainerSpec({payload: {
             containerType: 'indexed',
             $contentSpecs: _.stateService.add([{objectId: $content, coordinate: {index: 0}}]),

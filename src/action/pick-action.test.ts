@@ -79,11 +79,11 @@ test('@protoboard2/action/pick-action', init => {
       $$rootState.set(_.personaContext.vine, () => $rootState);
       _.objectId$.next(movedId);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($activeContentIds))),
       );
-      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($targetContentSpecs))),
       );
@@ -91,18 +91,18 @@ test('@protoboard2/action/pick-action', init => {
       _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
           otherActiveSpec,
-          objectThat<ContentSpec<Indexed>>().haveProperties({
+          objectThat<ContentSpec<'indexed'>>().haveProperties({
             ...movedSpec,
             coordinate: objectThat<Indexed>().haveProperties(createIndexed(1)),
           }),
         ]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherSpec1, otherSpec2]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, otherSpec2]),
       ]);
     });
   });

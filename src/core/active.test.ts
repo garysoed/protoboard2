@@ -6,7 +6,7 @@ import {PersonaTesterFactory} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {createIndexed, Indexed} from '../coordinate/indexed';
+import {createIndexed} from '../coordinate/indexed';
 import {$createSpecMap} from '../objects/object-service';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeActiveSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
@@ -28,7 +28,7 @@ test('@protoboard2/core/active', init => {
     const stateService = new StateService();
     $stateService.set(tester.vine, () => stateService);
 
-    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
+    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
 
     const $activeSpec = stateService.add<ActiveSpec>(fakeActiveSpec({
       payload: {

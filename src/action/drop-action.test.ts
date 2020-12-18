@@ -23,7 +23,7 @@ test('@protoboard2/action/drop-action', init => {
     const stateService = new StateService();
     $stateService.set(personaContext.vine, () => stateService);
 
-    const objectId$ = new ReplaySubject<StateId<ContainerSpec<'indexed'>>|null>(1);
+    const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
 
     const action = new DropAction(
         () => 1,
@@ -78,11 +78,11 @@ test('@protoboard2/action/drop-action', init => {
 
       _.objectId$.next($objectSpec);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($activeContentIds))),
       );
-      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
           $stateService.get(_.personaContext.vine)
               .pipe(switchMap(service => service.get($targetContentIds))),
       );
@@ -90,15 +90,15 @@ test('@protoboard2/action/drop-action', init => {
       _.action.trigger({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec, movedSpec]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherActiveSpec]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([otherSpec1, otherSpec2]),
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, otherSpec2]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
           otherSpec1,
           otherSpec2,
-          objectThat<ContentSpec<Indexed>>().haveProperties({
+          objectThat<ContentSpec<'indexed'>>().haveProperties({
             ...movedSpec,
             coordinate: objectThat<Indexed>().haveProperties(createIndexed(1)),
           }),

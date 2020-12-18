@@ -6,7 +6,7 @@ import {host, multi, renderNode, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf, ReplaySubject} from 'rxjs';
 
-import {createIndexed, Indexed} from '../coordinate/indexed';
+import {createIndexed} from '../coordinate/indexed';
 import {$createSpecMap} from '../objects/object-service';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
@@ -27,7 +27,7 @@ test('@protoboard2/render/render-contents', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const context = createFakeContext({shadowRoot});
     const $ = host({content: multi(slotName)});
-    const containerSpec$ = new ReplaySubject<ContainerSpec<'indexed'>|null>(1);
+    const containerSpec$ = new ReplaySubject<ContainerSpec<unknown, 'indexed'>|null>(1);
 
     const stateService = new StateService();
     $stateService.set(context.vine, () => stateService);
@@ -76,7 +76,7 @@ test('@protoboard2/render/render-contents', init => {
       });
       $$rootState.set(_.context.vine, () => $root);
 
-      const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
+      const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
       _.isContainer$.next(fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}}));
 
       _.stateService.set($contentSpecs, []);

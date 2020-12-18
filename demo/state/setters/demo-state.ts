@@ -115,7 +115,7 @@ function setToPlay(
   // }
 
   // Add the active specs.
-  const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>([]);
+  const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
   const $activeState = stateService.add<ActiveSpec>({
     objectClass: ObjectClass.ACTIVE,
     type: ACTIVE_TYPE,
@@ -163,7 +163,7 @@ function setToPlay(
   }
 
   // Add the supply specs.
-  const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<Indexed>>>(
+  const $supplyContentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>(
       $pipe(
           pieceObjectSpecIds,
           $map(objectId => ({objectId, coordinate: createIndexed(0)})),

@@ -18,10 +18,10 @@ interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<ContainerSpec<'indexed'>, Config> {
+export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<ContainerSpec<'indexed'>>,
+      context: ActionContext<ContainerSpec<unknown, 'indexed'>>,
       defaultConfig: Config,
   ) {
     super(

@@ -55,7 +55,7 @@ export const $activeState = stream<ActiveSpec|null>(
 );
 
 type GetContainerOf = (id: StateId<ObjectSpec<any>>) =>
-    StateId<ContainerSpec<CoordinateTypes>>|null;
+    StateId<ContainerSpec<unknown, CoordinateTypes>>|null;
 export const $getContainerOf = stream<GetContainerOf>(
     'getContainerOf',
     vine => combineLatest([
@@ -67,7 +67,7 @@ export const $getContainerOf = stream<GetContainerOf>(
             switchMap(([stateService, objectSpecMap]) => {
               const contentEntries = $pipe(
                   objectSpecMap,
-                  $filter((pair): pair is [StateId<ContainerSpec<CoordinateTypes>>, ContainerSpec<CoordinateTypes>] => {
+                  $filter((pair): pair is [StateId<ContainerSpec<unknown, CoordinateTypes>>, ContainerSpec<unknown, CoordinateTypes>] => {
                     return pair[1].objectClass === ObjectClass.CONTAINER;
                   }),
                   $map(([containerSpecId]) => {
@@ -98,12 +98,12 @@ export const $getContainerOf = stream<GetContainerOf>(
 
               if (contentEntries.length <= 0) {
                 return observableOf(
-                    new Map<StateId<ContainerSpec<CoordinateTypes>>, ReadonlySet<string>>(),
+                    new Map<StateId<ContainerSpec<unknown, CoordinateTypes>>, ReadonlySet<string>>(),
                 );
               }
 
               return combineLatest(contentEntries).pipe(
-                  map(entries => new Map<StateId<ContainerSpec<CoordinateTypes>>, ReadonlySet<string>>(entries)),
+                  map(entries => new Map<StateId<ContainerSpec<unknown, CoordinateTypes>>, ReadonlySet<string>>(entries)),
               );
             }),
             map(containerMap => {

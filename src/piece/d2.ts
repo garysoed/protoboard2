@@ -40,9 +40,7 @@ export const $ = {
   }),
 };
 
-export interface D2Payload extends IsMultifaced, IsRotatable {
-
-}
+export type D2Spec = PieceSpec<IsMultifaced&IsRotatable>;
 
 /**
  * Represents an object with two faces.
@@ -59,7 +57,7 @@ export interface D2Payload extends IsMultifaced, IsRotatable {
   ...$d2,
   template,
 })
-export class D2 extends BaseComponent<PieceSpec<D2Payload>, typeof $> {
+export class D2 extends BaseComponent<D2Spec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [

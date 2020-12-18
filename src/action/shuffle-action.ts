@@ -5,8 +5,8 @@ import {ActionContext, BaseAction} from '../core/base-action';
 import {ContainerSpec} from '../types/container-spec';
 
 
-export class ShuffleAction extends BaseAction<ContainerSpec<'indexed'>> {
-  constructor(context: ActionContext<ContainerSpec<'indexed'>>) {
+export class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>> {
+  constructor(context: ActionContext<ContainerSpec<unknown, 'indexed'>>) {
     super(
         'shuffle',
         'Shuffle',

@@ -1,15 +1,17 @@
-export { Lens, $lens } from '../src/core/lens';
-export { LensDisplay } from '../src/core/lens-display';
+export {Lens, $lens} from '../src/core/lens';
+export {LensDisplay} from '../src/core/lens-display';
 
 // action
-export { PickAction } from '../src/action/pick-action';
+export {PickAction} from '../src/action/pick-action';
 
 // region
-export { Slot, $slot } from '../src/region/slot';
+export {Deck, $deck, DeckSpec} from '../src/region/deck';
+export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
-export { ConverterOf, BaseAction } from '../src/core/base-action';
+export {ConverterOf, BaseAction} from '../src/core/base-action';
 
 // piece
-export { $d1, D1 } from '../src/piece/d1';
-export { $d2, D2 } from '../src/piece/d2';
+export {$d1, D1, D1Spec, d1Spec} from '../src/piece/d1';
+export {$d2, D2, D2Spec} from '../src/piece/d2';
+export {$d6, D6, D6Spec} from '../src/piece/d6';

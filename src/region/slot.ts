@@ -1,15 +1,16 @@
 import {cache} from 'gs-tools/export/data';
+import {StateId} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {PersonaContext, element, host, multi} from 'persona';
+import {element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 
 import {DropAction} from '../action/drop-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
-import {IsContainer} from '../payload/is-container';
+import {ContentSpec} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
-import {ContainerSpec} from '../types/container-spec';
+import {containerSpec, ContainerSpec} from '../types/container-spec';
 
 import template from './slot.html';
 
@@ -30,14 +31,26 @@ export const $ = {
   }),
 };
 
-// TODO: Replace with SlotSpec.
-export type SlotPayload = IsContainer<'indexed'>;
+export type SlotSpec<P> = ContainerSpec<P, 'indexed'>;
+
+interface Input<P> {
+  readonly type: string;
+  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
+  readonly payload: P;
+}
+
+export function slotSpec<P>(input: Input<P>): SlotSpec<P> {
+  return containerSpec({
+    ...input,
+    containerType: 'indexed',
+  });
+}
 
 @_p.customElement({
   ...$slot,
   template,
 })
-export class Slot extends BaseComponent<ContainerSpec<'indexed'>, typeof $> {
+export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [

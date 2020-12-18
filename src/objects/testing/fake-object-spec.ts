@@ -14,9 +14,9 @@ export function fakeActiveSpec(
   };
 }
 
-export function fakeContainerSpec<C extends CoordinateTypes>(
-    partial: {readonly type?: string; readonly payload: IsContainer<C>},
-): ContainerSpec<C> {
+export function fakeContainerSpec<P extends IsContainer<C>, C extends CoordinateTypes>(
+    partial: {readonly type?: string; readonly payload: P},
+): ContainerSpec<P, C> {
   return {
     objectClass: ObjectClass.CONTAINER,
     type: 'TEST_TYPE',

@@ -58,7 +58,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               if (!fromObjectId) {
                 return null;
               }
-              return getObjectSpec<ContainerSpec<CoordinateTypes>>(fromObjectId);
+              return getObjectSpec<ContainerSpec<unknown, CoordinateTypes>>(fromObjectId);
             }),
         );
 

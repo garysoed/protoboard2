@@ -1,4 +1,5 @@
 import {cache} from 'gs-tools/export/data';
+import {StateId} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {PersonaContext, element, slotted, host} from 'persona';
@@ -10,7 +11,7 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
-import {PieceSpec} from '../types/piece-spec';
+import {pieceSpec, PieceSpec} from '../types/piece-spec';
 
 import template from './d1.html';
 
@@ -25,7 +26,23 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export type D1Payload = IsRotatable;
+export type D1Spec<P> = PieceSpec<IsRotatable&P>;
+
+interface Input<P> {
+  readonly type: string;
+  readonly payload: P;
+  readonly $rotationDeg: StateId<number>;
+}
+
+export function d1Spec<P>(input: Input<P>): D1Spec<P> {
+  return pieceSpec({
+    type: input.type,
+    payload: {
+      ...input.payload,
+      $rotationDeg: input.$rotationDeg,
+    },
+  });
+}
 
 const $ = {
   host: host($d1.api),
@@ -49,7 +66,7 @@ const $ = {
   template,
   api: {},
 })
-export class D1 extends BaseComponent<PieceSpec<D1Payload>, typeof $> {
+export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
   /**
    * @internal
    */

@@ -41,10 +41,10 @@ test('@protoboard2/action/util/move-object', () => {
     const $fromContentSpecs = stateService.add([fromSpec1, movedSpec, fromSpec2]);
     const $toContentSpecs = stateService.add([toSpec1, toSpec2]);
 
-    const fromContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+    const fromContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
         stateService.get($fromContentSpecs),
     );
-    const toContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<Indexed>>|null>(
+    const toContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
         stateService.get($toContentSpecs),
     );
 
@@ -59,13 +59,13 @@ test('@protoboard2/action/util/move-object', () => {
         ));
 
     assert(fromContentIds$).to.emitWith(
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([fromSpec1, fromSpec2]),
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([fromSpec1, fromSpec2]),
     );
     assert(toContentIds$).to.emitWith(
-        arrayThat<ContentSpec<Indexed>>().haveExactElements([
+        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
           toSpec1,
           toSpec2,
-          objectThat<ContentSpec<Indexed>>().haveProperties({
+          objectThat<ContentSpec<'indexed'>>().haveProperties({
             ...movedSpec,
             coordinate: objectThat<Indexed>().haveProperties(createIndexed(2)),
           }),
