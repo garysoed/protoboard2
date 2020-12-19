@@ -1,16 +1,14 @@
 import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
 import {filterNonNull} from 'gs-tools/export/rxjs';
 import {$stateService} from 'mask';
-import {NodeWithId, PersonaContext, renderNode, RenderSpec} from 'persona';
+import {PersonaContext, RenderSpec} from 'persona';
 import {MultiOutput} from 'persona/export/internal';
-// TODO: Remove these.
-import {__id} from 'persona/src/render/node-with-id';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {Indexed} from '../coordinate/indexed';
-import {$getObjectNode} from '../objects/object-service';
+import {$getRenderSpec} from '../objects/object-create-spec';
 import {IsContainer} from '../payload/is-container';
 
 
@@ -34,12 +32,12 @@ export function renderContents(
         }
 
         return stateService.get(containerSpec.payload.$contentSpecs).pipe(
-            withLatestFrom($getObjectNode.get(context.vine)),
-            switchMap(([contentIds, getObjectNode]) => {
+            withLatestFrom($getRenderSpec.get(context.vine)),
+            switchMap(([contentIds, getRenderSpec]) => {
               const node$list = $pipe(
                   contentIds ?? [],
                   $map(({objectId, coordinate}) => {
-                    return getObjectNode(objectId, context).pipe(
+                    return getRenderSpec(objectId, context).pipe(
                         take(1),
                         filterNonNull(),
                         map(node => [coordinate, node] as const),
@@ -63,12 +61,12 @@ export function renderContents(
 }
 
 function renderIndexed(
-    contents: ReadonlyMap<Indexed, NodeWithId<Node>>,
+    contents: ReadonlyMap<Indexed, RenderSpec>,
 ): readonly RenderSpec[] {
   return $pipe(
       [...contents],
       $sort(withMap(([coordinate]) => coordinate.index, normal())),
-      $map(([, node]) => renderNode({node, id: node[__id]})),
+      $map(([, node]) => node),
       $asArray(),
   );
 }

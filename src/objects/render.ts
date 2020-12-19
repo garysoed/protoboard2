@@ -1,14 +1,13 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, element, host, PersonaContext, renderNode, RenderSpec, single} from 'persona';
-import {__id} from 'persona/src/render/node-with-id';
+import {attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
-import {$getObjectNode} from './object-service';
+import {$getRenderSpec} from './object-create-spec';
 import template from './render.html';
 
 
@@ -45,18 +44,14 @@ export class Render extends BaseThemedCtrl<typeof $> {
   private get object$(): Observable<RenderSpec|null> {
     return combineLatest([
       this.inputs.host.objectId,
-      $getObjectNode.get(this.vine),
+      $getRenderSpec.get(this.vine),
     ])
         .pipe(
-            switchMap(([objectId, getObjectNode]) => {
+            switchMap(([objectId, getRenderSpec]) => {
               if (!objectId) {
                 return observableOf(null);
               }
-              return getObjectNode(objectId, this.context);
-            }),
-            map(node => {
-              // TODO: Remove the [__id], make RenderSpec accept NodeWithId.
-              return node ? renderNode({node, id: node[__id]}) : null;
+              return getRenderSpec(objectId, this.context);
             }),
         );
   }
