@@ -1,3 +1,4 @@
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {PersonaContext, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
@@ -14,3 +15,8 @@ export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
     objectId: StateId<O>,
     context: PersonaContext,
 ) => Observable<RenderSpec|null>;
+
+export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
+    'createSpecMap',
+    () => new Map(),
+);

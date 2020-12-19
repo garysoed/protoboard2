@@ -7,7 +7,7 @@ import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf, ReplaySubject} from 'rxjs';
 
 import {createIndexed} from '../coordinate/indexed';
-import {$createSpecMap} from '../objects/object-service';
+import {$createSpecMap} from '../objects/object-create-spec';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';

@@ -1,4 +1,4 @@
-import {source, stream} from 'grapevine';
+import {stream} from 'grapevine';
 import {$asMap, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {NodeWithId, PersonaContext, render} from 'persona';
@@ -8,7 +8,7 @@ import {map, shareReplay, switchMap} from 'rxjs/operators';
 import {ObjectSpec} from '../types/object-spec';
 
 import {$getObjectSpec, $objectSpecIds} from './getters/root-state';
-import {ObjectCreateSpec} from './object-create-spec';
+import {$createSpecMap, ObjectCreateSpec} from './object-create-spec';
 
 
 class ObjectCache {
@@ -35,12 +35,6 @@ class ObjectCache {
     return object;
   }
 }
-
-// TODO: Move to RootState
-export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
-    'createSpecMap',
-    () => new Map(),
-);
 
 const $objectNodeCacheMap = stream<ReadonlyMap<string, ObjectCache>>(
     'objectNodeCacheMap',

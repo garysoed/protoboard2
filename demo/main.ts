@@ -6,8 +6,7 @@ import {switchMap, tap} from 'rxjs/operators';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {ACTIVE_TYPE, renderActive} from '../src/core/active';
-import {ObjectCreateSpec} from '../src/objects/object-create-spec';
-import {$createSpecMap} from '../src/objects/object-service';
+import {$createSpecMap, ObjectCreateSpec} from '../src/objects/object-create-spec';
 import {$$rootState} from '../src/objects/root-state';
 import {ObjectClass} from '../src/types/object-spec';
 

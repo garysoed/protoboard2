@@ -7,7 +7,7 @@ import {of as observableOf} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {createIndexed} from '../coordinate/indexed';
-import {$createSpecMap} from '../objects/object-service';
+import {$createSpecMap} from '../objects/object-create-spec';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeActiveSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';

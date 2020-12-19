@@ -8,7 +8,8 @@ import {switchMap} from 'rxjs/operators';
 
 import {ActiveSpec} from '../types/active-spec';
 
-import {$createSpecMap, $getObjectNode} from './object-service';
+import {$createSpecMap} from './object-create-spec';
+import {$getObjectNode} from './object-service';
 import {$$rootState, RootState} from './root-state';
 import {fakeActiveSpec, fakePieceSpec} from './testing/fake-object-spec';
 
