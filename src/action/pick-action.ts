@@ -54,9 +54,9 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               return getContainerOf(objectId);
             }),
             withLatestFrom($getObjectSpec.get(this.vine)),
-            map(([fromObjectId, getObjectSpec]) => {
+            switchMap(([fromObjectId, getObjectSpec]) => {
               if (!fromObjectId) {
-                return null;
+                return observableOf(null);
               }
               return getObjectSpec<ContainerSpec<unknown, CoordinateTypes>>(fromObjectId);
             }),

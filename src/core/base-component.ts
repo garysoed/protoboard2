@@ -84,7 +84,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
    */
   @cache()
-  get objectId$(): Observable<StateId<ObjectSpec<any>>> {
+  get objectId$(): Observable<StateId<O>> {
     return $.host._.objectId.getValue(this.context).pipe(
         switchMap(objectId => {
           if (!objectId) {
@@ -92,7 +92,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             return EMPTY;
           }
 
-          return observableOf(objectId);
+          return observableOf(objectId as StateId<O>);
         }),
     );
   }
@@ -104,8 +104,8 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
       $getObjectSpec.get(this.context.vine),
     ])
         .pipe(
-            map(([objectId, getObjectSpec]) => {
-              return (getObjectSpec(objectId) || null) as O|null;
+            switchMap(([objectId, getObjectSpec]) => {
+              return getObjectSpec(objectId);
             }),
         );
   }

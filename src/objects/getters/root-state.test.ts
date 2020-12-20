@@ -2,7 +2,7 @@ import {Vine} from 'grapevine';
 import {assert, setThat, should, test} from 'gs-testing';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 import {ContainerSpec} from '../../types/container-spec';
 import {ObjectSpec} from '../../types/object-spec';
@@ -121,7 +121,7 @@ test('@protoboard2/objects/getters/root-state', init => {
       });
       $$rootState.set(_.vine, () => $root);
 
-      assert($getObjectSpec.get(_.vine).pipe(map(getObjectSpec => getObjectSpec(objectId))))
+      assert($getObjectSpec.get(_.vine).pipe(switchMap(getObjectSpec => getObjectSpec(objectId))))
           .to.emitWith(objectSpec);
     });
   });

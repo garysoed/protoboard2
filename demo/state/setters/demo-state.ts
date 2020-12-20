@@ -2,10 +2,10 @@ import {stream, Vine} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
-import {createIndexed, Indexed} from '../../../src/coordinate/indexed';
+import {createIndexed} from '../../../src/coordinate/indexed';
 import {ACTIVE_TYPE} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {$$rootState} from '../../../src/objects/root-state';
@@ -36,7 +36,7 @@ export const $setStaging = stream(
         $stateService.get(vine),
       ])
           .pipe(
-              map(([
+              switchMap(([
                 demoState,
                 objectSpecIds,
                 getObjectSpec,
@@ -45,19 +45,46 @@ export const $setStaging = stream(
                 stateService,
               ]) => {
                 if (!demoState) {
-                  return null;
+                  return observableOf(null);
                 }
 
                 const objectSpecs = $pipe(
                     objectSpecIds,
                     $map(id => getObjectSpec(id)),
-                    $filterNonNull(),
                     $asArray(),
                 );
 
+                if (objectSpecs.length <= 0) {
+                  return observableOf({
+                    objectSpecs: [],
+                    demoState,
+                    pieceSpecs,
+                    regionSpecs,
+                    stateService,
+                  });
+                }
+
+                return combineLatest(objectSpecs).pipe(map(objectSpecs => ({
+                  objectSpecs,
+                  demoState,
+                  pieceSpecs,
+                  regionSpecs,
+                  stateService,
+                })));
+              }),
+              map(params => {
+                if (!params) {
+                  return null;
+                }
+
+                const {demoState, objectSpecs, pieceSpecs, regionSpecs, stateService} = params;
                 return (isStaging: boolean) => {
                   if (isStaging) {
-                    setToStaging(demoState, objectSpecs, stateService);
+                    setToStaging(
+                        demoState,
+                        $pipe(objectSpecs, $filterNonNull(), $asArray()),
+                        stateService,
+                    );
                   } else {
                     setToPlay(demoState, pieceSpecs ?? [], regionSpecs ?? [], stateService, vine);
                   }

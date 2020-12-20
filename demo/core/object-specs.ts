@@ -2,7 +2,7 @@ import {StateId} from 'gs-tools/export/state';
 import {$icon} from 'mask';
 import {PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 import {$baseComponent} from '../../src/core/base-component';
 import {$getObjectSpec} from '../../src/objects/getters/root-state';
@@ -45,7 +45,7 @@ export function renderDemoPiece(
     context: PersonaContext,
 ): Observable<RenderSpec|null> {
   return $getObjectSpec.get(context.vine).pipe(
-      map(getObjectSpec => getObjectSpec(objectId)),
+      switchMap(getObjectSpec => getObjectSpec(objectId)),
       map(state => {
         if (!state) {
           return null;
@@ -86,7 +86,7 @@ export function renderDemoRegion(
     context: PersonaContext,
 ): Observable<RenderSpec|null> {
   return $getObjectSpec.get(context.vine).pipe(
-      map(getObjectSpec => getObjectSpec(objectId)),
+      switchMap(getObjectSpec => getObjectSpec(objectId)),
       map(state => {
         if (!state) {
           return null;

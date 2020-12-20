@@ -2,7 +2,7 @@ import {stream} from 'grapevine';
 import {$asArray, $asMap, $asSet, $filter, $find, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, of as observableOf, Observable} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {CoordinateTypes} from '../../payload/is-container';
@@ -48,8 +48,8 @@ export const $activeId = stream<StateId<ActiveSpec>|null>(
 export const $activeState = stream<ActiveSpec|null>(
     'activeState',
     vine => combineLatest([$activeId.get(vine), $getObjectSpec.get(vine)]).pipe(
-        map(([activeId, getObjectSpec]) => {
-          return activeId ? getObjectSpec(activeId) : null;
+        switchMap(([activeId, getObjectSpec]) => {
+          return activeId ? getObjectSpec(activeId) : observableOf(null);
         }),
     ),
 );
@@ -117,19 +117,12 @@ export const $getContainerOf = stream<GetContainerOf>(
         ),
 );
 
-type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => O|null;
+type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => Observable<O|null>;
 export const $getObjectSpec = stream<GetObjectSpec>(
     'getObjectSpec',
-    vine => $objectSpecMap.get(vine).pipe(
-        map(objectSpecMap => {
-          return <O extends ObjectSpec<any>>(id: StateId<O>) => {
-            for (const [specId, spec] of objectSpecMap) {
-              if (specId.id === id.id) {
-                return spec as O;
-              }
-            }
-            return null;
-          };
+    vine => $stateService.get(vine).pipe(
+        map(stateService => {
+          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.get(id);
         }),
     ),
 );

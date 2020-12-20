@@ -1,9 +1,10 @@
+import {$asMap, $filterNonNull, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {$button, BaseThemedCtrl, Button, LineLayout, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
-import {combineLatest, Observable} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, tap, withLatestFrom, switchMap} from 'rxjs/operators';
 
 import {$getObjectSpec} from '../../src/objects/getters/root-state';
 import {$render, Render} from '../../src/objects/render';
@@ -82,27 +83,32 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
   @cache()
   private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, StateId<ObjectSpec<any>>>> {
     return combineLatest([$objectSpecIds.get(this.vine), $getObjectSpec.get(this.vine)]).pipe(
-        map(([specIds, getObjectSpec]) => {
-          const objectSpecMap = new Map<GridArea, StateId<ObjectSpec<any>>>();
-          for (const specId of specIds) {
-            const spec = getObjectSpec(specId);
-            if (!spec) {
-              continue;
-            }
+        switchMap(([specIds, getObjectSpec]) => {
+          const pair$list = specIds.map(
+              id => getObjectSpec(id).pipe(map(spec => {
+                if (!spec) {
+                  return null;
+                }
 
-            if (spec.payload.type !== 'region') {
-              continue;
-            }
+                if (spec.payload.type !== 'region') {
+                  return null;
+                }
 
-            if (!spec.payload.gridArea) {
-              continue;
-            }
+                if (!spec.payload.gridArea) {
+                  return null;
+                }
 
-            objectSpecMap.set(spec.payload.gridArea, specId);
+                return [spec.payload.gridArea, id] as const;
+              })),
+          );
+
+          if (pair$list.length <= 0) {
+            return observableOf([]);
           }
 
-          return objectSpecMap;
+          return combineLatest(pair$list);
         }),
+        map(pairlist => $pipe(pairlist, $filterNonNull(), $asMap())),
     );
   }
 }
