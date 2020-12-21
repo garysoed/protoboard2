@@ -7,11 +7,11 @@ import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf, ReplaySubject} from 'rxjs';
 
 import {createIndexed} from '../coordinate/indexed';
+import {activeSpec, ActiveSpec} from '../core/active';
 import {$createSpecMap} from '../objects/object-create-spec';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {ActiveSpec} from '../types/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
 import {renderContents} from './render-contents';
@@ -62,16 +62,13 @@ test('@protoboard2/render/render-contents', init => {
       ]));
 
       const $root = _.stateService.add<RootState>({
+        $activeState: _.stateService.add<ActiveSpec>(activeSpec({
+          $contentSpecs: _.stateService.add([]),
+        })),
         objectSpecIds: [
           $object1,
           $object2,
           $object3,
-          _.stateService.add<ActiveSpec>(fakeActiveSpec({
-            payload: {
-              containerType: 'indexed',
-              $contentSpecs: _.stateService.add([]),
-            },
-          })),
         ],
       });
       $$rootState.set(_.context.vine, () => $root);

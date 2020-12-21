@@ -9,11 +9,10 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 import {createIndexed} from '../coordinate/indexed';
 import {$createSpecMap} from '../objects/object-create-spec';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeActiveSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {ActiveSpec} from '../types/active-spec';
 
-import {$, $active, Active} from './active';
+import {$, $active, Active, activeSpec, ActiveSpec} from './active';
 
 
 const dest = new WebConsoleDestination({installTrigger: true});
@@ -30,14 +29,9 @@ test('@protoboard2/core/active', init => {
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
 
-    const $activeSpec = stateService.add<ActiveSpec>(fakeActiveSpec({
-      payload: {
-        containerType: 'indexed' as const,
-        $contentSpecs,
-      },
-    }));
+    const $activeSpec = stateService.add<ActiveSpec>(activeSpec({$contentSpecs}));
     const root = {
-      $activeId: $activeSpec,
+      $activeState: $activeSpec,
       containerIds: [],
       objectSpecIds: [$activeSpec],
     };

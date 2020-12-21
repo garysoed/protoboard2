@@ -1,12 +1,12 @@
 import {stream} from 'grapevine';
-import {$asArray, $asMap, $asSet, $filter, $find, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $asMap, $asSet, $filter, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf, Observable} from 'rxjs';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
+import {ActiveSpec} from '../../core/active';
 import {CoordinateTypes} from '../../payload/is-container';
-import {ActiveSpec} from '../../types/active-spec';
 import {ContainerSpec} from '../../types/container-spec';
 import {ObjectClass, ObjectSpec} from '../../types/object-spec';
 import {$$rootState} from '../root-state';
@@ -32,16 +32,7 @@ export const $rootState = stream(
 
 export const $activeId = stream<StateId<ActiveSpec>|null>(
     'activeState',
-    vine => $objectSpecMap.get(vine).pipe(
-        map(objectSpecMap => {
-          return $pipe(
-              objectSpecMap,
-              $find((pair): pair is [StateId<ActiveSpec>, ActiveSpec] => {
-                return pair[1].objectClass === ObjectClass.ACTIVE;
-              }),
-          )?.[0] ?? null;
-        }),
-    ),
+    vine => $rootState.get(vine).pipe(map(rootState => rootState?.$activeState ?? null)),
 );
 
 // TODO: Rename to $activeSpec

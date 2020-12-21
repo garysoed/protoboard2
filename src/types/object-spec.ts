@@ -1,7 +1,6 @@
 export enum ObjectClass {
   PIECE = 0,
   CONTAINER = 1,
-  ACTIVE = 2,
 }
 
 /**

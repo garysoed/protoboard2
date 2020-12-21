@@ -6,8 +6,9 @@ import {ReplaySubject} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
+import {activeSpec} from '../core/active';
 import {$$rootState, RootState} from '../objects/root-state';
-import {fakeActiveSpec, fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -69,11 +70,11 @@ test('@protoboard2/action/pick-action', init => {
         },
       }));
       const $rootState = _.stateService.add<RootState>({
+        $activeState: _.stateService.add(activeSpec({
+          $contentSpecs: $activeContentIds,
+        })),
         objectSpecIds: [
           $container,
-          _.stateService.add(fakeActiveSpec({
-            payload: {containerType: 'indexed' as const, $contentSpecs: $activeContentIds},
-          })),
         ],
       });
       $$rootState.set(_.personaContext.vine, () => $rootState);

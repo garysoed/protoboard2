@@ -6,11 +6,10 @@ import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {createIndexed} from '../../../src/coordinate/indexed';
-import {ACTIVE_TYPE} from '../../../src/core/active';
+import {activeSpec, ActiveSpec} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
-import {ActiveSpec} from '../../../src/types/active-spec';
 import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
@@ -143,14 +142,9 @@ function setToPlay(
 
   // Add the active specs.
   const $activeContentIds = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
-  const $activeState = stateService.add<ActiveSpec>({
-    objectClass: ObjectClass.ACTIVE,
-    type: ACTIVE_TYPE,
-    payload: {
-      containerType: 'indexed',
-      $contentSpecs: $activeContentIds,
-    },
-  });
+  const $activeState = stateService.add<ActiveSpec>(activeSpec({
+    $contentSpecs: $activeContentIds,
+  }));
 
   // User defined object specs.
   const pieceObjectSpecIds: Array<StateId<ObjectSpec<PiecePayload>>> = [];
@@ -209,8 +203,8 @@ function setToPlay(
   });
 
   const playState: PlayState = {
+    $activeState,
     objectSpecIds: [
-      $activeState,
       supplyObjectId,
       ...pieceObjectSpecIds,
       ...regionObjectSpecIds,

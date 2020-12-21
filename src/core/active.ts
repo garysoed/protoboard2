@@ -8,8 +8,9 @@ import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
+import {ContentSpec} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
-import {ActiveSpec} from '../types/active-spec';
+import {containerSpec, ContainerSpec} from '../types/container-spec';
 import {ObjectSpec} from '../types/object-spec';
 
 import template from './active.html';
@@ -44,6 +45,21 @@ export const $ = {
     top: style('top'),
   }),
 };
+
+export type ActiveSpec = ContainerSpec<{}, 'indexed'>;
+
+interface Input {
+  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
+}
+
+export function activeSpec(input: Input): ActiveSpec {
+  return containerSpec({
+    ...input,
+    type: '$active',
+    payload: {},
+    containerType: 'indexed',
+  });
+}
 
 /**
  * Represents a region containing objects that are actively manipulated.

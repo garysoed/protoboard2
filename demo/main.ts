@@ -5,7 +5,7 @@ import {identity, json} from 'nabu';
 import {switchMap, tap} from 'rxjs/operators';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {ACTIVE_TYPE, renderActive} from '../src/core/active';
+import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
 import {$createSpecMap, ObjectCreateSpec} from '../src/objects/object-create-spec';
 import {$$rootState} from '../src/objects/root-state';
 import {ObjectClass} from '../src/types/object-spec';
@@ -90,16 +90,10 @@ function init(stateService: StateService): StateId<DemoState> {
   return stateService.add<DemoState>({
     $isStaging: stateService.add(true),
     $playState: stateService.add<PlayState>({
-      objectSpecIds: [
-        stateService.add({
-          objectClass: ObjectClass.ACTIVE,
-          type: ACTIVE_TYPE,
-          payload: {
-            containerType: 'indexed',
-            $contentSpecs: stateService.add([]),
-          },
-        }),
-      ],
+      $activeState: stateService.add(activeSpec({
+        $contentSpecs: stateService.add([]),
+      })),
+      objectSpecIds: [],
     }),
     pieceEditorState: {
       [PieceType.D1]: {
