@@ -67,7 +67,7 @@ export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
     return [
       this.renderers.root.content(
           this.objectId$.pipe(
-              switchMap(objectId => renderContents(objectId, this.context)),
+              switchMap(objectId => renderContents(objectId, this.vine)),
           )),
     ];
   }

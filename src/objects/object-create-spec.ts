@@ -1,9 +1,9 @@
-import {source, stream} from 'grapevine';
+import {source, stream, Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {PersonaContext, RenderSpec} from 'persona';
-import {Observable, combineLatest, of as observableOf} from 'rxjs';
-import {switchMap, map} from 'rxjs/operators';
+import {RenderSpec} from 'persona';
+import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -15,7 +15,7 @@ import {ObjectSpec} from '../types/object-spec';
  */
 export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
     objectId: StateId<O>,
-    context: PersonaContext,
+    vine: Vine,
 ) => Observable<RenderSpec|null>;
 
 export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
@@ -23,12 +23,12 @@ export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>
     () => new Map(),
 );
 
-type GetRenderSpec = (id: StateId<ObjectSpec<any>>, context: PersonaContext) => Observable<RenderSpec|null>;
+type GetRenderSpec = (id: StateId<ObjectSpec<any>>, vine: Vine) => Observable<RenderSpec|null>;
 export const $getRenderSpec = stream<GetRenderSpec>(
     'getRenderSpec',
     vine => combineLatest([$createSpecMap.get(vine), $stateService.get(vine)]).pipe(
         map(([createSpecMap, stateService]) => {
-          return (id: StateId<ObjectSpec<any>>, context: PersonaContext) => {
+          return (id: StateId<ObjectSpec<any>>) => {
             return stateService.get(id).pipe(
                 switchMap(state => {
                   if (!state) {
@@ -40,7 +40,7 @@ export const $getRenderSpec = stream<GetRenderSpec>(
                     return observableOf(null);
                   }
 
-                  return createSpec(id, context);
+                  return createSpec(id, vine);
                 }),
             );
           };

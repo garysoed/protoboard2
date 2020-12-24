@@ -1,8 +1,9 @@
+import {Vine} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
 import {filterNonNull} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {applyDecorators, Decorator, NodeWithId, PersonaContext, RenderSpec} from 'persona';
+import {applyDecorators, Decorator, NodeWithId, RenderSpec} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -19,13 +20,13 @@ const LOGGER = new Logger('protoboard2.renderContents');
 
 export function renderContents(
     parentId: StateId<ContainerSpec<unknown, CoordinateTypes>>,
-    context: PersonaContext,
+    vine: Vine,
 ): Observable<readonly RenderSpec[]> {
-  const containerSpec$ = $stateService.get(context.vine)
+  const containerSpec$ = $stateService.get(vine)
       .pipe(switchMap(stateService => stateService.get(parentId)));
 
   return combineLatest([
-    $stateService.get(context.vine),
+    $stateService.get(vine),
     containerSpec$,
   ])
       .pipe(
@@ -35,12 +36,12 @@ export function renderContents(
             }
 
             return stateService.get(containerSpec.payload.$contentSpecs).pipe(
-                withLatestFrom($getRenderSpec.get(context.vine)),
+                withLatestFrom($getRenderSpec.get(vine)),
                 switchMap(([contentIds, getRenderSpec]) => {
                   const node$list = $pipe(
                       contentIds ?? [],
                       $map(({objectId, coordinate}) => {
-                        return getRenderSpec(objectId, context).pipe(
+                        return getRenderSpec(objectId, vine).pipe(
                             take(1),
                             filterNonNull(),
                             map(spec => [coordinate, {id: objectId, spec}] as const),
@@ -61,7 +62,7 @@ export function renderContents(
                     renderSpecs,
                     $map(({id, spec}) => {
                       const decorator: Decorator<NodeWithId<Node>> = () => $setParent
-                          .get(context.vine)
+                          .get(vine)
                           .pipe(
                               tap(setParent => {
                                 setParent(id, parentId);

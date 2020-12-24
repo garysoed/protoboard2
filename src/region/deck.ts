@@ -70,7 +70,7 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
     return [
       this.renderers.root.contents(
           this.objectId$.pipe(
-              switchMap(objectId => renderContents(objectId, this.context)),
+              switchMap(objectId => renderContents(objectId, this.vine)),
           ),
       ),
     ];

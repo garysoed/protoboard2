@@ -86,7 +86,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
       this.renderers.root.left(this.left$),
       this.renderers.root.top(this.top$),
       this.renderers.root.content(this.objectId$.pipe(
-          switchMap(objectId => renderContents(objectId, this.context)),
+          switchMap(objectId => renderContents(objectId, this.vine)),
       )),
     ];
   }

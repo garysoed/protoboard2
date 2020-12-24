@@ -51,7 +51,7 @@ export class Render extends BaseThemedCtrl<typeof $> {
               if (!objectId) {
                 return observableOf(null);
               }
-              return getRenderSpec(objectId, this.context);
+              return getRenderSpec(objectId, this.vine);
             }),
         );
   }

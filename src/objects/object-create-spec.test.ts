@@ -1,8 +1,8 @@
+import {Vine} from 'grapevine';
 import {assert, should, test} from 'gs-testing';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {renderNode, RenderSpec} from 'persona';
-import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
@@ -13,11 +13,10 @@ import {$createSpecMap, $getRenderSpec} from './object-create-spec';
 
 test('@protoboard2/objects/object-create-spec', init => {
   const _ = init(() => {
-    const el = document.createElement('div');
-    const context = createFakeContext({shadowRoot: el.attachShadow({mode: 'open'})});
+    const vine = new Vine('test');
     const stateService = new StateService();
-    $stateService.set(context.vine, () => stateService);
-    return {context, stateService};
+    $stateService.set(vine, () => stateService);
+    return {vine, stateService};
   });
 
   test('$getRenderSpec', () => {
@@ -33,9 +32,9 @@ test('@protoboard2/objects/object-create-spec', init => {
         $rotationDeg: _.stateService.add(0),
       }));
 
-      $createSpecMap.set(_.context.vine, () => new Map([[type, () => observableOf(spec)]]));
+      $createSpecMap.set(_.vine, () => new Map([[type, () => observableOf(spec)]]));
 
-      assert($getRenderSpec.get(_.context.vine).pipe(switchMap(fn => fn(id, _.context))))
+      assert($getRenderSpec.get(_.vine).pipe(switchMap(fn => fn(id, _.vine))))
           .to.emitWith(spec);
     });
 
@@ -47,7 +46,7 @@ test('@protoboard2/objects/object-create-spec', init => {
         $rotationDeg: _.stateService.add(0),
       }));
 
-      assert($getRenderSpec.get(_.context.vine).pipe(switchMap(fn => fn(id, _.context))))
+      assert($getRenderSpec.get(_.vine).pipe(switchMap(fn => fn(id, _.vine))))
           .to.emitWith(null);
     });
   });

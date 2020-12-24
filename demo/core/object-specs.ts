@@ -1,3 +1,4 @@
+import {Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$icon} from 'mask';
 import {PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
@@ -42,9 +43,9 @@ export const REGION_TYPE = 'pbd.region';
 
 export function renderDemoPiece(
     objectId: StateId<ObjectSpec<PieceSpec>>,
-    context: PersonaContext,
+    vine: Vine,
 ): Observable<RenderSpec|null> {
-  return $getObjectSpec.get(context.vine).pipe(
+  return $getObjectSpec.get(vine).pipe(
       switchMap(getObjectSpec => getObjectSpec(objectId)),
       map(state => {
         if (!state) {
@@ -83,9 +84,9 @@ export function renderDemoPiece(
 
 export function renderDemoRegion(
     objectId: StateId<ObjectSpec<RegionSpec>>,
-    context: PersonaContext,
+    vine: Vine,
 ): Observable<RenderSpec|null> {
-  return $getObjectSpec.get(context.vine).pipe(
+  return $getObjectSpec.get(vine).pipe(
       switchMap(getObjectSpec => getObjectSpec(objectId)),
       map(state => {
         if (!state) {
