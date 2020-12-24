@@ -37,7 +37,7 @@ export type DeckSpec<P> = ContainerSpec<P, 'indexed'>;
 
 interface Input<P> {
   readonly type: string;
-  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
+  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>;
   readonly payload: P;
 }
 
@@ -63,7 +63,9 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
         $,
     );
 
-    this.addSetup(renderContents(this.objectSpec$, $.root._.contents, this.context));
+    this.addSetup(
+        renderContents(this.objectId$, $.root._.contents, this.context),
+    );
   }
 
   @cache()

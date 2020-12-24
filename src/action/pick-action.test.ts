@@ -3,10 +3,11 @@ import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {switchMap, take, tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {$setParent} from '../objects/content-map';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
@@ -69,14 +70,26 @@ test('@protoboard2/action/pick-action', init => {
           $contentSpecs: $targetContentSpecs,
         },
       }));
+
+      const $activeState = _.stateService.add(activeSpec({
+        $contentSpecs: $activeContentIds,
+      }));
       const $rootState = _.stateService.add<RootState>({
-        $activeState: _.stateService.add(activeSpec({
-          $contentSpecs: $activeContentIds,
-        })),
+        $activeState,
         objectSpecIds: [
           $container,
         ],
       });
+      run($setParent.get(_.personaContext.vine).pipe(
+          take(1),
+          tap(setParent => {
+            setParent(otherActiveSpec.objectId, $activeState);
+            setParent(otherSpec1.objectId, $container);
+            setParent(movedSpec.objectId, $container);
+            setParent(otherSpec2.objectId, $container);
+          }),
+      ));
+
       $$rootState.set(_.personaContext.vine, () => $rootState);
       _.objectId$.next(movedId);
 

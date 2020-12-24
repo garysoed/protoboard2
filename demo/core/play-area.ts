@@ -10,8 +10,7 @@ import {$getObjectSpec} from '../../src/objects/getters/root-state';
 import {$render, Render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
 import {ObjectSpec} from '../../src/types/object-spec';
-import {$supplyId} from '../state/getters/demo-state';
-import {$objectSpecIds} from '../state/getters/play-state';
+import {$objectSpecIds, $supplyId} from '../state/getters/play-state';
 import {$setStaging} from '../state/setters/demo-state';
 import {GridArea} from '../state/types/region-state';
 

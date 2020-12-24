@@ -10,6 +10,7 @@ import {activeSpec, ActiveSpec} from '../../../src/core/active';
 import {$getObjectSpec} from '../../../src/objects/getters/root-state';
 import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
+import {slotSpec, SlotSpec} from '../../../src/region/slot';
 import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
@@ -191,21 +192,16 @@ function setToPlay(
           $asArray(),
       ),
   );
-  const supplyObjectId = stateService.add<ObjectSpec<RegionPayload>>({
-    objectClass: ObjectClass.CONTAINER,
+  const $supply = stateService.add<SlotSpec<{}>>(slotSpec({
     type: SUPPLY_TYPE,
-    payload: {
-      type: 'region',
-      containerType: 'indexed',
-      $contentSpecs: $supplyContentSpecs,
-      gridArea: null,
-    },
-  });
+    $contentSpecs: $supplyContentSpecs,
+    payload: {},
+  }));
 
   const playState: PlayState = {
     $activeState,
+    $supply,
     objectSpecIds: [
-      supplyObjectId,
       ...pieceObjectSpecIds,
       ...regionObjectSpecIds,
     ],

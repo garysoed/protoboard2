@@ -4,7 +4,8 @@ import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {$activeState, $getContainerOf, $getObjectSpec} from '../objects/getters/root-state';
+import {$getParent} from '../objects/content-map';
+import {$activeState, $getObjectSpec} from '../objects/getters/root-state';
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 import {PieceSpec} from '../types/piece-spec';
@@ -44,14 +45,14 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
   private get handleTrigger$(): Observable<unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectId$,
-      $getContainerOf.get(this.vine),
+      $getParent.get(this.vine),
     ])
         .pipe(
-            map(([objectId, getContainerOf]) => {
+            map(([objectId, getParent]) => {
               if (!objectId) {
                 return null;
               }
-              return getContainerOf(objectId);
+              return getParent(objectId);
             }),
             withLatestFrom($getObjectSpec.get(this.vine)),
             switchMap(([fromObjectId, getObjectSpec]) => {

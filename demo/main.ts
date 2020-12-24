@@ -1,6 +1,6 @@
 import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
 import {LocalStorage} from 'gs-tools/export/store';
-import {$saveConfig, $saveService, PALETTE, Theme, registerSvg, start} from 'mask';
+import {$saveConfig, $saveService, PALETTE, registerSvg, start, Theme} from 'mask';
 import {identity, json} from 'nabu';
 import {switchMap, tap} from 'rxjs/operators';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
@@ -8,11 +8,11 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
 import {$createSpecMap, ObjectCreateSpec} from '../src/objects/object-create-spec';
 import {$$rootState} from '../src/objects/root-state';
-import {ObjectClass} from '../src/types/object-spec';
+import {slotSpec, SlotSpec} from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
-import {PIECE_TYPE, REGION_TYPE, ROOT_SLOT_TYPE, SUPPLY_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply} from './core/object-specs';
+import {PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE} from './core/object-specs';
 import {Root} from './root';
 import {$demoState} from './state/getters/demo-state';
 import {DemoState} from './state/types/demo-state';
@@ -93,7 +93,16 @@ function init(stateService: StateService): StateId<DemoState> {
       $activeState: stateService.add(activeSpec({
         $contentSpecs: stateService.add([]),
       })),
-      objectSpecIds: [],
+      $supply: stateService.add<SlotSpec<{}>>(slotSpec({
+        type: SUPPLY_TYPE,
+        $contentSpecs: stateService.add([]),
+        payload: {},
+      })),
+      objectSpecIds: [
+        stateService.add(activeSpec({
+          $contentSpecs: stateService.add([]),
+        })),
+      ],
     }),
     pieceEditorState: {
       [PieceType.D1]: {

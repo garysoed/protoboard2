@@ -60,7 +60,7 @@ export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
         $,
     );
 
-    this.addSetup(renderContents(this.objectSpec$, $.root._.content, context));
+    this.addSetup(renderContents(this.objectId$, $.root._.content, context));
   }
 
   @cache()

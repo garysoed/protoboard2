@@ -1,16 +1,14 @@
 import {Vine} from 'grapevine';
-import {assert, setThat, should, test} from 'gs-testing';
-import {StateId, StateService} from 'gs-tools/export/state';
+import {assert, should, test} from 'gs-testing';
+import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {map, switchMap} from 'rxjs/operators';
 
 import {activeSpec} from '../../core/active';
-import {ContainerSpec} from '../../types/container-spec';
-import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState, RootState} from '../root-state';
-import {fakeContainerSpec, fakePieceSpec} from '../testing/fake-object-spec';
+import {fakePieceSpec} from '../testing/fake-object-spec';
 
-import {$activeId, $activeState, $getContainerOf, $getObjectSpec, $objectSpecIds} from './root-state';
+import {$activeId, $activeState, $getObjectSpec} from './root-state';
 
 
 test('@protoboard2/objects/getters/root-state', init => {
@@ -52,47 +50,6 @@ test('@protoboard2/objects/getters/root-state', init => {
     });
   });
 
-  test('$getContainerOf', () => {
-    should('return the correct container state ID', () => {
-      const $content = _.stateService.add(fakePieceSpec({payload: {}}));
-      const $container = _.stateService.add<ContainerSpec<unknown, 'indexed'>>(
-          fakeContainerSpec({payload: {
-            containerType: 'indexed',
-            $contentSpecs: _.stateService.add([{objectId: $content, coordinate: {index: 0}}]),
-          }}),
-      );
-      const $root = _.stateService.add<RootState>({
-        $activeState: _.stateService.add(activeSpec({
-          $contentSpecs: _.stateService.add([]),
-        })),
-        objectSpecIds: [
-          $container,
-          $content,
-        ],
-      });
-      $$rootState.set(_.vine, () => $root);
-
-      assert($getContainerOf.get(_.vine).pipe(map(getFn => getFn($content))))
-          .to.emitWith($container);
-    });
-
-    should('return null if the ID has no container', () => {
-      const $content = _.stateService.add(fakePieceSpec({payload: {}}));
-      const $root = _.stateService.add<RootState>({
-        $activeState: _.stateService.add(activeSpec({
-          $contentSpecs: _.stateService.add([]),
-        })),
-        objectSpecIds: [
-          $content,
-        ],
-      });
-      $$rootState.set(_.vine, () => $root);
-
-      assert($getContainerOf.get(_.vine).pipe(map(getFn => getFn($content))))
-          .to.emitWith(null);
-    });
-  });
-
   test('$getObjectSpec', () => {
     should('emit the object spec', () => {
       const objectSpec = fakePieceSpec({payload: {}});
@@ -109,31 +66,6 @@ test('@protoboard2/objects/getters/root-state', init => {
 
       assert($getObjectSpec.get(_.vine).pipe(switchMap(getObjectSpec => getObjectSpec(objectId))))
           .to.emitWith(objectSpec);
-    });
-  });
-
-  test('$objectSpecIds', () => {
-    should('emit the object IDs', () => {
-      const objectId1 = _.stateService.add(fakePieceSpec({payload: {}}));
-      const objectId2 = _.stateService.add(fakePieceSpec({payload: {}}));
-      const objectId3 = _.stateService.add(fakePieceSpec({payload: {}}));
-      const activeId = _.stateService.add(activeSpec({
-        $contentSpecs: _.stateService.add([]),
-      }));
-      const $root = _.stateService.add<RootState>({
-        $activeState: activeId,
-        objectSpecIds: [
-          objectId1,
-          objectId2,
-          objectId3,
-        ],
-      });
-      $$rootState.set(_.vine, () => $root);
-
-      assert($objectSpecIds.get(_.vine)).to.emitWith(
-          setThat<StateId<ObjectSpec<any>>>()
-              .haveExactElements(new Set([objectId1, objectId2, objectId3])),
-      );
     });
   });
 });
