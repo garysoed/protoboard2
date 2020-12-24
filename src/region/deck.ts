@@ -63,16 +63,16 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
         context,
         $,
     );
-
-    this.addSetup(
-        this.objectId$.pipe(
-            switchMap(objectId => renderContents(objectId, $.root._.contents, context)),
-        ),
-    );
   }
 
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    return [];
+    return [
+      this.renderers.root.contents(
+          this.objectId$.pipe(
+              switchMap(objectId => renderContents(objectId, this.context)),
+          ),
+      ),
+    ];
   }
 }

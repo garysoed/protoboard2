@@ -36,7 +36,7 @@ test('@protoboard2/render/render-contents', init => {
     const $parentSpec = stateService.add(
         fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}}),
     );
-    run(renderContents($parentSpec, $._.content, context));
+    run(renderContents($parentSpec, context).pipe($._.content.output(context)));
 
     return {$contentSpecs, context, el, $parentSpec, stateService};
   });

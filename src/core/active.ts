@@ -76,12 +76,6 @@ export function activeSpec(input: Input): ActiveSpec {
 export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
     super([], context, $);
-
-    this.addSetup(
-        this.objectId$.pipe(
-            switchMap(objectId => renderContents(objectId, $.root._.content, context)),
-        ),
-    );
   }
 
   @cache()
@@ -91,6 +85,9 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
       this.renderers.root.classMultiple(this.multipleItems$),
       this.renderers.root.left(this.left$),
       this.renderers.root.top(this.top$),
+      this.renderers.root.content(this.objectId$.pipe(
+          switchMap(objectId => renderContents(objectId, this.context)),
+      )),
     ];
   }
 

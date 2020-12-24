@@ -3,7 +3,6 @@ import {filterNonNull} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {applyDecorators, Decorator, NodeWithId, PersonaContext, RenderSpec} from 'persona';
-import {MultiOutput} from 'persona/export/internal';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -20,9 +19,8 @@ const LOGGER = new Logger('protoboard2.renderContents');
 
 export function renderContents(
     parentId: StateId<ContainerSpec<unknown, CoordinateTypes>>,
-    output: MultiOutput,
     context: PersonaContext,
-): Observable<unknown> {
+): Observable<readonly RenderSpec[]> {
   const containerSpec$ = $stateService.get(context.vine)
       .pipe(switchMap(stateService => stateService.get(parentId)));
 
@@ -86,7 +84,6 @@ export function renderContents(
                 )),
             );
           }),
-          output.output(context),
       );
 }
 

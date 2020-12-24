@@ -60,16 +60,15 @@ export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
         context,
         $,
     );
-
-    this.addSetup(
-        this.objectId$.pipe(
-            switchMap(objectId => renderContents(objectId, $.root._.content, context)),
-        ),
-    );
   }
 
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    return [];
+    return [
+      this.renderers.root.content(
+          this.objectId$.pipe(
+              switchMap(objectId => renderContents(objectId, this.context)),
+          )),
+    ];
   }
 }
