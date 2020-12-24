@@ -4,6 +4,7 @@ import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
 import {DropAction} from '../action/drop-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
@@ -60,7 +61,11 @@ export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
         $,
     );
 
-    this.addSetup(renderContents(this.objectId$, $.root._.content, context));
+    this.addSetup(
+        this.objectId$.pipe(
+            switchMap(objectId => renderContents(objectId, $.root._.content, context)),
+        ),
+    );
   }
 
   @cache()

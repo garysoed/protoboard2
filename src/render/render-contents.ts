@@ -19,27 +19,19 @@ const LOGGER = new Logger('protoboard2.renderContents');
 
 
 export function renderContents(
-    parentId$: Observable<StateId<ContainerSpec<unknown, CoordinateTypes>>>,
+    parentId: StateId<ContainerSpec<unknown, CoordinateTypes>>,
     output: MultiOutput,
     context: PersonaContext,
 ): Observable<unknown> {
-  const containerSpec$ = combineLatest([
-    $stateService.get(context.vine),
-    parentId$,
-  ])
-      .pipe(
-          switchMap(([stateService, parentId]) => {
-            return stateService.get(parentId);
-          }),
-      );
+  const containerSpec$ = $stateService.get(context.vine)
+      .pipe(switchMap(stateService => stateService.get(parentId)));
 
   return combineLatest([
     $stateService.get(context.vine),
     containerSpec$,
-    parentId$,
   ])
       .pipe(
-          switchMap(([stateService, containerSpec, parentId]) => {
+          switchMap(([stateService, containerSpec]) => {
             if (!containerSpec) {
               return observableOf([]);
             }
@@ -70,11 +62,13 @@ export function renderContents(
                 map(renderSpecs => $pipe(
                     renderSpecs,
                     $map(({id, spec}) => {
-                      const decorator: Decorator<NodeWithId<Node>> = () => $setParent.get(context.vine).pipe(
-                          tap(setParent => {
-                            setParent(id, parentId);
-                          }),
-                      );
+                      const decorator: Decorator<NodeWithId<Node>> = () => $setParent
+                          .get(context.vine)
+                          .pipe(
+                              tap(setParent => {
+                                setParent(id, parentId);
+                              }),
+                          );
 
                       const decorators: Array<Decorator<NodeWithId<any>>> = [decorator];
                       if (spec.decorator) {

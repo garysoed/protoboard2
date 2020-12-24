@@ -4,6 +4,7 @@ import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
 import {element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {DropAction} from '../action/drop-action';
@@ -64,7 +65,9 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
     );
 
     this.addSetup(
-        renderContents(this.objectId$, $.root._.contents, this.context),
+        this.objectId$.pipe(
+            switchMap(objectId => renderContents(objectId, $.root._.contents, context)),
+        ),
     );
   }
 

@@ -77,7 +77,11 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
     super([], context, $);
 
-    this.addSetup(renderContents(this.objectId$, $.root._.content, context));
+    this.addSetup(
+        this.objectId$.pipe(
+            switchMap(objectId => renderContents(objectId, $.root._.content, context)),
+        ),
+    );
   }
 
   @cache()

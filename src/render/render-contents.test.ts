@@ -1,10 +1,10 @@
 import {assert, createSpySubject, run, should, test} from 'gs-testing';
 import {arrayFrom} from 'gs-tools/export/collect';
-import {StateId, StateService} from 'gs-tools/export/state';
+import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {host, multi, renderNode, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {of as observableOf, ReplaySubject} from 'rxjs';
+import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {createIndexed} from '../coordinate/indexed';
@@ -14,7 +14,6 @@ import {$createSpecMap} from '../objects/object-create-spec';
 import {$$rootState, RootState} from '../objects/root-state';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {ContainerSpec} from '../types/container-spec';
 
 import {renderContents} from './render-contents';
 
@@ -29,14 +28,17 @@ test('@protoboard2/render/render-contents', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const context = createFakeContext({shadowRoot});
     const $ = host({content: multi(slotName)});
-    const containerSpec$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>>(1);
 
     const stateService = new StateService();
     $stateService.set(context.vine, () => stateService);
 
-    run(renderContents(containerSpec$, $._.content, context));
+    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
+    const $parentSpec = stateService.add(
+        fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}}),
+    );
+    run(renderContents($parentSpec, $._.content, context));
 
-    return {context, el, isContainer$: containerSpec$, stateService};
+    return {$contentSpecs, context, el, $parentSpec, stateService};
   });
 
   test('contents$', () => {
@@ -84,54 +86,48 @@ test('@protoboard2/render/render-contents', init => {
       });
       $$rootState.set(_.context.vine, () => $root);
 
-      const $contentSpecs = _.stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
-      const parentId = _.stateService.add(
-          fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}}),
-      );
-      _.isContainer$.next(parentId);
-
-      _.stateService.set($contentSpecs, []);
+      _.stateService.set(_.$contentSpecs, []);
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
       assert($object1Parent).to.emitWith(null);
       assert($object2Parent).to.emitWith(null);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.set($contentSpecs, [spec1]);
+      _.stateService.set(_.$contentSpecs, [spec1]);
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1]);
-      assert($object1Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(null);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.set($contentSpecs, [spec1, spec2]);
+      _.stateService.set(_.$contentSpecs, [spec1, spec2]);
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el2]);
-      assert($object1Parent).to.emitWith(parentId);
-      assert($object2Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
+      assert($object2Parent).to.emitWith(_.$parentSpec);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.set($contentSpecs, [spec1, spec2, spec3]);
+      _.stateService.set(_.$contentSpecs, [spec1, spec2, spec3]);
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el2, el3]);
-      assert($object1Parent).to.emitWith(parentId);
-      assert($object2Parent).to.emitWith(parentId);
-      assert($object3Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
+      assert($object2Parent).to.emitWith(_.$parentSpec);
+      assert($object3Parent).to.emitWith(_.$parentSpec);
 
       // renderContent should not modify the parents if they are removed.
-      _.stateService.set($contentSpecs, [spec1, spec3]);
+      _.stateService.set(_.$contentSpecs, [spec1, spec3]);
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el3]);
-      assert($object1Parent).to.emitWith(parentId);
-      assert($object2Parent).to.emitWith(parentId);
-      assert($object3Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
+      assert($object2Parent).to.emitWith(_.$parentSpec);
+      assert($object3Parent).to.emitWith(_.$parentSpec);
 
-      _.stateService.set($contentSpecs, [spec3]);
+      _.stateService.set(_.$contentSpecs, [spec3]);
       assert(arrayFrom(_.el.children)).to.haveExactElements([el3]);
-      assert($object1Parent).to.emitWith(parentId);
-      assert($object2Parent).to.emitWith(parentId);
-      assert($object3Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
+      assert($object2Parent).to.emitWith(_.$parentSpec);
+      assert($object3Parent).to.emitWith(_.$parentSpec);
 
-      _.stateService.set($contentSpecs, []);
+      _.stateService.set(_.$contentSpecs, []);
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
-      assert($object1Parent).to.emitWith(parentId);
-      assert($object2Parent).to.emitWith(parentId);
-      assert($object3Parent).to.emitWith(parentId);
+      assert($object1Parent).to.emitWith(_.$parentSpec);
+      assert($object2Parent).to.emitWith(_.$parentSpec);
+      assert($object3Parent).to.emitWith(_.$parentSpec);
     });
   });
 });
