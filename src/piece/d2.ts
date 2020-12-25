@@ -77,7 +77,7 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
             trigger: TriggerType.L,
             provider: context => new RollAction(context, {count: 2}),
           },
-          {trigger: TriggerType.CLICK, provider: context => new PickAction(() => 0, context, {})},
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {})},
         ],
         context,
         $,

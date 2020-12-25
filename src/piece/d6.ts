@@ -6,6 +6,7 @@ import {PersonaContext, attributeOut, element, host, slotted, stringParser, styl
 import {Observable} from 'rxjs';
 
 import {FlipAction} from '../action/flip-action';
+import {PickAction} from '../action/pick-action';
 import {RollAction} from '../action/roll-action';
 import {RotateAction} from '../action/rotate-action';
 import {TurnAction} from '../action/turn-action';
@@ -94,6 +95,7 @@ export class D6 extends BaseComponent<D6Spec, typeof $> {
             trigger: TriggerType.L as const,
             provider: context => new RollAction(context, {count: 6}),
           },
+          {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {})},
         ],
         context,
         $,

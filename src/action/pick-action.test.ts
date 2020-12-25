@@ -28,7 +28,6 @@ test('@protoboard2/action/pick-action', init => {
     const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
 
     const action = new PickAction(
-        () => 1,
         createFakeActionContext({
           personaContext,
           objectId$,

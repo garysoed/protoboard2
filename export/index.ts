@@ -15,7 +15,8 @@ export {ContentSpec} from '../src/payload/is-container';
 export {ObjectSpec} from '../src/types/object-spec';
 export {$render, Render} from '../src/objects/render';
 export {$active, Active, activeSpec} from '../src/core/active';
-export {RootState} from '../src/objects/root-state';
+export {$$rootState, RootState} from '../src/objects/root-state';
+export {$activeId} from '../src/objects/getters/root-state';
 
 // piece
 export {$d1, D1, D1Spec, d1Spec} from '../src/piece/d1';
