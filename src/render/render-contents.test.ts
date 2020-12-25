@@ -78,11 +78,6 @@ test('@protoboard2/render/render-contents', init => {
         $activeState: _.stateService.add<ActiveSpec>(activeSpec({
           $contentSpecs: _.stateService.add([]),
         })),
-        objectSpecIds: [
-          $object1,
-          $object2,
-          $object3,
-        ],
       });
       $$rootState.set(_.context.vine, () => $root);
 

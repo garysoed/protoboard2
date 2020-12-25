@@ -74,12 +74,7 @@ test('@protoboard2/action/pick-action', init => {
       const $activeState = _.stateService.add(activeSpec({
         $contentSpecs: $activeContentIds,
       }));
-      const $rootState = _.stateService.add<RootState>({
-        $activeState,
-        objectSpecIds: [
-          $container,
-        ],
-      });
+      const $rootState = _.stateService.add<RootState>({$activeState});
       run($setParent.get(_.personaContext.vine).pipe(
           take(1),
           tap(setParent => {

@@ -58,9 +58,6 @@ test('@protoboard2/objects/getters/root-state', init => {
         $activeState: _.stateService.add(activeSpec({
           $contentSpecs: _.stateService.add([]),
         })),
-        objectSpecIds: [
-          objectId,
-        ],
       });
       $$rootState.set(_.vine, () => $root);
 

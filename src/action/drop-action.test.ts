@@ -65,7 +65,6 @@ test('@protoboard2/action/drop-action', init => {
         $activeState: _.stateService.add(activeSpec({
           $contentSpecs: $activeContentIds,
         })),
-        objectSpecIds: [],
       });
       $$rootState.set(_.personaContext.vine, () => $rootState);
 
