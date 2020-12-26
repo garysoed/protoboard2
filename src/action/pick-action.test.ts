@@ -45,7 +45,7 @@ test('@protoboard2/action/pick-action', init => {
       const movedId = _.stateService.add(fakePieceSpec({payload: {}}));
       const otherSpec1 = {
         objectId: _.stateService.add(fakePieceSpec({payload: {}})),
-        coordinate: createIndexed(0),
+        coordinate: createIndexed(11),
       };
       const movedSpec = {
         objectId: movedId,
@@ -53,12 +53,12 @@ test('@protoboard2/action/pick-action', init => {
       };
       const otherSpec2 = {
         objectId: _.stateService.add(fakePieceSpec({payload: {}})),
-        coordinate: createIndexed(2),
+        coordinate: createIndexed(12),
       };
 
       const otherActiveSpec = {
         objectId: _.stateService.add(fakePieceSpec({payload: {}})),
-        coordinate: createIndexed(0),
+        coordinate: createIndexed(10),
       };
 
       const $activeContentIds = _.stateService.add([otherActiveSpec]);
@@ -104,7 +104,7 @@ test('@protoboard2/action/pick-action', init => {
           otherActiveSpec,
           objectThat<ContentSpec<'indexed'>>().haveProperties({
             ...movedSpec,
-            coordinate: objectThat<Indexed>().haveProperties(createIndexed(1)),
+            coordinate: objectThat<Indexed>().haveProperties(createIndexed(11)),
           }),
         ]),
       ]);

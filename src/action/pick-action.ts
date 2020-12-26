@@ -1,3 +1,4 @@
+import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {$stateService} from 'mask';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
@@ -82,9 +83,10 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
     ])
         .pipe(
             switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
-              if (!fromObjectSpec || !activeState) {
+              if (!fromObjectSpec || !activeState || !movedObjectId) {
                 return observableOf(null);
               }
+
               return moveObject(
                   fromObjectSpec.payload,
                   activeState.payload,
@@ -97,11 +99,14 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
                         }
 
                         return () => {
-                          if (!movedObjectId) {
-                            return;
-                          }
+                          const destIndex = $pipe(
+                              activeContents ?? [],
+                              $map(content => content.coordinate.index),
+                              $asArray(),
+                              $max(normal()),
+                          );
 
-                          fn(movedObjectId, {index: activeContents?.length ?? 0});
+                          fn(movedObjectId, {index: (destIndex ?? 0) + 1});
                         };
                       }),
                   );

@@ -50,8 +50,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                   switchMap(service => service.get(activeState.payload.$contentSpecs)),
                   switchMap(activeContents => {
                     const normalizedActiveContents = activeContents ?? [];
-                    const movedObjectSpec =
-                  normalizedActiveContents[normalizedActiveContents.length - 1];
+                    const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
                     if (!movedObjectSpec) {
                       return observableOf(null);
                     }
