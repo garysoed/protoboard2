@@ -29,13 +29,13 @@ export const $getRenderSpec = stream<GetRenderSpec>(
     vine => combineLatest([$createSpecMap.get(vine), $stateService.get(vine)]).pipe(
         map(([createSpecMap, stateService]) => {
           return (id: StateId<ObjectSpec<any>>) => {
-            return stateService.get(id).pipe(
-                switchMap(state => {
-                  if (!state) {
+            return stateService.resolve(id)._('type').pipe(
+                switchMap(stateType => {
+                  if (stateType === undefined) {
                     return observableOf(null);
                   }
 
-                  const createSpec = createSpecMap.get(state.type);
+                  const createSpec = createSpecMap.get(stateType);
                   if (!createSpec) {
                     return observableOf(null);
                   }

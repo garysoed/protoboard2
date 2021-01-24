@@ -77,13 +77,13 @@ test('@protoboard2/action/drop-action', init => {
 
       _.objectId$.next($objectSpec);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
+      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.get($activeContentIds))),
+              .pipe(switchMap(service => service.resolve($activeContentIds).self$)),
       );
-      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|null>(
+      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.get($targetContentIds))),
+              .pipe(switchMap(service => service.resolve($targetContentIds).self$)),
       );
 
       _.action.trigger({mouseX: 0, mouseY: 0});

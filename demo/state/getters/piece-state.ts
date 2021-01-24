@@ -8,22 +8,22 @@ import {PieceEditorState} from '../types/piece-editor-state';
 import {$demoState} from './demo-state';
 
 export type EditedFaces = {readonly [K in keyof PieceEditorState]: number};
-export const $editedFaces = stream<EditedFaces|null>(
+export const $editedFaces = stream<EditedFaces|undefined>(
     'editedFaces',
     vine => {
       return combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
           switchMap(([stateService, demoState]) => {
             if (!demoState) {
-              return observableOf(null);
+              return observableOf(undefined);
             }
 
-            const d1$ = stateService.get(demoState.pieceEditorState.d1.$editedFace);
-            const d2$ = stateService.get(demoState.pieceEditorState.d2.$editedFace);
-            const d6$ = stateService.get(demoState.pieceEditorState.d6.$editedFace);
+            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$editedFace).self$;
+            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$editedFace).self$;
+            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$editedFace).self$;
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
-                  if (d1 === null || d2 === null || d6 === null) {
-                    return null;
+                  if (d1 === undefined || d2 === undefined || d6 === undefined) {
+                    return undefined;
                   }
 
                   return {d1, d2, d6};
@@ -35,22 +35,22 @@ export const $editedFaces = stream<EditedFaces|null>(
 );
 
 export type FaceIcons = {readonly [K in keyof PieceEditorState]: readonly string[]};
-export const $faceIcons = stream<FaceIcons|null>(
+export const $faceIcons = stream<FaceIcons|undefined>(
     'faceIcons',
     vine => {
       return combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
           switchMap(([stateService, demoState]) => {
             if (!demoState) {
-              return observableOf(null);
+              return observableOf(undefined);
             }
 
-            const d1$ = stateService.get(demoState.pieceEditorState.d1.$faceIcons);
-            const d2$ = stateService.get(demoState.pieceEditorState.d2.$faceIcons);
-            const d6$ = stateService.get(demoState.pieceEditorState.d6.$faceIcons);
+            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$faceIcons).self$;
+            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$faceIcons).self$;
+            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$faceIcons).self$;
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
-                  if (d1 === null || d2 === null || d6 === null) {
-                    return null;
+                  if (d1 === undefined || d2 === undefined || d6 === undefined) {
+                    return undefined;
                   }
 
                   return {d1, d2, d6};

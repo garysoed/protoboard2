@@ -69,9 +69,9 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
         .pipe(
             switchMap(([stateService, activeSpec]) => {
               if (!activeSpec) {
-                return observableOf(null);
+                return observableOf(undefined);
               }
-              return stateService.get(activeSpec.payload.$contentSpecs);
+              return stateService.resolve(activeSpec.payload.$contentSpecs).self$;
             }),
         );
 

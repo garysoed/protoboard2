@@ -13,17 +13,17 @@ const LOGGER = new Logger('protoboard2.renderRotatable');
 
 
 export function renderRotatable(
-    isRotatable$: Observable<PieceSpec<IsRotatable>|null>,
+    isRotatable$: Observable<PieceSpec<IsRotatable>|undefined>,
     slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
   const rotation$ = combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
       switchMap(([stateService, pieceSpec]) => {
         if (!pieceSpec) {
-          return observableOf(null);
+          return observableOf(undefined);
         }
 
-        return stateService.get(pieceSpec.payload.$rotationDeg);
+        return stateService.resolve(pieceSpec.payload.$rotationDeg).self$;
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );

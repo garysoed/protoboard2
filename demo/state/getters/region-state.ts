@@ -12,14 +12,14 @@ export const $targetAreas = stream(
       return combineLatest([$demoState.get(vine), $stateService.get(vine)]).pipe(
           switchMap(([demoState, stateService]) => {
             if (!demoState) {
-              return observableOf(null);
+              return observableOf(undefined);
             }
 
-            const deck$ = stateService.get(demoState.regionEditorState.deck.$targetArea);
+            const deck$ = stateService.resolve(demoState.regionEditorState.deck.$targetArea).self$;
             return combineLatest([deck$]).pipe(
                 map(([deck]) => {
-                  if (deck === null) {
-                    return null;
+                  if (deck === undefined) {
+                    return undefined;
                   }
 
                   return {deck};

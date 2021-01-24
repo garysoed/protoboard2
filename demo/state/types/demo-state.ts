@@ -16,7 +16,7 @@ export interface DemoState {
   readonly stagingState: StagingState;
 }
 
-export const $demoStateId = stream<StateId<DemoState>|null>(
+export const $demoStateId = stream<StateId<DemoState>|undefined>(
     'demoStateId',
     vine => $rootId.get(vine),
 );

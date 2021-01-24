@@ -52,7 +52,11 @@ export class Root extends BaseThemedCtrl<typeof $> {
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
       this.renderers.active.objectId($activeId.get(this.vine).pipe(map(id => id ?? undefined))),
-      this.renderers.drawer.drawerExpanded(this.inputs.root.drawerExpanded),
+      this.renderers.drawer.drawerExpanded(
+          this.inputs.root.drawerExpanded.pipe(
+              map(expanded => expanded ?? false),
+          ),
+      ),
       this.renderers.main.isPlaying(this.isPlaying$),
     ];
   }

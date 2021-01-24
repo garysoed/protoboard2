@@ -98,7 +98,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   @cache()
-  get objectSpec$(): Observable<O|null> {
+  get objectSpec$(): Observable<O|undefined> {
     return combineLatest([
       this.objectId$,
       $getObjectSpec.get(this.context.vine),

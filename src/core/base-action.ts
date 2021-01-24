@@ -113,15 +113,15 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
   }
 
   @cache()
-  get objectSpec$(): Observable<P|null> {
+  get objectSpec$(): Observable<P|undefined> {
     return this.context.objectId$.pipe(
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([objectId, stateService]) => {
           if (!objectId) {
-            return observableOf(null);
+            return observableOf(undefined);
           }
 
-          return stateService.get(objectId);
+          return stateService.resolve(objectId).self$;
         }),
     );
   }

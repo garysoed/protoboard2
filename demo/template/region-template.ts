@@ -98,12 +98,12 @@ export class RegionTemplate extends BaseThemedCtrl<typeof $> {
         .pipe(
             map(([targetAreas, regionType]) => {
               if (!targetAreas || !regionType) {
-                return null;
+                return undefined;
               }
 
               return targetAreas[regionType];
             }),
-            map(area => area === null ? 'Select grid area ...' : `Add to: ${GRID_AREAS[area]}`),
+            map(area => area === undefined ? 'Select grid area ...' : `Add to: ${GRID_AREAS[area]}`),
         );
   }
 

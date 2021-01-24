@@ -56,11 +56,14 @@ export class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           }
 
           const $faceIndex = objectSpec.payload.$currentFaceIndex;
-          return stateService.get($faceIndex).pipe(
+          return stateService.resolve($faceIndex).self$.pipe(
               take(1),
               filterNonNull(),
               tap(faceIndex => {
-                stateService.set($faceIndex, (faceIndex + Math.floor(faceCount / 2)) % faceCount);
+                stateService.set(
+                    $faceIndex,
+                    ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
+                );
               }),
           );
         }),

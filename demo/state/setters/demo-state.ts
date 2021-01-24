@@ -1,5 +1,5 @@
 import {stream, Vine} from 'grapevine';
-import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $filterDefined, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest, of as observableOf} from 'rxjs';
@@ -82,7 +82,7 @@ export const $setStaging = stream(
                   if (isStaging) {
                     setToStaging(
                         demoState,
-                        $pipe(objectSpecs, $filterNonNull(), $asArray()),
+                        $pipe(objectSpecs, $filterDefined(), $asArray()),
                         stateService,
                     );
                   } else {

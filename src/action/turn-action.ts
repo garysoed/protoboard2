@@ -53,11 +53,11 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           }
 
           const $faceIndex = objectSpec.payload.$currentFaceIndex;
-          return stateService.get($faceIndex).pipe(
+          return stateService.resolve($faceIndex).self$.pipe(
               take(1),
               filterNonNull(),
               tap(faceIndex => {
-                stateService.set($faceIndex, (faceIndex + 1) % faceCount);
+                stateService.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
               }),
           );
         }),

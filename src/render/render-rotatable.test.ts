@@ -16,7 +16,7 @@ test('@protoboard2/render/render-rotatable', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const context = createFakeContext({shadowRoot});
-    const isRotatable$ = new ReplaySubject<PieceSpec<IsRotatable>|null>(1);
+    const isRotatable$ = new ReplaySubject<PieceSpec<IsRotatable>|undefined>(1);
 
     const stateService = new StateService();
     $stateService.set(context.vine, () => stateService);
@@ -41,7 +41,7 @@ test('@protoboard2/render/render-rotatable', init => {
   should('output 0 if IsRotatable payload is null', () => {
     const targetEl = document.createElement('div');
     _.slottedNodes$.next([targetEl]);
-    _.isRotatable$.next(null);
+    _.isRotatable$.next(undefined);
 
     assert(targetEl.style.transform).to.equal('rotateZ(0deg)');
   });

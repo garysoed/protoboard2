@@ -9,8 +9,8 @@ import {PieceSpec} from '../types/piece-spec';
 
 
 export function renderMultifaced(
-    isMultifaced$: Observable<PieceSpec<IsMultifaced>|null>,
-    slotNameOutput: AttributeOutput<string>,
+    isMultifaced$: Observable<PieceSpec<IsMultifaced>|undefined>,
+    slotNameOutput: AttributeOutput<string|undefined>,
     context: PersonaContext,
 ): Observable<unknown> {
   return combineLatest([$stateService.get(context.vine), isMultifaced$]).pipe(
@@ -19,7 +19,7 @@ export function renderMultifaced(
           return observableOf(null);
         }
 
-        return stateService.get(isMultifaced.payload.$currentFaceIndex);
+        return stateService.resolve(isMultifaced.payload.$currentFaceIndex).self$;
       }),
       map(faceIndex => `face-${faceIndex ?? 0}`),
       slotNameOutput.output(context),

@@ -13,16 +13,16 @@ import {RegionPayload} from '../types/region-payload';
 import {$demoState} from './demo-state';
 
 
-export const $playState = stream<PlayState|null>(
+export const $playState = stream<PlayState|undefined>(
     'playState',
     vine => {
       return combineLatest([$demoState.get(vine), $stateService.get(vine)]).pipe(
           switchMap(([demoState, stateService]) => {
             if (!demoState) {
-              return observableOf(null);
+              return observableOf(undefined);
             }
 
-            return stateService.get(demoState.$playState);
+            return stateService.resolve(demoState.$playState).self$;
           }),
       );
     },

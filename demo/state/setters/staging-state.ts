@@ -64,7 +64,7 @@ export const $addRegionSpecs = stream(
           .pipe(
               map(([regionSpecs, stateService, stagingState, targetAreas]) => {
                 if (!targetAreas || !stagingState) {
-                  return null;
+                  return undefined;
                 }
                 const boundAddPieceSpec = addRegionSpec
                     .bind(undefined, regionSpecs ?? [], stagingState, stateService);

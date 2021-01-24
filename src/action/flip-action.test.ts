@@ -45,13 +45,13 @@ test('@protoboard2/action/flip-action', init => {
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
-      assert(_.stateService.get(_.$faceIndex)).to.emitWith(3);
+      assert(_.stateService.resolve(_.$faceIndex).self$).to.emitWith(3);
     });
 
     should('wrap the face index by the count', () => {
       _.stateService.set(_.$faceIndex, 1);
 
-      const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
+      const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex).self$);
 
       _.action.trigger({mouseX: 0, mouseY: 0});
       _.action.trigger({mouseX: 0, mouseY: 0});
@@ -64,7 +64,7 @@ test('@protoboard2/action/flip-action', init => {
 
       _.el.setAttribute('pb-flip-count', '6');
 
-      const faceIndex$ = createSpySubject(_.stateService.get(_.$faceIndex));
+      const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex).self$);
 
       _.action.trigger({mouseX: 0, mouseY: 0});
       _.action.trigger({mouseX: 0, mouseY: 0});

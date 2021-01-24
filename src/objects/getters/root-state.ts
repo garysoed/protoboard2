@@ -22,7 +22,7 @@ export const $rootState = stream(
                   return observableOf(null);
                 }
 
-                return stateService.get($rootState);
+                return stateService.resolve($rootState).self$;
               }));
     },
 );
@@ -33,21 +33,21 @@ export const $activeId = stream<StateId<ActiveSpec>|null>(
 );
 
 // TODO: Rename to $activeSpec
-export const $activeState = stream<ActiveSpec|null>(
+export const $activeState = stream<ActiveSpec|undefined>(
     'activeState',
     vine => combineLatest([$activeId.get(vine), $getObjectSpec.get(vine)]).pipe(
         switchMap(([activeId, getObjectSpec]) => {
-          return activeId ? getObjectSpec(activeId) : observableOf(null);
+          return activeId ? getObjectSpec(activeId) : observableOf(undefined);
         }),
     ),
 );
 
-type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => Observable<O|null>;
+type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => Observable<O|undefined>;
 export const $getObjectSpec = stream<GetObjectSpec>(
     'getObjectSpec',
     vine => $stateService.get(vine).pipe(
         map(stateService => {
-          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.get(id);
+          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.resolve(id).self$;
         }),
     ),
 );

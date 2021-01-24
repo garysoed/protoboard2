@@ -49,7 +49,7 @@ export const $setFaces = stream(
       ])
           .pipe(
               map(([demoState, editedFaces, faceIcons, stateService]) => {
-                if (!faceIcons || editedFaces === null || !demoState) {
+                if (!faceIcons || editedFaces === undefined || !demoState) {
                   return null;
                 }
 

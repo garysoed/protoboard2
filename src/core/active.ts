@@ -97,10 +97,10 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
         withLatestFrom($stateService.get(this.vine)),
         switchMap(([spec, stateService]) => {
           if (!spec) {
-            return observableOf(null);
+            return observableOf(undefined);
           }
 
-          return stateService.get(spec.payload.$contentSpecs);
+          return stateService.resolve(spec.payload.$contentSpecs).self$;
         }),
         map(ids => $pipe(
             ids ?? [],

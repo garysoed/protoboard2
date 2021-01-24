@@ -19,7 +19,7 @@ export const $pieceSpecs = stream(
             return observableOf(null);
           }
 
-          return stateService.get(stagingState.$pieceSpecs);
+          return stateService.resolve(stagingState.$pieceSpecs).self$;
         }),
     ),
 );
@@ -32,7 +32,7 @@ export const $regionSpecs = stream(
             return observableOf(null);
           }
 
-          return stateService.get(stagingState.$regionSpecs);
+          return stateService.resolve(stagingState.$regionSpecs).self$;
         }),
     ),
 );

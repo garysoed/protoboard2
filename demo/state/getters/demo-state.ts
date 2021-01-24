@@ -6,15 +6,15 @@ import {map, switchMap} from 'rxjs/operators';
 import {$demoStateId, DemoState} from '../types/demo-state';
 
 
-export const $demoState = stream<DemoState|null>(
+export const $demoState = stream<DemoState|undefined>(
     'DemoState',
     vine => combineLatest([$stateService.get(vine), $demoStateId.get(vine)]).pipe(
         switchMap(([stateService, demoStateId]) => {
           if (!demoStateId) {
-            return observableOf(null);
+            return observableOf(undefined);
           }
 
-          return stateService.get(demoStateId);
+          return stateService.resolve(demoStateId).self$;
         }),
     ));
 
@@ -23,10 +23,10 @@ export const $isStaging = stream<boolean>(
     vine => combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
         switchMap(([stateService, demoState]) => {
           if (!demoState) {
-            return observableOf(null);
+            return observableOf(undefined);
           }
 
-          return stateService.get(demoState.$isStaging);
+          return stateService.resolve(demoState.$isStaging).self$;
         }),
         map(isStaging => isStaging ?? true),
     ),
