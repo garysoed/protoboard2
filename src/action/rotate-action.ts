@@ -53,7 +53,7 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
           }
 
           const $rotationDeg = objectSpec.payload.$rotationDeg;
-          return stateService.resolve($rotationDeg).self$.pipe(
+          return stateService.resolve($rotationDeg).pipe(
               take(1),
               map(rotationDeg => rotationDeg ?? 0),
               withLatestFrom(this.stops$),

@@ -19,7 +19,7 @@ export function renderMultifaced(
           return observableOf(null);
         }
 
-        return stateService.resolve(isMultifaced.payload.$currentFaceIndex).self$;
+        return stateService.resolve(isMultifaced.payload.$currentFaceIndex);
       }),
       map(faceIndex => `face-${faceIndex ?? 0}`),
       slotNameOutput.output(context),

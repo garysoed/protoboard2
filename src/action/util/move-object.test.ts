@@ -42,10 +42,10 @@ test('@protoboard2/action/util/move-object', () => {
     const $toContentSpecs = stateService.add([toSpec1, toSpec2]);
 
     const fromContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-        stateService.resolve($fromContentSpecs).self$,
+        stateService.resolve($fromContentSpecs),
     );
     const toContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-        stateService.resolve($toContentSpecs).self$,
+        stateService.resolve($toContentSpecs),
     );
 
     run(moveObject(

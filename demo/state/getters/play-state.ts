@@ -22,7 +22,7 @@ export const $playState = stream<PlayState|undefined>(
               return observableOf(undefined);
             }
 
-            return stateService.resolve(demoState.$playState).self$;
+            return stateService.resolve(demoState.$playState);
           }),
       );
     },

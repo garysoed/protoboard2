@@ -19,7 +19,7 @@ export function renderContents(
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   const containerSpec$ = $stateService.get(vine)
-      .pipe(switchMap(stateService => stateService.resolve(parentId).self$));
+      .pipe(switchMap(stateService => stateService.resolve(parentId)));
 
   return combineLatest([
     $stateService.get(vine),
@@ -31,7 +31,7 @@ export function renderContents(
               return observableOf([]);
             }
 
-            return stateService.resolve(containerSpec.payload.$contentSpecs).self$.pipe(
+            return stateService.resolve(containerSpec.payload.$contentSpecs).pipe(
                 withLatestFrom($getRenderSpec.get(vine)),
                 switchMap(([contentIds, getRenderSpec]) => {
                   const node$list = $pipe(

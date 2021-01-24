@@ -100,7 +100,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
             return observableOf(undefined);
           }
 
-          return stateService.resolve(spec.payload.$contentSpecs).self$;
+          return stateService.resolve(spec.payload.$contentSpecs);
         }),
         map(ids => $pipe(
             ids ?? [],

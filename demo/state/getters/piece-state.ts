@@ -17,9 +17,9 @@ export const $editedFaces = stream<EditedFaces|undefined>(
               return observableOf(undefined);
             }
 
-            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$editedFace).self$;
-            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$editedFace).self$;
-            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$editedFace).self$;
+            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$editedFace);
+            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$editedFace);
+            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$editedFace);
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
                   if (d1 === undefined || d2 === undefined || d6 === undefined) {
@@ -44,9 +44,9 @@ export const $faceIcons = stream<FaceIcons|undefined>(
               return observableOf(undefined);
             }
 
-            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$faceIcons).self$;
-            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$faceIcons).self$;
-            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$faceIcons).self$;
+            const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$faceIcons);
+            const d2$ = stateService.resolve(demoState.pieceEditorState.d2.$faceIcons);
+            const d6$ = stateService.resolve(demoState.pieceEditorState.d6.$faceIcons);
             return combineLatest([d1$, d2$, d6$]).pipe(
                 map(([d1, d2, d6]) => {
                   if (d1 === undefined || d2 === undefined || d6 === undefined) {

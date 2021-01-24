@@ -51,7 +51,7 @@ test('@protoboard2/action/roll-action', init => {
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
-      assert(_.stateService.resolve(_.$faceIndex).self$).to.emitWith(2);
+      assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
     });
 
     should('use the config object', () => {
@@ -63,7 +63,7 @@ test('@protoboard2/action/roll-action', init => {
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
-      assert(_.stateService.resolve(_.$faceIndex).self$).to.emitWith(3);
+      assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });
   });
 });

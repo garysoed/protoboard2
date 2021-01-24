@@ -22,7 +22,7 @@ export const $rootState = stream(
                   return observableOf(null);
                 }
 
-                return stateService.resolve($rootState).self$;
+                return stateService.resolve($rootState);
               }));
     },
 );
@@ -47,7 +47,7 @@ export const $getObjectSpec = stream<GetObjectSpec>(
     'getObjectSpec',
     vine => $stateService.get(vine).pipe(
         map(stateService => {
-          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.resolve(id).self$;
+          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.resolve(id);
         }),
     ),
 );

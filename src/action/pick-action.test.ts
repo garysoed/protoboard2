@@ -89,11 +89,11 @@ test('@protoboard2/action/pick-action', init => {
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($activeContentIds).self$)),
+              .pipe(switchMap(service => service.resolve($activeContentIds))),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($targetContentSpecs).self$)),
+              .pipe(switchMap(service => service.resolve($targetContentSpecs))),
       );
 
       _.action.trigger({mouseX: 0, mouseY: 0});

@@ -23,7 +23,7 @@ export function renderRotatable(
           return observableOf(undefined);
         }
 
-        return stateService.resolve(pieceSpec.payload.$rotationDeg).self$;
+        return stateService.resolve(pieceSpec.payload.$rotationDeg);
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );

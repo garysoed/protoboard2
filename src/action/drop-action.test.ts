@@ -79,11 +79,11 @@ test('@protoboard2/action/drop-action', init => {
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($activeContentIds).self$)),
+              .pipe(switchMap(service => service.resolve($activeContentIds))),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($targetContentIds).self$)),
+              .pipe(switchMap(service => service.resolve($targetContentIds))),
       );
 
       _.action.trigger({mouseX: 0, mouseY: 0});

@@ -57,7 +57,7 @@ export class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
 
           // TODO: Fix
           const $faceIndex = objectSpec.payload.$currentFaceIndex;
-          return stateService.resolve($faceIndex).self$.pipe(
+          return stateService.resolve($faceIndex).pipe(
               take(1),
               filterNonNullable(),
               tap(faceIndex => {

@@ -14,7 +14,7 @@ export const $demoState = stream<DemoState|undefined>(
             return observableOf(undefined);
           }
 
-          return stateService.resolve(demoStateId).self$;
+          return stateService.resolve(demoStateId);
         }),
     ));
 
@@ -26,7 +26,7 @@ export const $isStaging = stream<boolean>(
             return observableOf(undefined);
           }
 
-          return stateService.resolve(demoState.$isStaging).self$;
+          return stateService.resolve(demoState.$isStaging);
         }),
         map(isStaging => isStaging ?? true),
     ),

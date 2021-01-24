@@ -42,7 +42,7 @@ test('@protoboard2/action/rotate-action', init => {
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
-      assert(_.stateService.resolve(_.$rotationDeg).self$).to.emitWith(22);
+      assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
     });
 
     should('handle rotations that are more than 360', () => {
@@ -52,7 +52,7 @@ test('@protoboard2/action/rotate-action', init => {
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
-      assert(_.stateService.resolve(_.$rotationDeg).self$).to.emitWith(456);
+      assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
     });
   });
 });

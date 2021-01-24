@@ -121,7 +121,7 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
             return observableOf(undefined);
           }
 
-          return stateService.resolve(objectId).self$;
+          return stateService.resolve(objectId);
         }),
     );
   }

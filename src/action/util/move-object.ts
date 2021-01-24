@@ -19,8 +19,8 @@ export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>
   return $stateService.get(vine).pipe(
       switchMap(stateService => {
         return combineLatest([
-          stateService.resolve(fromContainer.$contentSpecs).self$,
-          stateService.resolve(toContainer.$contentSpecs).self$,
+          stateService.resolve(fromContainer.$contentSpecs),
+          stateService.resolve(toContainer.$contentSpecs),
         ])
             .pipe(
                 map(([fromContentSpecs, toContentSpecs]) => {

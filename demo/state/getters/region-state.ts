@@ -15,7 +15,7 @@ export const $targetAreas = stream(
               return observableOf(undefined);
             }
 
-            const deck$ = stateService.resolve(demoState.regionEditorState.deck.$targetArea).self$;
+            const deck$ = stateService.resolve(demoState.regionEditorState.deck.$targetArea);
             return combineLatest([deck$]).pipe(
                 map(([deck]) => {
                   if (deck === undefined) {

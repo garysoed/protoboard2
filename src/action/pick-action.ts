@@ -71,7 +71,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               if (!activeSpec) {
                 return observableOf(undefined);
               }
-              return stateService.resolve(activeSpec.payload.$contentSpecs).self$;
+              return stateService.resolve(activeSpec.payload.$contentSpecs);
             }),
         );
 
