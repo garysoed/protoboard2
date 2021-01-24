@@ -16,15 +16,14 @@ import {ObjectSpec} from '../types/object-spec';
 export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
     objectId: StateId<O>,
     vine: Vine,
-) => Observable<RenderSpec|null>;
+) => Observable<RenderSpec|null|undefined>;
 
 export const $createSpecMap = source<ReadonlyMap<string, ObjectCreateSpec<any>>>(
     'createSpecMap',
     () => new Map(),
 );
 
-type GetRenderSpec = (id: StateId<ObjectSpec<any>>, vine: Vine) => Observable<RenderSpec|null>;
-export const $getRenderSpec = stream<GetRenderSpec>(
+export const $getRenderSpec = stream<ObjectCreateSpec<any>>(
     'getRenderSpec',
     vine => combineLatest([$createSpecMap.get(vine), $stateService.get(vine)]).pipe(
         map(([createSpecMap, stateService]) => {

@@ -1,21 +1,17 @@
 import {Vine} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
-import {filterNonNull} from 'gs-tools/export/rxjs';
+import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {applyDecorators, Decorator, NodeWithId, RenderSpec} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {Indexed} from '../coordinate/indexed';
 import {$setParent} from '../objects/content-map';
 import {$getRenderSpec} from '../objects/object-create-spec';
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
-
-
-const LOGGER = new Logger('protoboard2.renderContents');
 
 
 export function renderContents(
@@ -43,7 +39,7 @@ export function renderContents(
                       $map(({objectId, coordinate}) => {
                         return getRenderSpec(objectId, vine).pipe(
                             take(1),
-                            filterNonNull(),
+                            filterNonNullable(),
                             map(spec => [coordinate, {id: objectId, spec}] as const),
                         );
                       }),

@@ -1,4 +1,5 @@
 import {cache} from 'gs-tools/export/data';
+import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
@@ -41,7 +42,7 @@ export class Render extends BaseThemedCtrl<typeof $> {
     ];
   }
   @cache()
-  private get object$(): Observable<RenderSpec|null> {
+  private get object$(): Observable<RenderSpec|undefined> {
     return combineLatest([
       this.inputs.host.objectId,
       $getRenderSpec.get(this.vine),
@@ -49,10 +50,11 @@ export class Render extends BaseThemedCtrl<typeof $> {
         .pipe(
             switchMap(([objectId, getRenderSpec]) => {
               if (!objectId) {
-                return observableOf(null);
+                return observableOf(undefined);
               }
               return getRenderSpec(objectId, this.vine);
             }),
+            mapNullableTo<RenderSpec|undefined>(undefined),
         );
   }
 }
