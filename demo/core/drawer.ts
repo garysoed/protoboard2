@@ -1,4 +1,4 @@
-import {assertByType, filterNonNull} from 'gs-tools/export/rxjs';
+import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType, instanceofType} from 'gs-types';
 import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
 import {attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
@@ -105,7 +105,7 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
 
               return event.target.getAttribute('path') || null;
             }),
-            filterNonNull(),
+            filterNonNullable(),
             assertByType(enumType<Views>(Views)),
             withLatestFrom($locationService.get(this.vine)),
             tap(([path, locationService]) => {

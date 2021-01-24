@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {filterNonNull} from 'gs-tools/export/rxjs';
+import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {$stateService} from 'mask';
 import {integerParser} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
@@ -55,7 +55,7 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           const $faceIndex = objectSpec.payload.$currentFaceIndex;
           return stateService.resolve($faceIndex).self$.pipe(
               take(1),
-              filterNonNull(),
+              filterNonNullable(),
               tap(faceIndex => {
                 stateService.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
               }),
