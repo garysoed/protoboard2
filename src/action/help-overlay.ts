@@ -4,7 +4,7 @@ import {instanceofType} from 'gs-types';
 import {$keyboard, BaseThemedCtrl, Keyboard, SpecialKeys, _p} from 'mask';
 import {classToggle, element, multi, onDom, PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
@@ -48,8 +48,7 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   }
 
   private get isVisible$(): Observable<boolean> {
-    return $helpService.get(this.vine).pipe(
-        switchMap(service => service.actions$),
+    return $helpService.get(this.vine).actions$.pipe(
         map(actions => actions.length > 0),
     );
   }
@@ -57,15 +56,13 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   private setupHandleClick(): Observable<unknown> {
     return this.inputs.root.click
         .pipe(
-            withLatestFrom($helpService.get(this.vine)),
-            tap(([, service]) => service.hide()),
+            tap(() => $helpService.get(this.vine).hide()),
         );
   }
 
   @cache()
   private get tableRows$(): Observable<readonly RenderSpec[]> {
-    return $helpService.get(this.vine).pipe(
-        switchMap(service => service.actions$),
+    return $helpService.get(this.vine).actions$.pipe(
         map(actions => {
           const rows$list = $pipe(
               actions,

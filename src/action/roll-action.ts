@@ -40,17 +40,15 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
         withLatestFrom(
             this.objectSpec$,
             this.faceCount$,
-            $stateService.get(this.vine),
-            $random.get(this.vine),
         ),
-        tap(([, objectSpec, faceCount, stateService, random]) => {
+        tap(([, objectSpec, faceCount]) => {
           if (!objectSpec) {
             return;
           }
 
-          const randomValue = random.next();
+          const randomValue = $random.get(this.vine).next();
           const nextIndex = Math.floor(randomValue * faceCount);
-          stateService.set(objectSpec.payload.$currentFaceIndex, nextIndex);
+          $stateService.get(this.vine).set(objectSpec.payload.$currentFaceIndex, nextIndex);
         }),
     );
   }

@@ -5,15 +5,10 @@ import {identity} from 'nabu';
 import {listParser} from 'persona';
 import {EMPTY, Observable} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGER = new Logger('pb.RotateAction');
 
 
 interface Config {
@@ -42,12 +37,10 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   }
 
   private get handleTrigger$(): Observable<unknown> {
+    const stateService = $stateService.get(this.vine);
     return this.onTrigger$.pipe(
-        withLatestFrom(
-            this.objectSpec$,
-            $stateService.get(this.vine),
-        ),
-        switchMap(([, objectSpec, stateService]) => {
+        withLatestFrom(this.objectSpec$),
+        switchMap(([, objectSpec]) => {
           if (!objectSpec) {
             return EMPTY;
           }

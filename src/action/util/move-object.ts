@@ -2,8 +2,8 @@ import {Vine} from 'grapevine';
 import {$asArray, $filter, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {Observable, combineLatest} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {combineLatest, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {CoordinateTypes, IsContainer, TypeCoordinateMapping} from '../../payload/is-container';
 import {ObjectSpec} from '../../types/object-spec';
@@ -16,39 +16,36 @@ export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>
     toContainer: IsContainer<T>,
     vine: Vine,
 ): Observable<MoveObjectFn<T>|null> {
-  return $stateService.get(vine).pipe(
-      switchMap(stateService => {
-        return combineLatest([
-          stateService.resolve(fromContainer.$contentSpecs),
-          stateService.resolve(toContainer.$contentSpecs),
-        ])
-            .pipe(
-                map(([fromContentSpecs, toContentSpecs]) => {
-                  if (!fromContentSpecs || !toContentSpecs) {
-                    return null;
-                  }
+  const stateService = $stateService.get(vine);
+  return combineLatest([
+    stateService.resolve(fromContainer.$contentSpecs),
+    stateService.resolve(toContainer.$contentSpecs),
+  ])
+      .pipe(
+          map(([fromContentSpecs, toContentSpecs]) => {
+            if (!fromContentSpecs || !toContentSpecs) {
+              return null;
+            }
 
-                  return (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => {
-                    stateService.set(
-                        fromContainer.$contentSpecs,
-                        $pipe(
-                            fromContentSpecs,
-                            $filter(spec => spec.objectId.id !== movedObjectId.id),
-                            $asArray(),
-                        ),
-                    );
+            return (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => {
+              stateService.set(
+                  fromContainer.$contentSpecs,
+                  $pipe(
+                      fromContentSpecs,
+                      $filter(spec => spec.objectId.id !== movedObjectId.id),
+                      $asArray(),
+                  ),
+              );
 
-                    // Add the moved object to the destination.
-                    const newToContentSpecs = [
-                      ...toContentSpecs,
-                      {objectId: movedObjectId, coordinate: toLocation},
-                    ];
-                    stateService.set(toContainer.$contentSpecs, newToContentSpecs);
-                  };
-                }),
-            );
-      }),
-  );
+              // Add the moved object to the destination.
+              const newToContentSpecs = [
+                ...toContentSpecs,
+                {objectId: movedObjectId, coordinate: toLocation},
+              ];
+              stateService.set(toContainer.$contentSpecs, newToContentSpecs);
+            };
+          }),
+      );
 }
 
 export function computeDistance<T extends CoordinateTypes>(

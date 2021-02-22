@@ -1,6 +1,6 @@
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
@@ -18,13 +18,16 @@ test('@protoboard2/action/roll-action', init => {
 
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const personaContext = createFakeContext({shadowRoot});
-
     const seed = new FakeSeed();
-    $random.set(personaContext.vine, () => fromSeed(seed));
+    const stateService = fakeStateService();
 
-    const stateService = new StateService();
-    $stateService.set(personaContext.vine, () => stateService);
+    const personaContext = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $random, withValue: fromSeed(seed)},
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     const $faceIndex = stateService.add(2);
     const objectId = stateService.add(fakePieceSpec({

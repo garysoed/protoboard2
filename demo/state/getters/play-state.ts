@@ -1,7 +1,7 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {SlotSpec} from '../../../src/region/slot';
@@ -13,21 +13,21 @@ import {RegionPayload} from '../types/region-payload';
 import {$demoState} from './demo-state';
 
 
-export const $playState = stream<PlayState|undefined>(
+export const $playState = source<Observable<PlayState|undefined>>(
     'playState',
     vine => {
-      return combineLatest([$demoState.get(vine), $stateService.get(vine)]).pipe(
-          switchMap(([demoState, stateService]) => {
+      return $demoState.get(vine).pipe(
+          switchMap(demoState => {
             if (!demoState) {
-              return observableOf(undefined);
+              return of(undefined);
             }
 
-            return stateService.resolve(demoState.$playState);
+            return $stateService.get(vine).resolve(demoState.$playState);
           }),
       );
     },
 );
-export const $objectSpecIds = stream<ReadonlyArray<StateId<ObjectSpec<PiecePayload|RegionPayload>>>>(
+export const $objectSpecIds = source<Observable<ReadonlyArray<StateId<ObjectSpec<PiecePayload|RegionPayload>>>>>(
     'objectSpecIds',
     vine =>  $playState.get(vine).pipe(
         map(playState => playState?.objectSpecIds ?? []),
@@ -35,7 +35,7 @@ export const $objectSpecIds = stream<ReadonlyArray<StateId<ObjectSpec<PiecePaylo
 );
 
 
-export const $supplyId = stream<StateId<SlotSpec<{}>>|null>(
+export const $supplyId = source<Observable<StateId<SlotSpec<{}>>|null>>(
     'supplyId',
     vine => $playState.get(vine).pipe(map(state => state?.$supply ?? null)),
 );

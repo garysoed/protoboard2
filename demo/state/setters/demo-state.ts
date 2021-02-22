@@ -1,4 +1,4 @@
-import {stream, Vine} from 'grapevine';
+import {source, Vine} from 'grapevine';
 import {$asArray, $filterDefined, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
@@ -24,33 +24,25 @@ import {RegionPayload} from '../types/region-payload';
 import {RegionSpec} from '../types/region-spec';
 
 
-export const $setStaging = stream(
+export const $setStaging = source(
     'setStaging',
     vine => {
+      const stateService = $stateService.get(vine);
       return combineLatest([
         $demoState.get(vine),
         $objectSpecIds.get(vine),
-        $getObjectSpec.get(vine),
         $pieceSpecs.get(vine),
         $regionSpecs.get(vine),
-        $stateService.get(vine),
       ])
           .pipe(
-              switchMap(([
-                demoState,
-                objectSpecIds,
-                getObjectSpec,
-                pieceSpecs,
-                regionSpecs,
-                stateService,
-              ]) => {
+              switchMap(([demoState, objectSpecIds, pieceSpecs, regionSpecs]) => {
                 if (!demoState) {
                   return observableOf(null);
                 }
 
                 const objectSpecs = $pipe(
                     objectSpecIds,
-                    $map(id => getObjectSpec(id)),
+                    $map(id => $getObjectSpec.get(vine)(id)),
                     $asArray(),
                 );
 

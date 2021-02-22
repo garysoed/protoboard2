@@ -1,9 +1,9 @@
 import {Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$icon} from 'mask';
-import {PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
+import {renderCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 import {$baseComponent} from '../../src/core/base-component';
 import {$getObjectSpec} from '../../src/objects/getters/root-state';
@@ -45,8 +45,7 @@ export function renderDemoPiece(
     objectId: StateId<ObjectSpec<PieceSpec>>,
     vine: Vine,
 ): Observable<RenderSpec|null> {
-  return $getObjectSpec.get(vine).pipe(
-      switchMap(getObjectSpec => getObjectSpec(objectId)),
+  return $getObjectSpec.get(vine)(objectId).pipe(
       map(state => {
         if (!state) {
           return null;
@@ -86,8 +85,7 @@ export function renderDemoRegion(
     objectId: StateId<ObjectSpec<RegionSpec>>,
     vine: Vine,
 ): Observable<RenderSpec|null> {
-  return $getObjectSpec.get(vine).pipe(
-      switchMap(getObjectSpec => getObjectSpec(objectId)),
+  return $getObjectSpec.get(vine)(objectId).pipe(
       map(state => {
         if (!state) {
           return null;

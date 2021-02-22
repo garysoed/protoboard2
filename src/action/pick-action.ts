@@ -54,26 +54,21 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               }
               return getParent(objectId);
             }),
-            withLatestFrom($getObjectSpec.get(this.vine)),
-            switchMap(([fromObjectId, getObjectSpec]) => {
+            switchMap(fromObjectId => {
               if (!fromObjectId) {
                 return observableOf(null);
               }
-              return getObjectSpec<ContainerSpec<unknown, CoordinateTypes>>(fromObjectId);
+              return $getObjectSpec.get(this.vine)<ContainerSpec<unknown, CoordinateTypes>>(fromObjectId);
             }),
         );
-    const activeContents$ = combineLatest([
-      $stateService.get(this.vine),
-      $activeState.get(this.vine),
-    ])
-        .pipe(
-            switchMap(([stateService, activeSpec]) => {
-              if (!activeSpec) {
-                return observableOf(undefined);
-              }
-              return stateService.resolve(activeSpec.payload.$contentSpecs);
-            }),
-        );
+    const activeContents$ = $activeState.get(this.vine).pipe(
+        switchMap(activeSpec => {
+          if (!activeSpec) {
+            return observableOf(undefined);
+          }
+          return $stateService.get(this.vine).resolve(activeSpec.payload.$contentSpecs);
+        }),
+    );
 
     const moveFn$ = combineLatest([
       fromObjectSpec$,

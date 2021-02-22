@@ -3,7 +3,7 @@ import {enumType, instanceofType} from 'gs-types';
 import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
 import {attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
 
@@ -107,9 +107,8 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
             }),
             filterNonNullable(),
             assertByType(enumType<Views>(Views)),
-            withLatestFrom($locationService.get(this.vine)),
-            tap(([path, locationService]) => {
-              locationService.goToPath(path, {});
+            tap(path => {
+              $locationService.get(this.vine).goToPath(path, {});
             }),
         );
   }

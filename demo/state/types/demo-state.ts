@@ -1,6 +1,7 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$rootId} from 'mask';
+import {Observable} from 'rxjs';
 
 import {PieceEditorState} from './piece-editor-state';
 import {PlayState} from './play-state';
@@ -16,7 +17,7 @@ export interface DemoState {
   readonly stagingState: StagingState;
 }
 
-export const $demoStateId = stream<StateId<DemoState>|undefined>(
+export const $demoStateId = source<Observable<StateId<DemoState>|undefined>>(
     'demoStateId',
     vine => $rootId.get(vine),
 );

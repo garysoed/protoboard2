@@ -1,6 +1,6 @@
 import {assert, createSpySubject, run, should, test} from 'gs-testing';
 import {arrayFrom} from 'gs-tools/export/collect';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {host, multi, renderNode, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
@@ -26,11 +26,14 @@ test('@protoboard2/render/render-contents', init => {
     el.appendChild(comment);
 
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const context = createFakeContext({shadowRoot});
+    const stateService = fakeStateService();
+    const context = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
     const $ = host({content: multi(slotName)});
-
-    const stateService = new StateService();
-    $stateService.set(context.vine, () => stateService);
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
     const $parentSpec = stateService.add(

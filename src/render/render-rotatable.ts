@@ -1,15 +1,10 @@
 import {$stateService} from 'mask';
 import {PersonaContext, style} from 'persona';
-import {EMPTY, Observable, combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, EMPTY, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGER = new Logger('protoboard2.renderRotatable');
 
 
 export function renderRotatable(
@@ -17,13 +12,13 @@ export function renderRotatable(
     slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
-  const rotation$ = combineLatest([$stateService.get(context.vine), isRotatable$]).pipe(
-      switchMap(([stateService, pieceSpec]) => {
+  const rotation$ = isRotatable$.pipe(
+      switchMap(pieceSpec => {
         if (!pieceSpec) {
           return observableOf(undefined);
         }
 
-        return stateService.resolve(pieceSpec.payload.$rotationDeg);
+        return $stateService.get(context.vine).resolve(pieceSpec.payload.$rotationDeg);
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );

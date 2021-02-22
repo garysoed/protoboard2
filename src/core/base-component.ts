@@ -3,7 +3,7 @@ import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, InputsOf, onDom, PersonaContext} from 'persona';
-import {combineLatest, EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
+import {EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
 import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
@@ -99,14 +99,9 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
 
   @cache()
   get objectSpec$(): Observable<O|undefined> {
-    return combineLatest([
-      this.objectId$,
-      $getObjectSpec.get(this.context.vine),
-    ])
+    return this.objectId$
         .pipe(
-            switchMap(([objectId, getObjectSpec]) => {
-              return getObjectSpec(objectId);
-            }),
+            switchMap(objectId => $getObjectSpec.get(this.context.vine)(objectId)),
         );
   }
 

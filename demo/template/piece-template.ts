@@ -4,7 +4,6 @@ import {$button, ACTION_EVENT, BaseThemedCtrl, Button, LineLayout, registerSvg, 
 import {attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec, stringParser} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import cardFront from '../asset/card_front.svg';
 import coinSvg from '../asset/coin.svg';
@@ -20,9 +19,6 @@ import {$documentationTemplate as $documentationTemplate, DocumentationTemplate}
 import {$pieceButton, ClickEvent as ClickButtonEvent, PieceButton} from './piece-button';
 import {$piecePreview, ClickEvent as ClickPreviewEvent, PiecePreview} from './piece-preview';
 import template from './piece-template.html';
-
-
-const LOGGER = new Logger('pbd.PieceTemplate');
 
 
 export const $pieceTemplate = {

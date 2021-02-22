@@ -4,7 +4,7 @@ import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
 import {element, PersonaContext, renderCustomElement, RenderSpec, single} from 'persona';
 import {Observable} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 import {$d1Demo, D1Demo} from '../piece/d1';
 import {$d2Demo, D2Demo} from '../piece/d2';
@@ -52,9 +52,8 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
 
   @cache()
   private get content$(): Observable<RenderSpec|null> {
-    return $locationService.get(this.vine)
+    return $locationService.get(this.vine).getLocation()
         .pipe(
-            switchMap(service => service.getLocation()),
             map(location => {
               switch (location.type) {
                 case Views.D1:

@@ -1,4 +1,4 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
@@ -13,22 +13,21 @@ import {GRID_AREAS} from '../types/region-state';
 import {StagingState} from '../types/staging-state';
 
 
-export const $addPieceSpecs = stream(
+export const $addPieceSpecs = source(
     'addPieceSpecs',
     vine => {
       return combineLatest([
         $faceIcons.get(vine),
         $pieceSpecs.get(vine),
-        $stateService.get(vine),
         $stagingState.get(vine),
       ])
           .pipe(
-              map(([faceIcons, pieceSpecs, stateService, stagingState]) => {
+              map(([faceIcons, pieceSpecs, stagingState]) => {
                 if (!faceIcons || !stagingState) {
                   return null;
                 }
                 const boundAddPieceSpec = addPieceSpec
-                    .bind(undefined, pieceSpecs ?? [], stagingState, stateService);
+                    .bind(undefined, pieceSpecs ?? [], stagingState, $stateService.get(vine));
                 const d1 = boundAddPieceSpec.bind(undefined, faceIcons.d1);
                 const d2 = boundAddPieceSpec.bind(undefined, faceIcons.d2);
                 const d6 = boundAddPieceSpec.bind(undefined, faceIcons.d6);
@@ -52,22 +51,21 @@ function addPieceSpec(
   );
 }
 
-export const $addRegionSpecs = stream(
+export const $addRegionSpecs = source(
     'addRegionSpecs',
     vine => {
       return combineLatest([
         $regionSpecs.get(vine),
-        $stateService.get(vine),
         $stagingState.get(vine),
         $targetAreas.get(vine),
       ])
           .pipe(
-              map(([regionSpecs, stateService, stagingState, targetAreas]) => {
+              map(([regionSpecs, stagingState, targetAreas]) => {
                 if (!targetAreas || !stagingState) {
                   return undefined;
                 }
                 const boundAddPieceSpec = addRegionSpec
-                    .bind(undefined, regionSpecs ?? [], stagingState, stateService);
+                    .bind(undefined, regionSpecs ?? [], stagingState, $stateService.get(vine));
                 const deck = boundAddPieceSpec.bind(undefined, 'indexed', targetAreas.deck);
                 return {deck};
               }),

@@ -81,10 +81,10 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
 
   @cache()
   private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, StateId<ObjectSpec<any>>>> {
-    return combineLatest([$objectSpecIds.get(this.vine), $getObjectSpec.get(this.vine)]).pipe(
-        switchMap(([specIds, getObjectSpec]) => {
+    return $objectSpecIds.get(this.vine).pipe(
+        switchMap(specIds => {
           const pair$list = specIds.map(
-              id => getObjectSpec(id).pipe(map(spec => {
+              id => $getObjectSpec.get(this.vine)(id).pipe(map(spec => {
                 if (!spec) {
                   return null;
                 }

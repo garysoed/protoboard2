@@ -1,6 +1,6 @@
 import {Vine} from 'grapevine';
 import {assert, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {renderNode, RenderSpec} from 'persona';
 import {of as observableOf} from 'rxjs';
@@ -13,9 +13,13 @@ import {$createSpecMap, $getRenderSpec} from './object-create-spec';
 
 test('@protoboard2/objects/object-create-spec', init => {
   const _ = init(() => {
-    const vine = new Vine('test');
-    const stateService = new StateService();
-    $stateService.set(vine, () => stateService);
+    const stateService = fakeStateService();
+    const vine = new Vine({
+      appName: 'test',
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
     return {vine, stateService};
   });
 

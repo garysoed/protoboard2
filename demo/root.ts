@@ -3,7 +3,7 @@ import {elementWithTagType, instanceofType} from 'gs-types';
 import {$rootLayout, BaseThemedCtrl, Overlay, RootLayout, _p} from 'mask';
 import {api, classToggle, element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 import {HelpOverlay} from '../src/action/help-overlay';
 import {$active, Active} from '../src/core/active';
@@ -65,9 +65,8 @@ export class Root extends BaseThemedCtrl<typeof $> {
   private get handleOnRootActive$(): Observable<unknown> {
     return this.inputs.root.onTitleClick
         .pipe(
-            withLatestFrom($locationService.get(this.vine)),
-            tap(([, service]) => {
-              service.goToPath(Views.INSTRUCTION, {});
+            tap(() => {
+              $locationService.get(this.vine).goToPath(Views.INSTRUCTION, {});
             }),
         );
   }

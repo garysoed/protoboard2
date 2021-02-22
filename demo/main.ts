@@ -2,7 +2,6 @@ import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
 import {LocalStorage} from 'gs-tools/export/store';
 import {$saveConfig, $saveService, PALETTE, registerSvg, start, Theme} from 'mask';
 import {identity, json} from 'nabu';
-import {switchMap, tap} from 'rxjs/operators';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
@@ -47,9 +46,7 @@ window.addEventListener('load', () => {
     registerSvg(vine, key, {type: 'embed', content});
   }
 
-  $locationService.get(vine)
-      .pipe(switchMap(locationService => locationService.run()))
-      .subscribe();
+  $locationService.get(vine).run().subscribe();
 
   const storage = new LocalStorage<Snapshot<DemoState>, any>(
       window,
@@ -58,14 +55,9 @@ window.addEventListener('load', () => {
       json(),
   );
 
-  $saveService.get(vine)
-      .pipe(
-          tap(saveService => {
-            saveService.setSaving(true);
-          }),
-          switchMap(saveService => saveService.run()),
-      )
-      .subscribe();
+  const saveService = $saveService.get(vine);
+  saveService.setSaving(true);
+  saveService.run().subscribe();
   $saveConfig.set(vine, () => ({
     loadOnInit: true,
     saveId: 'save',

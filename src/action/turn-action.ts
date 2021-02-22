@@ -4,15 +4,10 @@ import {$stateService} from 'mask';
 import {integerParser} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
-
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGER = new Logger('pb.FlipAction');
 
 
 interface Config {
@@ -44,10 +39,10 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
 
   @cache()
   private get handleTrigger$(): Observable<unknown> {
-    const stateService$ = $stateService.get(this.vine);
+    const stateService = $stateService.get(this.vine);
     return this.onTrigger$.pipe(
-        withLatestFrom(this.objectSpec$, this.faceCount$, stateService$),
-        switchMap(([, objectSpec, faceCount, stateService]) => {
+        withLatestFrom(this.objectSpec$, this.faceCount$),
+        switchMap(([, objectSpec, faceCount]) => {
           if (!objectSpec) {
             return observableOf(null);
           }

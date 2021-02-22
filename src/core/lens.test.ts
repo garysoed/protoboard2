@@ -10,11 +10,15 @@ const TESTER_FACTORY = new PersonaTesterFactory(_p);
 
 test('@protoboard2/util/lens', init => {
   const _ = init(() => {
-    const tester = TESTER_FACTORY.build([Lens], document);
-    const el = tester.createElement($lens.tag);
-
     const mockLensService = createSpyInstance(LensService);
-    $lensService.set(tester.vine, () => mockLensService);
+    const tester = TESTER_FACTORY.build({
+      overrides: [
+        {override: $lensService, withValue: mockLensService},
+      ],
+      rootCtrls: [Lens],
+      rootDoc: document,
+    });
+    const el = tester.createElement($lens.tag);
 
     return {el, mockLensService, tester};
   });

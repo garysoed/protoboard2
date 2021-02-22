@@ -1,7 +1,7 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {ActiveSpec} from '../../core/active';
@@ -9,45 +9,38 @@ import {ObjectSpec} from '../../types/object-spec';
 import {$$rootState} from '../root-state';
 
 
-export const $rootState = stream(
+export const $rootState = source(
     'rootState',
     vine => {
-      return combineLatest([
-        $$rootState.get(vine),
-        $stateService.get(vine),
-      ])
+      return $$rootState.get(vine)
           .pipe(
-              switchMap(([$rootState, stateService]) => {
+              switchMap($rootState => {
                 if (!$rootState) {
                   return observableOf(null);
                 }
 
-                return stateService.resolve($rootState);
+                return $stateService.get(vine).resolve($rootState);
               }));
     },
 );
 
-export const $activeId = stream<StateId<ActiveSpec>|null>(
+export const $activeId = source<Observable<StateId<ActiveSpec>|null>>(
     'activeState',
     vine => $rootState.get(vine).pipe(map(rootState => rootState?.$activeState ?? null)),
 );
 
 // TODO: Rename to $activeSpec
-export const $activeState = stream<ActiveSpec|undefined>(
+export const $activeState = source<Observable<ActiveSpec|undefined>>(
     'activeState',
-    vine => combineLatest([$activeId.get(vine), $getObjectSpec.get(vine)]).pipe(
-        switchMap(([activeId, getObjectSpec]) => {
-          return activeId ? getObjectSpec(activeId) : observableOf(undefined);
+    vine => $activeId.get(vine).pipe(
+        switchMap(activeId => {
+          return activeId ? $getObjectSpec.get(vine)(activeId) : observableOf(undefined);
         }),
     ),
 );
 
 type GetObjectSpec = <O extends ObjectSpec<any>>(id: StateId<O>) => Observable<O|undefined>;
-export const $getObjectSpec = stream<GetObjectSpec>(
+export const $getObjectSpec = source<GetObjectSpec>(
     'getObjectSpec',
-    vine => $stateService.get(vine).pipe(
-        map(stateService => {
-          return <O extends ObjectSpec<any>>(id: StateId<O>) => stateService.resolve(id);
-        }),
-    ),
+    vine => <O>(id: StateId<O>) => $stateService.get(vine).resolve(id),
 );

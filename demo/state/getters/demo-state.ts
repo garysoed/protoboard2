@@ -1,32 +1,32 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {$demoStateId, DemoState} from '../types/demo-state';
 
 
-export const $demoState = stream<DemoState|undefined>(
+export const $demoState = source<Observable<DemoState|undefined>>(
     'DemoState',
-    vine => combineLatest([$stateService.get(vine), $demoStateId.get(vine)]).pipe(
-        switchMap(([stateService, demoStateId]) => {
+    vine => $demoStateId.get(vine).pipe(
+        switchMap(demoStateId => {
           if (!demoStateId) {
-            return observableOf(undefined);
+            return of(undefined);
           }
 
-          return stateService.resolve(demoStateId);
+          return $stateService.get(vine).resolve(demoStateId);
         }),
     ));
 
-export const $isStaging = stream<boolean>(
+export const $isStaging = source<Observable<boolean>>(
     'isStaging',
-    vine => combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
-        switchMap(([stateService, demoState]) => {
+    vine => $demoState.get(vine).pipe(
+        switchMap(demoState => {
           if (!demoState) {
-            return observableOf(undefined);
+            return of(undefined);
           }
 
-          return stateService.resolve(demoState.$isStaging);
+          return $stateService.get(vine).resolve(demoState.$isStaging);
         }),
         map(isStaging => isStaging ?? true),
     ),

@@ -5,7 +5,7 @@ import {instanceofType} from 'gs-types';
 import {$stateService, _p} from 'mask';
 import {classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
-import {map, share, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {map, share, switchMap, throttleTime} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {ContentSpec} from '../payload/is-container';
@@ -94,13 +94,12 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   @cache()
   private get contentIds$(): Observable<ReadonlyArray<StateId<ObjectSpec<any>>>> {
     return this.objectSpec$.pipe(
-        withLatestFrom($stateService.get(this.vine)),
-        switchMap(([spec, stateService]) => {
+        switchMap(spec => {
           if (!spec) {
             return observableOf(undefined);
           }
 
-          return stateService.resolve(spec.payload.$contentSpecs);
+          return $stateService.get(this.vine).resolve(spec.payload.$contentSpecs);
         }),
         map(ids => $pipe(
             ids ?? [],

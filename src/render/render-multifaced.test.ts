@@ -1,5 +1,5 @@
 import {assert, run, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {attributeOut, host, stringParser} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
@@ -11,16 +11,20 @@ import {PieceSpec} from '../types/piece-spec';
 
 import {renderMultifaced} from './render-multifaced';
 
+
 test('@protoboard2/render/render-multifaced', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const context = createFakeContext({shadowRoot});
+    const stateService = fakeStateService();
+    const context = createFakeContext({
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+      shadowRoot,
+    });
     const $ = host({slot: attributeOut('name', stringParser())});
     const isMultifaced$ = new ReplaySubject<PieceSpec<IsMultifaced>>(1);
-
-    const stateService = new StateService();
-    $stateService.set(context.vine, () => stateService);
 
     run(renderMultifaced(isMultifaced$, $._.slot, context));
 

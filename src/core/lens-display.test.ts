@@ -1,7 +1,6 @@
-import {arrayThat, assert, run, should, test} from 'gs-testing';
+import {arrayThat, assert, should, test} from 'gs-testing';
 import {_p} from 'mask';
 import {PersonaTesterFactory} from 'persona/export/testing';
-import {take, tap} from 'rxjs/operators';
 
 import {$, $lensDisplay, LensDisplay} from './lens-display';
 import {$lensService} from './lens-service';
@@ -11,7 +10,7 @@ const TESTER_FACTORY = new PersonaTesterFactory(_p);
 
 test('@protoboard2/util/lens-display', init => {
   const _ = init(() => {
-    const tester = TESTER_FACTORY.build([LensDisplay], document);
+    const tester = TESTER_FACTORY.build({rootCtrls: [LensDisplay], rootDoc: document});
     const el = tester.createElement($lensDisplay.tag);
 
     return {el, tester};
@@ -46,12 +45,7 @@ test('@protoboard2/util/lens-display', init => {
       fragment.appendChild(el1);
       fragment.appendChild(el2);
 
-      run($lensService.get(_.tester.vine).pipe(
-          take(1),
-          tap(lensService => {
-            lensService.show('key', fragment);
-          }),
-      ));
+      $lensService.get(_.tester.vine).show('key', fragment);
 
       assert(getRenderedHtmls(_.rootEl)).to.equal(arrayThat<string>().haveExactElements([
         '<div><span></span></div>',
@@ -65,13 +59,9 @@ test('@protoboard2/util/lens-display', init => {
       const fragment = document.createDocumentFragment();
       fragment.appendChild(el);
 
-      run($lensService.get(_.tester.vine).pipe(
-          take(1),
-          tap(lensService => {
-            lensService.show('key', fragment);
-            lensService.hide('key');
-          }),
-      ));
+      const lensService = $lensService.get(_.tester.vine);
+      lensService.show('key', fragment);
+      lensService.hide('key');
 
       assert(getRenderedHtmls(_.rootEl)).to.equal(arrayThat<string>().beEmpty());
     });

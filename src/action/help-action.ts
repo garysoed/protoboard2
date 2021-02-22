@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {tap, withLatestFrom} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {TriggerSpec} from '../core/trigger-spec';
@@ -25,11 +25,10 @@ export class HelpAction extends BaseAction<ObjectSpec<any>> {
   }
 
   private setupHandleTrigger(): Observable<unknown> {
-    const helpService$ = $helpService.get(this.vine);
+    const helpService = $helpService.get(this.vine);
     return this.onTrigger$
         .pipe(
-            withLatestFrom(helpService$),
-            tap(([, helpService]) => {
+            tap(() => {
               helpService.show(this.actions);
             }),
         );

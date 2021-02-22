@@ -5,9 +5,9 @@ import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {Converter} from 'nabu';
-import {PersonaContext, host, onMutation} from 'persona';
-import {Observable, Subject, of as observableOf} from 'rxjs';
-import {map, scan, startWith, withLatestFrom, switchMap} from 'rxjs/operators';
+import {host, onMutation, PersonaContext} from 'persona';
+import {Observable, of as observableOf, Subject} from 'rxjs';
+import {map, scan, startWith, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -115,13 +115,12 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
   @cache()
   get objectSpec$(): Observable<P|undefined> {
     return this.context.objectId$.pipe(
-        withLatestFrom($stateService.get(this.vine)),
-        switchMap(([objectId, stateService]) => {
+        switchMap(objectId => {
           if (!objectId) {
             return observableOf(undefined);
           }
 
-          return stateService.resolve(objectId);
+          return $stateService.get(this.vine).resolve(objectId);
         }),
     );
   }

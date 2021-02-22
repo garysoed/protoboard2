@@ -1,8 +1,8 @@
 import {Vine} from 'grapevine';
 import {assert, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
-import {map, switchMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 import {activeSpec} from '../../core/active';
 import {$$rootState, RootState} from '../root-state';
@@ -13,9 +13,13 @@ import {$activeId, $activeState, $getObjectSpec} from './root-state';
 
 test('@protoboard2/objects/getters/root-state', init => {
   const _ = init(() => {
-    const vine = new Vine('test');
-    const stateService = new StateService();
-    $stateService.set(vine, () => stateService);
+    const stateService = fakeStateService();
+    const vine = new Vine({
+      appName: 'test',
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     return {stateService, vine};
   });
@@ -61,8 +65,7 @@ test('@protoboard2/objects/getters/root-state', init => {
       });
       $$rootState.set(_.vine, () => $root);
 
-      assert($getObjectSpec.get(_.vine).pipe(switchMap(getObjectSpec => getObjectSpec(objectId))))
-          .to.emitWith(objectSpec);
+      assert($getObjectSpec.get(_.vine)(objectId)).to.emitWith(objectSpec);
     });
   });
 });

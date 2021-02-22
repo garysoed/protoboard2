@@ -1,8 +1,7 @@
+import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {_v} from 'mask';
 import {createFakeContext} from 'persona/export/testing';
 import {EMPTY, Observable, of as observableOf} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
 
 import {ActionContext, BaseAction} from '../core/base-action';
 import {TriggerType} from '../core/trigger-spec';
@@ -33,7 +32,7 @@ test('@protoboard2/action/help-action', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const vine = _v.build('test');
+    const vine = new Vine({appName: 'test'});
     const context = createFakeActionContext<PieceSpec<{}>>({
       personaContext: createFakeContext({shadowRoot, vine}),
       objectId$: observableOf(null),
@@ -48,9 +47,7 @@ test('@protoboard2/action/help-action', init => {
 
   test('onTrigger', () => {
     should('show the help correctly', () => {
-      const actions$ = createSpySubject($helpService.get(_.vine)
-          .pipe(switchMap(service => service.actions$)),
-      );
+      const actions$ = createSpySubject($helpService.get(_.vine).actions$);
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 

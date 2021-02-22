@@ -46,8 +46,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                 return observableOf(null);
               }
 
-              return $stateService.get(this.vine).pipe(
-                  switchMap(service => service.resolve(activeState.payload.$contentSpecs)),
+              return $stateService.get(this.vine).resolve(activeState.payload.$contentSpecs).pipe(
                   switchMap(activeContents => {
                     const normalizedActiveContents = activeContents ?? [];
                     const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];

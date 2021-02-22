@@ -1,5 +1,5 @@
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
@@ -16,10 +16,13 @@ test('@protoboard2/action/flip-action', init => {
 
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const personaContext = createFakeContext({shadowRoot});
-
-    const stateService = new StateService();
-    $stateService.set(personaContext.vine, () => stateService);
+    const stateService = fakeStateService();
+    const personaContext = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     const $faceIndex = stateService.add(2);
     const objectSpec = fakePieceSpec({

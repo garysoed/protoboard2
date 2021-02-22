@@ -1,6 +1,6 @@
 import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {take, tap} from 'rxjs/operators';
 
@@ -13,9 +13,13 @@ import {moveObject} from './move-object';
 
 test('@protoboard2/action/util/move-object', () => {
   should('move the object correctly', () => {
-    const vine = new Vine('test');
-    const stateService = new StateService();
-    $stateService.set(vine, () => stateService);
+    const stateService = fakeStateService();
+    const vine = new Vine({
+      appName: 'test',
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     const fromSpec1 = {
       objectId: stateService.add(fakePieceSpec({payload: {}})),

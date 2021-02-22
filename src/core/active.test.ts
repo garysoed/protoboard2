@@ -1,5 +1,5 @@
 import {assert, setThat, should, test} from 'gs-testing';
-import {StateService} from 'gs-tools/export/state';
+import {fakeStateService} from 'gs-tools/export/state';
 import {$stateService, _p} from 'mask';
 import {renderNode, setId} from 'persona';
 import {PersonaTesterFactory} from 'persona/export/testing';
@@ -23,9 +23,14 @@ test('@protoboard2/core/active', init => {
   const factory = new PersonaTesterFactory(_p);
 
   const _ = init(() => {
-    const tester = factory.build([Active], document);
-    const stateService = new StateService();
-    $stateService.set(tester.vine, () => stateService);
+    const stateService = fakeStateService();
+    const tester = factory.build({
+      rootCtrls: [Active],
+      rootDoc: document,
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
 

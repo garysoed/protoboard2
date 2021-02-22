@@ -1,4 +1,4 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {StateService} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
@@ -11,18 +11,18 @@ import {PieceEditorState} from '../types/piece-editor-state';
 import {PieceType} from '../types/piece-type';
 
 
-export const $setEditedFaces = stream(
+export const $setEditedFaces = source(
     'setEditedFaces',
     vine => {
-      return combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
-          map(([stateService, demoState]) => {
+      return $demoState.get(vine).pipe(
+          map(demoState => {
             if (!demoState) {
               return null;
             }
 
-            const d1 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D1);
-            const d2 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D2);
-            const d6 = setEditedFace.bind(undefined, stateService, demoState, PieceType.D6);
+            const d1 = setEditedFace.bind(undefined, $stateService.get(vine), demoState, PieceType.D1);
+            const d2 = setEditedFace.bind(undefined, $stateService.get(vine), demoState, PieceType.D2);
+            const d6 = setEditedFace.bind(undefined, $stateService.get(vine), demoState, PieceType.D6);
             return {d1, d2, d6};
           }),
       );
@@ -38,17 +38,16 @@ function setEditedFace(
   stateService.set(demoState.pieceEditorState[pieceType].$editedFace, selectedIndex);
 }
 
-export const $setFaces = stream(
+export const $setFaces = source(
     'setFaces',
     vine => {
       return combineLatest([
         $demoState.get(vine),
         $editedFaces.get(vine),
         $faceIcons.get(vine),
-        $stateService.get(vine),
       ])
           .pipe(
-              map(([demoState, editedFaces, faceIcons, stateService]) => {
+              map(([demoState, editedFaces, faceIcons]) => {
                 if (!faceIcons || editedFaces === undefined || !demoState) {
                   return null;
                 }
@@ -58,7 +57,7 @@ export const $setFaces = stream(
                     editedFaces,
                     demoState.pieceEditorState,
                     faceIcons,
-                    stateService,
+                    $stateService.get(vine),
                 );
                 const d1 = boundSetFace.bind(undefined, PieceType.D1);
                 const d2 = boundSetFace.bind(undefined, PieceType.D2);

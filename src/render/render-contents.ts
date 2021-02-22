@@ -4,8 +4,8 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {applyDecorators, Decorator, NodeWithId, RenderSpec} from 'persona';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {combineLatest, EMPTY, Observable, of} from 'rxjs';
+import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {Indexed} from '../coordinate/indexed';
 import {$setParent} from '../objects/content-map';
@@ -18,17 +18,14 @@ export function renderContents(
     parentId: StateId<ContainerSpec<unknown, CoordinateTypes>>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
-  const containerSpec$ = $stateService.get(vine)
-      .pipe(switchMap(stateService => stateService.resolve(parentId)));
+  const stateService = $stateService.get(vine);
+  const containerSpec$ = stateService.resolve(parentId);
 
-  return combineLatest([
-    $stateService.get(vine),
-    containerSpec$,
-  ])
+  return containerSpec$
       .pipe(
-          switchMap(([stateService, containerSpec]) => {
+          switchMap(containerSpec => {
             if (!containerSpec) {
-              return observableOf([]);
+              return of([]);
             }
 
             return stateService.resolve(containerSpec.payload.$contentSpecs).pipe(
@@ -46,7 +43,7 @@ export function renderContents(
                       $asArray(),
                   );
 
-                  return node$list.length <= 0 ? observableOf([]) : combineLatest(node$list);
+                  return node$list.length <= 0 ? of([]) : combineLatest(node$list);
                 }),
                 map(pairs => {
                   switch (containerSpec.payload.containerType) {
@@ -57,13 +54,10 @@ export function renderContents(
                 map(renderSpecs => $pipe(
                     renderSpecs,
                     $map(({id, spec}) => {
-                      const decorator: Decorator<NodeWithId<Node>> = () => $setParent
-                          .get(vine)
-                          .pipe(
-                              tap(setParent => {
-                                setParent(id, parentId);
-                              }),
-                          );
+                      const decorator: Decorator<NodeWithId<Node>> = () => {
+                        $setParent.get(vine)(id, parentId);
+                        return EMPTY;
+                      };
 
                       const decorators: Array<Decorator<NodeWithId<any>>> = [decorator];
                       if (spec.decorator) {

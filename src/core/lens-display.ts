@@ -3,7 +3,7 @@ import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
-import {switchMap, tap} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 import template from './lens-display.html';
 import {$lensService} from './lens-service';
@@ -35,8 +35,7 @@ export class LensDisplay extends BaseThemedCtrl<typeof $> {
   }
 
   private setupRenderContent(): Observable<unknown> {
-    return $lensService.get(this.vine).pipe(
-        switchMap(service => service.onNodes$),
+    return $lensService.get(this.vine).onNodes$.pipe(
         tap(nodes => {
           const rootEl = $.root.getSelectable(this.context);
           rootEl.innerHTML = '';

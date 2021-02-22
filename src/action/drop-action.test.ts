@@ -1,9 +1,8 @@
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {StateId, StateService} from 'gs-tools/export/state';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
@@ -20,9 +19,13 @@ test('@protoboard2/action/drop-action', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
-    const personaContext = createFakeContext({shadowRoot});
-    const stateService = new StateService();
-    $stateService.set(personaContext.vine, () => stateService);
+    const stateService = fakeStateService();
+    const personaContext = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
     const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
 
@@ -78,13 +81,9 @@ test('@protoboard2/action/drop-action', init => {
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-          $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($activeContentIds))),
-      );
+          $stateService.get(_.personaContext.vine).resolve($activeContentIds));
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-          $stateService.get(_.personaContext.vine)
-              .pipe(switchMap(service => service.resolve($targetContentIds))),
-      );
+          $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 

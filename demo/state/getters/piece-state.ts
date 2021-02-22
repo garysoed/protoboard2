@@ -1,20 +1,22 @@
-import {stream} from 'grapevine';
+import {source} from 'grapevine';
 import {$stateService} from 'mask';
-import {combineLatest, of as observableOf} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {PieceEditorState} from '../types/piece-editor-state';
 
 import {$demoState} from './demo-state';
 
+
 export type EditedFaces = {readonly [K in keyof PieceEditorState]: number};
-export const $editedFaces = stream<EditedFaces|undefined>(
+export const $editedFaces = source<Observable<EditedFaces|undefined>>(
     'editedFaces',
     vine => {
-      return combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
-          switchMap(([stateService, demoState]) => {
+      const stateService = $stateService.get(vine);
+      return $demoState.get(vine).pipe(
+          switchMap(demoState => {
             if (!demoState) {
-              return observableOf(undefined);
+              return of(undefined);
             }
 
             const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$editedFace);
@@ -35,13 +37,14 @@ export const $editedFaces = stream<EditedFaces|undefined>(
 );
 
 export type FaceIcons = {readonly [K in keyof PieceEditorState]: readonly string[]};
-export const $faceIcons = stream<FaceIcons|undefined>(
+export const $faceIcons = source<Observable<FaceIcons|undefined>>(
     'faceIcons',
     vine => {
-      return combineLatest([$stateService.get(vine), $demoState.get(vine)]).pipe(
-          switchMap(([stateService, demoState]) => {
+      const stateService = $stateService.get(vine);
+      return $demoState.get(vine).pipe(
+          switchMap(demoState => {
             if (!demoState) {
-              return observableOf(undefined);
+              return of(undefined);
             }
 
             const d1$ = stateService.resolve(demoState.pieceEditorState.d1.$faceIcons);

@@ -1,4 +1,4 @@
-import {source, stream} from 'grapevine';
+import {source, subjectSource} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {map} from 'rxjs/operators';
 
@@ -6,12 +6,12 @@ import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
 
-const $parentMap = source(
+const $parentMap = subjectSource<ReadonlyMap<string, StateId<ContainerSpec<any, CoordinateTypes>>>>(
     'contentMap',
-    () => new Map<string, StateId<ContainerSpec<any, CoordinateTypes>>>(),
+    () => new Map(),
 );
 
-export const $getParent = stream(
+export const $getParent = source(
     'getParent',
     vine => $parentMap.get(vine).pipe(
         map(parentMap => {
