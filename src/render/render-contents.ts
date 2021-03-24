@@ -60,16 +60,11 @@ export function renderContents(
                       };
 
                       const decorators: Array<Decorator<NodeWithId<any>>> = [decorator];
-                      if (spec.decorator) {
-                        decorators.push(spec.decorator);
+                      if (spec.decorators) {
+                        decorators.push(...spec.decorators);
                       }
 
-                      return {
-                        ...spec,
-                        decorator: (node: NodeWithId<Node>): Observable<unknown> => {
-                          return applyDecorators<NodeWithId<Node>>(node, ...decorators);
-                        },
-                      };
+                      return {...spec, decorators};
                     }),
                     $asArray(),
                 )),
