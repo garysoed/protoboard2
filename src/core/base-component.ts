@@ -63,7 +63,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
       objectId$: (this.baseInputs.host.objectId as Observable<StateId<O>>)
           .pipe(map(id => id ?? null)),
     };
-    const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = $pipe(
+    const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = new Map($pipe(
         this.triggerActions,
         $map(({trigger, provider}) => {
           const action = provider(actionContext);
@@ -73,7 +73,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
           return [trigger, action] as const;
         }),
         $asMap(),
-    );
+    ));
     const helpAction = new HelpAction(actionContext, allActions);
     allActions.set({type: TriggerType.QUESTION, shift: true}, helpAction);
 
