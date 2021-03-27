@@ -1,18 +1,18 @@
-import {assert, setThat, should, test} from 'gs-testing';
-import {fakeStateService} from 'gs-tools/export/state';
-import {$stateService, _p} from 'mask';
-import {renderNode, setId} from 'persona';
-import {PersonaTesterFactory} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
-import {ON_LOG_$, WebConsoleDestination} from 'santa';
+import { assert, setThat, should, test } from 'gs-testing';
+import { fakeStateService } from 'gs-tools/export/state';
+import { $stateService, _p } from 'mask';
+import { renderNode, setId } from 'persona';
+import { PersonaTesterFactory } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
+import { ON_LOG_$, WebConsoleDestination } from 'santa';
+import { createIndexed } from '../coordinate/indexed';
+import { $createSpecMap } from '../objects/object-create-spec';
+import { $$rootState, RootState } from '../objects/root-state';
+import { fakePieceSpec } from '../objects/testing/fake-object-spec';
+import { ContentSpec } from '../payload/is-container';
+import { $, Active, activeSpec, ActiveSpec } from './active';
 
-import {createIndexed} from '../coordinate/indexed';
-import {$createSpecMap} from '../objects/object-create-spec';
-import {$$rootState, RootState} from '../objects/root-state';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {ContentSpec} from '../payload/is-container';
 
-import {$, $active, Active, activeSpec, ActiveSpec} from './active';
 
 
 const dest = new WebConsoleDestination({installTrigger: true});
@@ -44,7 +44,7 @@ test('@protoboard2/core/active', init => {
     $$rootState.set(tester.vine, () => $rootState);
 
     // Need to add to body so the dimensions work.
-    const el = tester.createElement($active.tag);
+    const el = tester.createElement(Active);
     el.setAttribute($.host._.objectId, $activeSpec);
     document.body.appendChild(el.element);
 

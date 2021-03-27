@@ -1,27 +1,26 @@
-import {assert, runEnvironment, should, test} from 'gs-testing';
-import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {_p} from 'mask';
-import {createFakeContext, PersonaTesterFactory} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
-import {map} from 'rxjs/operators';
-
-import {TriggerType} from '../core/trigger-spec';
-
-import {$, $helpOverlay, HelpOverlay} from './help-overlay';
-import {$helpService} from './help-service';
-import {PickAction} from './pick-action';
-import * as snapshots from './snapshots.json';
-import {createFakeActionContext} from './testing/fake-action-context';
+import { assert, runEnvironment, should, test } from 'gs-testing';
+import { BrowserSnapshotsEnv } from 'gs-testing/export/browser';
+import { _p } from 'mask';
+import { createFakeContext, PersonaTesterFactory } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { TriggerType } from '../core/trigger-spec';
+import render from './goldens/help-overlay__render.html';
+import renderEmpty from './goldens/help-overlay__render_empty.html';
+import { $, HelpOverlay } from './help-overlay';
+import { $helpService } from './help-service';
+import { PickAction } from './pick-action';
+import { createFakeActionContext} from './testing/fake-action-context';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
-    runEnvironment(new BrowserSnapshotsEnv(snapshots));
+    runEnvironment(new BrowserSnapshotsEnv({render, renderEmpty}));
 
     const tester = testerFactory.build({rootCtrls: [HelpOverlay], rootDoc: document});
-    const el = tester.createElement($helpOverlay.tag);
+    const el = tester.createElement(HelpOverlay);
 
     const targetEl = document.createElement('div');
     const shadowRoot = targetEl.attachShadow({mode: 'open'});
@@ -54,8 +53,7 @@ test('@protoboard2/action/help-overlay', init => {
         [{type: TriggerType.CLICK, meta: true, alt: true}, _.testAction],
       ]));
 
-      assert(_.el.element.shadowRoot!.getElementById('content')!.innerHTML)
-          .to.matchSnapshot('helpOverlay.render');
+      assert(_.el.flattenContent()).to.matchSnapshot('render');
     });
 
     should('render deletion correctly', () => {
@@ -63,8 +61,7 @@ test('@protoboard2/action/help-overlay', init => {
       service.show(new Map([[TriggerType.CLICK, _.testAction]]));
       service.show(new Map());
 
-      assert(_.el.element.shadowRoot!.getElementById('content')!.innerHTML)
-          .to.matchSnapshot('helpOverlay.renderEmpty');
+      assert(_.el.flattenContent()).to.matchSnapshot('renderEmpty');
     });
   });
 

@@ -1,9 +1,8 @@
-import {assert, createSpyInstance, objectThat, should, test} from 'gs-testing';
-import {_p} from 'mask';
-import {PersonaTesterFactory} from 'persona/export/testing';
-
-import {$, $lens, Lens} from './lens';
-import {$lensService, LensService} from './lens-service';
+import { assert, createSpyInstance, objectThat, should, test } from 'gs-testing';
+import { _p } from 'mask';
+import { PersonaTesterFactory } from 'persona/export/testing';
+import { $, Lens } from './lens';
+import { $lensService, LensService } from './lens-service';
 
 
 const TESTER_FACTORY = new PersonaTesterFactory(_p);
@@ -18,7 +17,7 @@ test('@protoboard2/util/lens', init => {
       rootCtrls: [Lens],
       rootDoc: document,
     });
-    const el = tester.createElement($lens.tag);
+    const el = tester.createElement(Lens);
 
     return {el, mockLensService, tester};
   });
