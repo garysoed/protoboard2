@@ -1,60 +1,36 @@
 # New version
 
-## Overview
+## Objects
 
-The new protoboard will be driven by states. All changes will be done to the state, and the UI
-will reflect changes to the state.
+There are 4 general of objects:
 
-## States
+-   **Face**: Represents a printable display.
+-   **Piece**: Corresponds to a game piece. These are usually printable pieces and have multiple
+    faces.
+-   **Region**: A collection of pieces.
 
-A state represents the state of an object in the game. Every state consists of 3 parts:
+### Face
 
-```typescript
-interface State {
-  /**
-   * Identifies the object. Must be globally unique.
-   */
-  readonly id: string;
+Faces are printable display of a piece. Each face can be zoomed in using `<pb-lens>`. All faces
+support a `Layout` property, to arrange the regions on it. The layout types are specified in the
+Face's state object.
 
-  /**
-   * Used to map to a function that generates the object.
-   */
-  readonly type: string;
-
-  /**
-   * Used to generate the object.
-   */
-  readonly payload: ReadonlyMap<string, Observable<unknown>>;
-}
 ```
+<pb-face
+    state-id <-- Links to state information of the face -->
+    height <-- Height to display this face. -->
+    width <-- Width to display this face -->>
+  <div slot="display">
+    <!-- The component to display. This should not depend on outer CSS to be displayed. -->
+  </div>
 
-On setup, user must register a mapping from state to object:
-
-```typescript
-function registerStateHandler(
-    type: string,
-    onCreate: (id: string, payload: ReadonlyMap<string, unknown>) => Observable<Node>,
-): void;
+  <!--
+  Regions that should be displayed on the face. The slot names depend on the layout being used.
+  -->
+  <pb-region id="region1" slot="layout-x">
+  </pb-region>
+</pb-face>
 ```
-
-`onCreate` will only be called **once** - at the start of the game. For the rest of the game, no
-object will ever be destroyed.
-
-## Rendering
-
-States are rendered using the element `<pb-render>`. This element takes one attribute: `object-id`.
-At the start of the game, Protoboard will check the state for this object and render it.
-
-## Actions
-
-A state changes its state using actions. Actions are triggered by objects, usually by user actions.
-
-## Object
-
-There are 4 classes of objects:
-
--   **Region**: Denotes a region in a game that doesn't have a concrete representation.
--   **Piece**: Cannot contain other objects.
 
 ### Piece
 
@@ -65,19 +41,30 @@ blocks in a game. Pieces may have several faces and can switch between them. Som
 -   **D2**: A piece with two faces. For example: cards and coins.
 -   **D6**: A piece with six sides. For example: a d6 die.
 -   **DN**: A piece with any specified number of sides.
+-   **Board**: A special D1 that cannot be interacted with.
+
+All pieces has a method to retrieve all faces for printing purposes.
 
 ### Region
 
-A region can contain other pieces. They can be used to group pieces together. Some example
-regions:
+A region can contain other pieces. They can be used to group pieces together. Some example regions:
 
+-   **Slot**: Can contain only 1 piece.
+-   **Surface**: Pieces can be placed in an x - y coordinate, based on the position of the mouse
+    when adding the piece.
 -   **Bag**: Puts in pieces, and you can only take out random items from the bag.
 -   **Chute**: Mimics a cube tower. Put in pieces and they may randomly come out.
 -   **Deck**: Pieces are stacked. They can be shuffled, reversed, cut. Only the top and bottom
     pieces can be revealed at a time.
 -   **Hand**: A player's hand. Always arranges all the contents in horizontal order and allows
     random access to all its contents.
--   **Surface**: Pieces can be placed in an x - y coordinate.
+
+
+## Actions
+
+A state changes its state using actions. Actions are triggered by objects, usually by user actions.
+
+
 
 ### Special
 
