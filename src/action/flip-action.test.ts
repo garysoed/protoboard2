@@ -24,7 +24,7 @@ test('@protoboard2/action/flip-action', init => {
       ],
     });
 
-    const $faceIndex = stateService.add(2);
+    const $faceIndex = stateService.modify(x => x.add(2));
     const objectSpec = fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
     });
@@ -32,7 +32,7 @@ test('@protoboard2/action/flip-action', init => {
     const action = new FlipAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(stateService.add(objectSpec)),
+          objectId$: observableOf(stateService.modify(x => x.add(objectSpec))),
         }),
         {count: 4},
     );
@@ -44,7 +44,7 @@ test('@protoboard2/action/flip-action', init => {
 
   test('handleTrigger', () => {
     should('increase the face by half the face count', () => {
-      _.stateService.set(_.$faceIndex, 1);
+      _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
@@ -52,7 +52,7 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     should('wrap the face index by the count', () => {
-      _.stateService.set(_.$faceIndex, 1);
+      _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
@@ -63,7 +63,7 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     should('use the config object', () => {
-      _.stateService.set(_.$faceIndex, 1);
+      _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       _.el.setAttribute('pb-flip-count', '6');
 

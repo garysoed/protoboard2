@@ -144,7 +144,7 @@ test('@protoboard2/core/base-component', init => {
   test('objectId$', () => {
     should('emit the object ID if exists', () => {
       const stateService = new StateService();
-      const objectId = stateService.add(fakePieceSpec({payload: {}}));
+      const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
       _.el.setAttribute('object-id', $baseComponent.api.objectId.createAttributePair(objectId)[1]);
 
       const objectId$ = createSpySubject(_.component.objectId$);

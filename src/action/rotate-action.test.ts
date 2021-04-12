@@ -24,8 +24,8 @@ test('@protoboard2/action/rotate-action', init => {
       shadowRoot,
     });
 
-    const $rotationDeg = stateService.add(2);
-    const objectId = stateService.add(fakePieceSpec({payload: {$rotationDeg}}));
+    const $rotationDeg = stateService.modify(x => x.add(2));
+    const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
 
     const action = new RotateAction(
         createFakeActionContext({
@@ -41,7 +41,7 @@ test('@protoboard2/action/rotate-action', init => {
 
   test('handleTrigger$', () => {
     should('change the rotation to the next index', () => {
-      _.stateService.set(_.$rotationDeg, 1);
+      _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
@@ -51,7 +51,7 @@ test('@protoboard2/action/rotate-action', init => {
     should('handle rotations that are more than 360', () => {
       _.el.setAttribute('pb-rotate-stops', '[123 456 678]');
 
-      _.stateService.set(_.$rotationDeg, 910);
+      _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 

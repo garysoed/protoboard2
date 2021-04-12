@@ -45,9 +45,9 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const movedId = _.stateService.add(fakePieceSpec({payload: {}}));
+      const movedId = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
       const otherSpec1 = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(11),
       };
       const movedSpec = {
@@ -55,35 +55,35 @@ test('@protoboard2/action/pick-action', init => {
         coordinate: createIndexed(1),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(12),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(10),
       };
 
-      const $activeContentIds = _.stateService.add([otherActiveSpec]);
-      const $targetContentSpecs = _.stateService.add([otherSpec1, movedSpec, otherSpec2]);
-      const $container = _.stateService.add(fakeContainerSpec({
+      const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec]));
+      const $targetContentSpecs = _.stateService.modify(x => x.add([otherSpec1, movedSpec, otherSpec2]));
+      const $container = _.stateService.modify(x => x.add(fakeContainerSpec({
         payload: {
           containerType: 'indexed' as const,
           $contentSpecs: $targetContentSpecs,
         },
-      }));
+      })));
 
-      const $activeState = _.stateService.add(activeSpec({
+      const $activeState = _.stateService.modify(x => x.add(activeSpec({
         $contentSpecs: $activeContentIds,
-      }));
-      const $rootState = _.stateService.add<RootState>({$activeState});
+      })));
+      const $rootState = _.stateService.modify(x => x.add<RootState>({$activeState}));
       const setParent = $setParent.get(_.personaContext.vine);
       setParent(otherActiveSpec.objectId, $activeState);
       setParent(otherSpec1.objectId, $container);
       setParent(movedSpec.objectId, $container);
       setParent(otherSpec2.objectId, $container);
 
-      $$rootState.set(_.personaContext.vine, () => $rootState);
+      $$rootState.get(_.personaContext.vine).next($rootState);
       _.objectId$.next(movedId);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(

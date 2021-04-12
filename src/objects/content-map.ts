@@ -1,14 +1,23 @@
-import {source, subjectSource} from 'grapevine';
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
-import {map} from 'rxjs/operators';
+import {map, scan, startWith} from 'rxjs/operators';
+import {Subject, ReplaySubject, Observable} from 'rxjs';
 
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
+type ContainerStateId = StateId<ContainerSpec<any, CoordinateTypes>>;
+const $parentMapEntries$ = source<Subject<[string, ContainerStateId]>>(
+    'parentMapEntries',
+    () => new ReplaySubject(),
+);
 
-const $parentMap = subjectSource<ReadonlyMap<string, StateId<ContainerSpec<any, CoordinateTypes>>>>(
+const $parentMap = source<Observable<ReadonlyMap<string, ContainerStateId>>>(
     'contentMap',
-    () => new Map(),
+    vine => $parentMapEntries$.get(vine).pipe(
+        scan((parentMap, entry) => new Map([...parentMap, entry]), new Map()),
+        startWith(new Map()),
+    ),
 );
 
 export const $getParent = source(
@@ -23,6 +32,6 @@ export const $getParent = source(
 export const $setParent = source(
     'setParent',
     vine => (child: StateId<any>, parent: StateId<ContainerSpec<any, CoordinateTypes>>) => {
-      $parentMap.set(vine, oldMap => new Map([...oldMap, [child.id, parent]]));
+      $parentMapEntries$.get(vine).next([child.id, parent]);
     },
 );

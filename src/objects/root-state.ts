@@ -1,5 +1,6 @@
-import {subjectSource} from 'grapevine';
+import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
+import {BehaviorSubject} from 'rxjs';
 
 import {ActiveSpec} from '../core/active';
 
@@ -8,7 +9,7 @@ export interface RootState {
   readonly $activeState: StateId<ActiveSpec>;
 }
 
-export const $$rootState = subjectSource<StateId<RootState>|null>(
+export const $$rootState = source(
     'objectSpecListId',
-    () => null,
+    () => new BehaviorSubject<StateId<RootState>|null>(null),
 );

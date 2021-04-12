@@ -1,8 +1,7 @@
-import {ActiveSpec, activeSpec} from '../../core/active';
-import {CoordinateTypes, IsContainer} from '../../payload/is-container';
-import {ContainerSpec} from '../../types/container-spec';
-import {ObjectClass} from '../../types/object-spec';
-import {PieceSpec} from '../../types/piece-spec';
+import { CoordinateTypes, IsContainer } from '../../payload/is-container';
+import { ContainerSpec } from '../../types/container-spec';
+import { ObjectClass } from '../../types/object-spec';
+import { PieceSpec } from '../../types/piece-spec';
 
 export function fakeContainerSpec<P extends IsContainer<C>, C extends CoordinateTypes>(
     partial: {readonly type?: string; readonly payload: P},

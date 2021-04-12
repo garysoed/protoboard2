@@ -32,7 +32,7 @@ test('@protoboard2/render/render-multifaced', init => {
   });
 
   should('render the face name correctly', () => {
-    const $currentFaceIndex = _.stateService.add(2);
+    const $currentFaceIndex = _.stateService.modify(x => x.add(2));
     _.isMultifaced$.next(fakePieceSpec({payload: {$currentFaceIndex}}));
 
     assert(_.el.getAttribute('name')).to.equal('face-2');

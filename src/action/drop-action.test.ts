@@ -1,18 +1,18 @@
-import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
-import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject} from 'rxjs';
+import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
+import { fakeStateService, StateId } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext } from 'persona/export/testing';
+import { ReplaySubject } from 'rxjs';
+import { createIndexed, Indexed } from '../coordinate/indexed';
+import { activeSpec } from '../core/active';
+import { $$rootState } from '../objects/root-state';
+import { fakeContainerSpec, fakePieceSpec } from '../objects/testing/fake-object-spec';
+import { ContentSpec } from '../payload/is-container';
+import { ContainerSpec } from '../types/container-spec';
+import { DropAction } from './drop-action';
+import { createFakeActionContext } from './testing/fake-action-context';
 
-import {createIndexed, Indexed} from '../coordinate/indexed';
-import {activeSpec} from '../core/active';
-import {$$rootState, RootState} from '../objects/root-state';
-import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {ContentSpec} from '../payload/is-container';
-import {ContainerSpec} from '../types/container-spec';
 
-import {DropAction} from './drop-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -46,37 +46,37 @@ test('@protoboard2/action/drop-action', init => {
   test('onTrigger', () => {
     should('trigger correctly', () => {
       const otherSpec1 = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(0),
       };
       const otherSpec2 = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(1),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
-        objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
         coordinate: createIndexed(1),
       };
 
-      const $activeContentIds = _.stateService.add([otherActiveSpec, movedSpec]);
-      const $rootState = _.stateService.add<RootState>({
-        $activeState: _.stateService.add(activeSpec({
+      const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec, movedSpec]));
+      const $rootState = _.stateService.modify(x => x.add({
+        $activeState: x.add(activeSpec({
           $contentSpecs: $activeContentIds,
         })),
-      });
-      $$rootState.set(_.personaContext.vine, () => $rootState);
+      }));
+      $$rootState.get(_.personaContext.vine).next($rootState);
 
-      const $targetContentIds = _.stateService.add([otherSpec1, otherSpec2]);
-      const $objectSpec = _.stateService.add(
+      const $targetContentIds = _.stateService.modify(x => x.add([otherSpec1, otherSpec2]));
+      const $objectSpec = _.stateService.modify(x => x.add(
           fakeContainerSpec({
             payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentIds},
           }),
-      );
+      ));
 
       _.objectId$.next($objectSpec);
 

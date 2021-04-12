@@ -6,11 +6,11 @@ import { PersonaTesterFactory } from 'persona/export/testing';
 import { of as observableOf } from 'rxjs';
 import { ON_LOG_$, WebConsoleDestination } from 'santa';
 import { createIndexed } from '../coordinate/indexed';
-import { $createSpecMap } from '../objects/object-create-spec';
+import { $createSpecEntries } from '../objects/object-create-spec';
 import { $$rootState, RootState } from '../objects/root-state';
 import { fakePieceSpec } from '../objects/testing/fake-object-spec';
 import { ContentSpec } from '../payload/is-container';
-import { $, Active, activeSpec, ActiveSpec } from './active';
+import { $, Active, activeSpec } from './active';
 
 
 
@@ -32,16 +32,16 @@ test('@protoboard2/core/active', init => {
       ],
     });
 
-    const $contentSpecs = stateService.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
+    const $contentSpecs = stateService.modify(x => x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]));
 
-    const $activeSpec = stateService.add<ActiveSpec>(activeSpec({$contentSpecs}));
+    const $activeSpec = stateService.modify(x => x.add(activeSpec({$contentSpecs})));
     const root = {
       $activeState: $activeSpec,
       containerIds: [],
       objectSpecIds: [$activeSpec],
     };
-    const $rootState = stateService.add<RootState>(root);
-    $$rootState.set(tester.vine, () => $rootState);
+    const $rootState = stateService.modify(x => x.add<RootState>(root));
+    $$rootState.get(tester.vine).next($rootState);
 
     // Need to add to body so the dimensions work.
     const el = tester.createElement(Active);
@@ -53,44 +53,44 @@ test('@protoboard2/core/active', init => {
 
   test('itemCount$', _, () => {
     should('render the 0 item count correctly', () => {
-      _.stateService.set(_.$contentSpecs, []);
+      _.stateService.modify(x => x.set(_.$contentSpecs, []));
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 1 item count correctly', () => {
-      const objectId = _.stateService.add(fakePieceSpec({payload: {}}));
-      _.stateService.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]);
+      const objectId = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
+      _.stateService.modify(x => x.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]));
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 3 items count correctly', () => {
-      _.stateService.set(
+      _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(0),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(1),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(2),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(3),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(4),
             },
           ],
-      );
+      ));
 
       assert(_.el.getTextContent($.count)).to.equal('+2');
     });
@@ -105,20 +105,18 @@ test('@protoboard2/core/active', init => {
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.width = `${width}px`;
-      $createSpecMap.set(_.tester.vine, map => new Map([
-        ...map,
-        [testType, () => observableOf(renderNode({node: content, id}))],
-      ]));
-
+      $createSpecEntries.get(_.tester.vine).next([testType, () => observableOf(renderNode({node: content, id}))]);
       // TODO: RootStateBuilder
-      const $objectSpec = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
+      const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
       };
       const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
-      _.stateService.set(_.$rootState, root);
-      _.stateService.set(_.$contentSpecs, [contentSpec]);
+      _.stateService.modify(x => {
+        x.set(_.$rootState, root);
+        x.set(_.$contentSpecs, [contentSpec]);
+      });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
@@ -128,45 +126,46 @@ test('@protoboard2/core/active', init => {
 
   test('multipleItems$', _, () => {
     should('remove the multiple classname if there are 0 items', () => {
-      _.stateService.set(_.$contentSpecs, []);
+      _.stateService.modify(x => x.set(_.$contentSpecs, []));
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should('remove the multiple classname if there is 1 item', () => {
-      _.stateService.set(
+      _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [{
-            objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+            objectId:x.add(fakePieceSpec({payload: {}})),
             coordinate: createIndexed(0),
           },
-          ]);
+          ]),
+      );
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should('add the multiple classname if there are 3 items', () => {
-      _.stateService.set(
+      _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(0),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(1),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(2),
             },
             {
-              objectId: _.stateService.add(fakePieceSpec({payload: {}})),
+              objectId: x.add(fakePieceSpec({payload: {}})),
               coordinate: createIndexed(3),
             },
           ],
-      );
+        ));
 
       assert(_.el.getClassList($.root)).to.equal(
           setThat<string>().haveExactElements(new Set(['multiple'])),
@@ -183,20 +182,20 @@ test('@protoboard2/core/active', init => {
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.height = `${height}px`;
-      $createSpecMap.set(_.tester.vine, map => new Map([
-        ...map,
-        [testType, () => observableOf(renderNode({node: content, id}))],
-      ]));
+      $createSpecEntries.get(_.tester.vine)
+          .next([testType, () => observableOf(renderNode({node: content, id}))]);
 
       // TODO: RootStateBuilder
-      const $objectSpec = _.stateService.add(fakePieceSpec({payload: {}, type: testType}));
+      const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
       };
       const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
-      _.stateService.set(_.$rootState, root);
-      _.stateService.set(_.$contentSpecs, [contentSpec]);
+      _.stateService.modify(x => {
+        x.set(_.$rootState, root);
+        x.set(_.$contentSpecs, [contentSpec]);
+      });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
@@ -222,18 +221,16 @@ test('@protoboard2/core/active', init => {
       content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
-      $createSpecMap.set(_.tester.vine, map => new Map([
-        ...map,
-        [testType1, () => observableOf(renderNode({node: content1, id: id1}))],
-        [testType2, () => observableOf(renderNode({node: content2, id: id2}))],
-      ]));
+      const createSpecEntries$ = $createSpecEntries.get(_.tester.vine);
+      createSpecEntries$.next([testType1, () => observableOf(renderNode({node: content1, id: id1}))]);
+      createSpecEntries$.next([testType2, () => observableOf(renderNode({node: content2, id: id2}))]);
 
-      const $objectSpec1 = _.stateService.add(fakePieceSpec({payload: {}, type: testType1}));
+      const $objectSpec1 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType1})));
       const spec1 = {
         objectId: $objectSpec1,
         coordinate: createIndexed(0),
       };
-      const $objectSpec2 = _.stateService.add(fakePieceSpec({payload: {}, type: testType2}));
+      const $objectSpec2 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType2})));
       const spec2 = {
         objectId: $objectSpec2,
         coordinate: createIndexed(1),
@@ -244,8 +241,10 @@ test('@protoboard2/core/active', init => {
         ..._.root,
         objectSpecIds: [..._.root.objectSpecIds, $objectSpec1, $objectSpec2],
       };
-      _.stateService.set(_.$rootState, root);
-      _.stateService.set(_.$contentSpecs, [spec1, spec2]);
+      _.stateService.modify(x => {
+        x.set(_.$rootState, root);
+        x.set(_.$contentSpecs, [spec1, spec2]);
+      });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 

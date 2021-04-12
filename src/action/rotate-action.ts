@@ -63,7 +63,7 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
                 )[0][1];
 
                 const newIndex = (rotationIndex + 1) % stops.length;
-                stateService.set($rotationDeg, stops[newIndex]);
+                stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
               }),
               share(),
           );

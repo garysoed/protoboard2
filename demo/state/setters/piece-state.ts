@@ -35,7 +35,7 @@ function setEditedFace(
     pieceType: keyof PieceEditorState,
     selectedIndex: number,
 ): void {
-  stateService.set(demoState.pieceEditorState[pieceType].$editedFace, selectedIndex);
+  stateService.modify(x => x.set(demoState.pieceEditorState[pieceType].$editedFace, selectedIndex));
 }
 
 export const $setFaces = source(
@@ -78,5 +78,5 @@ function setFace(
 ): void {
   const newFaces = [...faceIcons[pieceType]];
   newFaces[editedFaces[pieceType]] = newFace;
-  stateService.set(editorState[pieceType].$faceIcons, newFaces);
+  stateService.modify(x => x.set(editorState[pieceType].$faceIcons, newFaces));
 }

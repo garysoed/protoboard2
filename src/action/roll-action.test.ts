@@ -29,10 +29,10 @@ test('@protoboard2/action/roll-action', init => {
       ],
     });
 
-    const $faceIndex = stateService.add(2);
-    const objectId = stateService.add(fakePieceSpec({
+    const $faceIndex = stateService.modify(x => x.add(2));
+    const objectId = stateService.modify(x => x.add(fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
-    }));
+    })));
 
     const action = new RollAction(
         createFakeActionContext({
@@ -49,7 +49,7 @@ test('@protoboard2/action/roll-action', init => {
 
   test('handleTrigger', () => {
     should('change the current face correctly', () => {
-      _.stateService.set(_.$faceIndex, 0);
+      _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
       _.action.trigger({mouseX: 0, mouseY: 0});
@@ -58,7 +58,7 @@ test('@protoboard2/action/roll-action', init => {
     });
 
     should('use the config object', () => {
-      _.stateService.set(_.$faceIndex, 0);
+      _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
       _.el.setAttribute('pb-roll-count', '4');
 

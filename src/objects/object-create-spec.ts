@@ -1,9 +1,9 @@
-import {source, subjectSource, Vine} from 'grapevine';
+import {source, Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {$stateService} from 'mask';
 import {RenderSpec} from 'persona';
-import {Observable, of as observableOf} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {Observable, of as observableOf, Subject, ReplaySubject} from 'rxjs';
+import {map, switchMap, scan, startWith} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -18,9 +18,19 @@ export type ObjectCreateSpec<O extends ObjectSpec<any>> = (
     vine: Vine,
 ) => Observable<RenderSpec|null|undefined>;
 
-export const $createSpecMap = subjectSource<ReadonlyMap<string, ObjectCreateSpec<any>>>(
+type CreateSpecMap = ReadonlyMap<string, ObjectCreateSpec<any>>;
+
+export const $createSpecEntries = source<Subject<[string, ObjectCreateSpec<any>]>>(
+    'createSpecEntries',
+    () => new ReplaySubject(),
+);
+
+export const $createSpecMap = source<Observable<CreateSpecMap>>(
     'createSpecMap',
-    () => new Map(),
+    vine => $createSpecEntries.get(vine).pipe(
+        scan((specMap, entry) => new Map([...specMap, entry]), new Map()),
+        startWith(new Map()),
+    ),
 );
 
 export const $getRenderSpec = source<Observable<ObjectCreateSpec<any>>>(

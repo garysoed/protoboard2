@@ -45,10 +45,10 @@ function addPieceSpec(
     componentTag: string,
 ): void {
   const pieceSpec: PieceSpec = {icons, componentTag};
-  stateService.set(
+  stateService.modify(x => x.set(
       stagingState.$pieceSpecs,
       [...currentPieceSpecs, pieceSpec],
-  );
+  ));
 }
 
 export const $addRegionSpecs = source(
@@ -87,5 +87,5 @@ function addRegionSpec(
     containerType,
     gridArea: GRID_AREAS[targetArea],
   };
-  stateService.set(stagingState.$regionSpecs, [...currentRegionSpecs, regionSpec]);
+  stateService.modify(x => x.set(stagingState.$regionSpecs, [...currentRegionSpecs, regionSpec]));
 }

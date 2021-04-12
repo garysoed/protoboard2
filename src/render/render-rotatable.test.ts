@@ -32,7 +32,7 @@ test('@protoboard2/render/render-rotatable', init => {
 
   should('output the correct transform style', () => {
     const rotationDeg = 123;
-    const $rotationDeg = _.stateService.add<number>(rotationDeg);
+    const $rotationDeg = _.stateService.modify(x => x.add(rotationDeg));
     _.isRotatable$.next(fakePieceSpec({payload: {$rotationDeg}}));
 
     const targetEl = document.createElement('div');

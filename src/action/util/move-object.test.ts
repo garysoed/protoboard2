@@ -22,28 +22,28 @@ test('@protoboard2/action/util/move-object', () => {
     });
 
     const fromSpec1 = {
-      objectId: stateService.add(fakePieceSpec({payload: {}})),
+      objectId: stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
       coordinate: createIndexed(0),
     };
     const movedSpec = {
-      objectId: stateService.add(fakePieceSpec({payload: {}})),
+      objectId: stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
       coordinate: createIndexed(1),
     };
     const fromSpec2 = {
-      objectId: stateService.add(fakePieceSpec({payload: {}})),
+      objectId: stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
       coordinate: createIndexed(2),
     };
     const toSpec1 = {
-      objectId: stateService.add(fakePieceSpec({payload: {}})),
+      objectId: stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
       coordinate: createIndexed(0),
     };
     const toSpec2 = {
-      objectId: stateService.add(fakePieceSpec({payload: {}})),
+      objectId: stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
       coordinate: createIndexed(1),
     };
 
-    const $fromContentSpecs = stateService.add([fromSpec1, movedSpec, fromSpec2]);
-    const $toContentSpecs = stateService.add([toSpec1, toSpec2]);
+    const $fromContentSpecs = stateService.modify(x => x.add([fromSpec1, movedSpec, fromSpec2]));
+    const $toContentSpecs = stateService.modify(x => x.add([toSpec1, toSpec2]));
 
     const fromContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
         stateService.resolve($fromContentSpecs),

@@ -28,21 +28,23 @@ export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>
             }
 
             return (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => {
-              stateService.set(
-                  fromContainer.$contentSpecs,
-                  $pipe(
-                      fromContentSpecs,
-                      $filter(spec => spec.objectId.id !== movedObjectId.id),
-                      $asArray(),
-                  ),
-              );
+              stateService.modify(x => {
+                x.set(
+                    fromContainer.$contentSpecs,
+                    $pipe(
+                        fromContentSpecs,
+                        $filter(spec => spec.objectId.id !== movedObjectId.id),
+                        $asArray(),
+                    ),
+                );
 
-              // Add the moved object to the destination.
-              const newToContentSpecs = [
-                ...toContentSpecs,
-                {objectId: movedObjectId, coordinate: toLocation},
-              ];
-              stateService.set(toContainer.$contentSpecs, newToContentSpecs);
+                // Add the moved object to the destination.
+                const newToContentSpecs = [
+                  ...toContentSpecs,
+                  {objectId: movedObjectId, coordinate: toLocation},
+                ];
+                x.set(toContainer.$contentSpecs, newToContentSpecs);
+              });
             };
           }),
       );

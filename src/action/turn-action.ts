@@ -1,13 +1,13 @@
-import {cache} from 'gs-tools/export/data';
-import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {$stateService} from 'mask';
-import {integerParser} from 'persona';
-import {Observable, of as observableOf} from 'rxjs';
-import {map, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import { cache } from 'gs-tools/export/data';
+import { filterNonNullable } from 'gs-tools/export/rxjs';
+import { $stateService } from 'mask';
+import { integerParser } from 'persona';
+import { Observable, of as observableOf } from 'rxjs';
+import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { ActionContext, BaseAction } from '../core/base-action';
+import { IsMultifaced } from '../payload/is-multifaced';
+import { PieceSpec } from '../types/piece-spec';
 
-import {ActionContext, BaseAction} from '../core/base-action';
-import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 
 interface Config {
@@ -51,8 +51,8 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           return stateService.resolve($faceIndex).pipe(
               take(1),
               filterNonNullable(),
-              tap(faceIndex => {
-                stateService.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
+              stateService.modifyOperator((x, faceIndex) => {
+                x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
               }),
           );
         }),

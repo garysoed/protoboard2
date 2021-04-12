@@ -1,15 +1,13 @@
-import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
-import {fakeStateService} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
-import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
+import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
+import { fakeStateService } from 'gs-tools/export/state';
+import { $stateService } from 'mask';
+import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
+import { of as observableOf } from 'rxjs';
+import { fakePieceSpec } from '../objects/testing/fake-object-spec';
+import { createFakeActionContext } from './testing/fake-action-context';
+import { TurnAction } from './turn-action';
 
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
-import {createFakeActionContext} from './testing/fake-action-context';
-import {TurnAction} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -27,10 +25,10 @@ test('@protoboard2/action/turn-action', init => {
     });
 
 
-    const $faceIndex = stateService.add(2);
-    const objectId = stateService.add<PieceSpec<IsMultifaced>>(fakePieceSpec({
+    const $faceIndex = stateService.modify(x => x.add(2));
+    const objectId = stateService.modify(x => x.add(fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
-    }));
+    })));
 
     const action = new TurnAction(
         createFakeActionContext({
@@ -47,7 +45,7 @@ test('@protoboard2/action/turn-action', init => {
 
   test('handleTrigger', () => {
     should('increase the face by 1', () => {
-      _.stateService.set(_.$faceIndex, 0);
+      _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
       _.action.trigger({mouseX: 0, mouseY: 0});
 
@@ -55,7 +53,7 @@ test('@protoboard2/action/turn-action', init => {
     });
 
     should('wrap the face index by the count', () => {
-      _.stateService.set(_.$faceIndex, 1);
+      _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
@@ -66,7 +64,7 @@ test('@protoboard2/action/turn-action', init => {
     });
 
     should('use the config object', () => {
-      _.stateService.set(_.$faceIndex, 1);
+      _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       _.el.setAttribute('pb-turn-count', '4');
 
