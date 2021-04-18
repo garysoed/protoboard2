@@ -1,4 +1,4 @@
-import {$stateService} from 'mask';
+import {$stateService} from 'grapevine';
 import {PersonaContext, style} from 'persona';
 import {combineLatest, EMPTY, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';

@@ -1,9 +1,9 @@
 import {Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {$asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {Converter} from 'nabu';
 import {host, onMutation, PersonaContext} from 'persona';
 import {Observable, of as observableOf, Subject} from 'rxjs';

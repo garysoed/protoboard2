@@ -1,7 +1,7 @@
+import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 

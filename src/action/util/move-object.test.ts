@@ -1,7 +1,7 @@
 import {Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {take, tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../../coordinate/indexed';

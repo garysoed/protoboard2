@@ -1,8 +1,9 @@
-import { arrayThat, assert, should, test } from 'gs-testing';
-import { _p } from 'mask';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { $, LensDisplay } from './lens-display';
-import { $lensService } from './lens-service';
+import {arrayThat, assert, should, test} from 'gs-testing';
+import {_p} from 'mask';
+import {PersonaTesterFactory} from 'persona/export/testing';
+
+import {$, LensDisplay} from './lens-display';
+import {$lensService} from './lens-service';
 
 
 const TESTER_FACTORY = new PersonaTesterFactory(_p);

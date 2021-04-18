@@ -1,6 +1,6 @@
 import {source, Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {RenderSpec} from 'persona';
 import {Observable, of as observableOf, Subject, ReplaySubject} from 'rxjs';
 import {map, switchMap, scan, startWith} from 'rxjs/operators';

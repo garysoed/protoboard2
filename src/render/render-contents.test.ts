@@ -1,21 +1,21 @@
-import { assert, createSpySubject, run, should, test } from 'gs-testing';
-import { arrayFrom } from 'gs-tools/export/collect';
-import { fakeStateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { host, multi, renderNode, setId } from 'persona';
-import { createFakeContext } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { createIndexed } from '../coordinate/indexed';
-import { activeSpec, ActiveSpec } from '../core/active';
-import { $getParent } from '../objects/content-map';
-import { $createSpecEntries } from '../objects/object-create-spec';
-import { $$rootState } from '../objects/root-state';
-import { fakeContainerSpec, fakePieceSpec } from '../objects/testing/fake-object-spec';
-import { ContentSpec } from '../payload/is-container';
-import { renderContents } from './render-contents';
+import {$stateService} from 'grapevine';
+import {assert, createSpySubject, run, should, test} from 'gs-testing';
+import {arrayFrom} from 'gs-tools/export/collect';
+import {fakeStateService} from 'gs-tools/export/state';
+import {host, multi, renderNode, setId} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
+import {map} from 'rxjs/operators';
 
+import {createIndexed} from '../coordinate/indexed';
+import {activeSpec, ActiveSpec} from '../core/active';
+import {$getParent} from '../objects/content-map';
+import {$createSpecEntries} from '../objects/object-create-spec';
+import {$$rootState} from '../objects/root-state';
+import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {ContentSpec} from '../payload/is-container';
 
+import {renderContents} from './render-contents';
 
 
 test('@protoboard2/render/render-contents', init => {

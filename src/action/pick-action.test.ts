@@ -1,6 +1,6 @@
+import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
 

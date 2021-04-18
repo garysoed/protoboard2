@@ -1,18 +1,19 @@
-import { assert, setThat, should, test } from 'gs-testing';
-import { fakeStateService } from 'gs-tools/export/state';
-import { $stateService, _p } from 'mask';
-import { renderNode, setId } from 'persona';
-import { PersonaTesterFactory } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
-import { ON_LOG_$, WebConsoleDestination } from 'santa';
-import { createIndexed } from '../coordinate/indexed';
-import { $createSpecEntries } from '../objects/object-create-spec';
-import { $$rootState, RootState } from '../objects/root-state';
-import { fakePieceSpec } from '../objects/testing/fake-object-spec';
-import { ContentSpec } from '../payload/is-container';
-import { $, Active, activeSpec } from './active';
+import {$stateService} from 'grapevine';
+import {assert, setThat, should, test} from 'gs-testing';
+import {fakeStateService} from 'gs-tools/export/state';
+import {_p} from 'mask';
+import {renderNode, setId} from 'persona';
+import {PersonaTesterFactory} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
+import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
+import {createIndexed} from '../coordinate/indexed';
+import {$createSpecEntries} from '../objects/object-create-spec';
+import {$$rootState, RootState} from '../objects/root-state';
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {ContentSpec} from '../payload/is-container';
 
+import {$, Active, activeSpec} from './active';
 
 
 const dest = new WebConsoleDestination({installTrigger: true});
@@ -165,7 +166,7 @@ test('@protoboard2/core/active', init => {
               coordinate: createIndexed(3),
             },
           ],
-        ));
+      ));
 
       assert(_.el.getClassList($.root)).to.equal(
           setThat<string>().haveExactElements(new Set(['multiple'])),

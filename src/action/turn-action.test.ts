@@ -1,13 +1,13 @@
-import { assert, createSpySubject, run, runEnvironment, should, test } from 'gs-testing';
-import { fakeStateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { createFakeContext, PersonaTesterEnvironment } from 'persona/export/testing';
-import { of as observableOf } from 'rxjs';
-import { fakePieceSpec } from '../objects/testing/fake-object-spec';
-import { createFakeActionContext } from './testing/fake-action-context';
-import { TurnAction } from './turn-action';
+import {$stateService} from 'grapevine';
+import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
+import {fakeStateService} from 'gs-tools/export/state';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
+import {of as observableOf} from 'rxjs';
 
+import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
+import {createFakeActionContext} from './testing/fake-action-context';
+import {TurnAction} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {

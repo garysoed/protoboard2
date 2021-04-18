@@ -1,14 +1,14 @@
-import { Vine } from 'grapevine';
-import { assert, should, test } from 'gs-testing';
-import { fakeStateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { map } from 'rxjs/operators';
-import { activeSpec } from '../../core/active';
-import { $$rootState } from '../root-state';
-import { fakePieceSpec } from '../testing/fake-object-spec';
-import { $activeId, $activeState, $getObjectSpec } from './root-state';
+import {Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
+import {assert, should, test} from 'gs-testing';
+import {fakeStateService} from 'gs-tools/export/state';
+import {map} from 'rxjs/operators';
 
+import {activeSpec} from '../../core/active';
+import {$$rootState} from '../root-state';
+import {fakePieceSpec} from '../testing/fake-object-spec';
 
+import {$activeId, $activeState, $getObjectSpec} from './root-state';
 
 
 test('@protoboard2/objects/getters/root-state', init => {

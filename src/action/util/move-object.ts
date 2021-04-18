@@ -1,7 +1,7 @@
 import {Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {$asArray, $filter, $pipe} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 

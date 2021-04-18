@@ -1,6 +1,6 @@
 import {source} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {StateService} from 'gs-tools/export/state';
-import {$stateService} from 'mask';
 import {combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 

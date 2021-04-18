@@ -1,6 +1,6 @@
+import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {$stateService} from 'mask';
 import {identity} from 'nabu';
 import {listParser} from 'persona';
 import {EMPTY, Observable} from 'rxjs';

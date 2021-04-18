@@ -1,5 +1,5 @@
 import {source} from 'grapevine';
-import {$stateService} from 'mask';
+import {$stateService} from 'grapevine';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 

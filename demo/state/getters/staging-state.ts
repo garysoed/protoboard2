@@ -1,5 +1,5 @@
 import {source} from 'grapevine';
-import {$stateService} from 'mask';
+import {$stateService} from 'grapevine';
 import {of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 

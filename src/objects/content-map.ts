@@ -1,7 +1,7 @@
 import {source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
-import {map, scan, startWith} from 'rxjs/operators';
 import {Subject, ReplaySubject, Observable} from 'rxjs';
+import {map, scan, startWith} from 'rxjs/operators';
 
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';

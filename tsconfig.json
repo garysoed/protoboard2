@@ -27,7 +27,7 @@
   "include": [
     "demo/**/*.ts",
     "src/**/*.ts",
-    "node_modules/mask/typings/*.d.ts",
+    "node_modules/devbase/ts/typings/*.d.ts",
     "export/index.ts",
   ],
 }

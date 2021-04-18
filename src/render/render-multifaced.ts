@@ -1,4 +1,4 @@
-import {$stateService} from 'mask';
+import {$stateService} from 'grapevine';
 import {PersonaContext} from 'persona';
 import {AttributeOutput} from 'persona/export/internal';
 import {Observable, of as observableOf} from 'rxjs';

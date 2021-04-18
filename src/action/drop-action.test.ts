@@ -1,18 +1,18 @@
-import { arrayThat, assert, createSpySubject, objectThat, run, should, test } from 'gs-testing';
-import { fakeStateService, StateId } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { createFakeContext } from 'persona/export/testing';
-import { ReplaySubject } from 'rxjs';
-import { createIndexed, Indexed } from '../coordinate/indexed';
-import { activeSpec } from '../core/active';
-import { $$rootState } from '../objects/root-state';
-import { fakeContainerSpec, fakePieceSpec } from '../objects/testing/fake-object-spec';
-import { ContentSpec } from '../payload/is-container';
-import { ContainerSpec } from '../types/container-spec';
-import { DropAction } from './drop-action';
-import { createFakeActionContext } from './testing/fake-action-context';
+import {$stateService} from 'grapevine';
+import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject} from 'rxjs';
 
+import {createIndexed, Indexed} from '../coordinate/indexed';
+import {activeSpec} from '../core/active';
+import {$$rootState} from '../objects/root-state';
+import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {ContentSpec} from '../payload/is-container';
+import {ContainerSpec} from '../types/container-spec';
 
+import {DropAction} from './drop-action';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/drop-action', init => {

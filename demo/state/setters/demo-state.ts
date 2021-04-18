@@ -1,27 +1,27 @@
-import { source, Vine } from 'grapevine';
-import { $asArray, $filterDefined, $map, $pipe } from 'gs-tools/export/collect';
-import { StateId, StateService } from 'gs-tools/export/state';
-import { $stateService } from 'mask';
-import { combineLatest, of as observableOf } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { createIndexed } from '../../../src/coordinate/indexed';
-import { activeSpec, ActiveSpec } from '../../../src/core/active';
-import { $getObjectSpec } from '../../../src/objects/getters/root-state';
-import { $$rootState } from '../../../src/objects/root-state';
-import { ContentSpec } from '../../../src/payload/is-container';
-import { slotSpec, SlotSpec } from '../../../src/region/slot';
-import { ObjectClass, ObjectSpec } from '../../../src/types/object-spec';
-import { PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE } from '../../core/object-specs';
-import { $demoState } from '../getters/demo-state';
-import { $objectSpecIds } from '../getters/play-state';
-import { $pieceSpecs, $regionSpecs } from '../getters/staging-state';
-import { DemoState } from '../types/demo-state';
-import { PiecePayload } from '../types/piece-payload';
-import { PieceSpec } from '../types/piece-spec';
-import { PlayState } from '../types/play-state';
-import { RegionPayload } from '../types/region-payload';
-import { RegionSpec } from '../types/region-spec';
+import {source, Vine} from 'grapevine';
+import {$stateService} from 'grapevine';
+import {$asArray, $filterDefined, $map, $pipe} from 'gs-tools/export/collect';
+import {StateId, StateService} from 'gs-tools/export/state';
+import {combineLatest, of as observableOf} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
+import {createIndexed} from '../../../src/coordinate/indexed';
+import {activeSpec, ActiveSpec} from '../../../src/core/active';
+import {$getObjectSpec} from '../../../src/objects/getters/root-state';
+import {$$rootState} from '../../../src/objects/root-state';
+import {ContentSpec} from '../../../src/payload/is-container';
+import {slotSpec, SlotSpec} from '../../../src/region/slot';
+import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
+import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
+import {$demoState} from '../getters/demo-state';
+import {$objectSpecIds} from '../getters/play-state';
+import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';
+import {DemoState} from '../types/demo-state';
+import {PiecePayload} from '../types/piece-payload';
+import {PieceSpec} from '../types/piece-spec';
+import {PlayState} from '../types/play-state';
+import {RegionPayload} from '../types/region-payload';
+import {RegionSpec} from '../types/region-spec';
 
 
 export const $setStaging = source(
