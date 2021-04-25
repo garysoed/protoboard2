@@ -1,26 +1,26 @@
-import { Snapshot, StateId, StateService } from 'gs-tools/export/state';
-import { LocalStorage } from 'gs-tools/export/store';
-import { $saveConfig, $saveService, PALETTE, registerSvg, start, Theme } from 'mask';
-import { identity, json } from 'nabu';
-import { ON_LOG_$, WebConsoleDestination } from 'santa';
-import { activeSpec, ACTIVE_TYPE, renderActive } from '../src/core/active';
-import { $createSpecEntries } from '../src/objects/object-create-spec';
-import { $$rootState } from '../src/objects/root-state';
-import { slotSpec, SlotSpec } from '../src/region/slot';
+import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
+import {LocalStorage} from 'gs-tools/export/store';
+import {$saveConfig, $saveService, registerSvg, start, UrlThemeLoader} from 'mask';
+import {identity, json} from 'nabu';
+import {ON_LOG_$, WebConsoleDestination} from 'santa';
+
+import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
+import {$createSpecEntries} from '../src/objects/object-create-spec';
+import {$$rootState} from '../src/objects/root-state';
+import {slotSpec, SlotSpec} from '../src/region/slot';
+
 import protoboardSvg from './asset/icon.svg';
-import { $locationService } from './core/location-service';
-import { PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE } from './core/object-specs';
-import { Root } from './root';
-import { $demoState } from './state/getters/demo-state';
-import { DemoState } from './state/types/demo-state';
-import { PieceSpec } from './state/types/piece-spec';
-import { FACE_ICONS } from './state/types/piece-state';
-import { PieceType } from './state/types/piece-type';
-import { PlayState } from './state/types/play-state';
-import { RegionSpec } from './state/types/region-spec';
-import { RegionType } from './state/types/region-type';
-
-
+import {$locationService} from './core/location-service';
+import {PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE} from './core/object-specs';
+import {Root} from './root';
+import {$demoState} from './state/getters/demo-state';
+import {DemoState} from './state/types/demo-state';
+import {PieceSpec} from './state/types/piece-spec';
+import {FACE_ICONS} from './state/types/piece-state';
+import {PieceType} from './state/types/piece-type';
+import {PlayState} from './state/types/play-state';
+import {RegionSpec} from './state/types/region-spec';
+import {RegionType} from './state/types/region-type';
 
 
 const iconConfigs: Map<string, string> = new Map([
@@ -33,13 +33,11 @@ ON_LOG_$.subscribe(log => {
 });
 
 window.addEventListener('load', () => {
-  const theme = new Theme(document, PALETTE.AMBER, PALETTE.LIME);
   const {vine} = start(
       'protoboard',
       [Root],
       document,
-      theme,
-      document.getElementById('globalStyle') as HTMLStyleElement,
+      new UrlThemeLoader('theme.css'),
   );
 
   for (const [key, content] of iconConfigs) {
