@@ -10,7 +10,7 @@ export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
 export {ConverterOf, BaseAction} from '../src/core/base-action';
-export {$createSpecMap} from '../src/objects/object-create-spec';
+export {$createSpecEntries, $createSpecMap} from '../src/objects/object-create-spec';
 export {ContentSpec} from '../src/payload/is-container';
 export {ObjectSpec} from '../src/types/object-spec';
 export {$render, Render} from '../src/objects/render';

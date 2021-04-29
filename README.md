@@ -5,9 +5,9 @@
 There are 4 general of objects:
 
 -   **Face**: Represents a printable display.
--   **Piece**: Corresponds to a game piece. These are usually printable pieces and have multiple
+-   **Piece**: Corresponds to a game piece. These have printable pieces and can have multiple
     faces.
--   **Region**: A collection of pieces.
+-   **Region**: Non printable game component.
 
 ### Face
 
@@ -17,7 +17,6 @@ Face's state object.
 
 ```
 <pb-face
-    state-id <-- Links to state information of the face -->
     height <-- Height to display this face. -->
     width <-- Width to display this face -->>
   <div slot="display">
@@ -58,6 +57,8 @@ A region can contain other pieces. They can be used to group pieces together. So
     pieces can be revealed at a time.
 -   **Hand**: A player's hand. Always arranges all the contents in horizontal order and allows
     random access to all its contents.
+
+
 
 
 ## Actions
