@@ -1,12 +1,12 @@
 import {assert, objectThat, should, test} from 'gs-testing';
 
-import {Direction, RectOrthogonal} from './rect-orthogonal';
 import {testTile, TestTile} from './testing/test-tile';
+import {Direction, VHex} from './vhex';
 
 
-test('@protoboard2/tiling/rect-orthogonal', init => {
+test('@protoboard2/tiling/vhex', init => {
   const _ = init(() => {
-    const board = new RectOrthogonal([
+    const board = new VHex([
       testTile(1, 2),
       testTile(1, 3),
       testTile(1, 4),
@@ -24,17 +24,20 @@ test('@protoboard2/tiling/rect-orthogonal', init => {
   test('getAdjacentTilesAt', () => {
     should('return all adjacent tiles', () => {
       assert(_.board.getAdjacentTilesAt({x: 2, y: 3})).to.haveExactElements(new Map([
-        [Direction.DOWN, objectThat<TestTile>().haveProperties(testTile(2, 4))],
-        [Direction.UP, objectThat<TestTile>().haveProperties(testTile(2, 2))],
-        [Direction.LEFT, objectThat<TestTile>().haveProperties(testTile(1, 3))],
+        [Direction.UP_RIGHT, objectThat<TestTile>().haveProperties(testTile(2, 2))],
         [Direction.RIGHT, objectThat<TestTile>().haveProperties(testTile(3, 3))],
+        [Direction.DOWN_RIGHT, objectThat<TestTile>().haveProperties(testTile(3, 4))],
+        [Direction.DOWN_LEFT, objectThat<TestTile>().haveProperties(testTile(2, 4))],
+        [Direction.LEFT, objectThat<TestTile>().haveProperties(testTile(1, 3))],
+        [Direction.UP_LEFT, objectThat<TestTile>().haveProperties(testTile(1, 2))],
       ]));
     });
 
     should('skip non existing tiles', () => {
       assert(_.board.getAdjacentTilesAt({x: 3, y: 4})).to.haveExactElements(new Map([
-        [Direction.UP, objectThat<TestTile>().haveProperties(testTile(3, 3))],
+        [Direction.UP_RIGHT, objectThat<TestTile>().haveProperties(testTile(3, 3))],
         [Direction.LEFT, objectThat<TestTile>().haveProperties(testTile(2, 4))],
+        [Direction.UP_LEFT, objectThat<TestTile>().haveProperties(testTile(2, 3))],
       ]));
     });
   });
@@ -50,8 +53,9 @@ test('@protoboard2/tiling/rect-orthogonal', init => {
   });
 
   test('getTileFrom', () => {
-    should('return the correct tile for UP direction', () => {
-      assert(_.board.getTileFrom({x: 3, y: 3}, Direction.UP)!).to.haveProperties(testTile(3, 2));
+    should('return the correct tile for UP_RIGHT direction', () => {
+      assert(_.board.getTileFrom({x: 3, y: 3}, Direction.UP_RIGHT)!)
+          .to.haveProperties(testTile(3, 2));
     });
 
     should('return null if destination does not exist', () => {
