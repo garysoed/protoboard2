@@ -1,10 +1,9 @@
-import {$asMap, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
-import {cache} from 'gs-tools/export/data';
 import {getAllValues} from 'gs-tools/export/typescript';
 
 import {Cartesian} from '../coordinate/cartesian';
 
-import {Board, Tile, TileGrid} from './types';
+import {BaseBoard} from './base-board';
+import {Board, Tile} from './types';
 
 
 export enum Direction {
@@ -17,60 +16,29 @@ export enum Direction {
 }
 
 
-export class VHex<TILE extends Tile> implements Board<TILE, Direction> {
-  constructor(private readonly inputTiles: Iterable<TILE>) {}
+export type VHex<TILE extends Tile> = Board<TILE, Direction>;
 
-  getAdjacentTilesAt(coordinate: Cartesian): ReadonlyMap<Direction, TILE> {
-    return $pipe(
-        getAllValues<Direction>(Direction),
-        $map(direction => {
-          const tile = this.getTileFrom(coordinate, direction);
-          if (!tile) {
-            return null;
-          }
-
-          return [direction, tile] as const;
-        }),
-        $filterNonNull(),
-        $asMap(),
-    );
-  }
-
-  getTileAt({x, y}: Cartesian): TILE|null {
-    return this.tileGrid[y]?.[x] ?? null;
-  }
-
-  getTileFrom(origin: Cartesian, direction: Direction): TILE|null {
-    const newCoordinate = computeNewCoordinate(origin, direction);
-    return this.getTileAt(newCoordinate);
-  }
-
-  @cache()
-  private get tileGrid(): TileGrid<TILE> {
-    const rows: TILE[][] = [];
-    for (const tile of this.inputTiles) {
-      const cells = rows[tile.y] ?? [];
-      cells[tile.x] = tile;
-      rows[tile.y] = cells;
-    }
-
-    return rows;
-  }
+export function vhex<TILE extends Tile>(tiles: Iterable<TILE>): VHex<TILE> {
+  return new BaseBoard(
+      tiles,
+      getAllValues<Direction>(Direction),
+      getDeltaCoordinate,
+  );
 }
 
-function computeNewCoordinate(from: Cartesian, direction: Direction): Cartesian {
+function getDeltaCoordinate(direction: Direction): Cartesian {
   switch (direction) {
     case Direction.UP_RIGHT:
-      return {x: from.x, y: from.y - 1};
+      return {x: 0, y: -1};
     case Direction.RIGHT:
-      return {x: from.x + 1, y: from.y};
+      return {x: 1, y: 0};
     case Direction.DOWN_RIGHT:
-      return {x: from.x + 1, y: from.y + 1};
+      return {x: 1, y: 1};
     case Direction.DOWN_LEFT:
-      return {x: from.x, y: from.y + 1};
+      return {x: 0, y: 1};
     case Direction.LEFT:
-      return {x: from.x - 1, y: from.y};
+      return {x: -1, y: 0};
     case Direction.UP_LEFT:
-      return {x: from.x - 1, y: from.y - 1};
+      return {x: -1, y: -1};
   }
 }

@@ -1,12 +1,12 @@
 import {assert, objectThat, should, test} from 'gs-testing';
 
 import {testTile, TestTile} from './testing/test-tile';
-import {Direction, VHex} from './vhex';
+import {Direction, vhex} from './vhex';
 
 
 test('@protoboard2/tiling/vhex', init => {
   const _ = init(() => {
-    const board = new VHex([
+    const board = vhex([
       testTile(1, 2),
       testTile(1, 3),
       testTile(1, 4),

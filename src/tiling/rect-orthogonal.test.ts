@@ -1,12 +1,12 @@
 import {assert, objectThat, should, test} from 'gs-testing';
 
-import {Direction, RectOrthogonal} from './rect-orthogonal';
+import {Direction, rectOrthogonal} from './rect-orthogonal';
 import {testTile, TestTile} from './testing/test-tile';
 
 
 test('@protoboard2/tiling/rect-orthogonal', init => {
   const _ = init(() => {
-    const board = new RectOrthogonal([
+    const board = rectOrthogonal([
       testTile(1, 2),
       testTile(1, 3),
       testTile(1, 4),
