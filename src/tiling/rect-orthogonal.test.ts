@@ -1,6 +1,6 @@
 import {assert, objectThat, should, test} from 'gs-testing';
 
-import {Direction, rectOrthogonal} from './rect-orthogonal';
+import {Direction, distance, rectOrthogonal} from './rect-orthogonal';
 import {testTile, TestTile} from './testing/test-tile';
 
 
@@ -60,6 +60,24 @@ test('@protoboard2/tiling/rect-orthogonal', init => {
 
     should('return the correct tile if origin does not exist but destination does', () => {
       assert(_.board.getTileFrom({x: 4, y: 2}, Direction.LEFT)!).to.haveProperties(testTile(3, 2));
+    });
+  });
+
+  test('distance', () => {
+    should('return the correct distance if dx is -ve and dy is -ve', () => {
+      assert(distance({x: 1, y: 2}, {x: -1, y: -2})).to.equal(6);
+    });
+
+    should('return the correct distance if dx is -ve and dy is +ve', () => {
+      assert(distance({x: 1, y: 2}, {x: -1, y: 4})).to.equal(4);
+    });
+
+    should('return the correct distance if dx is +ve and dy is -ve', () => {
+      assert(distance({x: 1, y: 2}, {x: 3, y: -4})).to.equal(8);
+    });
+
+    should('return the correct distance if dx is +ve and dy is +ve', () => {
+      assert(distance({x: 1, y: 2}, {x: 3, y: 4})).to.equal(4);
     });
   });
 });

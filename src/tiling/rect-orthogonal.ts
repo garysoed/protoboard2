@@ -23,6 +23,13 @@ export function rectOrthogonal<TILE extends Tile>(tiles: Iterable<TILE>): RectOr
   );
 }
 
+export function distance(from: Cartesian, to: Cartesian): number {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+
+  return Math.abs(dx) + Math.abs(dy);
+}
+
 function getDeltaCoordinate(direction: Direction): Cartesian {
   switch (direction) {
     case Direction.UP:

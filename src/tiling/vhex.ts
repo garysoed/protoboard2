@@ -26,6 +26,17 @@ export function vhex<TILE extends Tile>(tiles: Iterable<TILE>): VHex<TILE> {
   );
 }
 
+export function distance(from: Cartesian, to: Cartesian): number {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+
+  if (dx * dy < 0) {
+    return Math.abs(dx - dy);
+  }
+
+  return Math.max(Math.abs(dx), Math.abs(dy));
+}
+
 function getDeltaCoordinate(direction: Direction): Cartesian {
   switch (direction) {
     case Direction.UP_RIGHT:

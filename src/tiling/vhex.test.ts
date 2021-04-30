@@ -1,7 +1,7 @@
 import {assert, objectThat, should, test} from 'gs-testing';
 
 import {testTile, TestTile} from './testing/test-tile';
-import {Direction, vhex} from './vhex';
+import {Direction, distance, vhex} from './vhex';
 
 
 test('@protoboard2/tiling/vhex', init => {
@@ -64,6 +64,32 @@ test('@protoboard2/tiling/vhex', init => {
 
     should('return the correct tile if origin does not exist but destination does', () => {
       assert(_.board.getTileFrom({x: 4, y: 2}, Direction.LEFT)!).to.haveProperties(testTile(3, 2));
+    });
+  });
+
+  test('distance', () => {
+    should('return the correct distance if dx and dy have different signs and dx > dy', () => {
+      assert(distance({x: 1, y: 2}, {x: 5, y: -4})).to.equal(10);
+    });
+
+    should('return the correct distance if dx and dy have different signs and dy > dx', () => {
+      assert(distance({x: 1, y: 2}, {x: -5, y: 4})).to.equal(8);
+    });
+
+    should('return the correct distance if dx and dy have the same signs, are -ve and dx < dy', () => {
+      assert(distance({x: 1, y: 2}, {x: -5, y: -2})).to.equal(6);
+    });
+
+    should('return the correct distance if dx and dy have the same signs, are -ve and dx > dy', () => {
+      assert(distance({x: 1, y: 2}, {x: -1, y: -2})).to.equal(4);
+    });
+
+    should('return the correct distance if dx and dy have the same signs, are +ve and dx < dy', () => {
+      assert(distance({x: 1, y: 2}, {x: 2, y: 5})).to.equal(3);
+    });
+
+    should('return the correct distance if dx and dy have the same signs, are +ve and dx > dy', () => {
+      assert(distance({x: 1, y: 2}, {x: 5, y: 4})).to.equal(4);
     });
   });
 });
