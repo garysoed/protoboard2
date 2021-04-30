@@ -7,6 +7,7 @@ import {Direction, distance, vhex} from './vhex';
 test('@protoboard2/tiling/vhex', init => {
   const _ = init(() => {
     const board = vhex([
+      testTile(-1, -5),
       testTile(1, 2),
       testTile(1, 3),
       testTile(1, 4),
@@ -64,6 +65,37 @@ test('@protoboard2/tiling/vhex', init => {
 
     should('return the correct tile if origin does not exist but destination does', () => {
       assert(_.board.getTileFrom({x: 4, y: 2}, Direction.LEFT)!).to.haveProperties(testTile(3, 2));
+    });
+  });
+
+  test('replaceTiles', () => {
+    should('replace and add the tiles correctly', () => {
+      const newBoard = _.board.replaceTiles([
+        testTile(2, 3, 'replaced'),
+        testTile(-2, -5, 'added'),
+      ]);
+
+      assert(_.board.getTileAt({x: 2, y: 3})!).to.haveProperties(testTile(2, 3));
+      assert(_.board.getTileAt({x: -2, y: -5})).to.beNull();
+      assert(newBoard.getTileAt({x: 2, y: 3})!).to.haveProperties({payload: 'replaced'});
+      assert(newBoard.getTileAt({x: -2, y: -5})!).to.haveProperties({payload: 'added'});
+    });
+  });
+
+  test('tiles', () => {
+    should('include all tiles, including the ones with negative coordinates', () => {
+      assert(_.board.tiles).to.haveExactElements(new Set([
+        objectThat<TestTile>().haveProperties(testTile(-1, -5)),
+        objectThat<TestTile>().haveProperties(testTile(1, 2)),
+        objectThat<TestTile>().haveProperties(testTile(1, 3)),
+        objectThat<TestTile>().haveProperties(testTile(1, 4)),
+        objectThat<TestTile>().haveProperties(testTile(2, 2)),
+        objectThat<TestTile>().haveProperties(testTile(2, 3)),
+        objectThat<TestTile>().haveProperties(testTile(2, 4)),
+        objectThat<TestTile>().haveProperties(testTile(3, 2)),
+        objectThat<TestTile>().haveProperties(testTile(3, 3)),
+        objectThat<TestTile>().haveProperties(testTile(3, 4)),
+      ]));
     });
   });
 

@@ -1,9 +1,10 @@
-import {$asMap, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$asMap, $filter, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 
 import {Cartesian} from '../coordinate/cartesian';
 
 import {Board, Tile, TileGrid} from './types';
+
 
 type GetDeltaCoordinate<DIRECTION> = (direction: DIRECTION) => Cartesian;
 
@@ -38,6 +39,22 @@ export class BaseBoard<TILE extends Tile, DIRECTION> implements Board<TILE, DIRE
     const deltaCoordinate = this.getDeltaCoordinate(direction);
     const newCoordinate = {x: origin.x + deltaCoordinate.x, y: origin.y + deltaCoordinate.y};
     return this.getTileAt(newCoordinate);
+  }
+
+  replaceTiles(newTiles: Iterable<TILE>): BaseBoard<TILE, DIRECTION> {
+    return new BaseBoard(
+        [...this.inputTiles, ...newTiles],
+        this.directions,
+        this.getDeltaCoordinate,
+    );
+  }
+
+  @cache()
+  get tiles(): ReadonlySet<TILE> {
+    return new Set($pipe(
+        this.inputTiles,
+        $filter(tile => !!(this.tileGrid[tile.y]?.[tile.x])),
+    ));
   }
 
   @cache()
