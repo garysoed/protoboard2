@@ -1,5 +1,4 @@
 import {$stateService} from 'grapevine';
-import { $first, $pipe } from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {integerParser} from 'persona';
 import {Observable} from 'rxjs';
@@ -47,7 +46,7 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
             return;
           }
 
-          const randomValue = $pipe($random.get(this.vine), $first());
+          const randomValue = $random.get(this.vine).next();
           if (randomValue === null) {
             throw new Error('Random produced no values');
           }
