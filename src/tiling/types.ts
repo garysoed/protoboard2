@@ -2,8 +2,6 @@ import {Cartesian} from '../coordinate/cartesian';
 
 export type Tile = Cartesian;
 
-export type TileGrid<TILE extends Tile> = ReadonlyArray<readonly TILE[]>;
-
 export interface Board<TILE extends Tile, DIRECTION> {
   readonly tiles: ReadonlySet<TILE>;
 
@@ -12,6 +10,8 @@ export interface Board<TILE extends Tile, DIRECTION> {
   getTileAt(coordinate: Cartesian): TILE|null;
 
   getTileFrom(origin: Cartesian, direction: DIRECTION): TILE|null;
+
+  removeTiles(tiles: Iterable<Cartesian>): Board<TILE, DIRECTION>;
 
   replaceTiles(newTiles: Iterable<TILE>): Board<TILE, DIRECTION>;
 }

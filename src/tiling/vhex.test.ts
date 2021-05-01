@@ -68,6 +68,27 @@ test('@protoboard2/tiling/vhex', init => {
     });
   });
 
+  test('removeTiles', () => {
+    should('remove the tiles correctly', () => {
+      const newBoard = _.board.removeTiles([
+        testTile(2, 3),
+        testTile(3, 3),
+        testTile(4, 4),
+      ]);
+
+      assert(newBoard.tiles).to.haveExactElements(new Set([
+        objectThat<TestTile>().haveProperties(testTile(-1, -5)),
+        objectThat<TestTile>().haveProperties(testTile(1, 2)),
+        objectThat<TestTile>().haveProperties(testTile(1, 3)),
+        objectThat<TestTile>().haveProperties(testTile(1, 4)),
+        objectThat<TestTile>().haveProperties(testTile(2, 2)),
+        objectThat<TestTile>().haveProperties(testTile(2, 4)),
+        objectThat<TestTile>().haveProperties(testTile(3, 2)),
+        objectThat<TestTile>().haveProperties(testTile(3, 4)),
+      ]));
+    });
+  });
+
   test('replaceTiles', () => {
     should('replace and add the tiles correctly', () => {
       const newBoard = _.board.replaceTiles([
