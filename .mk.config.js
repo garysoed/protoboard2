@@ -1,6 +1,6 @@
 declare({
   name: 'link',
-  as: single({
+  as: shell({
     bin: 'npm',
     flags: [
       'link',
@@ -21,7 +21,7 @@ declare({
 
 declare({
   name: 'demo',
-  as: single({
+  as: shell({
     bin: 'simpleserver',
     flags: [
       'demo/demo.conf.json',

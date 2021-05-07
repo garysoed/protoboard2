@@ -4,7 +4,6 @@ import {$button, $lineLayout, $overlayLayout, $radioInput, BaseThemedCtrl, Butto
 import {attributeIn, element, enumParser, host, multi, PersonaContext, renderCustomElement, RenderSpec, stringParser, textContent} from 'persona';
 import {combineLatest, Observable} from 'rxjs';
 import {map, mapTo, tap, withLatestFrom} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {$demoState} from '../state/getters/demo-state';
 import {$targetAreas} from '../state/getters/region-state';
@@ -14,9 +13,6 @@ import {RegionType} from '../state/types/region-type';
 
 import {$documentationTemplate, DocumentationTemplate} from './documentation-template';
 import template from './region-template.html';
-
-
-const LOGGER = new Logger('pbd.RegionTemplate');
 
 
 const $$ = {
