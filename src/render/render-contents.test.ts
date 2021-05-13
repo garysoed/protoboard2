@@ -8,10 +8,8 @@ import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {createIndexed} from '../coordinate/indexed';
-import {activeSpec, ActiveSpec} from '../core/active';
 import {$getParent} from '../objects/content-map';
 import {$createSpecEntries} from '../objects/object-create-spec';
-import {$$rootState} from '../objects/root-state';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
@@ -77,13 +75,6 @@ test('@protoboard2/render/render-contents', init => {
       createSpecEntries$.next([testType1, () => observableOf(renderNode({node: el1, id: el1}))]);
       createSpecEntries$.next([testType2, () => observableOf(renderNode({node: el2, id: el2}))]);
       createSpecEntries$.next([testType3, () => observableOf(renderNode({node: el3, id: el3}))]);
-
-      const $root = _.stateService.modify(x => x.add({
-        $activeState: x.add<ActiveSpec>(activeSpec({
-          $contentSpecs: x.add([]),
-        })),
-      }));
-      $$rootState.get(_.context.vine).next($root);
 
       _.stateService.modify(x => x.set(_.$contentSpecs, []));
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);

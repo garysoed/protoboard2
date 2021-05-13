@@ -1,3 +1,4 @@
+import {$resolveState} from 'grapevine';
 import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
@@ -8,7 +9,6 @@ import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from '
 import {Logger} from 'santa';
 
 import {HelpAction} from '../action/help-action';
-import {$getObjectSpec} from '../objects/getters/root-state';
 import {ObjectSpec} from '../types/object-spec';
 
 import {ActionContext, BaseAction, TriggerEvent} from './base-action';
@@ -101,7 +101,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   get objectSpec$(): Observable<O|undefined> {
     return this.objectId$
         .pipe(
-            switchMap(objectId => $getObjectSpec.get(this.context.vine)(objectId)),
+            switchMap(objectId => $resolveState.get(this.context.vine)(objectId)),
         );
   }
 

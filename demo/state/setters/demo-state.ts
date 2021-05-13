@@ -1,14 +1,10 @@
-import {source, Vine} from 'grapevine';
-import {$stateService} from 'grapevine';
+import {$resolveState, $stateService, source} from 'grapevine';
 import {$asArray, $filterDefined, $map, $pipe} from 'gs-tools/export/collect';
 import {StateId, StateService} from 'gs-tools/export/state';
 import {combineLatest, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {createIndexed} from '../../../src/coordinate/indexed';
-import {activeSpec, ActiveSpec} from '../../../src/core/active';
-import {$getObjectSpec} from '../../../src/objects/getters/root-state';
-import {$$rootState} from '../../../src/objects/root-state';
 import {ContentSpec} from '../../../src/payload/is-container';
 import {slotSpec, SlotSpec} from '../../../src/region/slot';
 import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
@@ -42,7 +38,7 @@ export const $setStaging = source(
 
                 const objectSpecs = $pipe(
                     objectSpecIds,
-                    $map(id => $getObjectSpec.get(vine)(id)),
+                    $map(id => $resolveState.get(vine)(id)),
                     $asArray(),
                 );
 
@@ -78,7 +74,7 @@ export const $setStaging = source(
                         stateService,
                     );
                   } else {
-                    setToPlay(demoState, pieceSpecs ?? [], regionSpecs ?? [], stateService, vine);
+                    setToPlay(demoState, pieceSpecs ?? [], regionSpecs ?? [], stateService);
                   }
                 };
               }),
@@ -118,15 +114,8 @@ function setToPlay(
     pieceSpecs: readonly PieceSpec[],
     regionSpecs: readonly RegionSpec[],
     stateService: StateService,
-    vine: Vine,
 ): void {
   stateService.modify(x => {
-    // Add the active specs.
-    const $activeContentIds = x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
-    const $activeState = x.add<ActiveSpec>(activeSpec({
-      $contentSpecs: $activeContentIds,
-    }));
-
     // User defined object specs.
     const pieceObjectSpecIds: Array<StateId<ObjectSpec<PiecePayload>>> = [];
     for (const spec of pieceSpecs) {
@@ -179,7 +168,6 @@ function setToPlay(
     }));
 
     const playState: PlayState = {
-      $activeState,
       $supply,
       objectSpecIds: [
         ...pieceObjectSpecIds,
@@ -188,7 +176,6 @@ function setToPlay(
     };
 
     x.set(demoState.$playState, playState);
-    $$rootState.get(vine).next(demoState.$playState);
     x.set(demoState.$isStaging, false);
   });
 }

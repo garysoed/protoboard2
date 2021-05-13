@@ -1,3 +1,4 @@
+import {$stateService} from 'grapevine';
 import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
 import {LocalStorage} from 'gs-tools/export/store';
 import {$saveConfig, $saveService, registerSvg, start, UrlThemeLoader} from 'mask';
@@ -5,15 +6,14 @@ import {identity, json} from 'nabu';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
+import {$$activeSpec} from '../src/objects/active-spec';
 import {$createSpecEntries} from '../src/objects/object-create-spec';
-import {$$rootState} from '../src/objects/root-state';
 import {slotSpec, SlotSpec} from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
 import {PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE} from './core/object-specs';
 import {Root} from './root';
-import {$demoState} from './state/getters/demo-state';
 import {DemoState} from './state/types/demo-state';
 import {PieceSpec} from './state/types/piece-spec';
 import {FACE_ICONS} from './state/types/piece-state';
@@ -63,9 +63,10 @@ window.addEventListener('load', () => {
     initFn: init,
   });
 
-  $demoState.get(vine).subscribe(demoState => {
-    $$rootState.get(vine).next(demoState?.$playState ?? null);
-  });
+  const stateService = $stateService.get(vine);
+  $$activeSpec.get(vine).next(stateService.modify(x => x.add(activeSpec({
+    $contentSpecs: x.add([]),
+  }))));
 
   const createSpecEntries$ = $createSpecEntries.get(vine);
   createSpecEntries$.next([ACTIVE_TYPE, renderActive]);
@@ -79,9 +80,6 @@ function init(stateService: StateService): StateId<DemoState> {
   return stateService.modify(x => x.add({
     $isStaging: x.add(true),
     $playState: x.add<PlayState>({
-      $activeState: x.add(activeSpec({
-        $contentSpecs: x.add([]),
-      })),
       $supply: x.add<SlotSpec<{}>>(slotSpec({
         type: SUPPLY_TYPE,
         $contentSpecs: x.add([]),

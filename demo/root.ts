@@ -7,7 +7,7 @@ import {map, tap} from 'rxjs/operators';
 
 import {HelpOverlay} from '../src/action/help-overlay';
 import {$active, Active} from '../src/core/active';
-import {$activeId} from '../src/objects/getters/root-state';
+import {$$activeSpec} from '../src/objects/active-spec';
 
 import {Documentation} from './core/documentation';
 import {$drawer, Drawer} from './core/drawer';
@@ -51,7 +51,7 @@ export class Root extends BaseThemedCtrl<typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.active.objectId($activeId.get(this.vine).pipe(map(id => id ?? undefined))),
+      this.renderers.active.objectId($$activeSpec.get(this.vine).pipe(map(id => id ?? undefined))),
       this.renderers.drawer.drawerExpanded(
           this.inputs.root.drawerExpanded.pipe(
               map(expanded => expanded ?? false),

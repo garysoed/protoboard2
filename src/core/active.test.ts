@@ -9,7 +9,6 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {createIndexed} from '../coordinate/indexed';
 import {$createSpecEntries} from '../objects/object-create-spec';
-import {$$rootState, RootState} from '../objects/root-state';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
@@ -41,15 +40,13 @@ test('@protoboard2/core/active', init => {
       containerIds: [],
       objectSpecIds: [$activeSpec],
     };
-    const $rootState = stateService.modify(x => x.add<RootState>(root));
-    $$rootState.get(tester.vine).next($rootState);
 
     // Need to add to body so the dimensions work.
     const el = tester.createElement(Active);
     el.setAttribute($.host._.objectId, $activeSpec);
     document.body.appendChild(el.element);
 
-    return {$contentSpecs, $rootState, el, root, stateService, tester};
+    return {$contentSpecs, el, root, stateService, tester};
   });
 
   test('itemCount$', _, () => {
@@ -113,9 +110,7 @@ test('@protoboard2/core/active', init => {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
       };
-      const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
       _.stateService.modify(x => {
-        x.set(_.$rootState, root);
         x.set(_.$contentSpecs, [contentSpec]);
       });
 
@@ -192,9 +187,7 @@ test('@protoboard2/core/active', init => {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
       };
-      const root = {..._.root, objectSpecIds: [..._.root.objectSpecIds, $objectSpec]};
       _.stateService.modify(x => {
-        x.set(_.$rootState, root);
         x.set(_.$contentSpecs, [contentSpec]);
       });
 
@@ -237,13 +230,7 @@ test('@protoboard2/core/active', init => {
         coordinate: createIndexed(1),
       };
 
-      // TODO: RootStateBuilder
-      const root = {
-        ..._.root,
-        objectSpecIds: [..._.root.objectSpecIds, $objectSpec1, $objectSpec2],
-      };
       _.stateService.modify(x => {
-        x.set(_.$rootState, root);
         x.set(_.$contentSpecs, [spec1, spec2]);
       });
 

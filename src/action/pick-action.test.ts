@@ -6,8 +6,8 @@ import {ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {$$activeSpec} from '../objects/active-spec';
 import {$setParent} from '../objects/content-map';
-import {$$rootState, RootState} from '../objects/root-state';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {PieceSpec} from '../types/piece-spec';
@@ -76,14 +76,14 @@ test('@protoboard2/action/pick-action', init => {
       const $activeState = _.stateService.modify(x => x.add(activeSpec({
         $contentSpecs: $activeContentIds,
       })));
-      const $rootState = _.stateService.modify(x => x.add<RootState>({$activeState}));
+      $$activeSpec.get(_.personaContext.vine).next($activeState);
+
       const setParent = $setParent.get(_.personaContext.vine);
       setParent(otherActiveSpec.objectId, $activeState);
       setParent(otherSpec1.objectId, $container);
       setParent(movedSpec.objectId, $container);
       setParent(otherSpec2.objectId, $container);
 
-      $$rootState.get(_.personaContext.vine).next($rootState);
       _.objectId$.next(movedId);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(

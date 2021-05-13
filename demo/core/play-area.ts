@@ -1,3 +1,4 @@
+import {$resolveState} from 'grapevine';
 import {$asMap, $filterNonNull, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
@@ -6,7 +7,6 @@ import {element, PersonaContext} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, tap, withLatestFrom, switchMap} from 'rxjs/operators';
 
-import {$getObjectSpec} from '../../src/objects/getters/root-state';
 import {$render, Render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
 import {ObjectSpec} from '../../src/types/object-spec';
@@ -84,7 +84,7 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
     return $objectSpecIds.get(this.vine).pipe(
         switchMap(specIds => {
           const pair$list = specIds.map(
-              id => $getObjectSpec.get(this.vine)(id).pipe(map(spec => {
+              id => $resolveState.get(this.vine)(id).pipe(map(spec => {
                 if (!spec) {
                   return null;
                 }

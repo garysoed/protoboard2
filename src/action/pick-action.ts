@@ -1,14 +1,12 @@
-import {$stateService} from 'grapevine';
+import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction} from '../core/base-action';
+import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
-import {$activeState, $getObjectSpec} from '../objects/getters/root-state';
-import {CoordinateTypes} from '../payload/is-container';
-import {ContainerSpec} from '../types/container-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {moveObject} from './util/move-object';
@@ -58,10 +56,10 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               if (!fromObjectId) {
                 return observableOf(null);
               }
-              return $getObjectSpec.get(this.vine)<ContainerSpec<unknown, CoordinateTypes>>(fromObjectId);
+              return $resolveState.get(this.vine)(fromObjectId);
             }),
         );
-    const activeContents$ = $activeState.get(this.vine).pipe(
+    const activeContents$ = $activeSpec.get(this.vine).pipe(
         switchMap(activeSpec => {
           if (!activeSpec) {
             return observableOf(undefined);
@@ -72,7 +70,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
 
     const moveFn$ = combineLatest([
       fromObjectSpec$,
-      $activeState.get(this.vine),
+      $activeSpec.get(this.vine),
       activeContents$,
       this.context.objectId$,
     ])

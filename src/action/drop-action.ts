@@ -3,7 +3,7 @@ import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {$activeState} from '../objects/getters/root-state';
+import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
 import {moveObject} from './util/move-object';
@@ -38,7 +38,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
   private get handleTrigger$(): Observable<unknown> {
     const moveObjectFn$ = combineLatest([
       this.objectSpec$,
-      $activeState.get(this.vine),
+      $activeSpec.get(this.vine),
     ])
         .pipe(
             switchMap(([toState, activeState]) => {

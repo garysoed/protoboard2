@@ -3,10 +3,11 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
-import {$$rootState} from '../objects/root-state';
+import {$$activeSpec} from '../objects/active-spec';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
@@ -63,13 +64,25 @@ test('@protoboard2/action/drop-action', init => {
         coordinate: createIndexed(1),
       };
 
-      const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec, movedSpec]));
-      const $rootState = _.stateService.modify(x => x.add({
-        $activeState: x.add(activeSpec({
-          $contentSpecs: $activeContentIds,
-        })),
-      }));
-      $$rootState.get(_.personaContext.vine).next($rootState);
+      const $activeContentId$ = _.stateService
+          .resolve($$activeSpec.get(_.personaContext.vine).getValue())
+          ._('payload')
+          ._('$contentSpecs');
+      run($activeContentId$.pipe(
+          tap(id => {
+            if (!id) {
+              return;
+            }
+            _.stateService.modify(x => x.set(id, [otherActiveSpec, movedSpec]));
+          }),
+      ));
+
+      const $activeContentIds = _.stateService.modify(x => x.add(
+          activeSpec({
+            $contentSpecs: x.add([otherActiveSpec, movedSpec]),
+          })),
+      );
+      $$activeSpec.get(_.personaContext.vine).next($activeContentIds);
 
       const $targetContentIds = _.stateService.modify(x => x.add([otherSpec1, otherSpec2]));
       const $objectSpec = _.stateService.modify(x => x.add(
@@ -81,7 +94,10 @@ test('@protoboard2/action/drop-action', init => {
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-          $stateService.get(_.personaContext.vine).resolve($activeContentIds));
+          _.stateService.resolve($$activeSpec.get(_.personaContext.vine).getValue())
+              ._('payload')
+              .$('$contentSpecs'),
+      );
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 

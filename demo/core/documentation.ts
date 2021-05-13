@@ -52,7 +52,7 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
 
   @cache()
   private get content$(): Observable<RenderSpec|null> {
-    return $locationService.get(this.vine).getLocation()
+    return $locationService.get(this.vine).location$
         .pipe(
             map(location => {
               switch (location.type) {
