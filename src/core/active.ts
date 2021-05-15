@@ -2,9 +2,8 @@ import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
+import {$div, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime} from 'rxjs/operators';
 
@@ -36,10 +35,10 @@ export const $active = {
 
 export const $ = {
   host: host($active.api),
-  count: element('count', instanceofType(HTMLDivElement), {
+  count: element('count', $div, {
     text: textContent(),
   }),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     classMultiple: classToggle('multiple'),
     content: multi('#content'),
     left: style('left'),

@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
-import {elementWithTagType, instanceofType} from 'gs-types';
+import {elementWithTagType} from 'gs-types';
 import {$rootLayout, BaseThemedCtrl, Overlay, RootLayout, _p} from 'mask';
-import {api, classToggle, element, PersonaContext} from 'persona';
+import {$div, api, classToggle, element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -21,7 +21,7 @@ import {$isStaging} from './state/getters/demo-state';
 const $ = {
   active: element('active', $active, {}),
   drawer: element('drawer', $drawer, {}),
-  main: element('main', instanceofType(HTMLDivElement), {
+  main: element('main', $div, {
     isPlaying: classToggle('isPlaying'),
   }),
   root: element('root', elementWithTagType('mk-root-layout'), api($rootLayout.api)),

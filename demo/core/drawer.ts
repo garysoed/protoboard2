@@ -1,7 +1,7 @@
 import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
-import {enumType, instanceofType} from 'gs-types';
+import {enumType} from 'gs-types';
 import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
-import {attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
+import {$div, attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -21,7 +21,7 @@ export const $drawer = {
 
 const $ = {
   host: host($drawer.api),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     containers: multi('#containers'),
     layouts: multi('#layouts'),
     onClick: onDom('click'),

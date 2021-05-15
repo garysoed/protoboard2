@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$icon, ActionEvent, ACTION_EVENT, BaseThemedCtrl, _p} from 'mask';
-import {attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser} from 'persona';
+import {$div, attributeIn, dispatcher, element, host, onDom, PersonaContext, setAttribute, stringParser} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
@@ -24,7 +23,7 @@ const $ = {
     mkAction: setAttribute('mk-action-2'),
   }),
   icon: element('icon', $icon, {}),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     onClick: onDom('click'),
   }),
 };

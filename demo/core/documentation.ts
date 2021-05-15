@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {assertUnreachable} from 'gs-tools/export/typescript';
-import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
-import {element, PersonaContext, renderCustomElement, RenderSpec, single} from 'persona';
+import {$div, element, PersonaContext, renderCustomElement, RenderSpec, single} from 'persona';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -22,7 +21,7 @@ const $documentation = {
 };
 
 const $ = {
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     content: single('#content'),
   }),
 };

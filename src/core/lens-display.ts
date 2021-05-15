@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
-import {element, PersonaContext} from 'persona';
+import {$div, element, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
@@ -15,7 +14,7 @@ export const $lensDisplay = {
 };
 
 export const $ = {
-  root: element('root', instanceofType(HTMLDivElement), {}),
+  root: element('root', $div, {}),
 };
 
 @_p.customElement({

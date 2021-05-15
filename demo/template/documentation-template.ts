@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$button, $drawerLayout, $icon, BaseThemedCtrl, Button, DrawerLayout, Icon, ListItemLayout, registerSvg, _p} from 'mask';
-import {attributeIn, element, host, PersonaContext, stringParser, textContent} from 'persona';
+import {$h3, attributeIn, element, host, PersonaContext, stringParser, textContent} from 'persona';
 import {Observable} from 'rxjs';
 import {map, scan, startWith} from 'rxjs/operators';
 
@@ -23,7 +22,7 @@ const $ = {
   drawerButton: element('drawerButton', $button, {}),
   drawerIcon: element('drawerIcon', $icon, {}),
   host: host($documentationTemplate.api),
-  title: element('title', instanceofType(HTMLHeadingElement), {
+  title: element('title', $h3, {
     text: textContent(),
   }),
 };

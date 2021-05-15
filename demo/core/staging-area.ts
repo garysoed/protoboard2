@@ -1,8 +1,7 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$button, $lineLayout, BaseThemedCtrl, Button, LineLayout, _p} from 'mask';
-import {element, multi, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
+import {$div, element, multi, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -18,7 +17,7 @@ export const $stagingArea = {
 };
 
 const $ = {
-  list: element('list', instanceofType(HTMLDivElement), {
+  list: element('list', $div, {
     pieces: multi('#pieces'),
     regions: multi('#regions'),
   }),

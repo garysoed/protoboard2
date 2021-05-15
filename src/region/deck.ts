@@ -1,11 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {element, host, multi, PersonaContext} from 'persona';
+import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
-import {Logger} from 'santa';
 
 import {DropAction} from '../action/drop-action';
 import {ShuffleAction} from '../action/shuffle-action';
@@ -18,10 +16,6 @@ import {containerSpec, ContainerSpec} from '../types/container-spec';
 import template from './deck.html';
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGER = new Logger('pb.Deck');
-
-
 export const $deck = {
   tag: 'pb-deck',
   api: {...$baseComponent.api},
@@ -29,7 +23,7 @@ export const $deck = {
 
 export const $ = {
   host: host($deck.api),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     contents: multi('#contents'),
   }),
 };

@@ -1,8 +1,7 @@
 import {assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
-import {PersonaContext, element, host} from 'persona';
+import {$div, element, host, PersonaContext} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {Observable, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -51,7 +50,7 @@ const KEY = TriggerType.T;
 
 test('@protoboard2/core/base-component', init => {
   const _ = init(() => {
-    const $targetEl = element('target', instanceofType(HTMLElement), {});
+    const $targetEl = element('target', $div, {});
     const el = document.createElement('div');
     const targetEl = document.createElement('div');
     targetEl.id = 'target';

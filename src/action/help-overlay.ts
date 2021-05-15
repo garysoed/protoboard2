@@ -1,8 +1,7 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$keyboard, BaseThemedCtrl, Keyboard, SpecialKeys, _p} from 'mask';
-import {classToggle, element, multi, onDom, PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
+import {$div, $tbody, $template, classToggle, element, multi, onDom, PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -18,14 +17,14 @@ export const $helpOverlay = {
 };
 
 export const $ = {
-  content: element('content', instanceofType(HTMLTableSectionElement), {
+  content: element('content', $tbody, {
     rows: multi('#rows'),
   }),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     click: onDom('click'),
     isVisibleClass: classToggle('isVisible'),
   }),
-  template: element('tableRow', instanceofType(HTMLTemplateElement), {}),
+  template: element('tableRow', $template, {}),
 };
 
 @_p.customElement({

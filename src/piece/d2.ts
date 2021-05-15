@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {PersonaContext, attributeOut, element, host, slotted, stringParser} from 'persona';
+import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
 import {Observable} from 'rxjs';
 
 import {FlipAction} from '../action/flip-action';
@@ -32,10 +31,10 @@ export const $d2 = {
 
 export const $ = {
   host: host($d2.api),
-  face: element('face', instanceofType(HTMLSlotElement), {
+  face: element('face', $slot, {
     name: attributeOut('name', stringParser()),
   }),
-  slot: element('face', instanceofType(HTMLSlotElement), {
+  slot: element('face', $slot, {
     slotted: slotted(),
   }),
 };

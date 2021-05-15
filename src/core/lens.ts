@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, _p} from 'mask';
-import {element, host, onDom, PersonaContext} from 'persona';
+import {$slot, element, host, onDom, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
@@ -20,7 +19,7 @@ export const $ = {
     onMouseEnter: onDom('mouseenter'),
     onMouseLeave: onDom('mouseleave'),
   }),
-  details: element('details', instanceofType(HTMLSlotElement), {
+  details: element('details', $slot, {
     onSlotChange: onDom('slotchange'),
   }),
 };

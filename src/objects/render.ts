@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
-import {instanceofType} from 'gs-types';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
+import {$div, attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
@@ -21,7 +20,7 @@ export const $render = {
 
 const $ = {
   host: host($render.api),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     content: single('#content'),
   }),
 };

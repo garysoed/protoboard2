@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {PersonaContext, element, slotted, host} from 'persona';
+import {$slot, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
 import {PickAction} from '../action/pick-action';
@@ -46,7 +45,7 @@ export function d1Spec<P>(input: Input<P>): D1Spec<P> {
 
 const $ = {
   host: host($d1.api),
-  slot: element('slot', instanceofType(HTMLSlotElement), {
+  slot: element('slot', $slot, {
     slotted: slotted(),
   }),
 };

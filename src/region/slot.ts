@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
 import {_p} from 'mask';
-import {element, host, multi, PersonaContext} from 'persona';
+import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
@@ -27,7 +26,7 @@ export const $ = {
   host: host({
     ...$slot.api,
   }),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     content: multi('#content'),
   }),
 };

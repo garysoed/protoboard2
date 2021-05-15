@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$button, ACTION_EVENT, BaseThemedCtrl, Button, LineLayout, registerSvg, _p} from 'mask';
-import {attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec, stringParser} from 'persona';
+import {$section, attributeIn, element, enumParser, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec, stringParser} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -33,11 +32,11 @@ export const $pieceTemplate = {
 const $ = {
   host: host($pieceTemplate.api),
   addButton: element('addbutton', $button, {}),
-  editors: element('editors', instanceofType(HTMLElement), {
+  editors: element('editors', $section, {
     content: multi('#content'),
     onClick: onDom<ClickButtonEvent>(ACTION_EVENT),
   }),
-  previews: element('previews', instanceofType(HTMLElement), {
+  previews: element('previews', $section, {
     content: multi('#content'),
     onClick: onDom<ClickPreviewEvent>(ACTION_EVENT),
   }),

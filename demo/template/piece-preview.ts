@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {$icon, ActionEvent, ACTION_EVENT, BaseThemedCtrl, _p} from 'mask';
-import {attributeIn, dispatcher, element, host, integerParser, onDom, PersonaContext, stringParser} from 'persona';
+import {$div, attributeIn, dispatcher, element, host, integerParser, onDom, PersonaContext, stringParser} from 'persona';
 import {EMPTY, Observable, of as observableOf} from 'rxjs';
 import {switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -22,7 +21,7 @@ export const $piecePreview = {
 const $ = {
   host: host($piecePreview.api),
   icon: element('icon', $icon, {}),
-  root: element('root', instanceofType(HTMLDivElement), {
+  root: element('root', $div, {
     onClick: onDom('click'),
   }),
 };
