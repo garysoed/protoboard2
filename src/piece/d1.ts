@@ -73,10 +73,15 @@ export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
     super(
         [
           {
+            defaultConfig: {stops: [0, 90, 180, 270]},
             trigger: {type: TriggerType.R},
-            action: new RotateAction({stops: [0, 90, 180, 270]}),
+            action: new RotateAction(),
           },
-          {trigger: TriggerType.CLICK, action: new PickAction()},
+          {
+            defaultConfig: {},
+            trigger: TriggerType.CLICK,
+            action: new PickAction(),
+          },
         ],
         context,
         $,

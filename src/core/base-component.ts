@@ -1,6 +1,7 @@
 import {$resolveState} from 'grapevine';
-import {$asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
+import {extend} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, onMutation, PersonaContext} from 'persona';
@@ -19,9 +20,14 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export interface ActionSpec {
+export interface ActionSpec<C> {
+  readonly defaultConfig: C;
   readonly trigger: UnreservedTriggerSpec;
-  readonly action: BaseAction<any, {}>;
+  readonly action: BaseAction<any, C>;
+}
+
+interface NormalizedActionSpec<C> extends Omit<ActionSpec<C>, 'trigger'> {
+  readonly trigger: DetailedTriggerSpec<TriggerType>;
 }
 
 export const $baseComponent = {
@@ -38,7 +44,7 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly triggerActions: readonly ActionSpec[],
+      private readonly triggerActions: ReadonlyArray<ActionSpec<{}>>,
       context: PersonaContext,
       spec: S,
   ) {
@@ -48,21 +54,30 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   @cache()
-  get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> {
-    const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> = new Map($pipe(
+  get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, NormalizedActionSpec<{}>> {
+    const allActions: Array<NormalizedActionSpec<{}>> = $pipe(
         this.triggerActions,
-        $map(({trigger, action}) => {
+        $map((spec) => {
+          const trigger = spec.trigger;
           if (typeof trigger === 'string') {
-            return [{type: trigger}, action] as const;
+            return {...spec, trigger: {type: trigger}};
           }
-          return [trigger, action] as const;
+          return {...spec, trigger};
         }),
-        $asMap(),
-    ));
+        $asArray(),
+    );
     const helpAction = new HelpAction(allActions);
-    allActions.set({type: TriggerType.QUESTION, shift: true}, helpAction);
+    allActions.push({
+      defaultConfig: {},
+      trigger: {type: TriggerType.QUESTION, shift: true},
+      action: helpAction,
+    });
 
-    return allActions;
+    return $pipe(
+        allActions,
+        $map(spec => [spec.trigger, spec] as const),
+        $asMap(),
+    );
   }
 
   /**
@@ -136,10 +151,10 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   private getConfig$<C extends {}>(
-      action: BaseAction<O, C>,
-  ): Observable<Partial<C>> {
-    const attributePrefix = `pb-${action.key}-`;
-    const attributeFilter = Object.keys(action.converters)
+      actionSpec: NormalizedActionSpec<C>,
+  ): Observable<C> {
+    const attributePrefix = `pb-${actionSpec.action.key}-`;
+    const attributeFilter = Object.keys(actionSpec.action.converters)
         .map(configKey => `${attributePrefix}${configKey}`);
     const $host = host({
       onMutation: onMutation({attributes: true, attributeFilter}),
@@ -165,7 +180,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             const rawValue = hostEl.getAttribute(attribute);
             const configKey = attribute.substr(attributePrefix.length) as keyof C;
 
-            const parseResult = action.converters[configKey]
+            const parseResult = actionSpec.action.converters[configKey]
                 .convertBackward(rawValue || '');
             if (parseResult.success) {
               changedConfig[configKey] = parseResult.result;
@@ -175,19 +190,20 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
           return changedConfig;
         }),
         scan((config, newConfig) => ({...config, ...newConfig}), {} as Partial<C>),
+        extend(actionSpec.defaultConfig),
     );
   }
 
   private setupActions(): void {
-    for (const [trigger, action] of this.actionsMap) {
-      this.addSetup(this.setupTrigger(trigger, action));
-      this.addSetup(action.run());
+    for (const [trigger, actionSpec] of this.actionsMap) {
+      this.addSetup(this.setupTrigger(trigger, actionSpec));
+      this.addSetup(actionSpec.action.run());
     }
   }
 
-  private setupTrigger(
+  private setupTrigger<C>(
       triggerSpec: DetailedTriggerSpec<TriggerType>,
-      action: BaseAction<O, {}>,
+      actionSpec: NormalizedActionSpec<C>,
   ): Observable<unknown> {
     const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
       this.createTriggerKey(triggerSpec) :
@@ -200,8 +216,8 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
                   event.metaKey === (triggerSpec.meta ?? false) &&
                   event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            action.getOperator({
-              config$: this.getConfig$(action),
+            actionSpec.action.getOperator({
+              config$: this.getConfig$(actionSpec),
               objectId$: this.objectId$,
               vine: this.context.vine,
             }),

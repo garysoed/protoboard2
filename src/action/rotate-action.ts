@@ -1,12 +1,11 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {extend} from 'gs-tools/export/rxjs';
 import {identity} from 'nabu';
 import {listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -21,9 +20,7 @@ export interface Config {
  * @thModule action
  */
 export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
-  constructor(
-      private readonly defaultConfig: Config,
-  ) {
+  constructor() {
     super(
         'rotate',
         'Rotate',
@@ -33,10 +30,7 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
 
   getOperator(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(context.vine);
-    const stops$ = context.config$.pipe(
-        extend(this.defaultConfig),
-        map(config => config.stops),
-    );
+    const stops$ = context.config$.pipe(map(config => config.stops));
     return pipe(
         withLatestFrom(this.getObject$(context), stops$),
         switchMap(([, obj, stops]) => {

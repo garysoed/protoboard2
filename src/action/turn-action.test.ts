@@ -30,13 +30,13 @@ test('@protoboard2/action/turn-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
-    const config$ = new BehaviorSubject<Partial<Config>>({});
+    const config$ = new BehaviorSubject<Config>({count: 2});
     const context = createFakeActionContext<PieceSpec<any>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = new TurnAction({count: 2});
+    const action = new TurnAction();
 
     run(action.run());
 

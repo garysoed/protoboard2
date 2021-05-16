@@ -12,7 +12,7 @@ import {moveObject} from './util/move-object';
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Config { }
+export interface Config { }
 
 /**
  * Lets the user pick up the object.
@@ -24,11 +24,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
    * @internal
    */
   constructor() {
-    super(
-        'pick',
-        'Pick',
-        {},
-    );
+    super('pick', 'Pick', {});
   }
 
   getOperator(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {

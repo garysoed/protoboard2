@@ -9,7 +9,7 @@ import {ContainerSpec} from '../types/container-spec';
 import {moveObject} from './util/move-object';
 
 
-interface Config {
+export interface Config {
 }
 
 

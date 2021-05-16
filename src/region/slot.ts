@@ -54,7 +54,7 @@ export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          {trigger: TriggerType.D, action: new DropAction(() => 0)},
+          {trigger: TriggerType.D, defaultConfig: {}, action: new DropAction(() => 0)},
         ],
         context,
         $,

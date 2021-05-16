@@ -1,10 +1,10 @@
 import {$stateService} from 'grapevine';
-import {extend, filterNonNullable} from 'gs-tools/export/rxjs';
+import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {integerParser} from 'persona';
 import {of as observableOf, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -21,20 +21,13 @@ export const KEY = 'turn';
  * @thModule action
  */
 export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor(private readonly defaultConfig: Config) {
-    super(
-        KEY,
-        'Turn',
-        {count: integerParser()},
-    );
+  constructor() {
+    super(KEY, 'Turn', {count: integerParser()});
   }
 
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(context.vine);
-    const faceCount$ = context.config$.pipe(
-        extend(this.defaultConfig),
-        map(config => config.count),
-    );
+    const faceCount$ = context.config$.pipe(map(config => config.count));
     return pipe(
         withLatestFrom(this.getObject$(context), faceCount$),
         switchMap(([, obj, faceCount]) => {

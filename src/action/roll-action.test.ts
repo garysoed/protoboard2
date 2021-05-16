@@ -36,15 +36,13 @@ test('@protoboard2/action/roll-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
-    const config$ = new BehaviorSubject<Partial<Config>>({});
+    const config$ = new BehaviorSubject<Config>({count: 3});
     const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(objectId),
       vine,
     });
-    const action = new RollAction(
-        {count: 3},
-    );
+    const action = new RollAction();
 
     run(action.run());
 

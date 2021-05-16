@@ -5,6 +5,7 @@ import {switchMapTo} from 'rxjs/operators';
 
 import {BaseAction, TriggerEvent} from '../core/base-action';
 import {TriggerType} from '../core/trigger-spec';
+import {ObjectSpec} from '../types/object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {HelpAction} from './help-action';
@@ -27,15 +28,17 @@ class TestAction extends BaseAction<PieceSpec<{}>, {}> {
 }
 
 test('@protoboard2/action/help-action', init => {
-  const TRIGGER = TriggerType.T;
+  const TRIGGER = {type: TriggerType.T};
 
   const _ = init(() => {
     const el = document.createElement('div');
     const vine = new Vine({appName: 'test'});
     const testAction = new TestAction();
-    const context = createFakeActionContext({vine});
+    const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
 
-    const action = new HelpAction(new Map([[TRIGGER, testAction]]));
+    const action = new HelpAction([
+      {defaultConfig: {}, trigger: TRIGGER, action: testAction},
+    ]);
     run(action.run());
 
     return {action, context, el, testAction, vine};

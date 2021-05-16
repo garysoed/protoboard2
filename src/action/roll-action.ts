@@ -1,10 +1,9 @@
 import {$stateService} from 'grapevine';
-import {extend} from 'gs-tools/export/rxjs';
 import {integerParser} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -19,21 +18,12 @@ export interface Config {
  * Lets the user pick a random face of the object
  */
 export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor(
-      private readonly defaultConfig: Config,
-  ) {
-    super(
-        'roll',
-        'Roll',
-        {count: integerParser()},
-    );
+  constructor() {
+    super('roll', 'Roll', {count: integerParser()});
   }
 
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
-    const faceCount$ = context.config$.pipe(
-        extend(this.defaultConfig),
-        map(config => config.count),
-    );
+    const faceCount$ = context.config$.pipe(map(config => config.count));
     return pipe(
         withLatestFrom(this.getObject$(context), faceCount$),
         tap(([, obj, faceCount]) => {

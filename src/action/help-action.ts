@@ -1,28 +1,34 @@
+import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {OperatorFunction, pipe} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
-import {TriggerSpec} from '../core/trigger-spec';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {ActionSpec} from '../core/base-component';
+import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 
 import {$helpService} from './help-service';
 
 
+interface NormalizedActionSpec extends Omit<ActionSpec<{}>, 'trigger'> {
+  readonly trigger: DetailedTriggerSpec<TriggerType>;
+}
+
 export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
   constructor(
-      private readonly actions: ReadonlyMap<TriggerSpec, BaseAction<any, unknown>>,
+      private readonly actionsArray: readonly NormalizedActionSpec[],
   ) {
-    super(
-        'help',
-        'Help',
-        {},
-    );
+    super('help', 'Help', {});
   }
 
   getOperator(context: ActionContext<ObjectSpec<any>, {}>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
         tap(() => {
-          $helpService.get(context.vine).show(this.actions);
+          $helpService.get(context.vine).show($pipe(
+              this.actionsArray,
+              $map(spec => [spec.trigger, spec.action] as const),
+              $asMap(),
+          ));
         }),
     );
   }

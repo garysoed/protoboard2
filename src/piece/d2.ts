@@ -61,22 +61,30 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
     super(
         [
           {
+            defaultConfig: {stops: [0, 90, 180, 270]},
             trigger: TriggerType.R,
-            action: new RotateAction({stops: [0, 90, 180, 270]}),
+            action: new RotateAction(),
           },
           {
+            defaultConfig: {count: 2},
             trigger: TriggerType.F,
-            action: new FlipAction({count: 2}),
+            action: new FlipAction(),
           },
           {
+            defaultConfig: {count: 2},
             trigger: TriggerType.T,
-            action: new TurnAction({count: 2}),
+            action: new TurnAction(),
           },
           {
+            defaultConfig: {count: 2},
             trigger: TriggerType.L,
-            action: new RollAction({count: 2}),
+            action: new RollAction(),
           },
-          {trigger: TriggerType.CLICK, action: new PickAction()},
+          {
+            defaultConfig: {},
+            trigger: TriggerType.CLICK,
+            action: new PickAction(),
+          },
         ],
         context,
         $,

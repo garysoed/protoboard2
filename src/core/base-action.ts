@@ -9,7 +9,7 @@ import {ObjectSpec} from '../types/object-spec';
 
 
 export interface ActionContext<O extends ObjectSpec<any>, C> {
-  readonly config$: Observable<Partial<C>>
+  readonly config$: Observable<C>
   readonly objectId$: Observable<StateId<O>|null>;
   readonly vine: Vine;
 }

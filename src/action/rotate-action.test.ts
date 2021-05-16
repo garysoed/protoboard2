@@ -29,13 +29,13 @@ test('@protoboard2/action/rotate-action', init => {
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
 
-    const config$ = new BehaviorSubject<Partial<Config>>({});
+    const config$ = new BehaviorSubject<Config>({stops: [11, 22, 33]});
     const context = createFakeActionContext<PieceSpec<IsRotatable>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = new RotateAction({stops: [11, 22, 33]});
+    const action = new RotateAction();
     run(action.run());
 
     return {$rotationDeg, action, config$, context, el, stateService};

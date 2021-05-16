@@ -31,13 +31,13 @@ test('@protoboard2/action/flip-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     });
 
-    const config$ = new BehaviorSubject<Partial<Config>>({});
+    const config$ = new BehaviorSubject<Config>({count: 4});
     const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       vine: personaContext.vine,
     });
-    const action = new FlipAction({count: 4});
+    const action = new FlipAction();
 
     run(action.run());
 
