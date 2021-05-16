@@ -3,10 +3,10 @@ import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} 
 import {cache} from 'gs-tools/export/data';
 import {identity} from 'nabu';
 import {listParser} from 'persona';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -32,13 +32,17 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
         context,
         defaultConfig,
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
-  private get handleTrigger$(): Observable<unknown> {
+  @cache()
+  private get stops$(): Observable<readonly number[]> {
+    return this.config$.pipe(map(config => config.stops));
+  }
+
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(this.vine);
-    return this.onTrigger$.pipe(
+    return pipe(
         withLatestFrom(this.objectSpec$),
         switchMap(([, objectSpec]) => {
           if (!objectSpec) {
@@ -69,10 +73,5 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
           );
         }),
     );
-  }
-
-  @cache()
-  private get stops$(): Observable<readonly number[]> {
-    return this.config$.pipe(map(config => config.stops));
   }
 }

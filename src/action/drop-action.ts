@@ -1,5 +1,6 @@
 import {$stateService} from 'grapevine';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {cache} from 'gs-tools/export/data';
+import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
@@ -31,11 +32,10 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
         context,
         defaultConfig,
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
-  private get handleTrigger$(): Observable<unknown> {
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.objectSpec$,
       $activeSpec.get(this.vine),
@@ -43,7 +43,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
         .pipe(
             switchMap(([toState, activeState]) => {
               if (!toState || !activeState) {
-                return observableOf(null);
+                return of(null);
               }
 
               return $stateService.get(this.vine).resolve(activeState.payload.$contentSpecs).pipe(
@@ -51,7 +51,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                     const normalizedActiveContents = activeContents ?? [];
                     const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
                     if (!movedObjectSpec) {
-                      return observableOf(null);
+                      return of(null);
                     }
 
                     return moveObject(
@@ -74,17 +74,15 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
               );
             }),
         );
+    return pipe(
+        withLatestFrom(moveObjectFn$),
+        tap(([event, moveObjectFn]) => {
+          if (!moveObjectFn) {
+            return;
+          }
 
-    return this.onTrigger$
-        .pipe(
-            withLatestFrom(moveObjectFn$),
-            tap(([event, moveObjectFn]) => {
-              if (!moveObjectFn) {
-                return;
-              }
-
-              moveObjectFn(event);
-            }),
-        );
+          moveObjectFn(event);
+        }),
+    );
   }
 }

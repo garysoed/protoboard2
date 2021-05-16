@@ -3,7 +3,7 @@ import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
 import {$div, element, host, integerParser, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {Observable, ReplaySubject} from 'rxjs';
+import {Observable, ReplaySubject, OperatorFunction, pipe, Subject} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
@@ -23,6 +23,7 @@ interface ActionConfig {
 
 class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
+  readonly onTrigger$ = new Subject<TriggerEvent>();
 
   constructor(context: ActionContext<PieceSpec<{}>, ActionConfig>) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
@@ -41,8 +42,13 @@ class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
         );
   }
 
-  get onTriggerOut$(): Observable<unknown> {
-    return this.onTrigger$;
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
+    return pipe(
+        tap(event => {
+          this.onTrigger$.next(event);
+        }),
+    );
   }
 }
 
@@ -99,7 +105,7 @@ test('@protoboard2/core/base-component', init => {
   test('createTriggerClick', () => {
     should('trigger click based actions', () => {
       const onTrigger$ = createSpySubject(
-          [..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1].onTrigger$,
+          ([..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1] as TestAction).onTrigger$,
       );
       _.targetEl.dispatchEvent(new MouseEvent('click'));
 
@@ -110,7 +116,7 @@ test('@protoboard2/core/base-component', init => {
   test('createTriggerKey', _, init => {
     const _ = init(_ => {
       const onTrigger$ = createSpySubject(
-          [..._.component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+          ([..._.component.actionsMap].find(([{type}]) => type === KEY)![1] as TestAction).onTrigger$,
       );
 
       return {
@@ -184,7 +190,7 @@ test('@protoboard2/core/base-component', init => {
       run(component.run());
 
       const onTrigger$ = createSpySubject(
-          [...component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+          ([...component.actionsMap].find(([{type}]) => type === KEY)![1] as TestAction).onTrigger$,
       );
 
       // Hover over the element.
@@ -222,7 +228,7 @@ test('@protoboard2/core/base-component', init => {
       run(component.run());
 
       const onTrigger$ = createSpySubject(
-          [...component.actionsMap].find(([{type}]) => type === KEY)![1].onTrigger$,
+          ([...component.actionsMap].find(([{type}]) => type === KEY)![1] as TestAction).onTrigger$,
       );
 
       // Hover over the element.

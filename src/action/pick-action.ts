@@ -1,10 +1,10 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
 import {PieceSpec} from '../types/piece-spec';
@@ -35,12 +35,10 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
         context,
         defaultConfig,
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
   @cache()
-  private get handleTrigger$(): Observable<unknown> {
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectId$,
       $getParent.get(this.vine),
@@ -54,7 +52,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
             }),
             switchMap(fromObjectId => {
               if (!fromObjectId) {
-                return observableOf(null);
+                return of(null);
               }
               return $resolveState.get(this.vine)(fromObjectId);
             }),
@@ -62,7 +60,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
     const activeContents$ = $activeSpec.get(this.vine).pipe(
         switchMap(activeSpec => {
           if (!activeSpec) {
-            return observableOf(undefined);
+            return of(undefined);
           }
           return $stateService.get(this.vine).resolve(activeSpec.payload.$contentSpecs);
         }),
@@ -77,7 +75,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
         .pipe(
             switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
               if (!fromObjectSpec || !activeState || !movedObjectId) {
-                return observableOf(null);
+                return of(null);
               }
 
               return moveObject(
@@ -106,16 +104,15 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
             }),
         );
 
-    return this.onTrigger$
-        .pipe(
-            withLatestFrom(moveFn$),
-            tap(([, moveFn]) => {
-              if (!moveFn) {
-                return;
-              }
+    return pipe(
+        withLatestFrom(moveFn$),
+        tap(([, moveFn]) => {
+          if (!moveFn) {
+            return;
+          }
 
-              moveFn();
-            }),
-        );
+          moveFn();
+        }),
+    );
   }
 }

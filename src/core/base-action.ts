@@ -4,8 +4,8 @@ import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {Converter} from 'nabu';
 import {PersonaContext} from 'persona';
-import {Observable, of as observableOf, Subject} from 'rxjs';
-import {switchMap, map} from 'rxjs/operators';
+import {Observable, of, OperatorFunction} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
@@ -39,8 +39,6 @@ export type ConverterOf<O> = {
  * @thModule action
  */
 export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runnable {
-  readonly #onTrigger$ = new Subject<TriggerEvent>();
-
   /**
    * Instantiates a new BaseAction.
    *
@@ -75,7 +73,7 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
     return this.context.objectId$.pipe(
         switchMap(objectId => {
           if (!objectId) {
-            return observableOf(undefined);
+            return of(undefined);
           }
 
           return $stateService.get(this.vine).resolve(objectId);
@@ -83,23 +81,10 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
     );
   }
 
+  abstract get operator(): OperatorFunction<TriggerEvent, unknown>;
+
   @cache()
   get vine(): Vine {
     return this.context.personaContext.vine;
-  }
-
-  /**
-   * Emits whenever the action is triggered.
-   */
-  @cache()
-  get onTrigger$(): Observable<TriggerEvent> {
-    return this.#onTrigger$;
-  }
-
-  /**
-   * Triggers the action.
-   */
-  trigger(event: TriggerEvent): void {
-    this.#onTrigger$.next(event);
   }
 }

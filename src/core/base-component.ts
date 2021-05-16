@@ -4,8 +4,8 @@ import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, InputsOf, onDom, onMutation, PersonaContext} from 'persona';
-import {EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
-import {filter, map, mapTo, switchMap, startWith, tap, throttleTime, withLatestFrom, scan} from 'rxjs/operators';
+import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
+import {filter, map, mapTo, scan, startWith, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {HelpAction} from '../action/help-action';
@@ -93,7 +93,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             return EMPTY;
           }
 
-          return observableOf(objectId as StateId<O>);
+          return of(objectId as StateId<O>);
         }),
     );
   }
@@ -217,9 +217,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
                   event.metaKey === (triggerSpec.meta ?? false) &&
                   event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            tap(event => {
-              action.trigger(event);
-            }),
+            action.operator,
         );
   }
 }

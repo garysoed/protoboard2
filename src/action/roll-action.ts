@@ -1,10 +1,10 @@
 import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {integerParser} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -30,13 +30,16 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
         context,
         defaultConfig,
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
   @cache()
-  private get handleTrigger$(): Observable<unknown> {
-    return this.onTrigger$.pipe(
+  private get faceCount$(): Observable<number> {
+    return this.config$.pipe(map(config => config.count));
+  }
+
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
+    return pipe(
         withLatestFrom(
             this.objectSpec$,
             this.faceCount$,
@@ -54,10 +57,5 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           $stateService.get(this.vine).modify(x => x.set(objectSpec.payload.$currentFaceIndex, nextIndex));
         }),
     );
-  }
-
-  @cache()
-  private get faceCount$(): Observable<number> {
-    return this.config$.pipe(map(config => config.count));
   }
 }

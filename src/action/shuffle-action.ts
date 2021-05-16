@@ -1,7 +1,8 @@
 import {cache} from 'gs-tools/export/data';
-import {NEVER, Observable} from 'rxjs';
+import {NEVER, OperatorFunction} from 'rxjs';
+import {switchMapTo} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {ContainerSpec} from '../types/container-spec';
 
 
@@ -14,26 +15,10 @@ export class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>>
         context,
         {},
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
   @cache()
-  private get handleTrigger$(): Observable<unknown> {
-    return NEVER;
-    // const contentIds$ = this.context.state$.pipe(
-    //     switchMap(state => state.payload.contentIds),
-    // );
-    // return this.onTrigger$
-    //     .pipe(
-    //         withLatestFrom(
-    //             this.context.state$,
-    //             contentIds$,
-    //             $random.get(this.vine),
-    //         ),
-    //         tap(([, state, contentIds, rng]) => {
-    //           state.payload.contentIds.next(shuffle(contentIds, rng));
-    //         }),
-    //     );
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
+    return switchMapTo(NEVER);
   }
 }

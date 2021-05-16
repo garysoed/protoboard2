@@ -54,7 +54,7 @@ test('@protoboard2/action/roll-action', init => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
-      _.action.trigger({mouseX: 0, mouseY: 0});
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
     });
@@ -66,7 +66,7 @@ test('@protoboard2/action/roll-action', init => {
 
       _.seed.values = [0.9];
 
-      _.action.trigger({mouseX: 0, mouseY: 0});
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });

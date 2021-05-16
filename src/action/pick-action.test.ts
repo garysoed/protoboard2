@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject} from 'rxjs';
+import {ReplaySubject, of} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
@@ -91,7 +91,7 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
-      _.action.trigger({mouseX: 0, mouseY: 0});
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),

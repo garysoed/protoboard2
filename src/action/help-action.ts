@@ -1,7 +1,8 @@
-import {Observable} from 'rxjs';
+import {cache} from 'gs-tools/export/data';
+import {OperatorFunction, pipe} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {TriggerSpec} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 
@@ -20,17 +21,14 @@ export class HelpAction extends BaseAction<ObjectSpec<any>> {
         context,
         {},
     );
-
-    this.addSetup(this.setupHandleTrigger());
   }
 
-  private setupHandleTrigger(): Observable<unknown> {
-    const helpService = $helpService.get(this.vine);
-    return this.onTrigger$
-        .pipe(
-            tap(() => {
-              helpService.show(this.actions);
-            }),
-        );
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
+    return pipe(
+        tap(() => {
+          $helpService.get(this.vine).show(this.actions);
+        }),
+    );
   }
 }

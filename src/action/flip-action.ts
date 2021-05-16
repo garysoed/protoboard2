@@ -2,10 +2,10 @@ import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {integerParser} from 'persona';
-import {Observable, of as observableOf} from 'rxjs';
+import {Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -36,18 +36,21 @@ export class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
         context,
         defaultConfig,
     );
-
-    this.addSetup(this.handleTrigger$);
   }
 
   @cache()
-  private get handleTrigger$(): Observable<unknown> {
+  private get faceCount$(): Observable<number> {
+    return this.config$.pipe(map(config => config.count));
+  }
+
+  @cache()
+  get operator(): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(this.vine);
-    return this.onTrigger$.pipe(
+    return pipe(
         withLatestFrom(this.objectSpec$, this.faceCount$),
         switchMap(([, objectSpec, faceCount]) => {
           if (!objectSpec) {
-            return observableOf(null);
+            return of(null);
           }
 
           // TODO: Fix
@@ -62,10 +65,5 @@ export class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
           );
         }),
     );
-  }
-
-  @cache()
-  private get faceCount$(): Observable<number> {
-    return this.config$.pipe(map(config => config.count));
   }
 }
