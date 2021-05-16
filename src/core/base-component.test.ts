@@ -30,11 +30,11 @@ interface TestValue {
 class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly onTrigger$ = new Subject<TestValue>();
 
-  constructor(context: ActionContext<PieceSpec<{}>>) {
+  constructor(context: ActionContext) {
     super(ACTION_KEY, 'Test', {value: integerParser()}, context);
   }
 
-  getOperator(context: OperatorContext<ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
         withLatestFrom(context.config$.pipe(extend({value: DEFAULT_CONFIG_VALUE}))),
         tap(([event, config]) => {
@@ -50,7 +50,7 @@ const $ = {
 
 class TestComponent extends BaseComponent<PieceSpec<{}>, typeof $> {
   constructor(
-      triggerActionMap: ReadonlyArray<ActionSpec<PieceSpec<{}>>>,
+      triggerActionMap: readonly ActionSpec[],
       context: PersonaContext,
   ) {
     super(triggerActionMap, context, $);

@@ -1,23 +1,22 @@
-import {$stateService, Vine} from 'grapevine';
+import {$resolveState, Vine} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {Converter} from 'nabu';
 import {PersonaContext} from 'persona';
-import {Observable, of, OperatorFunction} from 'rxjs';
+import {Observable, OperatorFunction} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
 
-export interface ActionContext<O extends ObjectSpec<any>> {
-  readonly host: Element;
+export interface ActionContext {
   readonly personaContext: PersonaContext;
-  readonly objectId$: Observable<StateId<O>|null>;
 }
 
-export interface OperatorContext<C> {
+export interface OperatorContext<O extends ObjectSpec<any>, C> {
   readonly config$: Observable<Partial<C>>
+  readonly objectId$: Observable<StateId<O>|null>;
 }
 
 export interface TriggerEvent {
@@ -55,25 +54,18 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C> extends Runnable 
       readonly key: string,
       readonly actionName: string,
       readonly converters: ConverterOf<C>,
-      protected readonly context: ActionContext<P>,
+      protected readonly context: ActionContext,
   ) {
     super();
   }
 
-  @cache()
-  get objectSpec$(): Observable<P|undefined> {
-    return this.context.objectId$.pipe(
-        switchMap(objectId => {
-          if (!objectId) {
-            return of(undefined);
-          }
-
-          return $stateService.get(this.vine).resolve(objectId);
-        }),
+  protected getObject$(context: OperatorContext<P, C>): Observable<P|undefined> {
+    return context.objectId$.pipe(
+        switchMap(objectId => $resolveState.get(this.context.personaContext.vine)(objectId)),
     );
   }
 
-  abstract getOperator(context: OperatorContext<C>): OperatorFunction<TriggerEvent, unknown>;
+  abstract getOperator(context: OperatorContext<P, C>): OperatorFunction<TriggerEvent, unknown>;
 
   @cache()
   get vine(): Vine {

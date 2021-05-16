@@ -2,7 +2,6 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {_p} from 'mask';
 import {createFakeContext, PersonaTesterFactory} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {TriggerType} from '../core/trigger-spec';
@@ -28,10 +27,7 @@ test('@protoboard2/action/help-overlay', init => {
     const shadowRoot = targetEl.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
     const testAction = new PickAction(
-        createFakeActionContext({
-          personaContext,
-          objectId$: observableOf(null),
-        }),
+        createFakeActionContext({personaContext}),
     );
     return {el, testAction, tester};
   });

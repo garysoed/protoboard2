@@ -7,7 +7,7 @@ import {ContainerSpec} from '../types/container-spec';
 
 
 export class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, {}> {
-  constructor(context: ActionContext<ContainerSpec<unknown, 'indexed'>>) {
+  constructor(context: ActionContext) {
     super(
         'shuffle',
         'Shuffle',

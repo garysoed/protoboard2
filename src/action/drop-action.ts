@@ -1,9 +1,8 @@
 import {$stateService} from 'grapevine';
-import {cache} from 'gs-tools/export/data';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -22,7 +21,7 @@ interface Config {
 export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<ContainerSpec<unknown, 'indexed'>>,
+      context: ActionContext,
   ) {
     super(
         'Drop',
@@ -32,10 +31,9 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
     );
   }
 
-  @cache()
-  getOperator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
-      this.objectSpec$,
+      this.getObject$(context),
       $activeSpec.get(this.vine),
     ])
         .pipe(

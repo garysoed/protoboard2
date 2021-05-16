@@ -14,6 +14,7 @@ import {ContainerSpec} from '../types/container-spec';
 
 import {DropAction} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -29,18 +30,16 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
+    const context = createFakeOperatorContext({objectId$});
 
     const action = new DropAction(
         () => 1,
-        createFakeActionContext({
-          personaContext,
-          objectId$,
-        }),
+        createFakeActionContext({personaContext}),
     );
 
     run(action.run());
 
-    return {action, el, objectId$, personaContext, stateService};
+    return {action, context, el, objectId$, personaContext, stateService};
   });
 
   test('onTrigger', () => {
@@ -100,7 +99,7 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator()));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),

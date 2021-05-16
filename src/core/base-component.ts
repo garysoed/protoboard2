@@ -19,11 +19,11 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export type BaseActionCtor<O extends ObjectSpec<any>> = (context: ActionContext<O>) => BaseAction<any, {}>;
+export type BaseActionCtor = (context: ActionContext) => BaseAction<any, {}>;
 
-export interface ActionSpec<O extends ObjectSpec<any>> {
+export interface ActionSpec {
   readonly trigger: UnreservedTriggerSpec;
-  readonly provider: BaseActionCtor<O>;
+  readonly provider: BaseActionCtor;
 }
 
 export const $baseComponent = {
@@ -40,7 +40,7 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<O>>,
+      private readonly triggerActions: readonly ActionSpec[],
       context: PersonaContext,
       spec: S,
   ) {
@@ -216,6 +216,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             }),
             action.getOperator({
               config$: this.getConfig$(action),
+              objectId$: this.objectId$,
             }),
         );
   }

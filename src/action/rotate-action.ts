@@ -22,7 +22,7 @@ export interface Config {
  */
 export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsRotatable>>,
+      context: ActionContext,
       private readonly defaultConfig: Config,
   ) {
     super(
@@ -33,20 +33,20 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
     );
   }
 
-  getOperator(context: OperatorContext<Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(this.vine);
     const stops$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.stops),
     );
     return pipe(
-        withLatestFrom(this.objectSpec$, stops$),
-        switchMap(([, objectSpec, stops]) => {
-          if (!objectSpec) {
+        withLatestFrom(this.getObject$(context), stops$),
+        switchMap(([, obj, stops]) => {
+          if (!obj) {
             return EMPTY;
           }
 
-          const $rotationDeg = objectSpec.payload.$rotationDeg;
+          const $rotationDeg = obj.payload.$rotationDeg;
           return stateService.resolve($rotationDeg).pipe(
               take(1),
               map(rotationDeg => rotationDeg ?? 0),

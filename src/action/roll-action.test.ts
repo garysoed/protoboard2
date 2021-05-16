@@ -6,9 +6,12 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {IsMultifaced} from '../payload/is-multifaced';
+import {PieceSpec} from '../types/piece-spec';
 
 import {RollAction, Config} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {createFakeOperatorContext} from './testing/fake-operator-context';
 import {$random} from './util/random';
 
 
@@ -35,17 +38,18 @@ test('@protoboard2/action/roll-action', init => {
     })));
 
     const config$ = new BehaviorSubject<Partial<Config>>({});
+    const context = createFakeOperatorContext<PieceSpec<IsMultifaced>, Config>({
+      config$,
+      objectId$: of(objectId),
+    });
     const action = new RollAction(
-        createFakeActionContext({
-          personaContext,
-          objectId$: of(objectId),
-        }),
+        createFakeActionContext({personaContext}),
         {count: 3},
     );
 
     run(action.run());
 
-    return {$faceIndex, action, config$, el, seed, stateService};
+    return {$faceIndex, action, config$, context, el, seed, stateService};
   });
 
   test('handleTrigger', () => {
@@ -53,7 +57,7 @@ test('@protoboard2/action/roll-action', init => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
     });
@@ -65,7 +69,7 @@ test('@protoboard2/action/roll-action', init => {
 
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });

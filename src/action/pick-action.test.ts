@@ -14,6 +14,7 @@ import {PieceSpec} from '../types/piece-spec';
 
 import {PickAction} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -29,17 +30,14 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
-
+    const context = createFakeOperatorContext({objectId$});
     const action = new PickAction(
-        createFakeActionContext({
-          personaContext,
-          objectId$,
-        }),
+        createFakeActionContext({personaContext}),
     );
 
     run(action.run());
 
-    return {action, el, objectId$, personaContext, stateService};
+    return {action, context, el, objectId$, personaContext, stateService};
   });
 
   test('onTrigger', () => {
@@ -90,7 +88,7 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator()));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),

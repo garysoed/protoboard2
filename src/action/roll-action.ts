@@ -20,7 +20,7 @@ export interface Config {
  */
 export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsMultifaced>>,
+      context: ActionContext,
       private readonly defaultConfig: Config,
   ) {
     super(
@@ -31,18 +31,15 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
     );
   }
 
-  getOperator(context: OperatorContext<Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const faceCount$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.count),
     );
     return pipe(
-        withLatestFrom(
-            this.objectSpec$,
-            faceCount$,
-        ),
-        tap(([, objectSpec, faceCount]) => {
-          if (!objectSpec) {
+        withLatestFrom(this.getObject$(context), faceCount$),
+        tap(([, obj, faceCount]) => {
+          if (!obj) {
             return;
           }
 
@@ -51,7 +48,7 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
             throw new Error('Random produced no values');
           }
           const nextIndex = Math.floor(randomValue * faceCount);
-          $stateService.get(this.vine).modify(x => x.set(objectSpec.payload.$currentFaceIndex, nextIndex));
+          $stateService.get(this.vine).modify(x => x.set(obj.payload.$currentFaceIndex, nextIndex));
         }),
     );
   }

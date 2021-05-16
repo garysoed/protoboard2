@@ -5,9 +5,12 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
+import {IsMultifaced} from '../payload/is-multifaced';
+import {PieceSpec} from '../types/piece-spec';
 
 import {FlipAction, Config} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
 test('@protoboard2/action/flip-action', init => {
@@ -30,24 +33,25 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     const config$ = new BehaviorSubject<Partial<Config>>({});
+    const context = createFakeOperatorContext<PieceSpec<IsMultifaced>, Config>({
+      config$,
+      objectId$: of(stateService.modify(x => x.add(objectSpec))),
+    });
     const action = new FlipAction(
-        createFakeActionContext({
-          personaContext,
-          objectId$: of(stateService.modify(x => x.add(objectSpec))),
-        }),
+        createFakeActionContext({personaContext}),
         {count: 4},
     );
 
     run(action.run());
 
-    return {$faceIndex, action, config$, el, personaContext, stateService};
+    return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
     should('increase the face by half the face count', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });
@@ -59,7 +63,7 @@ test('@protoboard2/action/flip-action', init => {
 
       run(
           of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0})
-              .pipe(_.action.getOperator({config$: _.config$})),
+              .pipe(_.action.getOperator(_.context)),
       );
 
       assert(faceIndex$).to.emitSequence([1, 3, 1]);
@@ -74,7 +78,7 @@ test('@protoboard2/action/flip-action', init => {
 
       run(
           of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0})
-              .pipe(_.action.getOperator({config$: _.config$})),
+              .pipe(_.action.getOperator(_.context)),
       );
 
       assert(faceIndex$).to.emitSequence([1, 4, 1]);

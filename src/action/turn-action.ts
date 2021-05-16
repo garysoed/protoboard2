@@ -22,7 +22,7 @@ export const KEY = 'turn';
  */
 export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsMultifaced>>,
+      context: ActionContext,
       private readonly defaultConfig: Config,
   ) {
     super(
@@ -33,20 +33,20 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
     );
   }
 
-  getOperator(context: OperatorContext<Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(this.vine);
     const faceCount$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.count),
     );
     return pipe(
-        withLatestFrom(this.objectSpec$, faceCount$),
-        switchMap(([, objectSpec, faceCount]) => {
-          if (!objectSpec) {
+        withLatestFrom(this.getObject$(context), faceCount$),
+        switchMap(([, obj, faceCount]) => {
+          if (!obj) {
             return observableOf(null);
           }
 
-          const $faceIndex = objectSpec.payload.$currentFaceIndex;
+          const $faceIndex = obj.payload.$currentFaceIndex;
           return stateService.resolve($faceIndex).pipe(
               take(1),
               filterNonNullable(),

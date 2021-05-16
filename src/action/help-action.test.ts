@@ -14,7 +14,7 @@ import {createFakeActionContext} from './testing/fake-action-context';
 
 
 class TestAction extends BaseAction<PieceSpec<{}>, {}> {
-  constructor(context: ActionContext<PieceSpec<{}>>) {
+  constructor(context: ActionContext) {
     super('test', 'test', {}, context);
   }
 
@@ -34,9 +34,8 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = new Vine({appName: 'test'});
-    const context = createFakeActionContext<PieceSpec<{}>>({
+    const context = createFakeActionContext({
       personaContext: createFakeContext({shadowRoot, vine}),
-      objectId$: of(null),
     });
     const testAction = new TestAction(context);
 
