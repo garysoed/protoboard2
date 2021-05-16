@@ -19,11 +19,9 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export type BaseActionCtor = () => BaseAction<any, {}>;
-
 export interface ActionSpec {
   readonly trigger: UnreservedTriggerSpec;
-  readonly provider: BaseActionCtor;
+  readonly action: BaseAction<any, {}>;
 }
 
 export const $baseComponent = {
@@ -53,8 +51,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> {
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> = new Map($pipe(
         this.triggerActions,
-        $map(({trigger, provider}) => {
-          const action = provider();
+        $map(({trigger, action}) => {
           if (typeof trigger === 'string') {
             return [{type: trigger}, action] as const;
           }

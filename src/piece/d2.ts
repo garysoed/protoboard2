@@ -62,21 +62,21 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
         [
           {
             trigger: TriggerType.R,
-            provider: () => new RotateAction({stops: [0, 90, 180, 270]}),
+            action: new RotateAction({stops: [0, 90, 180, 270]}),
           },
           {
             trigger: TriggerType.F,
-            provider: () => new FlipAction({count: 2}),
+            action: new FlipAction({count: 2}),
           },
           {
             trigger: TriggerType.T,
-            provider: () => new TurnAction({count: 2}),
+            action: new TurnAction({count: 2}),
           },
           {
             trigger: TriggerType.L,
-            provider: () => new RollAction({count: 2}),
+            action: new RollAction({count: 2}),
           },
-          {trigger: TriggerType.CLICK, provider: () => new PickAction()},
+          {trigger: TriggerType.CLICK, action: new PickAction()},
         ],
         context,
         $,

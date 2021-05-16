@@ -51,8 +51,8 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          {trigger: TriggerType.D, provider: () => new DropAction(() => 0)},
-          {trigger: TriggerType.S, provider: () => new ShuffleAction()},
+          {trigger: TriggerType.D, action: new DropAction(() => 0)},
+          {trigger: TriggerType.S, action: new ShuffleAction()},
         ],
         context,
         $,

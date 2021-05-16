@@ -80,11 +80,11 @@ test('@protoboard2/core/base-component', init => {
         [
           {
             trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
-            provider: () => new TestAction(),
+            action: new TestAction(),
           },
           {
             trigger: {type: KEY, targetEl: $targetEl},
-            provider: () => new TestAction(),
+            action: new TestAction(),
           },
         ],
         personaContext,
@@ -175,7 +175,7 @@ test('@protoboard2/core/base-component', init => {
           [
             {
               trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
-              provider: () => new TestAction()},
+              action: new TestAction()},
           ],
           _.personaContext,
       );
@@ -213,7 +213,7 @@ test('@protoboard2/core/base-component', init => {
           [
             {
               trigger: {type: KEY},
-              provider: () => new TestAction()},
+              action: new TestAction()},
           ],
           _.personaContext,
       );
