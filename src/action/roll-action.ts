@@ -11,7 +11,7 @@ import {PieceSpec} from '../types/piece-spec';
 import {$random} from './util/random';
 
 
-interface Config {
+export interface Config {
   readonly count: number;
 }
 
@@ -20,7 +20,7 @@ interface Config {
  */
 export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsMultifaced>>,
+      context: ActionContext<PieceSpec<IsMultifaced>, Config>,
       defaultConfig: Config,
   ) {
     super(

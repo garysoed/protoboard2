@@ -74,7 +74,7 @@ export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
         [
           {
             trigger: {type: TriggerType.R},
-            provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
+            provider: context => new RotateAction(context as any, {stops: [0, 90, 180, 270]}),
           },
           {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {})},
         ],

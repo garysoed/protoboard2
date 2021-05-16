@@ -1,17 +1,17 @@
 import {$resolveState} from 'grapevine';
-import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
+import {$asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, host, InputsOf, onDom, PersonaContext} from 'persona';
+import {attributeIn, host, InputsOf, onDom, onMutation, PersonaContext} from 'persona';
 import {EMPTY, fromEvent, merge, Observable, of as observableOf} from 'rxjs';
-import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, startWith, tap, throttleTime, withLatestFrom, scan} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {HelpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
-import {ActionContext, BaseAction, TriggerEvent} from './base-action';
+import {ActionContext, BaseAction, ConverterOf, TriggerEvent} from './base-action';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
@@ -20,7 +20,7 @@ const LOG = new Logger('pb.core.BaseComponent');
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
 export type BaseActionCtor<O extends ObjectSpec<any>> =
-    (context: ActionContext<O>) => BaseAction<any>;
+    (context: ActionContext<O, {}>) => BaseAction<any>;
 
 export interface ActionSpec<O extends ObjectSpec<any>> {
   readonly trigger: UnreservedTriggerSpec;
@@ -62,6 +62,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
       personaContext: this.context,
       objectId$: (this.baseInputs.host.objectId as Observable<StateId<O>>)
           .pipe(map(id => id ?? null)),
+      getConfig$: (key: string, converters: ConverterOf<{}>) => this.getConfig$(key, converters),
     };
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = new Map($pipe(
         this.triggerActions,
@@ -148,6 +149,50 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
                   {mouseX: mouseEvent.offsetX, mouseY: mouseEvent.offsetY});
             }),
         );
+  }
+
+  private getConfig$<C extends {}>(
+      key: string,
+      converters: ConverterOf<C>,
+  ): Observable<Partial<C>> {
+    const attributePrefix = `pb-${key}-`;
+    const attributeFilter = Object.keys(converters)
+        .map(configKey => `${attributePrefix}${configKey}`);
+    const $host = host({
+      onMutation: onMutation({attributes: true, attributeFilter}),
+    });
+    return $host._.onMutation.getValue(this.context).pipe(
+        startWith(null),
+        map(records => {
+          if (!records) {
+            return new Set(attributeFilter);
+          }
+
+          return $pipe(
+              records,
+              $map(record => record.attributeName),
+              $filterNonNull(),
+              $asSet(),
+          );
+        }),
+        map(changedAttributes => {
+          const hostEl = $host.getSelectable(this.context);
+          const changedConfig: Partial<C> = {};
+          for (const attribute of changedAttributes) {
+            const rawValue = hostEl.getAttribute(attribute);
+            const configKey = attribute.substr(attributePrefix.length) as keyof C;
+
+            const parseResult = converters[configKey]
+                .convertBackward(rawValue || '');
+            if (parseResult.success) {
+              changedConfig[configKey] = parseResult.result;
+            }
+          }
+
+          return changedConfig;
+        }),
+        scan((config, newConfig) => ({...config, ...newConfig}), {} as Partial<C>),
+    );
   }
 
   private setupActions(): void {

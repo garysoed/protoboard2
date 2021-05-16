@@ -2,11 +2,11 @@ import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
+import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
-import {FlipAction} from './flip-action';
+import {FlipAction, Config} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -29,17 +29,19 @@ test('@protoboard2/action/flip-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     });
 
+    const config$ = new BehaviorSubject<Partial<Config>>({});
     const action = new FlipAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(stateService.modify(x => x.add(objectSpec))),
+          objectId$: of(stateService.modify(x => x.add(objectSpec))),
+          getConfig$: () => config$,
         }),
         {count: 4},
     );
 
     run(action.run());
 
-    return {$faceIndex, action, el, personaContext, stateService};
+    return {$faceIndex, action, config$, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
@@ -65,7 +67,7 @@ test('@protoboard2/action/flip-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.el.setAttribute('pb-flip-count', '6');
+      _.config$.next({count: 6});
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 

@@ -2,11 +2,11 @@ import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
+import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
-import {RotateAction} from './rotate-action';
+import {RotateAction, Config} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -27,16 +27,18 @@ test('@protoboard2/action/rotate-action', init => {
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
 
+    const config$ = new BehaviorSubject<Partial<Config>>({});
     const action = new RotateAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(objectId),
+          objectId$: of(objectId),
+          getConfig$: () => config$,
         }),
         {stops: [11, 22, 33]},
     );
     run(action.run());
 
-    return {$rotationDeg, action, el, stateService};
+    return {$rotationDeg, action, config$, el, stateService};
   });
 
   test('handleTrigger$', () => {
@@ -49,7 +51,7 @@ test('@protoboard2/action/rotate-action', init => {
     });
 
     should('handle rotations that are more than 360', () => {
-      _.el.setAttribute('pb-rotate-stops', '[123 456 678]');
+      _.config$.next({stops: [123, 456, 678]});
 
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 

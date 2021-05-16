@@ -21,7 +21,7 @@ interface Config {
 export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<ContainerSpec<unknown, 'indexed'>>,
+      context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>,
       defaultConfig: Config,
   ) {
     super(

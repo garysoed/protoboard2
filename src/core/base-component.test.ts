@@ -1,10 +1,10 @@
-import {assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {assert, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
-import {$div, element, host, PersonaContext} from 'persona';
-import {createFakeContext} from 'persona/export/testing';
+import {$div, element, host, integerParser, PersonaContext} from 'persona';
+import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {Observable, ReplaySubject} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
@@ -15,12 +15,30 @@ import {TriggerType} from './trigger-spec';
 
 
 const ACTION_KEY = 'test';
+const DEFAULT_CONFIG_VALUE = 234;
 
-class TestAction extends BaseAction<PieceSpec<{}>> {
+interface ActionConfig {
+  readonly value: number;
+}
+
+class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly value$ = new ReplaySubject<number>(1);
 
-  constructor(context: ActionContext<PieceSpec<{}>>) {
-    super(ACTION_KEY, 'Test', {}, context, {});
+  constructor(context: ActionContext<PieceSpec<{}>, ActionConfig>) {
+    super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
+
+    this.addSetup(this.setupConfig());
+  }
+
+  private setupConfig(): Observable<unknown> {
+    return this.config$
+        .pipe(
+            tap(config => {
+              if (config.value) {
+                this.value$.next(config.value);
+              }
+            }),
+        );
   }
 
   get onTriggerOut$(): Observable<unknown> {
@@ -50,6 +68,8 @@ const KEY = TriggerType.T;
 
 test('@protoboard2/core/base-component', init => {
   const _ = init(() => {
+    runEnvironment(new PersonaTesterEnvironment());
+
     const $targetEl = element('target', $div, {});
     const el = document.createElement('div');
     const targetEl = document.createElement('div');
@@ -226,6 +246,40 @@ test('@protoboard2/core/base-component', init => {
 
       assert(onTrigger$).to
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
+    });
+  });
+
+  test('getConfig$', _, init => {
+    const _ = init(_ => {
+      const action = [..._.component.actionsMap].find(([{type}]) => type === KEY)![1] as TestAction;
+      return {..._, action};
+    });
+
+    should('update the configuration when attribute is specified', () => {
+      _.el.setAttribute('pb-test-value', '123');
+
+      assert(_.action.value$).to.emitSequence([123]);
+    });
+
+    should('use the default config if config attribute does not exist', () => {
+      assert(_.action.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
+    });
+
+    should('update the configuration when attribute has changed', () => {
+      _.el.setAttribute('pb-test-value', '123');
+      _.el.setAttribute('pb-test-value', '345');
+
+      assert(_.action.value$).to.emitSequence([345]);
+    });
+
+    should('update the trigger configuration correctly', () => {
+      _.el.setAttribute('pb-test-trigger', 'click');
+
+      _.targetEl.dispatchEvent(new CustomEvent('click'));
+
+      _.el.setAttribute('pb-test-value', '345');
+
+      assert(_.action.value$).to.emitSequence([345]);
     });
   });
 });

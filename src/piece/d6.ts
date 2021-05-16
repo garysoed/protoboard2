@@ -80,19 +80,19 @@ export class D6 extends BaseComponent<D6Spec, typeof $> {
         [
           {
             trigger: TriggerType.R as const,
-            provider: context => new RotateAction(context, {stops: [0, 90, 180, 270]}),
+            provider: context => new RotateAction(context as any, {stops: [0, 90, 180, 270]}),
           },
           {
             trigger: TriggerType.F as const,
-            provider: context => new FlipAction(context, {count: 6}),
+            provider: context => new FlipAction(context as any, {count: 6}),
           },
           {
             trigger: TriggerType.T as const,
-            provider: context => new TurnAction(context, {count: 6}),
+            provider: context => new TurnAction(context as any, {count: 6}),
           },
           {
             trigger: TriggerType.L as const,
-            provider: context => new RollAction(context, {count: 6}),
+            provider: context => new RollAction(context as any, {count: 6}),
           },
           {trigger: TriggerType.CLICK, provider: context => new PickAction(context, {})},
         ],

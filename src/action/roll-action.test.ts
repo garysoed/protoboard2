@@ -3,11 +3,11 @@ import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
+import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
-import {RollAction} from './roll-action';
+import {RollAction, Config} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {$random} from './util/random';
 
@@ -34,17 +34,19 @@ test('@protoboard2/action/roll-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
+    const config$ = new BehaviorSubject<Partial<Config>>({});
     const action = new RollAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(objectId),
+          objectId$: of(objectId),
+          getConfig$: () => config$,
         }),
         {count: 3},
     );
 
     run(action.run());
 
-    return {$faceIndex, action, el, seed, stateService};
+    return {$faceIndex, action, config$, el, seed, stateService};
   });
 
   test('handleTrigger', () => {
@@ -60,7 +62,7 @@ test('@protoboard2/action/roll-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
-      _.el.setAttribute('pb-roll-count', '4');
+      _.config$.next({count: 4});
 
       _.seed.values = [0.9];
 

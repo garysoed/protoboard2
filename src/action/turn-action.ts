@@ -10,7 +10,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
 
-interface Config {
+export interface Config {
   readonly count: number;
 }
 
@@ -23,7 +23,7 @@ export const KEY = 'turn';
  */
 export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsMultifaced>>,
+      context: ActionContext<PieceSpec<IsMultifaced>, Config>,
       defaultConfig: Config,
   ) {
     super(

@@ -2,12 +2,12 @@ import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of as observableOf} from 'rxjs';
+import {of, BehaviorSubject} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 
 import {createFakeActionContext} from './testing/fake-action-context';
-import {TurnAction} from './turn-action';
+import {TurnAction, Config} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -30,17 +30,19 @@ test('@protoboard2/action/turn-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
+    const config$ = new BehaviorSubject<Partial<Config>>({});
     const action = new TurnAction(
         createFakeActionContext({
           personaContext,
-          objectId$: observableOf(objectId),
+          objectId$: of(objectId),
+          getConfig$: () => config$,
         }),
         {count: 2},
     );
 
     run(action.run());
 
-    return {$faceIndex, action, el, personaContext, stateService};
+    return {$faceIndex, action, config$, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
@@ -66,7 +68,7 @@ test('@protoboard2/action/turn-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.el.setAttribute('pb-turn-count', '4');
+      _.config$.next({count: 4});
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 

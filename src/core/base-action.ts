@@ -1,21 +1,20 @@
-import {Vine} from 'grapevine';
-import {$stateService} from 'grapevine';
-import {$asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$stateService, Vine} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {Converter} from 'nabu';
-import {host, onMutation, PersonaContext} from 'persona';
+import {PersonaContext} from 'persona';
 import {Observable, of as observableOf, Subject} from 'rxjs';
-import {map, scan, startWith, switchMap} from 'rxjs/operators';
+import {switchMap, map} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
 
-export interface ActionContext<O extends ObjectSpec<any>> {
+export interface ActionContext<O extends ObjectSpec<any>, C> {
   readonly host: Element;
   readonly personaContext: PersonaContext;
   readonly objectId$: Observable<StateId<O>|null>;
+  getConfig$(key: string, converters: ConverterOf<C>): Observable<Partial<C>>;
 }
 
 export interface TriggerEvent {
@@ -55,7 +54,7 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
       readonly key: string,
       readonly actionName: string,
       private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly context: ActionContext<P>,
+      protected readonly context: ActionContext<P, C>,
       private readonly defaultConfig: C,
   ) {
     super();
@@ -66,49 +65,8 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
    */
   @cache()
   get config$(): Observable<C> {
-    const attributePrefix = `pb-${this.key}-`;
-    const attributeFilter = Object.keys(this.actionConfigConverters)
-        .map(configKey => `${attributePrefix}${configKey}`);
-    const $host = host({
-      onMutation: onMutation({attributes: true, attributeFilter}),
-    });
-    return $host._.onMutation.getValue(this.context.personaContext).pipe(
-        startWith(null),
-        map(records => {
-          if (!records) {
-            return new Set(attributeFilter);
-          }
-
-          return $pipe(
-              records,
-              $map(record => record.attributeName),
-              $filterNonNull(),
-              $asSet(),
-          );
-        }),
-        map(changedAttributes => {
-          const hostEl = $host.getSelectable(this.context.personaContext);
-          const changedConfig: Partial<C> = {};
-          for (const attribute of changedAttributes) {
-            const rawValue = hostEl.getAttribute(attribute);
-            const configKey = attribute.substr(attributePrefix.length) as keyof C;
-
-            const parseResult = this.actionConfigConverters[configKey]
-                .convertBackward(rawValue || '');
-            if (parseResult.success) {
-              changedConfig[configKey] = parseResult.result;
-            }
-          }
-
-          return changedConfig;
-        }),
-        scan((config, newConfig) => ({...config, ...newConfig}), {}),
-        map(config => {
-          return {
-            ...this.defaultConfig,
-            ...(config || {}),
-          };
-        }),
+    return this.context.getConfig$(this.key, this.actionConfigConverters).pipe(
+        map(config => ({...this.defaultConfig, ...config})),
     );
   }
 

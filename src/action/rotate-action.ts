@@ -11,7 +11,7 @@ import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
 
-interface Config {
+export interface Config {
   readonly stops: readonly number[];
 }
 
@@ -22,7 +22,7 @@ interface Config {
  */
 export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsRotatable>>,
+      context: ActionContext<PieceSpec<IsRotatable>, Config>,
       defaultConfig: Config,
   ) {
     super(

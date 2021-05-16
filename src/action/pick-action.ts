@@ -25,7 +25,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
    * @internal
    */
   constructor(
-      context: ActionContext<PieceSpec<any>>,
+      context: ActionContext<PieceSpec<any>, Config>,
       defaultConfig: Config,
   ) {
     super(
