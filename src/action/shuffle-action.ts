@@ -6,19 +6,18 @@ import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {ContainerSpec} from '../types/container-spec';
 
 
-export class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>> {
-  constructor(context: ActionContext<ContainerSpec<unknown, 'indexed'>, {}>) {
+export class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, {}> {
+  constructor(context: ActionContext<ContainerSpec<unknown, 'indexed'>>) {
     super(
         'shuffle',
         'Shuffle',
         {},
         context,
-        {},
     );
   }
 
   @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(): OperatorFunction<TriggerEvent, unknown> {
     return switchMapTo(NEVER);
   }
 }

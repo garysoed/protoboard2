@@ -11,7 +11,7 @@ import {Logger} from 'santa';
 import {HelpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
-import {ActionContext, BaseAction, ConverterOf, TriggerEvent} from './base-action';
+import {ActionContext, BaseAction, TriggerEvent} from './base-action';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
@@ -19,8 +19,7 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export type BaseActionCtor<O extends ObjectSpec<any>> =
-    (context: ActionContext<O, {}>) => BaseAction<any>;
+export type BaseActionCtor<O extends ObjectSpec<any>> = (context: ActionContext<O>) => BaseAction<any, {}>;
 
 export interface ActionSpec<O extends ObjectSpec<any>> {
   readonly trigger: UnreservedTriggerSpec;
@@ -56,15 +55,14 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   @cache()
-  get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any>> {
+  get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> {
     const actionContext = {
       host: host({}).getSelectable(this.context),
       personaContext: this.context,
       objectId$: (this.baseInputs.host.objectId as Observable<StateId<O>>)
           .pipe(map(id => id ?? null)),
-      getConfig$: (key: string, converters: ConverterOf<{}>) => this.getConfig$(key, converters),
     };
-    const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any>> = new Map($pipe(
+    const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> = new Map($pipe(
         this.triggerActions,
         $map(({trigger, provider}) => {
           const action = provider(actionContext);
@@ -152,11 +150,10 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   private getConfig$<C extends {}>(
-      key: string,
-      converters: ConverterOf<C>,
+      action: BaseAction<O, C>,
   ): Observable<Partial<C>> {
-    const attributePrefix = `pb-${key}-`;
-    const attributeFilter = Object.keys(converters)
+    const attributePrefix = `pb-${action.key}-`;
+    const attributeFilter = Object.keys(action.converters)
         .map(configKey => `${attributePrefix}${configKey}`);
     const $host = host({
       onMutation: onMutation({attributes: true, attributeFilter}),
@@ -182,7 +179,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             const rawValue = hostEl.getAttribute(attribute);
             const configKey = attribute.substr(attributePrefix.length) as keyof C;
 
-            const parseResult = converters[configKey]
+            const parseResult = action.converters[configKey]
                 .convertBackward(rawValue || '');
             if (parseResult.success) {
               changedConfig[configKey] = parseResult.result;
@@ -204,7 +201,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
 
   private setupTrigger(
       triggerSpec: DetailedTriggerSpec<TriggerType>,
-      action: BaseAction<O>,
+      action: BaseAction<O, {}>,
   ): Observable<unknown> {
     const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
       this.createTriggerKey(triggerSpec) :
@@ -217,7 +214,9 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
                   event.metaKey === (triggerSpec.meta ?? false) &&
                   event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            action.operator,
+            action.getOperator({
+              config$: this.getConfig$(action),
+            }),
         );
   }
 }

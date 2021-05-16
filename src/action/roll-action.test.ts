@@ -39,7 +39,6 @@ test('@protoboard2/action/roll-action', init => {
         createFakeActionContext({
           personaContext,
           objectId$: of(objectId),
-          getConfig$: () => config$,
         }),
         {count: 3},
     );
@@ -54,7 +53,7 @@ test('@protoboard2/action/roll-action', init => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
     });
@@ -66,7 +65,7 @@ test('@protoboard2/action/roll-action', init => {
 
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });

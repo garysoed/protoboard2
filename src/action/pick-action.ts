@@ -25,20 +25,18 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
    * @internal
    */
   constructor(
-      context: ActionContext<PieceSpec<any>, Config>,
-      defaultConfig: Config,
+      context: ActionContext<PieceSpec<any>>,
   ) {
     super(
         'pick',
         'Pick',
         {},
         context,
-        defaultConfig,
     );
   }
 
   @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(): OperatorFunction<TriggerEvent, unknown> {
     const fromObjectSpec$ = combineLatest([
       this.context.objectId$,
       $getParent.get(this.vine),

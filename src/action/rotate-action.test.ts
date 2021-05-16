@@ -32,7 +32,6 @@ test('@protoboard2/action/rotate-action', init => {
         createFakeActionContext({
           personaContext,
           objectId$: of(objectId),
-          getConfig$: () => config$,
         }),
         {stops: [11, 22, 33]},
     );
@@ -45,7 +44,7 @@ test('@protoboard2/action/rotate-action', init => {
     should('change the rotation to the next index', () => {
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
     });
@@ -55,7 +54,7 @@ test('@protoboard2/action/rotate-action', init => {
 
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
     });

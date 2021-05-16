@@ -5,16 +5,19 @@ import {StateId} from 'gs-tools/export/state';
 import {Converter} from 'nabu';
 import {PersonaContext} from 'persona';
 import {Observable, of, OperatorFunction} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
 
-export interface ActionContext<O extends ObjectSpec<any>, C> {
+export interface ActionContext<O extends ObjectSpec<any>> {
   readonly host: Element;
   readonly personaContext: PersonaContext;
   readonly objectId$: Observable<StateId<O>|null>;
-  getConfig$(key: string, converters: ConverterOf<C>): Observable<Partial<C>>;
+}
+
+export interface OperatorContext<C> {
+  readonly config$: Observable<Partial<C>>
 }
 
 export interface TriggerEvent {
@@ -38,34 +41,23 @@ export type ConverterOf<O> = {
  * @typeParam C - The configuration object.
  * @thModule action
  */
-export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runnable {
+export abstract class BaseAction<P extends ObjectSpec<any>, C> extends Runnable {
   /**
    * Instantiates a new BaseAction.
    *
    * @param key - Key to identtify the action. This has to be globally unique.
    * @param actionName - Name of the action. This is used in the help dialog.
-   * @param actionConfigConverters - Converters for the configuration object. Every field in the
+   * @param converters - Converters for the configuration object. Every field in the
    *     configuration object must have a converter to string.
    * @param context - The Persona context.
    */
   constructor(
       readonly key: string,
       readonly actionName: string,
-      private readonly actionConfigConverters: ConverterOf<C>,
-      protected readonly context: ActionContext<P, C>,
-      private readonly defaultConfig: C,
+      readonly converters: ConverterOf<C>,
+      protected readonly context: ActionContext<P>,
   ) {
     super();
-  }
-
-  /**
-   * Emits the current configuration state for the action.
-   */
-  @cache()
-  get config$(): Observable<C> {
-    return this.context.getConfig$(this.key, this.actionConfigConverters).pipe(
-        map(config => ({...this.defaultConfig, ...config})),
-    );
   }
 
   @cache()
@@ -81,7 +73,7 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C = {}> extends Runn
     );
   }
 
-  abstract get operator(): OperatorFunction<TriggerEvent, unknown>;
+  abstract getOperator(context: OperatorContext<C>): OperatorFunction<TriggerEvent, unknown>;
 
   @cache()
   get vine(): Vine {

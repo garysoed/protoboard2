@@ -35,7 +35,6 @@ test('@protoboard2/action/pick-action', init => {
           personaContext,
           objectId$,
         }),
-        {},
     );
 
     run(action.run());
@@ -91,7 +90,7 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator()));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),

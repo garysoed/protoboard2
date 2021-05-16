@@ -1,10 +1,10 @@
 import {$stateService} from 'grapevine';
-import {cache} from 'gs-tools/export/data';
+import {extend} from 'gs-tools/export/rxjs';
 import {integerParser} from 'persona';
-import {Observable, OperatorFunction, pipe} from 'rxjs';
+import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -20,29 +20,26 @@ export interface Config {
  */
 export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsMultifaced>, Config>,
-      defaultConfig: Config,
+      context: ActionContext<PieceSpec<IsMultifaced>>,
+      private readonly defaultConfig: Config,
   ) {
     super(
         'roll',
         'Roll',
         {count: integerParser()},
         context,
-        defaultConfig,
     );
   }
 
-  @cache()
-  private get faceCount$(): Observable<number> {
-    return this.config$.pipe(map(config => config.count));
-  }
-
-  @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<Config>): OperatorFunction<TriggerEvent, unknown> {
+    const faceCount$ = context.config$.pipe(
+        extend(this.defaultConfig),
+        map(config => config.count),
+    );
     return pipe(
         withLatestFrom(
             this.objectSpec$,
-            this.faceCount$,
+            faceCount$,
         ),
         tap(([, objectSpec, faceCount]) => {
           if (!objectSpec) {

@@ -13,16 +13,16 @@ import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
-class TestAction extends BaseAction<PieceSpec<{}>> {
-  constructor(context: ActionContext<PieceSpec<{}>, {}>) {
-    super('test', 'test', {}, context, {});
+class TestAction extends BaseAction<PieceSpec<{}>, {}> {
+  constructor(context: ActionContext<PieceSpec<{}>>) {
+    super('test', 'test', {}, context);
   }
 
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
     return config$;
   }
 
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(): OperatorFunction<TriggerEvent, unknown> {
     return switchMapTo(EMPTY);
   }
 }
@@ -34,7 +34,7 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const vine = new Vine({appName: 'test'});
-    const context = createFakeActionContext<PieceSpec<{}>, {}>({
+    const context = createFakeActionContext<PieceSpec<{}>>({
       personaContext: createFakeContext({shadowRoot, vine}),
       objectId$: of(null),
     });
@@ -50,7 +50,7 @@ test('@protoboard2/action/help-action', init => {
     should('show the help correctly', () => {
       const actions$ = createSpySubject($helpService.get(_.vine).actions$);
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator()));
 
       assert(actions$).to.emitSequence([
         arrayThat<ActionTrigger>().haveExactElements([]),

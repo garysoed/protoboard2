@@ -34,7 +34,6 @@ test('@protoboard2/action/flip-action', init => {
         createFakeActionContext({
           personaContext,
           objectId$: of(stateService.modify(x => x.add(objectSpec))),
-          getConfig$: () => config$,
         }),
         {count: 4},
     );
@@ -48,7 +47,7 @@ test('@protoboard2/action/flip-action', init => {
     should('increase the face by half the face count', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator({config$: _.config$})));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });
@@ -58,7 +57,10 @@ test('@protoboard2/action/flip-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(
+          of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0})
+              .pipe(_.action.getOperator({config$: _.config$})),
+      );
 
       assert(faceIndex$).to.emitSequence([1, 3, 1]);
     });
@@ -70,7 +72,10 @@ test('@protoboard2/action/flip-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action.operator));
+      run(
+          of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0})
+              .pipe(_.action.getOperator({config$: _.config$})),
+      );
 
       assert(faceIndex$).to.emitSequence([1, 4, 1]);
     });

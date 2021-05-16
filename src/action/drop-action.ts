@@ -22,20 +22,18 @@ interface Config {
 export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>,
-      defaultConfig: Config,
+      context: ActionContext<ContainerSpec<unknown, 'indexed'>>,
   ) {
     super(
         'Drop',
         'drop',
         {},
         context,
-        defaultConfig,
     );
   }
 
   @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.objectSpec$,
       $activeSpec.get(this.vine),

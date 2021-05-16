@@ -1,12 +1,12 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {cache} from 'gs-tools/export/data';
+import {extend} from 'gs-tools/export/rxjs';
 import {identity} from 'nabu';
 import {listParser} from 'persona';
-import {EMPTY, Observable, OperatorFunction, pipe} from 'rxjs';
+import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -22,29 +22,26 @@ export interface Config {
  */
 export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor(
-      context: ActionContext<PieceSpec<IsRotatable>, Config>,
-      defaultConfig: Config,
+      context: ActionContext<PieceSpec<IsRotatable>>,
+      private readonly defaultConfig: Config,
   ) {
     super(
         'rotate',
         'Rotate',
         {stops: listParser(identity<number>())},
         context,
-        defaultConfig,
     );
   }
 
-  @cache()
-  private get stops$(): Observable<readonly number[]> {
-    return this.config$.pipe(map(config => config.stops));
-  }
-
-  @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(this.vine);
+    const stops$ = context.config$.pipe(
+        extend(this.defaultConfig),
+        map(config => config.stops),
+    );
     return pipe(
-        withLatestFrom(this.objectSpec$),
-        switchMap(([, objectSpec]) => {
+        withLatestFrom(this.objectSpec$, stops$),
+        switchMap(([, objectSpec, stops]) => {
           if (!objectSpec) {
             return EMPTY;
           }
@@ -53,8 +50,7 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
           return stateService.resolve($rotationDeg).pipe(
               take(1),
               map(rotationDeg => rotationDeg ?? 0),
-              withLatestFrom(this.stops$),
-              tap(([rotationDeg, stops]) => {
+              tap(rotationDeg => {
                 const rotationIndex = $pipe(
                     stops,
                     $zip(countableIterable()),

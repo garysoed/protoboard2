@@ -1,15 +1,16 @@
 import {assert, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
+import {extend} from 'gs-tools/export/rxjs';
 import {StateService} from 'gs-tools/export/state';
 import {$div, element, host, integerParser, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {Observable, ReplaySubject, OperatorFunction, pipe, Subject} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
+import {Observable, OperatorFunction, pipe, Subject} from 'rxjs';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {ActionContext, BaseAction, TriggerEvent} from './base-action';
+import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from './base-action';
 import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
@@ -21,32 +22,23 @@ interface ActionConfig {
   readonly value: number;
 }
 
+interface TestValue {
+  readonly event: TriggerEvent;
+  readonly config: ActionConfig;
+}
+
 class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
-  readonly value$ = new ReplaySubject<number>(1);
-  readonly onTrigger$ = new Subject<TriggerEvent>();
+  readonly onTrigger$ = new Subject<TestValue>();
 
-  constructor(context: ActionContext<PieceSpec<{}>, ActionConfig>) {
-    super(ACTION_KEY, 'Test', {value: integerParser()}, context, {value: DEFAULT_CONFIG_VALUE});
-
-    this.addSetup(this.setupConfig());
+  constructor(context: ActionContext<PieceSpec<{}>>) {
+    super(ACTION_KEY, 'Test', {value: integerParser()}, context);
   }
 
-  private setupConfig(): Observable<unknown> {
-    return this.config$
-        .pipe(
-            tap(config => {
-              if (config.value) {
-                this.value$.next(config.value);
-              }
-            }),
-        );
-  }
-
-  @cache()
-  get operator(): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: OperatorContext<ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
-        tap(event => {
-          this.onTrigger$.next(event);
+        withLatestFrom(context.config$.pipe(extend({value: DEFAULT_CONFIG_VALUE}))),
+        tap(([event, config]) => {
+          this.onTrigger$.next({event, config});
         }),
     );
   }
@@ -136,7 +128,7 @@ test('@protoboard2/core/base-component', init => {
       // Press the key
       window.dispatchEvent(new KeyboardEvent('keydown', {key: KEY}));
 
-      assert(_.onTrigger$).to
+      assert(_.onTrigger$.pipe(map(({event}) => event))).to
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
@@ -212,7 +204,7 @@ test('@protoboard2/core/base-component', init => {
           },
       ));
 
-      assert(onTrigger$).to
+      assert(onTrigger$.pipe(map(({event}) => event))).to
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
 
@@ -250,42 +242,46 @@ test('@protoboard2/core/base-component', init => {
           },
       ));
 
-      assert(onTrigger$).to
+      assert(onTrigger$.pipe(map(({event}) => event))).to
           .emitWith(objectThat<TriggerEvent>().haveProperties({mouseX: 12, mouseY: 34}));
     });
   });
 
   test('getConfig$', _, init => {
     const _ = init(_ => {
-      const action = [..._.component.actionsMap].find(([{type}]) => type === KEY)![1] as TestAction;
-      return {..._, action};
+      const action = ([..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1] as TestAction);
+      const value$ = createSpySubject(action.onTrigger$ .pipe(map(({config}) => config.value)));
+      return {..._, action, value$};
     });
 
     should('update the configuration when attribute is specified', () => {
       _.el.setAttribute('pb-test-value', '123');
+      _.targetEl.dispatchEvent(new MouseEvent('click'));
 
-      assert(_.action.value$).to.emitSequence([123]);
+      assert(_.value$).to.emitSequence([123]);
     });
 
     should('use the default config if config attribute does not exist', () => {
-      assert(_.action.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
+      _.targetEl.dispatchEvent(new MouseEvent('click'));
+
+      assert(_.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
     });
 
     should('update the configuration when attribute has changed', () => {
       _.el.setAttribute('pb-test-value', '123');
       _.el.setAttribute('pb-test-value', '345');
+      _.targetEl.dispatchEvent(new MouseEvent('click'));
 
-      assert(_.action.value$).to.emitSequence([345]);
+      assert(_.value$).to.emitSequence([345]);
     });
 
     should('update the trigger configuration correctly', () => {
       _.el.setAttribute('pb-test-trigger', 'click');
-
-      _.targetEl.dispatchEvent(new CustomEvent('click'));
-
       _.el.setAttribute('pb-test-value', '345');
 
-      assert(_.action.value$).to.emitSequence([345]);
+      _.targetEl.dispatchEvent(new MouseEvent('click'));
+
+      assert(_.value$).to.emitSequence([345]);
     });
   });
 });

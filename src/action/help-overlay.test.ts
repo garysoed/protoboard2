@@ -32,7 +32,6 @@ test('@protoboard2/action/help-overlay', init => {
           personaContext,
           objectId$: observableOf(null),
         }),
-        {},
     );
     return {el, testAction, tester};
   });
