@@ -2,14 +2,13 @@ import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {createFakeActionContext} from './testing/fake-action-context';
 import {createFakeOperatorContext} from './testing/fake-operator-context';
-import {TurnAction, Config} from './turn-action';
+import {Config, TurnAction} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -26,7 +25,6 @@ test('@protoboard2/action/turn-action', init => {
       shadowRoot,
     });
 
-
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add(fakePieceSpec({
       payload: {$currentFaceIndex: $faceIndex},
@@ -36,13 +34,9 @@ test('@protoboard2/action/turn-action', init => {
     const context = createFakeOperatorContext<PieceSpec<any>, Config>({
       config$,
       objectId$: of(objectId),
+      vine: personaContext.vine,
     });
-    const action = new TurnAction(
-        createFakeActionContext({
-          personaContext,
-        }),
-        {count: 2},
-    );
+    const action = new TurnAction({count: 2});
 
     run(action.run());
 

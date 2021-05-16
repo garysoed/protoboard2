@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -21,20 +21,14 @@ interface Config {
 export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor(
       private readonly locationFn: (event: TriggerEvent) => number,
-      context: ActionContext,
   ) {
-    super(
-        'Drop',
-        'drop',
-        {},
-        context,
-    );
+    super('Drop', 'drop', {});
   }
 
   getOperator(context: OperatorContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.getObject$(context),
-      $activeSpec.get(this.vine),
+      $activeSpec.get(context.vine),
     ])
         .pipe(
             switchMap(([toState, activeState]) => {
@@ -42,7 +36,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                 return of(null);
               }
 
-              return $stateService.get(this.vine).resolve(activeState.payload.$contentSpecs).pipe(
+              return $stateService.get(context.vine).resolve(activeState.payload.$contentSpecs).pipe(
                   switchMap(activeContents => {
                     const normalizedActiveContents = activeContents ?? [];
                     const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
@@ -53,7 +47,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                     return moveObject(
                         activeState.payload,
                         toState.payload,
-                        this.vine,
+                        context.vine,
                     )
                         .pipe(
                             map(fn => {

@@ -4,7 +4,7 @@ import {integerParser} from 'persona';
 import {of as observableOf, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -21,20 +21,16 @@ export const KEY = 'turn';
  * @thModule action
  */
 export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor(
-      context: ActionContext,
-      private readonly defaultConfig: Config,
-  ) {
+  constructor(private readonly defaultConfig: Config) {
     super(
         KEY,
         'Turn',
         {count: integerParser()},
-        context,
     );
   }
 
   getOperator(context: OperatorContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
-    const stateService = $stateService.get(this.vine);
+    const stateService = $stateService.get(context.vine);
     const faceCount$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.count),

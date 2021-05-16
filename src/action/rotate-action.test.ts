@@ -2,14 +2,13 @@ import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
-import {RotateAction, Config} from './rotate-action';
-import {createFakeActionContext} from './testing/fake-action-context';
+import {Config, RotateAction} from './rotate-action';
 import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
@@ -34,11 +33,9 @@ test('@protoboard2/action/rotate-action', init => {
     const context = createFakeOperatorContext<PieceSpec<IsRotatable>, Config>({
       config$,
       objectId$: of(objectId),
+      vine: personaContext.vine,
     });
-    const action = new RotateAction(
-        createFakeActionContext({personaContext}),
-        {stops: [11, 22, 33]},
-    );
+    const action = new RotateAction({stops: [11, 22, 33]});
     run(action.run());
 
     return {$rotationDeg, action, config$, context, el, stateService};

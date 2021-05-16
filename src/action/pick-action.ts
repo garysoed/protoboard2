@@ -3,7 +3,7 @@ import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
 import {PieceSpec} from '../types/piece-spec';
@@ -23,19 +23,18 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
   /**
    * @internal
    */
-  constructor(context: ActionContext) {
+  constructor() {
     super(
         'pick',
         'Pick',
         {},
-        context,
     );
   }
 
   getOperator(context: OperatorContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const fromObjectSpec$ = combineLatest([
       context.objectId$,
-      $getParent.get(this.vine),
+      $getParent.get(context.vine),
     ])
         .pipe(
             map(([objectId, getParent]) => {
@@ -48,21 +47,21 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               if (!fromObjectId) {
                 return of(null);
               }
-              return $resolveState.get(this.vine)(fromObjectId);
+              return $resolveState.get(context.vine)(fromObjectId);
             }),
         );
-    const activeContents$ = $activeSpec.get(this.vine).pipe(
+    const activeContents$ = $activeSpec.get(context.vine).pipe(
         switchMap(activeSpec => {
           if (!activeSpec) {
             return of(undefined);
           }
-          return $stateService.get(this.vine).resolve(activeSpec.payload.$contentSpecs);
+          return $stateService.get(context.vine).resolve(activeSpec.payload.$contentSpecs);
         }),
     );
 
     const moveFn$ = combineLatest([
       fromObjectSpec$,
-      $activeSpec.get(this.vine),
+      $activeSpec.get(context.vine),
       activeContents$,
       context.objectId$,
     ])
@@ -75,7 +74,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
               return moveObject(
                   fromObjectSpec.payload,
                   activeState.payload,
-                  this.vine,
+                  context.vine,
               )
                   .pipe(
                       map(fn => {

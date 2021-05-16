@@ -3,14 +3,13 @@ import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
-import {RollAction, Config} from './roll-action';
-import {createFakeActionContext} from './testing/fake-action-context';
+import {Config, RollAction} from './roll-action';
 import {createFakeOperatorContext} from './testing/fake-operator-context';
 import {$random} from './util/random';
 
@@ -24,7 +23,7 @@ test('@protoboard2/action/roll-action', init => {
     const seed = new FakeSeed();
     const stateService = fakeStateService();
 
-    const personaContext = createFakeContext({
+    const {vine} = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $random, withValue: fromSeed(seed)},
@@ -41,9 +40,9 @@ test('@protoboard2/action/roll-action', init => {
     const context = createFakeOperatorContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(objectId),
+      vine,
     });
     const action = new RollAction(
-        createFakeActionContext({personaContext}),
         {count: 3},
     );
 

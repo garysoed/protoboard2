@@ -10,7 +10,7 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from './base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from './base-action';
 import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
@@ -30,8 +30,8 @@ interface TestValue {
 class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly onTrigger$ = new Subject<TestValue>();
 
-  constructor(context: ActionContext) {
-    super(ACTION_KEY, 'Test', {value: integerParser()}, context);
+  constructor() {
+    super(ACTION_KEY, 'Test', {value: integerParser()});
   }
 
   getOperator(context: OperatorContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
@@ -80,11 +80,11 @@ test('@protoboard2/core/base-component', init => {
         [
           {
             trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
-            provider: context => new TestAction(context),
+            provider: () => new TestAction(),
           },
           {
             trigger: {type: KEY, targetEl: $targetEl},
-            provider: context => new TestAction(context),
+            provider: () => new TestAction(),
           },
         ],
         personaContext,
@@ -175,7 +175,7 @@ test('@protoboard2/core/base-component', init => {
           [
             {
               trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
-              provider: context => new TestAction(context)},
+              provider: () => new TestAction()},
           ],
           _.personaContext,
       );
@@ -213,7 +213,7 @@ test('@protoboard2/core/base-component', init => {
           [
             {
               trigger: {type: KEY},
-              provider: context => new TestAction(context)},
+              provider: () => new TestAction()},
           ],
           _.personaContext,
       );

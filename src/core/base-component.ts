@@ -3,7 +3,7 @@ import {$asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/colle
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, host, InputsOf, onDom, onMutation, PersonaContext} from 'persona';
+import {attributeIn, host, onDom, onMutation, PersonaContext} from 'persona';
 import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, scan, startWith, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -11,7 +11,7 @@ import {Logger} from 'santa';
 import {HelpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
-import {ActionContext, BaseAction, TriggerEvent} from './base-action';
+import {BaseAction, TriggerEvent} from './base-action';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
@@ -19,7 +19,7 @@ const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
-export type BaseActionCtor = (context: ActionContext) => BaseAction<any, {}>;
+export type BaseActionCtor = () => BaseAction<any, {}>;
 
 export interface ActionSpec {
   readonly trigger: UnreservedTriggerSpec;
@@ -50,22 +50,11 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   @cache()
-  private get baseInputs(): InputsOf<typeof $> {
-    return this.inputs;
-  }
-
-  @cache()
   get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> {
-    const actionContext = {
-      host: host({}).getSelectable(this.context),
-      personaContext: this.context,
-      objectId$: (this.baseInputs.host.objectId as Observable<StateId<O>>)
-          .pipe(map(id => id ?? null)),
-    };
     const allActions: Map<DetailedTriggerSpec<TriggerType>, BaseAction<any, {}>> = new Map($pipe(
         this.triggerActions,
         $map(({trigger, provider}) => {
-          const action = provider(actionContext);
+          const action = provider();
           if (typeof trigger === 'string') {
             return [{type: trigger}, action] as const;
           }
@@ -73,7 +62,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
         }),
         $asMap(),
     ));
-    const helpAction = new HelpAction(actionContext, allActions);
+    const helpAction = new HelpAction(allActions);
     allActions.set({type: TriggerType.QUESTION, shift: true}, helpAction);
 
     return allActions;
@@ -217,6 +206,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             action.getOperator({
               config$: this.getConfig$(action),
               objectId$: this.objectId$,
+              vine: this.context.vine,
             }),
         );
   }

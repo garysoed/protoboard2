@@ -6,7 +6,7 @@ import {listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -22,19 +22,17 @@ export interface Config {
  */
 export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor(
-      context: ActionContext,
       private readonly defaultConfig: Config,
   ) {
     super(
         'rotate',
         'Rotate',
         {stops: listParser(identity<number>())},
-        context,
     );
   }
 
   getOperator(context: OperatorContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
-    const stateService = $stateService.get(this.vine);
+    const stateService = $stateService.get(context.vine);
     const stops$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.stops),

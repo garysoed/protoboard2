@@ -1,7 +1,7 @@
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {_p} from 'mask';
-import {createFakeContext, PersonaTesterFactory} from 'persona/export/testing';
+import {PersonaTesterFactory} from 'persona/export/testing';
 import {map} from 'rxjs/operators';
 
 import {TriggerType} from '../core/trigger-spec';
@@ -11,7 +11,6 @@ import renderEmpty from './goldens/help-overlay__render_empty.html';
 import {$, HelpOverlay} from './help-overlay';
 import {$helpService} from './help-service';
 import {PickAction} from './pick-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
@@ -23,12 +22,7 @@ test('@protoboard2/action/help-overlay', init => {
     const tester = testerFactory.build({rootCtrls: [HelpOverlay], rootDoc: document});
     const el = tester.createElement(HelpOverlay);
 
-    const targetEl = document.createElement('div');
-    const shadowRoot = targetEl.attachShadow({mode: 'open'});
-    const personaContext = createFakeContext({shadowRoot, vine: tester.vine});
-    const testAction = new PickAction(
-        createFakeActionContext({personaContext}),
-    );
+    const testAction = new PickAction();
     return {el, testAction, tester};
   });
 

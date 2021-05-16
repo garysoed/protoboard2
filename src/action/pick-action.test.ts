@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, of} from 'rxjs';
+import {of, ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
@@ -13,7 +13,6 @@ import {ContentSpec} from '../payload/is-container';
 import {PieceSpec} from '../types/piece-spec';
 
 import {PickAction} from './pick-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
@@ -30,10 +29,8 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
-    const context = createFakeOperatorContext({objectId$});
-    const action = new PickAction(
-        createFakeActionContext({personaContext}),
-    );
+    const context = createFakeOperatorContext({objectId$, vine: personaContext.vine});
+    const action = new PickAction();
 
     run(action.run());
 

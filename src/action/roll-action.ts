@@ -4,7 +4,7 @@ import {integerParser} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -20,14 +20,12 @@ export interface Config {
  */
 export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor(
-      context: ActionContext,
       private readonly defaultConfig: Config,
   ) {
     super(
         'roll',
         'Roll',
         {count: integerParser()},
-        context,
     );
   }
 
@@ -43,12 +41,12 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
             return;
           }
 
-          const randomValue = $random.get(this.vine).next();
+          const randomValue = $random.get(context.vine).next();
           if (randomValue === null) {
             throw new Error('Random produced no values');
           }
           const nextIndex = Math.floor(randomValue * faceCount);
-          $stateService.get(this.vine).modify(x => x.set(obj.payload.$currentFaceIndex, nextIndex));
+          $stateService.get(context.vine).modify(x => x.set(obj.payload.$currentFaceIndex, nextIndex));
         }),
     );
   }

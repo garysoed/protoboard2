@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, of} from 'rxjs';
+import {of, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
@@ -13,7 +13,6 @@ import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
 import {DropAction} from './drop-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {createFakeOperatorContext} from './testing/fake-operator-context';
 
 
@@ -30,12 +29,9 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
-    const context = createFakeOperatorContext({objectId$});
+    const context = createFakeOperatorContext({objectId$, vine: personaContext.vine});
 
-    const action = new DropAction(
-        () => 1,
-        createFakeActionContext({personaContext}),
-    );
+    const action = new DropAction(() => 1);
 
     run(action.run());
 
