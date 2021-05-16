@@ -4,7 +4,7 @@ import {integerParser} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
@@ -29,7 +29,7 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
     );
   }
 
-  getOperator(context: OperatorContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const faceCount$ = context.config$.pipe(
         extend(this.defaultConfig),
         map(config => config.count),

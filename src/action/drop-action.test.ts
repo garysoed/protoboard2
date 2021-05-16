@@ -13,7 +13,7 @@ import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
 import {DropAction} from './drop-action';
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -29,7 +29,7 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
-    const context = createFakeOperatorContext({objectId$, vine: personaContext.vine});
+    const context = createFakeActionContext({objectId$, vine: personaContext.vine});
 
     const action = new DropAction(() => 1);
 

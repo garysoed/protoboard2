@@ -9,7 +9,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
 import {Config, FlipAction} from './flip-action';
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/flip-action', init => {
@@ -32,7 +32,7 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     const config$ = new BehaviorSubject<Partial<Config>>({});
-    const context = createFakeOperatorContext<PieceSpec<IsMultifaced>, Config>({
+    const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       vine: personaContext.vine,

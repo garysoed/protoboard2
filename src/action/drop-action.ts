@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -25,7 +25,7 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
     super('Drop', 'drop', {});
   }
 
-  getOperator(context: OperatorContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.getObject$(context),
       $activeSpec.get(context.vine),

@@ -3,7 +3,7 @@ import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, OperatorContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
 import {PieceSpec} from '../types/piece-spec';
@@ -31,7 +31,7 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
     );
   }
 
-  getOperator(context: OperatorContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const fromObjectSpec$ = combineLatest([
       context.objectId$,
       $getParent.get(context.vine),

@@ -8,7 +8,7 @@ import {switchMap} from 'rxjs/operators';
 import {ObjectSpec} from '../types/object-spec';
 
 
-export interface OperatorContext<O extends ObjectSpec<any>, C> {
+export interface ActionContext<O extends ObjectSpec<any>, C> {
   readonly config$: Observable<Partial<C>>
   readonly objectId$: Observable<StateId<O>|null>;
   readonly vine: Vine;
@@ -53,11 +53,11 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C> extends Runnable 
     super();
   }
 
-  protected getObject$(context: OperatorContext<P, C>): Observable<P|undefined> {
+  protected getObject$(context: ActionContext<P, C>): Observable<P|undefined> {
     return context.objectId$.pipe(
         switchMap(objectId => $resolveState.get(context.vine)(objectId)),
     );
   }
 
-  abstract getOperator(context: OperatorContext<P, C>): OperatorFunction<TriggerEvent, unknown>;
+  abstract getOperator(context: ActionContext<P, C>): OperatorFunction<TriggerEvent, unknown>;
 }

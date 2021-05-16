@@ -9,7 +9,7 @@ import {PieceSpec} from '../types/piece-spec';
 
 import {HelpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 class TestAction extends BaseAction<PieceSpec<{}>, {}> {
@@ -33,7 +33,7 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const vine = new Vine({appName: 'test'});
     const testAction = new TestAction();
-    const context = createFakeOperatorContext({vine});
+    const context = createFakeActionContext({vine});
 
     const action = new HelpAction(new Map([[TRIGGER, testAction]]));
     run(action.run());

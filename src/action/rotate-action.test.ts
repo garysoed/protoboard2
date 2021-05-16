@@ -9,7 +9,7 @@ import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
 import {Config, RotateAction} from './rotate-action';
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/rotate-action', init => {
@@ -30,7 +30,7 @@ test('@protoboard2/action/rotate-action', init => {
     const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
 
     const config$ = new BehaviorSubject<Partial<Config>>({});
-    const context = createFakeOperatorContext<PieceSpec<IsRotatable>, Config>({
+    const context = createFakeActionContext<PieceSpec<IsRotatable>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,

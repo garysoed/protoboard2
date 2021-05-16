@@ -13,7 +13,7 @@ import {ContentSpec} from '../payload/is-container';
 import {PieceSpec} from '../types/piece-spec';
 
 import {PickAction} from './pick-action';
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -29,7 +29,7 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
-    const context = createFakeOperatorContext({objectId$, vine: personaContext.vine});
+    const context = createFakeActionContext({objectId$, vine: personaContext.vine});
     const action = new PickAction();
 
     run(action.run());

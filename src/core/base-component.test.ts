@@ -10,7 +10,7 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {BaseAction, OperatorContext, TriggerEvent} from './base-action';
+import {BaseAction, ActionContext, TriggerEvent} from './base-action';
 import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
@@ -34,7 +34,7 @@ class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
     super(ACTION_KEY, 'Test', {value: integerParser()});
   }
 
-  getOperator(context: OperatorContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
+  getOperator(context: ActionContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
         withLatestFrom(context.config$.pipe(extend({value: DEFAULT_CONFIG_VALUE}))),
         tap(([event, config]) => {

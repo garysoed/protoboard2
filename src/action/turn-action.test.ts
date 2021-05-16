@@ -7,7 +7,7 @@ import {BehaviorSubject, of} from 'rxjs';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {createFakeOperatorContext} from './testing/fake-operator-context';
+import {createFakeActionContext} from './testing/fake-action-context';
 import {Config, TurnAction} from './turn-action';
 
 
@@ -31,7 +31,7 @@ test('@protoboard2/action/turn-action', init => {
     })));
 
     const config$ = new BehaviorSubject<Partial<Config>>({});
-    const context = createFakeOperatorContext<PieceSpec<any>, Config>({
+    const context = createFakeActionContext<PieceSpec<any>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,
