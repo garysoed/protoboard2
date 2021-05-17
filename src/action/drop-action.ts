@@ -1,4 +1,5 @@
 import {$stateService} from 'grapevine';
+import {enumParser} from 'persona';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -8,8 +9,13 @@ import {ContainerSpec} from '../types/container-spec';
 
 import {moveObject} from './util/move-object';
 
+export enum PositioningType {
+  DEFAULT = 'default',
+}
+
 
 export interface Config {
+  readonly positioning: PositioningType;
 }
 
 
@@ -19,19 +25,18 @@ export interface Config {
  * @thModule action
  */
 export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
-  constructor(
-      private readonly locationFn: (event: TriggerEvent) => number,
-  ) {
-    super('Drop', 'drop', {});
+  constructor() {
+    super('Drop', 'drop', {positioning: enumParser<PositioningType>(PositioningType)});
   }
 
   getOperator(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.getObject$(context),
       $activeSpec.get(context.vine),
+      context.config$,
     ])
         .pipe(
-            switchMap(([toState, activeState]) => {
+            switchMap(([toState, activeState, config]) => {
               if (!toState || !activeState) {
                 return of(null);
               }
@@ -55,8 +60,8 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
                                 return null;
                               }
 
-                              return (event: TriggerEvent) => {
-                                fn(movedObjectSpec.objectId, {index: this.locationFn(event)});
+                              return () => {
+                                fn(movedObjectSpec.objectId, {index: this.locate(config.positioning)});
                               };
                             }),
                         );
@@ -66,13 +71,20 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
         );
     return pipe(
         withLatestFrom(moveObjectFn$),
-        tap(([event, moveObjectFn]) => {
+        tap(([, moveObjectFn]) => {
           if (!moveObjectFn) {
             return;
           }
 
-          moveObjectFn(event);
+          moveObjectFn();
         }),
     );
+  }
+
+  private locate(positioning: PositioningType): number {
+    switch (positioning) {
+      case PositioningType.DEFAULT:
+        return 0;
+    }
   }
 }

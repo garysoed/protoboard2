@@ -5,7 +5,7 @@ import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {DropAction} from '../action/drop-action';
+import {DropAction, PositioningType} from '../action/drop-action';
 import {ShuffleAction} from '../action/shuffle-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
@@ -51,7 +51,11 @@ export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          {defaultConfig: {}, trigger: TriggerType.D, action: new DropAction(() => 0)},
+          {
+            defaultConfig: {positioning: PositioningType.DEFAULT},
+            trigger: TriggerType.D,
+            action: new DropAction(),
+          },
           {defaultConfig: {}, trigger: TriggerType.S, action: new ShuffleAction()},
         ],
         context,

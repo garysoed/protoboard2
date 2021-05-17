@@ -12,7 +12,7 @@ import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-s
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
-import {Config, DropAction} from './drop-action';
+import {Config, DropAction, PositioningType} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -32,9 +32,10 @@ test('@protoboard2/action/drop-action', init => {
     const context = createFakeActionContext<ContainerSpec<unknown, 'indexed'>, Config>({
       objectId$,
       vine: personaContext.vine,
+      config$: of({positioning: PositioningType.DEFAULT}),
     });
 
-    const action = new DropAction(() => 1);
+    const action = new DropAction();
 
     run(action.run());
 
@@ -111,7 +112,7 @@ test('@protoboard2/action/drop-action', init => {
           otherSpec2,
           objectThat<ContentSpec<'indexed'>>().haveProperties({
             ...movedSpec,
-            coordinate: objectThat<Indexed>().haveProperties(createIndexed(1)),
+            coordinate: objectThat<Indexed>().haveProperties(createIndexed(0)),
           }),
         ]),
       ]);
