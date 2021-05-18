@@ -26,7 +26,7 @@ class PickAction extends BaseAction<PieceSpec<any>, Config> {
    * @internal
    */
   constructor() {
-    super('pick', 'Pick', {});
+    super('Pick');
   }
 
   getOperator(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {

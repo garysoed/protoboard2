@@ -15,8 +15,6 @@ import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
 
-const ACTION_KEY = 'test';
-
 interface ActionConfig {
   readonly value: number;
 }
@@ -30,7 +28,7 @@ class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly onTrigger$ = new Subject<TestValue>();
 
   constructor() {
-    super(ACTION_KEY, 'Test', {value: integerParser()});
+    super('Test');
   }
 
   getOperator(context: ActionContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {

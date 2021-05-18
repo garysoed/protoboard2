@@ -18,7 +18,7 @@ export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
   constructor(
       private readonly actionsArray: readonly NormalizedActionSpec[],
   ) {
-    super('help', 'Help', {});
+    super('Help');
   }
 
   getOperator(context: ActionContext<ObjectSpec<any>, {}>): OperatorFunction<TriggerEvent, unknown> {

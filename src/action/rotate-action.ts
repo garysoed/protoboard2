@@ -1,6 +1,5 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {identity} from 'nabu';
 import {attributeIn, integerParser, listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
@@ -24,11 +23,7 @@ export interface Config {
  */
 class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor() {
-    super(
-        'rotate',
-        'Rotate',
-        {stops: listParser(identity<number>())},
-    );
+    super('Rotate');
   }
 
   getOperator(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {

@@ -28,7 +28,7 @@ export const KEY = 'flip';
  */
 class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor() {
-    super(KEY, 'Flip', {count: integerParser()});
+    super('Flip');
   }
 
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {

@@ -11,7 +11,7 @@ import {ActionSpec} from './action-spec';
 
 class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, {}> {
   constructor() {
-    super('shuffle', 'Shuffle', {});
+    super('Shuffle');
   }
 
   @cache()

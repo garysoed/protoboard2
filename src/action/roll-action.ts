@@ -21,7 +21,7 @@ export interface Config {
  */
 class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor() {
-    super('roll', 'Roll', {count: integerParser()});
+    super('Roll');
   }
 
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {

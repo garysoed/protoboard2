@@ -25,7 +25,7 @@ export const KEY = 'turn';
  */
 class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor() {
-    super(KEY, 'Turn', {count: integerParser()});
+    super('Turn');
   }
 
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {

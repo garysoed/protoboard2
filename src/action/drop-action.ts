@@ -28,7 +28,7 @@ export interface Config {
  */
 class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor() {
-    super('Drop', 'drop', {positioning: enumParser<PositioningType>(PositioningType)});
+    super('Drop');
   }
 
   getOperator(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
