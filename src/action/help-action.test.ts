@@ -37,7 +37,7 @@ test('@protoboard2/action/help-action', init => {
     const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
 
     const action = new HelpAction([
-      {defaultConfig: {}, trigger: TRIGGER, action: testAction},
+      {defaultConfig: {}, trigger: TRIGGER, action: testAction, configSpecs: {}},
     ]);
 
     return {action, context, el, testAction, vine};

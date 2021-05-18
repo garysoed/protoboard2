@@ -1,6 +1,6 @@
 import {$stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {integerParser} from 'persona';
+import {attributeIn, integerParser} from 'persona';
 import {of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
@@ -9,7 +9,7 @@ import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
-import {ActionSpec} from './action-spec';
+import {ActionSpec, ConfigSpecs} from './action-spec';
 
 
 export interface Config {
@@ -59,10 +59,15 @@ class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
 export function flipAction(
     defaultConfig: Config,
     trigger: UnreservedTriggerSpec,
+    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
     defaultConfig,
     trigger,
     action: new FlipAction(),
+    configSpecs: {
+      count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
+      ...configSpecsOverride,
+    },
   };
 }

@@ -3,7 +3,7 @@ import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
@@ -115,5 +115,6 @@ export function pickAction(
     defaultConfig: {},
     trigger,
     action: new PickAction(),
+    configSpecs: {},
   };
 }

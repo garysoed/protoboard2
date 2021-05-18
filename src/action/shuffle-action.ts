@@ -28,5 +28,6 @@ export function shuffleAction(
     defaultConfig: {},
     trigger,
     action: new ShuffleAction(),
+    configSpecs: {},
   };
 }

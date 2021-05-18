@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {enumParser} from 'persona';
+import {attributeIn, enumParser} from 'persona';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -8,7 +8,7 @@ import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
-import {ActionSpec} from './action-spec';
+import {ActionSpec, ConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 
 export enum PositioningType {
@@ -94,10 +94,19 @@ class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
 export function dropAction(
     defaultConfig: Config,
     trigger: UnreservedTriggerSpec,
+    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
     defaultConfig,
     trigger,
     action: new DropAction(),
+    configSpecs: {
+      positioning: attributeIn(
+          'pb-drop-positioning',
+          enumParser<PositioningType>(PositioningType),
+          defaultConfig.positioning,
+      ),
+      ...configSpecsOverride,
+    },
   };
 }

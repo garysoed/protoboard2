@@ -1,12 +1,13 @@
 import {$resolveState} from 'grapevine';
-import {$asArray, $asMap, $asSet, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {extend} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, host, onDom, onMutation, PersonaContext} from 'persona';
-import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
-import {filter, map, mapTo, scan, startWith, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {attributeIn, host, onDom, PersonaContext} from 'persona';
+import {Input} from 'persona/export/internal';
+import {combineLatest, EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
+import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {ActionSpec} from '../action/action-spec';
@@ -66,6 +67,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
       defaultConfig: {},
       trigger: {type: TriggerType.QUESTION, shift: true},
       action: helpAction,
+      configSpecs: {},
     });
 
     return $pipe(
@@ -148,43 +150,31 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   private getConfig$<C extends {}>(
       actionSpec: NormalizedActionSpec<C>,
   ): Observable<C> {
-    const attributePrefix = `pb-${actionSpec.action.key}-`;
-    const attributeFilter = Object.keys(actionSpec.action.converters)
-        .map(configKey => `${attributePrefix}${configKey}`);
-    const $host = host({
-      onMutation: onMutation({attributes: true, attributeFilter}),
-    });
-    return $host._.onMutation.getValue(this.context).pipe(
-        startWith(null),
-        map(records => {
-          if (!records) {
-            return new Set(attributeFilter);
+    const $host = host({...actionSpec.configSpecs});
+    const configSpecMap: Map<keyof C, Observable<{}>> = new Map();
+    for (const key in $host._) {
+      configSpecMap.set(
+          key,
+          ($host._[key] as Input<C[Extract<keyof C, string>]>).getValue(this.context),
+      );
+    }
+
+    const obsList: Observable<ReadonlyArray<readonly [keyof C, {}]>> = configSpecMap.size <= 0 ?
+      of<Array<[keyof C, {}]>>([]) :
+      combineLatest($pipe(
+          configSpecMap,
+          $map(([key, obs]) => obs.pipe(map(value => [key, value] as const))),
+          $asArray(),
+      ));
+    return obsList.pipe(
+        map(entries => {
+          const partialConfig: Partial<C> = {};
+          for (const [key, value] of entries) {
+            partialConfig[key] = value as C[keyof C];
           }
 
-          return $pipe(
-              records,
-              $map(record => record.attributeName),
-              $filterNonNull(),
-              $asSet(),
-          );
+          return partialConfig;
         }),
-        map(changedAttributes => {
-          const hostEl = $host.getSelectable(this.context);
-          const changedConfig: Partial<C> = {};
-          for (const attribute of changedAttributes) {
-            const rawValue = hostEl.getAttribute(attribute);
-            const configKey = attribute.substr(attributePrefix.length) as keyof C;
-
-            const parseResult = actionSpec.action.converters[configKey]
-                .convertBackward(rawValue || '');
-            if (parseResult.success) {
-              changedConfig[configKey] = parseResult.result;
-            }
-          }
-
-          return changedConfig;
-        }),
-        scan((config, newConfig) => ({...config, ...newConfig}), {} as Partial<C>),
         extend(actionSpec.defaultConfig),
     );
   }

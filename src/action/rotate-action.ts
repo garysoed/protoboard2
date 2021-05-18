@@ -1,7 +1,7 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {identity} from 'nabu';
-import {listParser} from 'persona';
+import {attributeIn, integerParser, listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -10,7 +10,7 @@ import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
-import {ActionSpec} from './action-spec';
+import {ActionSpec, ConfigSpecs} from './action-spec';
 
 
 export interface Config {
@@ -70,10 +70,15 @@ class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
 export function rotateAction(
     defaultConfig: Config,
     trigger: UnreservedTriggerSpec,
+    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
     defaultConfig,
     trigger,
     action: new RotateAction(),
+    configSpecs: {
+      stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
+      ...configSpecsOverride,
+    },
   };
 }

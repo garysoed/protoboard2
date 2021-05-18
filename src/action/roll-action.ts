@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {integerParser} from 'persona';
+import {attributeIn, integerParser} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -8,7 +8,7 @@ import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
-import {ActionSpec} from './action-spec';
+import {ActionSpec, ConfigSpecs} from './action-spec';
 import {$random} from './util/random';
 
 
@@ -47,10 +47,15 @@ class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
 export function rollAction(
     defaultConfig: Config,
     trigger: UnreservedTriggerSpec,
+    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
     defaultConfig,
     trigger,
     action: new RollAction(),
+    configSpecs: {
+      count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
+      ...configSpecsOverride,
+    },
   };
 }

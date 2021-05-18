@@ -1,8 +1,7 @@
 import {assert, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {extend} from 'gs-tools/export/rxjs';
 import {StateService} from 'gs-tools/export/state';
-import {$div, element, host, integerParser, PersonaContext} from 'persona';
+import {$div, attributeIn, element, host, integerParser, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {Observable, OperatorFunction, pipe, Subject} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
@@ -11,13 +10,12 @@ import {ActionSpec} from '../action/action-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {BaseAction, ActionContext, TriggerEvent} from './base-action';
+import {ActionContext, BaseAction, TriggerEvent} from './base-action';
 import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
 
 const ACTION_KEY = 'test';
-const DEFAULT_CONFIG_VALUE = 234;
 
 interface ActionConfig {
   readonly value: number;
@@ -37,7 +35,7 @@ class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
 
   getOperator(context: ActionContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
-        withLatestFrom(context.config$.pipe(extend({value: DEFAULT_CONFIG_VALUE}))),
+        withLatestFrom(context.config$),
         tap(([event, config]) => {
           this.onTrigger$.next({event, config});
         }),
@@ -85,11 +83,13 @@ test('@protoboard2/core/base-component', init => {
             defaultConfig: {},
             trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
             action: clickAction,
+            configSpecs: {value: attributeIn('pb-test-value', integerParser(), -1)},
           },
           {
             defaultConfig: {},
             trigger: {type: KEY, targetEl: $targetEl},
             action: keyAction,
+            configSpecs: {value: attributeIn('pb-test2-value', integerParser(), -1)},
           },
         ],
         personaContext,
@@ -188,6 +188,7 @@ test('@protoboard2/core/base-component', init => {
               defaultConfig: {},
               trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
               action,
+              configSpecs: {},
             },
           ],
           _.personaContext,
@@ -227,6 +228,7 @@ test('@protoboard2/core/base-component', init => {
               defaultConfig: {},
               trigger: {type: KEY},
               action,
+              configSpecs: {},
             },
           ],
           _.personaContext,
@@ -262,26 +264,23 @@ test('@protoboard2/core/base-component', init => {
   test('getConfig$', _, init => {
     const _ = init(_ => {
       const action = _.clickAction;
-      const value$ = createSpySubject(action.onTrigger$ .pipe(map(({config}) => config.value)));
+      const value$ = createSpySubject(action.onTrigger$.pipe(map(({config}) => config.value)));
       return {..._, action, value$};
     });
 
     should('update the configuration when attribute is specified', () => {
       _.el.setAttribute('pb-test-value', '123');
+      _.personaContext.onAttributeChanged$.next({attrName: 'pb-test-value'});
       _.targetEl.dispatchEvent(new MouseEvent('click'));
 
       assert(_.value$).to.emitSequence([123]);
     });
 
-    should('use the default config if config attribute does not exist', () => {
-      _.targetEl.dispatchEvent(new MouseEvent('click'));
-
-      assert(_.value$).to.emitSequence([DEFAULT_CONFIG_VALUE]);
-    });
-
     should('update the configuration when attribute has changed', () => {
       _.el.setAttribute('pb-test-value', '123');
+      _.personaContext.onAttributeChanged$.next({attrName: 'pb-test-value'});
       _.el.setAttribute('pb-test-value', '345');
+      _.personaContext.onAttributeChanged$.next({attrName: 'pb-test-value'});
       _.targetEl.dispatchEvent(new MouseEvent('click'));
 
       assert(_.value$).to.emitSequence([345]);
