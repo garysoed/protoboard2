@@ -3,10 +3,10 @@ import {OperatorFunction, pipe} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
-import {ActionSpec} from '../core/base-component';
 import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 
+import {ActionSpec} from './action-spec';
 import {$helpService} from './help-service';
 
 

@@ -4,10 +4,12 @@ import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
 import {PieceSpec} from '../types/piece-spec';
 
+import {ActionSpec} from './action-spec';
 import {moveObject} from './util/move-object';
 
 
@@ -19,7 +21,7 @@ export interface Config { }
  *
  * @thModule action
  */
-export class PickAction extends BaseAction<PieceSpec<any>, Config> {
+class PickAction extends BaseAction<PieceSpec<any>, Config> {
   /**
    * @internal
    */
@@ -104,4 +106,14 @@ export class PickAction extends BaseAction<PieceSpec<any>, Config> {
         }),
     );
   }
+}
+
+export function pickAction(
+    trigger: UnreservedTriggerSpec,
+): ActionSpec<Config> {
+  return {
+    defaultConfig: {},
+    trigger,
+    action: new PickAction(),
+  };
 }

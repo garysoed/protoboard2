@@ -7,12 +7,13 @@ import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {TriggerType} from '../core/trigger-spec';
 import {$$activeSpec} from '../objects/active-spec';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
-import {Config, DropAction, PositioningType} from './drop-action';
+import {Config, dropAction, PositioningType} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -35,9 +36,7 @@ test('@protoboard2/action/drop-action', init => {
       config$: of({positioning: PositioningType.DEFAULT}),
     });
 
-    const action = new DropAction();
-
-    run(action.run());
+    const action = dropAction({positioning: PositioningType.DEFAULT}, TriggerType.D).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

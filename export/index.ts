@@ -2,7 +2,7 @@ export {Lens, $lens} from '../src/core/lens';
 export {LensDisplay} from '../src/core/lens-display';
 
 // action
-export {PickAction} from '../src/action/pick-action';
+export {pickAction} from '../src/action/pick-action';
 
 // coordinate
 export {Cartesian} from '../src/coordinate/cartesian';

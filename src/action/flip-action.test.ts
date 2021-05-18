@@ -4,11 +4,12 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
+import {TriggerType} from '../core/trigger-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
-import {Config, FlipAction} from './flip-action';
+import {Config, flipAction} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -37,7 +38,7 @@ test('@protoboard2/action/flip-action', init => {
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       vine: personaContext.vine,
     });
-    const action = new FlipAction();
+    const action = flipAction({count: 4}, TriggerType.D).action;
 
     run(action.run());
 

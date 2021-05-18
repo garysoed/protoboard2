@@ -4,11 +4,12 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
+import {TriggerType} from '../core/trigger-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {createFakeActionContext} from './testing/fake-action-context';
-import {Config, TurnAction} from './turn-action';
+import {Config, turnAction} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -36,7 +37,7 @@ test('@protoboard2/action/turn-action', init => {
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = new TurnAction();
+    const action = turnAction({count: 2}, TriggerType.T).action;
 
     run(action.run());
 

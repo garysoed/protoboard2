@@ -6,8 +6,11 @@ import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
+
+import {ActionSpec} from './action-spec';
 
 
 export interface Config {
@@ -19,7 +22,7 @@ export interface Config {
  *
  * @thModule action
  */
-export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
+class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
   constructor() {
     super(
         'rotate',
@@ -62,4 +65,15 @@ export class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
         }),
     );
   }
+}
+
+export function rotateAction(
+    defaultConfig: Config,
+    trigger: UnreservedTriggerSpec,
+): ActionSpec<Config> {
+  return {
+    defaultConfig,
+    trigger,
+    action: new RotateAction(),
+  };
 }

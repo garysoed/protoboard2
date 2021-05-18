@@ -5,8 +5,11 @@ import {of as observableOf, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
+
+import {ActionSpec} from './action-spec';
 
 
 export interface Config {
@@ -20,7 +23,7 @@ export const KEY = 'turn';
  *
  * @thModule action
  */
-export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
+class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor() {
     super(KEY, 'Turn', {count: integerParser()});
   }
@@ -46,4 +49,16 @@ export class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
         }),
     );
   }
+}
+
+
+export function turnAction(
+    defaultConfig: Config,
+    trigger: UnreservedTriggerSpec,
+): ActionSpec<Config> {
+  return {
+    defaultConfig,
+    trigger,
+    action: new TurnAction(),
+  };
 }

@@ -6,13 +6,14 @@ import {of, ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {TriggerType} from '../core/trigger-spec';
 import {$$activeSpec} from '../objects/active-spec';
 import {$setParent} from '../objects/content-map';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {PieceSpec} from '../types/piece-spec';
 
-import {Config, PickAction} from './pick-action';
+import {Config, pickAction} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -33,7 +34,7 @@ test('@protoboard2/action/pick-action', init => {
       objectId$,
       vine: personaContext.vine,
     });
-    const action = new PickAction();
+    const action = pickAction(TriggerType.P).action;
 
     run(action.run());
 

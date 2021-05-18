@@ -4,11 +4,11 @@ import {_p} from 'mask';
 import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser, style} from 'persona';
 import {Observable} from 'rxjs';
 
-import {FlipAction} from '../action/flip-action';
-import {PickAction} from '../action/pick-action';
-import {RollAction} from '../action/roll-action';
-import {RotateAction} from '../action/rotate-action';
-import {TurnAction} from '../action/turn-action';
+import {flipAction} from '../action/flip-action';
+import {pickAction} from '../action/pick-action';
+import {rollAction} from '../action/roll-action';
+import {rotateAction} from '../action/rotate-action';
+import {turnAction} from '../action/turn-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -63,10 +63,6 @@ export function d6Spec<P>(input: Input<P>): D6Spec {
  * Represents an object with six faces.
  *
  * @remarks
- * D6 supports {@link PickAction}, {@link RotateAction}., {@link FlipAction}, {@link RollAction},
- * and {@link TurnAction}.
- *
- * @thSlot - Face to display for the object.
  * @thWebComponent
  * @thModule piece
  */
@@ -78,31 +74,11 @@ export class D6 extends BaseComponent<D6Spec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          {
-            defaultConfig: {stops: [0, 90, 180, 270]},
-            trigger: TriggerType.R,
-            action: new RotateAction(),
-          },
-          {
-            defaultConfig: {count: 4},
-            trigger: TriggerType.F,
-            action: new FlipAction(),
-          },
-          {
-            defaultConfig: {count: 4},
-            trigger: TriggerType.T,
-            action: new TurnAction(),
-          },
-          {
-            defaultConfig: {count: 4},
-            trigger: TriggerType.L,
-            action: new RollAction(),
-          },
-          {
-            defaultConfig: {},
-            trigger: TriggerType.CLICK,
-            action: new PickAction(),
-          },
+          rotateAction({stops: [0, 90, 180, 270]}, TriggerType.R),
+          flipAction({count: 4}, TriggerType.F),
+          turnAction({count: 4}, TriggerType.T),
+          rollAction({count: 4}, TriggerType.L),
+          pickAction(TriggerType.CLICK),
         ],
         context,
         $,

@@ -4,11 +4,12 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
+import {TriggerType} from '../core/trigger-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
-import {Config, RotateAction} from './rotate-action';
+import {Config, rotateAction} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -35,7 +36,7 @@ test('@protoboard2/action/rotate-action', init => {
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = new RotateAction();
+    const action = rotateAction({stops: [11, 22, 33]}, TriggerType.R).action;
     run(action.run());
 
     return {$rotationDeg, action, config$, context, el, stateService};

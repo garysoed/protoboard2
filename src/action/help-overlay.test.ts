@@ -10,7 +10,7 @@ import render from './goldens/help-overlay__render.html';
 import renderEmpty from './goldens/help-overlay__render_empty.html';
 import {$, HelpOverlay} from './help-overlay';
 import {$helpService} from './help-service';
-import {PickAction} from './pick-action';
+import {pickAction} from './pick-action';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
@@ -22,7 +22,7 @@ test('@protoboard2/action/help-overlay', init => {
     const tester = testerFactory.build({rootCtrls: [HelpOverlay], rootDoc: document});
     const el = tester.createElement(HelpOverlay);
 
-    const testAction = new PickAction();
+    const testAction = pickAction(TriggerType.CLICK).action;
     return {el, testAction, tester};
   });
 

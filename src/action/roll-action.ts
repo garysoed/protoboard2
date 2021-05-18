@@ -4,9 +4,11 @@ import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
+import {ActionSpec} from './action-spec';
 import {$random} from './util/random';
 
 
@@ -17,7 +19,7 @@ export interface Config {
 /**
  * Lets the user pick a random face of the object
  */
-export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
+class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   constructor() {
     super('roll', 'Roll', {count: integerParser()});
   }
@@ -40,4 +42,15 @@ export class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
         }),
     );
   }
+}
+
+export function rollAction(
+    defaultConfig: Config,
+    trigger: UnreservedTriggerSpec,
+): ActionSpec<Config> {
+  return {
+    defaultConfig,
+    trigger,
+    action: new RollAction(),
+  };
 }

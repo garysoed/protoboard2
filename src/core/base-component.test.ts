@@ -7,11 +7,12 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {Observable, OperatorFunction, pipe, Subject} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
+import {ActionSpec} from '../action/action-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {BaseAction, ActionContext, TriggerEvent} from './base-action';
-import {$baseComponent, ActionSpec, BaseComponent} from './base-component';
+import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerType} from './trigger-spec';
 
 

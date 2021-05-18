@@ -5,11 +5,12 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
+import {TriggerType} from '../core/trigger-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
-import {Config, RollAction} from './roll-action';
+import {Config, rollAction} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {$random} from './util/random';
 
@@ -42,7 +43,7 @@ test('@protoboard2/action/roll-action', init => {
       objectId$: of(objectId),
       vine,
     });
-    const action = new RollAction();
+    const action = rollAction({count: 3}, TriggerType.R).action;
 
     run(action.run());
 

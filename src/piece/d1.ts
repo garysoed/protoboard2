@@ -4,8 +4,8 @@ import {_p} from 'mask';
 import {$slot, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
-import {PickAction} from '../action/pick-action';
-import {RotateAction} from '../action/rotate-action';
+import {pickAction} from '../action/pick-action';
+import {rotateAction} from '../action/rotate-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
@@ -72,16 +72,8 @@ export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          {
-            defaultConfig: {stops: [0, 90, 180, 270]},
-            trigger: {type: TriggerType.R},
-            action: new RotateAction(),
-          },
-          {
-            defaultConfig: {},
-            trigger: TriggerType.CLICK,
-            action: new PickAction(),
-          },
+          rotateAction({stops: [0, 90, 180, 270]}, TriggerType.R),
+          pickAction(TriggerType.CLICK),
         ],
         context,
         $,

@@ -4,9 +4,11 @@ import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
+import {ActionSpec} from './action-spec';
 import {moveObject} from './util/move-object';
 
 export enum PositioningType {
@@ -24,7 +26,7 @@ export interface Config {
  *
  * @thModule action
  */
-export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
+class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   constructor() {
     super('Drop', 'drop', {positioning: enumParser<PositioningType>(PositioningType)});
   }
@@ -87,4 +89,15 @@ export class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Co
         return 0;
     }
   }
+}
+
+export function dropAction(
+    defaultConfig: Config,
+    trigger: UnreservedTriggerSpec,
+): ActionSpec<Config> {
+  return {
+    defaultConfig,
+    trigger,
+    action: new DropAction(),
+  };
 }

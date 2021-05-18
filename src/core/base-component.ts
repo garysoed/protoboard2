@@ -9,22 +9,17 @@ import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, scan, startWith, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
+import {ActionSpec} from '../action/action-spec';
 import {HelpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
-import {BaseAction, TriggerEvent} from './base-action';
-import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
+import {TriggerEvent} from './base-action';
+import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType} from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
-
-export interface ActionSpec<C> {
-  readonly defaultConfig: C;
-  readonly trigger: UnreservedTriggerSpec;
-  readonly action: BaseAction<any, C>;
-}
 
 interface NormalizedActionSpec<C> extends Omit<ActionSpec<C>, 'trigger'> {
   readonly trigger: DetailedTriggerSpec<TriggerType>;
