@@ -37,7 +37,6 @@ test('@protoboard2/action/rotate-action', init => {
       vine: personaContext.vine,
     });
     const action = rotateAction({stops: [11, 22, 33]}, TriggerType.R).action;
-    run(action.run());
 
     return {$rotationDeg, action, config$, context, el, stateService};
   });

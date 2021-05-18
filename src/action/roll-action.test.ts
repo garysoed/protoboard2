@@ -45,8 +45,6 @@ test('@protoboard2/action/roll-action', init => {
     });
     const action = rollAction({count: 3}, TriggerType.R).action;
 
-    run(action.run());
-
     return {$faceIndex, action, config$, context, el, seed, stateService};
   });
 

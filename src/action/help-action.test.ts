@@ -39,7 +39,6 @@ test('@protoboard2/action/help-action', init => {
     const action = new HelpAction([
       {defaultConfig: {}, trigger: TRIGGER, action: testAction},
     ]);
-    run(action.run());
 
     return {action, context, el, testAction, vine};
   });

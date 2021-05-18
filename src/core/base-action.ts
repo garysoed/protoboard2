@@ -1,5 +1,4 @@
 import {$resolveState, Vine} from 'grapevine';
-import {Runnable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {Converter} from 'nabu';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -35,7 +34,7 @@ export type ConverterOf<O> = {
  * @typeParam C - The configuration object.
  * @thModule action
  */
-export abstract class BaseAction<P extends ObjectSpec<any>, C> extends Runnable {
+export abstract class BaseAction<P extends ObjectSpec<any>, C> {
   /**
    * Instantiates a new BaseAction.
    *
@@ -49,9 +48,7 @@ export abstract class BaseAction<P extends ObjectSpec<any>, C> extends Runnable 
       readonly key: string,
       readonly actionName: string,
       readonly converters: ConverterOf<C>,
-  ) {
-    super();
-  }
+  ) { }
 
   protected getObject$(context: ActionContext<P, C>): Observable<P|undefined> {
     return context.objectId$.pipe(

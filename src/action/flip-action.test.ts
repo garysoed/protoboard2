@@ -40,8 +40,6 @@ test('@protoboard2/action/flip-action', init => {
     });
     const action = flipAction({count: 4}, TriggerType.D).action;
 
-    run(action.run());
-
     return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });
 

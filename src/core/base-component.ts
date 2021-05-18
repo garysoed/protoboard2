@@ -192,7 +192,6 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   private setupActions(): void {
     for (const [trigger, actionSpec] of this.actionsMap) {
       this.addSetup(this.setupTrigger(trigger, actionSpec));
-      this.addSetup(actionSpec.action.run());
     }
   }
 

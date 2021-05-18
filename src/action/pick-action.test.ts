@@ -36,8 +36,6 @@ test('@protoboard2/action/pick-action', init => {
     });
     const action = pickAction(TriggerType.P).action;
 
-    run(action.run());
-
     return {action, context, el, objectId$, personaContext, stateService};
   });
 

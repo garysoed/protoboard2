@@ -39,8 +39,6 @@ test('@protoboard2/action/turn-action', init => {
     });
     const action = turnAction({count: 2}, TriggerType.T).action;
 
-    run(action.run());
-
     return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });
 
