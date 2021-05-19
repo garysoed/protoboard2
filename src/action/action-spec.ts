@@ -9,8 +9,9 @@ export type ConfigSpecs<C> = {
 }
 
 export interface ActionSpec<C> {
+  readonly action: BaseAction<any, C>;
+  readonly actionName: string;
+  readonly configSpecs: ConfigSpecs<C>;
   readonly defaultConfig: C;
   readonly trigger: UnreservedTriggerSpec;
-  readonly action: BaseAction<any, C>;
-  readonly configSpecs: ConfigSpecs<C>;
 }

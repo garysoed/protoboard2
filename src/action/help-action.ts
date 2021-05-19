@@ -18,7 +18,7 @@ export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
   constructor(
       private readonly actionsArray: readonly NormalizedActionSpec[],
   ) {
-    super('Help');
+    super();
   }
 
   getOperator(context: ActionContext<ObjectSpec<any>, {}>): OperatorFunction<TriggerEvent, unknown> {
@@ -26,7 +26,7 @@ export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
         tap(() => {
           $helpService.get(context.vine).show($pipe(
               this.actionsArray,
-              $map(spec => [spec.trigger, spec.action] as const),
+              $map(spec => [spec.trigger, spec.actionName] as const),
               $asMap(),
           ));
         }),

@@ -22,10 +22,6 @@ export interface Config {
  * @thModule action
  */
 class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
-  constructor() {
-    super('Rotate');
-  }
-
   getOperator(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(context.vine);
     const stops$ = context.config$.pipe(map(config => config.stops));
@@ -68,12 +64,13 @@ export function rotateAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    defaultConfig,
-    trigger,
     action: new RotateAction(),
+    actionName: 'Rotate',
     configSpecs: {
       stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
       ...configSpecsOverride,
     },
+    defaultConfig,
+    trigger,
   };
 }

@@ -20,10 +20,6 @@ export interface Config {
  * Lets the user pick a random face of the object
  */
 class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor() {
-    super('Roll');
-  }
-
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const faceCount$ = context.config$.pipe(map(config => config.count));
     return pipe(
@@ -50,12 +46,13 @@ export function rollAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    defaultConfig,
-    trigger,
     action: new RollAction(),
+    actionName: 'Roll',
     configSpecs: {
       count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
+    defaultConfig,
+    trigger,
   };
 }

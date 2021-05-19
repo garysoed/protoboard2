@@ -65,7 +65,7 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
         map(actions => {
           const rows$list = $pipe(
               actions,
-              $map(({action, trigger}) => {
+              $map(({actionName, trigger}) => {
                 const keyboardEl$ = renderCustomElement({
                   spec: $keyboard,
                   attrs: new Map([['a', observableOf('test')]]),
@@ -80,7 +80,7 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
 
                 const actionEl$ = renderElement({
                   tag: 'td',
-                  textContent: action.actionName,
+                  textContent: actionName,
                   id: {},
                 });
                 return renderElement({

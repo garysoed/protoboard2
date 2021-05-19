@@ -27,10 +27,6 @@ export interface Config {
  * @thModule action
  */
 class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
-  constructor() {
-    super('Drop');
-  }
-
   getOperator(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
       this.getObject$(context),
@@ -97,9 +93,8 @@ export function dropAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    defaultConfig,
-    trigger,
     action: new DropAction(),
+    actionName: 'Drop',
     configSpecs: {
       positioning: attributeIn(
           'pb-drop-positioning',
@@ -108,5 +103,7 @@ export function dropAction(
       ),
       ...configSpecsOverride,
     },
+    defaultConfig,
+    trigger,
   };
 }

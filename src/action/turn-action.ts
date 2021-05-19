@@ -24,10 +24,6 @@ export const KEY = 'turn';
  * @thModule action
  */
 class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor() {
-    super('Turn');
-  }
-
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(context.vine);
     const faceCount$ = context.config$.pipe(map(config => config.count));
@@ -58,12 +54,13 @@ export function turnAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    defaultConfig,
-    trigger,
     action: new TurnAction(),
+    actionName: 'Turn',
     configSpecs: {
       count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
+    defaultConfig,
+    trigger,
   };
 }

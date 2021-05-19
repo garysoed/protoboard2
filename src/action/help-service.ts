@@ -1,13 +1,11 @@
 import {source} from 'grapevine';
 import {BehaviorSubject} from 'rxjs';
 
-import {BaseAction} from '../core/base-action';
 import {TriggerSpec} from '../core/trigger-spec';
-import {ObjectSpec} from '../types/object-spec';
 
 
 export interface ActionTrigger {
-  readonly action: BaseAction<ObjectSpec<any>, unknown>;
+  readonly actionName: string;
   readonly trigger: TriggerSpec;
 }
 
@@ -18,9 +16,9 @@ export class HelpService {
     this.actions$.next([]);
   }
 
-  show(actions: ReadonlyMap<TriggerSpec, BaseAction<any, unknown>>): void {
+  show(actions: ReadonlyMap<TriggerSpec, string>): void {
     this.actions$.next(
-        [...actions].map(([trigger, action]) => ({action, trigger})),
+        [...actions].map(([trigger, actionName]) => ({actionName, trigger})),
     );
   }
 }

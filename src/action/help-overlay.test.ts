@@ -1,6 +1,7 @@
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {_p} from 'mask';
+import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
 import {PersonaTesterFactory} from 'persona/export/testing';
 import {map} from 'rxjs/operators';
 
@@ -10,20 +11,25 @@ import render from './goldens/help-overlay__render.html';
 import renderEmpty from './goldens/help-overlay__render_empty.html';
 import {$, HelpOverlay} from './help-overlay';
 import {$helpService} from './help-service';
-import {pickAction} from './pick-action';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
+const ACTION_NAME = 'ACTION_NAME';
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv({render, renderEmpty}));
 
-    const tester = testerFactory.build({rootCtrls: [HelpOverlay], rootDoc: document});
+    const tester = testerFactory.build({
+      overrides: [
+        THEME_LOADER_TEST_OVERRIDE,
+      ],
+      rootCtrls: [HelpOverlay],
+      rootDoc: document,
+    });
     const el = tester.createElement(HelpOverlay);
 
-    const testAction = pickAction(TriggerType.CLICK).action;
-    return {el, testAction, tester};
+    return {el, tester};
   });
 
   test('renderIsVisible', () => {
@@ -32,7 +38,7 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should('add the isVisible class if there is an action in the help service', () => {
-      $helpService.get(_.tester.vine).show(new Map([[TriggerType.CLICK, _.testAction]]));
+      $helpService.get(_.tester.vine).show(new Map([[TriggerType.CLICK, ACTION_NAME]]));
 
       assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(true);
     });
@@ -41,7 +47,7 @@ test('@protoboard2/action/help-overlay', init => {
   test('tableRows$', () => {
     should('render rows correctly', () => {
       $helpService.get(_.tester.vine).show(new Map([
-        [{type: TriggerType.CLICK, meta: true, alt: true}, _.testAction],
+        [{type: TriggerType.CLICK, meta: true, alt: true}, ACTION_NAME],
       ]));
 
       assert(_.el.flattenContent()).to.matchSnapshot('render');
@@ -49,7 +55,7 @@ test('@protoboard2/action/help-overlay', init => {
 
     should('render deletion correctly', () => {
       const service = $helpService.get(_.tester.vine);
-      service.show(new Map([[TriggerType.CLICK, _.testAction]]));
+      service.show(new Map([[TriggerType.CLICK, ACTION_NAME]]));
       service.show(new Map());
 
       assert(_.el.flattenContent()).to.matchSnapshot('renderEmpty');
@@ -58,7 +64,7 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('setupHandleClick', () => {
     should('hide the help when clicked', () => {
-      $helpService.get(_.tester.vine).show(new Map([[TriggerType.CLICK, _.testAction]]));
+      $helpService.get(_.tester.vine).show(new Map([[TriggerType.CLICK, ACTION_NAME]]));
 
       _.el.dispatchEvent($.root._.click);
 

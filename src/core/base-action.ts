@@ -35,15 +35,6 @@ export type ConverterOf<O> = {
  * @thModule action
  */
 export abstract class BaseAction<P extends ObjectSpec<any>, C> {
-  /**
-   * Instantiates a new BaseAction.
-   *
-   * @param actionName - Name of the action. This is used in the help dialog.
-   */
-  constructor(
-      readonly actionName: string,
-  ) { }
-
   protected getObject$(context: ActionContext<P, C>): Observable<P|undefined> {
     return context.objectId$.pipe(
         switchMap(objectId => $resolveState.get(context.vine)(objectId)),

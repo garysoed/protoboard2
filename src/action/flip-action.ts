@@ -27,10 +27,6 @@ export const KEY = 'flip';
  * @thModule action
  */
 class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  constructor() {
-    super('Flip');
-  }
-
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const stateService = $stateService.get(context.vine);
     const faceCount$ = context.config$.pipe(map(config => config.count));
@@ -62,12 +58,13 @@ export function flipAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    defaultConfig,
-    trigger,
     action: new FlipAction(),
+    actionName: 'Flip',
     configSpecs: {
       count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
+    defaultConfig,
+    trigger,
   };
 }

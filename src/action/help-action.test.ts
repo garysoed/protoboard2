@@ -14,10 +14,6 @@ import {createFakeActionContext} from './testing/fake-action-context';
 
 
 class TestAction extends BaseAction<PieceSpec<{}>, {}> {
-  constructor() {
-    super('test');
-  }
-
   protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
     return config$;
   }
@@ -37,7 +33,7 @@ test('@protoboard2/action/help-action', init => {
     const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
 
     const action = new HelpAction([
-      {defaultConfig: {}, trigger: TRIGGER, action: testAction, configSpecs: {}},
+      {defaultConfig: {}, trigger: TRIGGER, action: testAction, actionName: 'test', configSpecs: {}},
     ]);
 
     return {action, context, el, testAction, vine};
@@ -53,7 +49,7 @@ test('@protoboard2/action/help-action', init => {
         arrayThat<ActionTrigger>().haveExactElements([]),
         arrayThat<ActionTrigger>().haveExactElements([
           objectThat<ActionTrigger>().haveProperties({
-            action: _.testAction,
+            actionName: 'test',
             trigger: TRIGGER,
           }),
         ]),

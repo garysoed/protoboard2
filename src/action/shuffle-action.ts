@@ -10,10 +10,6 @@ import {ActionSpec} from './action-spec';
 
 
 class ShuffleAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, {}> {
-  constructor() {
-    super('Shuffle');
-  }
-
   @cache()
   getOperator(): OperatorFunction<TriggerEvent, unknown> {
     return switchMapTo(NEVER);
@@ -25,9 +21,10 @@ export function shuffleAction(
     trigger: UnreservedTriggerSpec,
 ): ActionSpec<{}> {
   return {
+    action: new ShuffleAction(),
+    actionName: 'Shuffle',
+    configSpecs: {},
     defaultConfig: {},
     trigger,
-    action: new ShuffleAction(),
-    configSpecs: {},
   };
 }

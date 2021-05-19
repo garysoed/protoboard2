@@ -22,13 +22,6 @@ export interface Config { }
  * @thModule action
  */
 class PickAction extends BaseAction<PieceSpec<any>, Config> {
-  /**
-   * @internal
-   */
-  constructor() {
-    super('Pick');
-  }
-
   getOperator(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const fromObjectSpec$ = combineLatest([
       context.objectId$,
@@ -112,9 +105,10 @@ export function pickAction(
     trigger: UnreservedTriggerSpec,
 ): ActionSpec<Config> {
   return {
+    action: new PickAction(),
+    actionName: 'Pick',
+    configSpecs: {},
     defaultConfig: {},
     trigger,
-    action: new PickAction(),
-    configSpecs: {},
   };
 }

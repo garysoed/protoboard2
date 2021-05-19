@@ -27,10 +27,6 @@ interface TestValue {
 class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
   readonly onTrigger$ = new Subject<TestValue>();
 
-  constructor() {
-    super('Test');
-  }
-
   getOperator(context: ActionContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
     return pipe(
         withLatestFrom(context.config$),
@@ -81,12 +77,14 @@ test('@protoboard2/core/base-component', init => {
             defaultConfig: {},
             trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
             action: clickAction,
+            actionName: 'test',
             configSpecs: {value: attributeIn('pb-test-value', integerParser(), -1)},
           },
           {
             defaultConfig: {},
             trigger: {type: KEY, targetEl: $targetEl},
             action: keyAction,
+            actionName: 'test',
             configSpecs: {value: attributeIn('pb-test2-value', integerParser(), -1)},
           },
         ],
@@ -186,6 +184,7 @@ test('@protoboard2/core/base-component', init => {
               defaultConfig: {},
               trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
               action,
+              actionName: 'test',
               configSpecs: {},
             },
           ],
@@ -226,6 +225,7 @@ test('@protoboard2/core/base-component', init => {
               defaultConfig: {},
               trigger: {type: KEY},
               action,
+              actionName: 'test',
               configSpecs: {},
             },
           ],

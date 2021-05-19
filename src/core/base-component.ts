@@ -64,10 +64,11 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
     );
     const helpAction = new HelpAction(allActions);
     allActions.push({
+      action: helpAction,
+      actionName: 'Help',
+      configSpecs: {},
       defaultConfig: {},
       trigger: {type: TriggerType.QUESTION, shift: true},
-      action: helpAction,
-      configSpecs: {},
     });
 
     return $pipe(
