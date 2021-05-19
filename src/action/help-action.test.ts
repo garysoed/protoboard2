@@ -8,7 +8,7 @@ import {TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {HelpAction} from './help-action';
+import {helpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
 
@@ -32,9 +32,9 @@ test('@protoboard2/action/help-action', init => {
     const testAction = new TestAction();
     const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
 
-    const action = new HelpAction([
+    const action = helpAction([
       {defaultConfig: {}, trigger: TRIGGER, action: testAction, actionName: 'test', configSpecs: {}},
-    ]);
+    ]).action;
 
     return {action, context, el, testAction, vine};
   });

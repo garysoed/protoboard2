@@ -11,7 +11,7 @@ import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/
 import {Logger} from 'santa';
 
 import {ActionSpec} from '../action/action-spec';
-import {HelpAction} from '../action/help-action';
+import {helpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
 import {TriggerEvent} from './base-action';
@@ -62,14 +62,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
         }),
         $asArray(),
     );
-    const helpAction = new HelpAction(allActions);
-    allActions.push({
-      action: helpAction,
-      actionName: 'Help',
-      configSpecs: {},
-      defaultConfig: {},
-      trigger: {type: TriggerType.QUESTION, shift: true},
-    });
+    allActions.push(helpAction(allActions));
 
     return $pipe(
         allActions,

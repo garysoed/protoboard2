@@ -14,7 +14,7 @@ interface NormalizedActionSpec extends Omit<ActionSpec<{}>, 'trigger'> {
   readonly trigger: DetailedTriggerSpec<TriggerType>;
 }
 
-export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
+class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
   constructor(
       private readonly actionsArray: readonly NormalizedActionSpec[],
   ) {
@@ -32,4 +32,16 @@ export class HelpAction extends BaseAction<ObjectSpec<any>, {}> {
         }),
     );
   }
+}
+
+export function helpAction(
+    actions: readonly NormalizedActionSpec[],
+): NormalizedActionSpec {
+  return {
+    action: new HelpAction(actions),
+    actionName: 'Help',
+    configSpecs: {},
+    defaultConfig: {},
+    trigger: {type: TriggerType.QUESTION, shift: true},
+  };
 }
