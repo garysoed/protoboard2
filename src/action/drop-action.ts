@@ -3,11 +3,12 @@ import {attributeIn, enumParser} from 'persona';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, ActionContext, TriggerEvent} from '../core/base-action';
+import {BaseAction, TriggerEvent} from '../core/base-action';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
+import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 
@@ -29,7 +30,7 @@ export interface Config {
 class DropAction extends BaseAction<ContainerSpec<unknown, 'indexed'>, Config> {
   getOperator(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const moveObjectFn$ = combineLatest([
-      this.getObject$(context),
+      getObject$(context),
       $activeSpec.get(context.vine),
       context.config$,
     ])

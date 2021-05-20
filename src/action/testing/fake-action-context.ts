@@ -1,8 +1,8 @@
 import {Vine} from 'grapevine';
 import {EMPTY} from 'rxjs';
 
-import {ActionContext} from '../../core/base-action';
 import {ObjectSpec} from '../../types/object-spec';
+import {ActionContext} from '../action-context';
 
 
 export function createFakeActionContext<O extends ObjectSpec<any>, C>(

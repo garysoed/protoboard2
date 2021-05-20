@@ -4,11 +4,12 @@ import {attributeIn, integerParser} from 'persona';
 import {of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction, TriggerEvent} from '../core/base-action';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
+import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs} from './action-spec';
 
 
@@ -31,7 +32,7 @@ class FlipAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
     const stateService = $stateService.get(context.vine);
     const faceCount$ = context.config$.pipe(map(config => config.count));
     return pipe(
-        withLatestFrom(this.getObject$(context), faceCount$),
+        withLatestFrom(getObject$(context), faceCount$),
         switchMap(([, obj, faceCount]) => {
           if (!obj) {
             return of(null);

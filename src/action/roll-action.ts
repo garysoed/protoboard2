@@ -3,11 +3,12 @@ import {attributeIn, integerParser} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction, TriggerEvent} from '../core/base-action';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
+import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs} from './action-spec';
 import {$random} from './util/random';
 
@@ -23,7 +24,7 @@ class RollAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
   getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
     const faceCount$ = context.config$.pipe(map(config => config.count));
     return pipe(
-        withLatestFrom(this.getObject$(context), faceCount$),
+        withLatestFrom(getObject$(context), faceCount$),
         tap(([, obj, faceCount]) => {
           if (!obj) {
             return;

@@ -2,10 +2,11 @@ import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {OperatorFunction, pipe} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction, TriggerEvent} from '../core/base-action';
 import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 
+import {ActionContext} from './action-context';
 import {ActionSpec} from './action-spec';
 import {$helpService} from './help-service';
 

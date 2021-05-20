@@ -4,11 +4,12 @@ import {attributeIn, integerParser, listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {ActionContext, BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction, TriggerEvent} from '../core/base-action';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
+import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs} from './action-spec';
 
 
@@ -26,7 +27,7 @@ class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
     const stateService = $stateService.get(context.vine);
     const stops$ = context.config$.pipe(map(config => config.stops));
     return pipe(
-        withLatestFrom(this.getObject$(context), stops$),
+        withLatestFrom(getObject$(context), stops$),
         switchMap(([, obj, stops]) => {
           if (!obj) {
             return EMPTY;
