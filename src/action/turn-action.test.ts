@@ -46,7 +46,7 @@ test('@protoboard2/action/turn-action', init => {
     should('increase the face by 1', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(1);
     });
@@ -56,7 +56,7 @@ test('@protoboard2/action/turn-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
+      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
 
       assert(faceIndex$).to.emitSequence([1, 0, 1]);
     });
@@ -68,7 +68,7 @@ test('@protoboard2/action/turn-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
+      run(of({mouseX: 0, mouseY: 0}, {mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
 
       assert(faceIndex$).to.emitSequence([1, 2, 3]);
     });

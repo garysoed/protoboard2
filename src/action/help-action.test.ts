@@ -1,28 +1,15 @@
 import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {EMPTY, Observable, of, OperatorFunction} from 'rxjs';
+import {EMPTY, of} from 'rxjs';
 import {switchMapTo} from 'rxjs/operators';
 
-import {BaseAction} from '../core/base-action';
-import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
-import {PieceSpec} from '../types/piece-spec';
 
 import {helpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
 
-
-class TestAction extends BaseAction<PieceSpec<{}>, {}> {
-  protected onConfig(config$: Observable<Partial<{}>>): Observable<unknown> {
-    return config$;
-  }
-
-  getOperator(): OperatorFunction<TriggerEvent, unknown> {
-    return switchMapTo(EMPTY);
-  }
-}
 
 test('@protoboard2/action/help-action', init => {
   const TRIGGER = {type: TriggerType.T};
@@ -30,21 +17,26 @@ test('@protoboard2/action/help-action', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const vine = new Vine({appName: 'test'});
-    const testAction = new TestAction();
     const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
 
     const action = helpAction([
-      {defaultConfig: {}, trigger: TRIGGER, action: testAction, actionName: 'test', configSpecs: {}},
+      {
+        defaultConfig: {},
+        trigger: TRIGGER,
+        action: () => switchMapTo(EMPTY),
+        actionName: 'test',
+        configSpecs: {},
+      },
     ]).action;
 
-    return {action, context, el, testAction, vine};
+    return {action, context, el, vine};
   });
 
   test('onTrigger', () => {
     should('show the help correctly', () => {
       const actions$ = createSpySubject($helpService.get(_.vine).actions$);
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
 
       assert(actions$).to.emitSequence([
         arrayThat<ActionTrigger>().haveExactElements([]),

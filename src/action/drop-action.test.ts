@@ -98,7 +98,7 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action.getOperator(_.context)));
+      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),

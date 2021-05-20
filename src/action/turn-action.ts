@@ -4,7 +4,6 @@ import {attributeIn, integerParser} from 'persona';
 import {of as observableOf, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction} from '../core/base-action';
 import {TriggerEvent} from '../core/trigger-event';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -20,33 +19,26 @@ export interface Config {
 
 export const KEY = 'turn';
 
-/**
- * Lets the user turn the object to reveal different faces.
- *
- * @thModule action
- */
-class TurnAction extends BaseAction<PieceSpec<IsMultifaced>, Config> {
-  getOperator(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
-    const stateService = $stateService.get(context.vine);
-    const faceCount$ = context.config$.pipe(map(config => config.count));
-    return pipe(
-        withLatestFrom(getObject$(context), faceCount$),
-        switchMap(([, obj, faceCount]) => {
-          if (!obj) {
-            return observableOf(null);
-          }
+function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
+  const stateService = $stateService.get(context.vine);
+  const faceCount$ = context.config$.pipe(map(config => config.count));
+  return pipe(
+      withLatestFrom(getObject$(context), faceCount$),
+      switchMap(([, obj, faceCount]) => {
+        if (!obj) {
+          return observableOf(null);
+        }
 
-          const $faceIndex = obj.payload.$currentFaceIndex;
-          return stateService.resolve($faceIndex).pipe(
-              take(1),
-              filterNonNullable(),
-              stateService.modifyOperator((x, faceIndex) => {
-                x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
-              }),
-          );
-        }),
-    );
-  }
+        const $faceIndex = obj.payload.$currentFaceIndex;
+        return stateService.resolve($faceIndex).pipe(
+            take(1),
+            filterNonNullable(),
+            stateService.modifyOperator((x, faceIndex) => {
+              x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
+            }),
+        );
+      }),
+  );
 }
 
 
@@ -56,7 +48,7 @@ export function turnAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    action: new TurnAction(),
+    action,
     actionName: 'Turn',
     configSpecs: {
       count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),

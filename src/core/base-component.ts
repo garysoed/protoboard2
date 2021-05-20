@@ -40,7 +40,7 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<{}>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
       spec: S,
   ) {
@@ -194,7 +194,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
                   event.metaKey === (triggerSpec.meta ?? false) &&
                   event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            actionSpec.action.getOperator({
+            actionSpec.action({
               config$: this.getConfig$(actionSpec),
               objectId$: this.objectId$,
               vine: this.context.vine,

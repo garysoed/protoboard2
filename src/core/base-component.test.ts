@@ -3,7 +3,7 @@ import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
 import {$div, attributeIn, element, host, integerParser, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {Observable, OperatorFunction, pipe, Subject} from 'rxjs';
+import {Observable, pipe, Subject} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext} from '../action/action-context';
@@ -11,10 +11,9 @@ import {ActionSpec} from '../action/action-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
-import {BaseAction} from './base-action';
 import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerEvent} from './trigger-event';
-import {TriggerType} from './trigger-spec';
+import {TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
 interface ActionConfig {
@@ -26,17 +25,23 @@ interface TestValue {
   readonly config: ActionConfig;
 }
 
-class TestAction extends BaseAction<PieceSpec<{}>, ActionConfig> {
-  readonly onTrigger$ = new Subject<TestValue>();
-
-  getOperator(context: ActionContext<PieceSpec<{}>, ActionConfig>): OperatorFunction<TriggerEvent, unknown> {
-    return pipe(
+function testAction(
+    onTrigger$: Subject<TestValue>,
+    trigger: UnreservedTriggerSpec,
+    attrName: string,
+): ActionSpec<ActionConfig> {
+  return {
+    defaultConfig: {value: 0},
+    trigger,
+    action: (context: ActionContext<PieceSpec<{}>, ActionConfig>) => pipe(
         withLatestFrom(context.config$),
         tap(([event, config]) => {
-          this.onTrigger$.next({event, config});
+          onTrigger$.next({event, config});
         }),
-    );
-  }
+    ),
+    actionName: 'test',
+    configSpecs: {value: attributeIn(attrName, integerParser(), -1)},
+  };
 }
 
 const $ = {
@@ -45,7 +50,7 @@ const $ = {
 
 class TestComponent extends BaseComponent<PieceSpec<{}>, typeof $> {
   constructor(
-      triggerActionMap: ReadonlyArray<ActionSpec<{}>>,
+      triggerActionMap: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
   ) {
     super(triggerActionMap, context, $);
@@ -71,34 +76,30 @@ test('@protoboard2/core/base-component', init => {
     shadowRoot.appendChild(targetEl);
 
     const personaContext = createFakeContext({shadowRoot});
-    const clickAction = new TestAction();
-    const keyAction = new TestAction();
+    const onClick$ = new Subject<TestValue>();
+    const onKey$ = new Subject<TestValue>();
     const component = new TestComponent(
         [
-          {
-            defaultConfig: {},
-            trigger: {type: TriggerType.CLICK, targetEl: $targetEl},
-            action: clickAction,
-            actionName: 'test',
-            configSpecs: {value: attributeIn('pb-test-value', integerParser(), -1)},
-          },
-          {
-            defaultConfig: {},
-            trigger: {type: KEY, targetEl: $targetEl},
-            action: keyAction,
-            actionName: 'test',
-            configSpecs: {value: attributeIn('pb-test2-value', integerParser(), -1)},
-          },
+          testAction(
+              onClick$,
+              {type: TriggerType.CLICK, targetEl: $targetEl},
+              'pb-test-value',
+          ),
+          testAction(
+              onKey$,
+              {type: KEY, targetEl: $targetEl},
+              'pb-test2-value',
+          ),
         ],
         personaContext,
     );
     run(component.run());
 
     return {
-      clickAction,
       component,
       el,
-      keyAction,
+      onClick$,
+      onKey$,
       personaContext,
       targetEl,
     };
@@ -106,9 +107,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerClick', () => {
     should('trigger click based actions', () => {
-      const onTrigger$ = createSpySubject(
-          ([..._.component.actionsMap].find(([{type}]) => type === TriggerType.CLICK)![1].action as TestAction).onTrigger$,
-      );
+      const onTrigger$ = createSpySubject(_.onClick$);
       _.targetEl.dispatchEvent(new MouseEvent('click'));
 
       assert(onTrigger$).to.emit();
@@ -117,7 +116,7 @@ test('@protoboard2/core/base-component', init => {
 
   test('createTriggerKey', _, init => {
     const _ = init(_ => {
-      const onTrigger$ = createSpySubject(_.keyAction.onTrigger$);
+      const onTrigger$ = createSpySubject(_.onKey$);
 
       return {
         ..._,
@@ -179,22 +178,20 @@ test('@protoboard2/core/base-component', init => {
 
   test('setupTrigger', _, () => {
     should('trigger if modifiers match', () => {
-      const action = new TestAction();
+      const onActionTrigger$ = new Subject<TestValue>();
       const component = new TestComponent(
           [
-            {
-              defaultConfig: {},
-              trigger: {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
-              action,
-              actionName: 'test',
-              configSpecs: {},
-            },
+            testAction(
+                onActionTrigger$,
+                {type: KEY, alt: true, ctrl: true, meta: true, shift: true},
+                'pb-test',
+            ),
           ],
           _.personaContext,
       );
       run(component.run());
 
-      const onTrigger$ = createSpySubject(action.onTrigger$);
+      const onTrigger$ = createSpySubject(onActionTrigger$);
 
       // Hover over the element.
       _.el.dispatchEvent(new CustomEvent('mouseenter'));
@@ -220,22 +217,20 @@ test('@protoboard2/core/base-component', init => {
     });
 
     should('default modifiers to false', () => {
-      const action = new TestAction();
+      const onActionTrigger$ = new Subject<TestValue>();
       const component = new TestComponent(
           [
-            {
-              defaultConfig: {},
-              trigger: {type: KEY},
-              action,
-              actionName: 'test',
-              configSpecs: {},
-            },
+            testAction(
+                onActionTrigger$,
+                {type: KEY},
+                'pb-test',
+            ),
           ],
           _.personaContext,
       );
       run(component.run());
 
-      const onTrigger$ = createSpySubject(action.onTrigger$);
+      const onTrigger$ = createSpySubject(onActionTrigger$);
 
       // Hover over the element.
       _.el.dispatchEvent(new CustomEvent('mouseenter'));
@@ -263,9 +258,8 @@ test('@protoboard2/core/base-component', init => {
 
   test('getConfig$', _, init => {
     const _ = init(_ => {
-      const action = _.clickAction;
-      const value$ = createSpySubject(action.onTrigger$.pipe(map(({config}) => config.value)));
-      return {..._, action, value$};
+      const value$ = createSpySubject(_.onClick$.pipe(map(({config}) => config.value)));
+      return {..._, value$};
     });
 
     should('update the configuration when attribute is specified', () => {

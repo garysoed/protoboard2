@@ -4,7 +4,6 @@ import {attributeIn, integerParser, listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction} from '../core/base-action';
 import {TriggerEvent} from '../core/trigger-event';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
@@ -18,46 +17,39 @@ export interface Config {
   readonly stops: readonly number[];
 }
 
-/**
- * Lets the user rotate the object on the same face.
- *
- * @thModule action
- */
-class RotateAction extends BaseAction<PieceSpec<IsRotatable>, Config> {
-  getOperator(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
-    const stateService = $stateService.get(context.vine);
-    const stops$ = context.config$.pipe(map(config => config.stops));
-    return pipe(
-        withLatestFrom(getObject$(context), stops$),
-        switchMap(([, obj, stops]) => {
-          if (!obj) {
-            return EMPTY;
-          }
+function action(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
+  const stateService = $stateService.get(context.vine);
+  const stops$ = context.config$.pipe(map(config => config.stops));
+  return pipe(
+      withLatestFrom(getObject$(context), stops$),
+      switchMap(([, obj, stops]) => {
+        if (!obj) {
+          return EMPTY;
+        }
 
-          const $rotationDeg = obj.payload.$rotationDeg;
-          return stateService.resolve($rotationDeg).pipe(
-              take(1),
-              map(rotationDeg => rotationDeg ?? 0),
-              tap(rotationDeg => {
-                const rotationIndex = $pipe(
-                    stops,
-                    $zip(countableIterable()),
-                    $map(([stop, index]) => {
-                      const distance = Math.abs((stop % 360) - (rotationDeg % 360));
-                      return [distance, index] as [number, number];
-                    }),
-                    $asArray(),
-                    $sort(withMap(([value]) => value, normal())),
-                )[0][1];
+        const $rotationDeg = obj.payload.$rotationDeg;
+        return stateService.resolve($rotationDeg).pipe(
+            take(1),
+            map(rotationDeg => rotationDeg ?? 0),
+            tap(rotationDeg => {
+              const rotationIndex = $pipe(
+                  stops,
+                  $zip(countableIterable()),
+                  $map(([stop, index]) => {
+                    const distance = Math.abs((stop % 360) - (rotationDeg % 360));
+                    return [distance, index] as [number, number];
+                  }),
+                  $asArray(),
+                  $sort(withMap(([value]) => value, normal())),
+              )[0][1];
 
-                const newIndex = (rotationIndex + 1) % stops.length;
-                stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
-              }),
-              share(),
-          );
-        }),
-    );
-  }
+              const newIndex = (rotationIndex + 1) % stops.length;
+              stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
+            }),
+            share(),
+        );
+      }),
+  );
 }
 
 export function rotateAction(
@@ -66,7 +58,7 @@ export function rotateAction(
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
   return {
-    action: new RotateAction(),
+    action,
     actionName: 'Rotate',
     configSpecs: {
       stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
