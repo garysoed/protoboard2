@@ -3,7 +3,8 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {EMPTY, Observable, of, OperatorFunction} from 'rxjs';
 import {switchMapTo} from 'rxjs/operators';
 
-import {BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction} from '../core/base-action';
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 import {PieceSpec} from '../types/piece-spec';

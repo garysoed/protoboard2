@@ -4,7 +4,8 @@ import {attributeIn, integerParser} from 'persona';
 import {of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction} from '../core/base-action';
+import {TriggerEvent} from '../core/trigger-event';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';

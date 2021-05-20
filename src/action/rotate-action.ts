@@ -4,7 +4,8 @@ import {attributeIn, integerParser, listParser} from 'persona';
 import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction} from '../core/base-action';
+import {TriggerEvent} from '../core/trigger-event';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';

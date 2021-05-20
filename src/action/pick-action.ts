@@ -3,7 +3,8 @@ import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction} from '../core/base-action';
+import {TriggerEvent} from '../core/trigger-event';
 import {UnreservedTriggerSpec} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';

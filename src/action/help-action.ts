@@ -2,7 +2,8 @@ import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {OperatorFunction, pipe} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import {BaseAction, TriggerEvent} from '../core/base-action';
+import {BaseAction} from '../core/base-action';
+import {TriggerEvent} from '../core/trigger-event';
 import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 

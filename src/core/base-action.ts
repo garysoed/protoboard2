@@ -1,23 +1,9 @@
-import {Converter} from 'nabu';
 import {OperatorFunction} from 'rxjs';
 
 import {ActionContext} from '../action/action-context';
 import {ObjectSpec} from '../types/object-spec';
 
-
-export interface TriggerEvent {
-  readonly mouseX: number;
-  readonly mouseY: number;
-}
-
-/**
- * Converters of the action's configuration object.
- *
- * @thHidden
- */
-export type ConverterOf<O> = {
-  readonly [K in keyof O]: Converter<O[K], string>;
-};
+import {TriggerEvent} from './trigger-event';
 
 
 /**

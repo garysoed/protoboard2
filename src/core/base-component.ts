@@ -14,7 +14,7 @@ import {ActionSpec} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ObjectSpec} from '../types/object-spec';
 
-import {TriggerEvent} from './base-action';
+import {TriggerEvent} from './trigger-event';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType} from './trigger-spec';
 
 
