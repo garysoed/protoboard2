@@ -18,6 +18,5 @@ export interface ActionSpec<C> {
   readonly action: Action<any, C>;
   readonly actionName: string;
   readonly configSpecs: ConfigSpecs<C>;
-  readonly defaultConfig: C;
   readonly trigger: UnreservedTriggerSpec;
 }

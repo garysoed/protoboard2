@@ -31,7 +31,6 @@ function testAction(
     attrName: string,
 ): ActionSpec<ActionConfig> {
   return {
-    defaultConfig: {value: 0},
     trigger,
     action: (context: ActionContext<PieceSpec<{}>, ActionConfig>) => pipe(
         withLatestFrom(context.config$),
@@ -40,7 +39,7 @@ function testAction(
         }),
     ),
     actionName: 'test',
-    configSpecs: {value: attributeIn(attrName, integerParser(), -1)},
+    configSpecs: {value: attributeIn(attrName, integerParser(), 0)},
   };
 }
 

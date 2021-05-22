@@ -55,7 +55,6 @@ export function flipAction(
       count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
-    defaultConfig,
     trigger,
   };
 }

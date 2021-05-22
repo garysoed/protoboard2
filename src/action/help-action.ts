@@ -37,7 +37,6 @@ export function helpAction(
     action: context => action(actions, context),
     actionName: 'Help',
     configSpecs: {},
-    defaultConfig: {},
     trigger: {type: TriggerType.QUESTION, shift: true},
   };
 }

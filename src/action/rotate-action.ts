@@ -64,7 +64,6 @@ export function rotateAction(
       stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
       ...configSpecsOverride,
     },
-    defaultConfig,
     trigger,
   };
 }

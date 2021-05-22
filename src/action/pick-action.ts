@@ -102,7 +102,6 @@ export function pickAction(
     action,
     actionName: 'Pick',
     configSpecs: {},
-    defaultConfig: {},
     trigger,
   };
 }

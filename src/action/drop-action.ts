@@ -97,7 +97,6 @@ export function dropAction(
       ),
       ...configSpecsOverride,
     },
-    defaultConfig,
     trigger,
   };
 }

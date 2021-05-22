@@ -19,7 +19,6 @@ export function shuffleAction(
     action,
     actionName: 'Shuffle',
     configSpecs: {},
-    defaultConfig: {},
     trigger,
   };
 }

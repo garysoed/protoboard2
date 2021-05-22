@@ -47,7 +47,6 @@ export function rollAction(
       count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
-    defaultConfig,
     trigger,
   };
 }

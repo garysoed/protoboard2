@@ -1,7 +1,6 @@
 import {$resolveState} from 'grapevine';
 import {$asArray, $asMap, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {extend} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, PersonaContext} from 'persona';
@@ -167,9 +166,8 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
             partialConfig[key] = value as C[keyof C];
           }
 
-          return partialConfig;
+          return partialConfig as C;
         }),
-        extend(actionSpec.defaultConfig),
     );
   }
 

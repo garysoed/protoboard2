@@ -54,7 +54,6 @@ export function turnAction(
       count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
       ...configSpecsOverride,
     },
-    defaultConfig,
     trigger,
   };
 }

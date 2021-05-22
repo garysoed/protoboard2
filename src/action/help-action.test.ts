@@ -21,7 +21,6 @@ test('@protoboard2/action/help-action', init => {
 
     const action = helpAction([
       {
-        defaultConfig: {},
         trigger: TRIGGER,
         action: () => switchMapTo(EMPTY),
         actionName: 'test',
