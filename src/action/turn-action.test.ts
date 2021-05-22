@@ -31,13 +31,13 @@ test('@protoboard2/action/turn-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
-    const config$ = new BehaviorSubject<Config>({count: 2});
+    const config$ = new BehaviorSubject<Config>({count: 2, trigger: TriggerType.T});
     const context = createFakeActionContext<PieceSpec<any>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = turnAction({count: 2}, TriggerType.T).action;
+    const action = turnAction({count: 2}).action;
 
     return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });
@@ -64,7 +64,7 @@ test('@protoboard2/action/turn-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.config$.next({count: 4});
+      _.config$.next({count: 4, trigger: TriggerType.T});
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 

@@ -4,12 +4,12 @@ import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../core/trigger-event';
-import {UnreservedTriggerSpec} from '../core/trigger-spec';
+import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {ContainerSpec} from '../types/container-spec';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
 import {moveObject} from './util/move-object';
 
 
@@ -18,7 +18,7 @@ export enum PositioningType {
 }
 
 
-export interface Config {
+export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
@@ -81,15 +81,21 @@ function locate(positioning: PositioningType): number {
   }
 }
 
+const DEFAULT_CONFIG: Config = {
+  positioning: PositioningType.DEFAULT,
+  trigger: TriggerType.D,
+};
+
 export function dropAction(
-    defaultConfig: Config,
-    trigger: UnreservedTriggerSpec,
+    defaultOverride: Partial<Config>,
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
+  const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     action,
     actionName: 'Drop',
     configSpecs: {
+      trigger: attributeIn('pb-drop-trigger', triggerSpecParser(), defaultConfig.trigger),
       positioning: attributeIn(
           'pb-drop-positioning',
           enumParser<PositioningType>(PositioningType),
@@ -97,6 +103,5 @@ export function dropAction(
       ),
       ...configSpecsOverride,
     },
-    trigger,
   };
 }

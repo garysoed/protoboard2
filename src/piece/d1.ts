@@ -72,8 +72,8 @@ export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          rotateAction({stops: [0, 90, 180, 270]}, TriggerType.R),
-          pickAction(TriggerType.CLICK),
+          rotateAction({stops: [0, 90, 180, 270], trigger: TriggerType.R}),
+          pickAction({trigger: TriggerType.CLICK}),
         ],
         context,
         $,

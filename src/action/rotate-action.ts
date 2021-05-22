@@ -5,15 +5,15 @@ import {EMPTY, OperatorFunction, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../core/trigger-event';
-import {UnreservedTriggerSpec} from '../core/trigger-spec';
+import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
 
 
-export interface Config {
+export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
@@ -52,18 +52,23 @@ function action(context: ActionContext<PieceSpec<IsRotatable>, Config>): Operato
   );
 }
 
+const DEFAULT_CONFIG: Config = {
+  stops: [0, 90, 180, 270],
+  trigger: TriggerType.R,
+};
+
 export function rotateAction(
-    defaultConfig: Config,
-    trigger: UnreservedTriggerSpec,
+    defaultOverride: Partial<Config> = {},
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
+  const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     action,
     actionName: 'Rotate',
     configSpecs: {
       stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
+      trigger: attributeIn('pb-rotate-trigger', triggerSpecParser(), defaultConfig.trigger),
       ...configSpecsOverride,
     },
-    trigger,
   };
 }

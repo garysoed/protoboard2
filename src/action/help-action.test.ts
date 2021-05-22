@@ -1,12 +1,11 @@
 import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {EMPTY, of} from 'rxjs';
-import {switchMapTo} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {ObjectSpec} from '../types/object-spec';
 
-import {helpAction} from './help-action';
+import {Config, helpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
 
@@ -17,16 +16,11 @@ test('@protoboard2/action/help-action', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const vine = new Vine({appName: 'test'});
-    const context = createFakeActionContext<ObjectSpec<any>, {}>({vine});
+    const context = createFakeActionContext<ObjectSpec<any>, Config>({vine});
 
-    const action = helpAction([
-      {
-        trigger: TRIGGER,
-        action: () => switchMapTo(EMPTY),
-        actionName: 'test',
-        configSpecs: {},
-      },
-    ]).action;
+    const action = helpAction(of([
+      {trigger: TRIGGER, actionName: 'test'},
+    ])).action;
 
     return {action, context, el, vine};
   });

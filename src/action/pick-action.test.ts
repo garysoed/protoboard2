@@ -34,7 +34,7 @@ test('@protoboard2/action/pick-action', init => {
       objectId$,
       vine: personaContext.vine,
     });
-    const action = pickAction(TriggerType.P).action;
+    const action = pickAction({trigger: TriggerType.P}).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

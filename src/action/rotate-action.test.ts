@@ -30,13 +30,13 @@ test('@protoboard2/action/rotate-action', init => {
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
 
-    const config$ = new BehaviorSubject<Config>({stops: [11, 22, 33]});
+    const config$ = new BehaviorSubject<Config>({stops: [11, 22, 33], trigger: TriggerType.R});
     const context = createFakeActionContext<PieceSpec<IsRotatable>, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = rotateAction({stops: [11, 22, 33]}, TriggerType.R).action;
+    const action = rotateAction({stops: [11, 22, 33]}).action;
 
     return {$rotationDeg, action, config$, context, el, stateService};
   });
@@ -51,7 +51,7 @@ test('@protoboard2/action/rotate-action', init => {
     });
 
     should('handle rotations that are more than 360', () => {
-      _.config$.next({stops: [123, 456, 678]});
+      _.config$.next({stops: [123, 456, 678], trigger: TriggerType.R});
 
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 

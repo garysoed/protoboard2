@@ -1,21 +1,21 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
+import {attributeIn} from 'persona';
 import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../core/trigger-event';
-import {UnreservedTriggerSpec} from '../core/trigger-spec';
+import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$activeSpec} from '../objects/active-spec';
 import {$getParent} from '../objects/content-map';
 import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext} from './action-context';
-import {ActionSpec} from './action-spec';
+import {ActionSpec, TriggerConfig} from './action-spec';
 import {moveObject} from './util/move-object';
 
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Config { }
+export type Config = TriggerConfig;
 
 function action(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
   const fromObjectSpec$ = combineLatest([
@@ -95,13 +95,19 @@ function action(context: ActionContext<PieceSpec<any>, Config>): OperatorFunctio
   );
 }
 
+const DEFAULT_CONFIG: Config = {
+  trigger: TriggerType.P,
+};
+
 export function pickAction(
-    trigger: UnreservedTriggerSpec,
+    defaultOverride: Partial<Config>,
 ): ActionSpec<Config> {
+  const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     action,
     actionName: 'Pick',
-    configSpecs: {},
-    trigger,
+    configSpecs: {
+      trigger: attributeIn('pb-drop-trigger', triggerSpecParser(), defaultConfig.trigger),
+    },
   };
 }

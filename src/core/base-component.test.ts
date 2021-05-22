@@ -7,16 +7,16 @@ import {Observable, pipe, Subject} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext} from '../action/action-context';
-import {ActionSpec} from '../action/action-spec';
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {PieceSpec} from '../types/piece-spec';
 
 import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerEvent} from './trigger-event';
-import {TriggerType, UnreservedTriggerSpec} from './trigger-spec';
+import {triggerSpecParser, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
-interface ActionConfig {
+interface ActionConfig extends TriggerConfig {
   readonly value: number;
 }
 
@@ -31,7 +31,6 @@ function testAction(
     attrName: string,
 ): ActionSpec<ActionConfig> {
   return {
-    trigger,
     action: (context: ActionContext<PieceSpec<{}>, ActionConfig>) => pipe(
         withLatestFrom(context.config$),
         tap(([event, config]) => {
@@ -39,7 +38,10 @@ function testAction(
         }),
     ),
     actionName: 'test',
-    configSpecs: {value: attributeIn(attrName, integerParser(), 0)},
+    configSpecs: {
+      value: attributeIn(attrName, integerParser(), 0),
+      trigger: attributeIn('pb-test-trigger', triggerSpecParser(), trigger),
+    },
   };
 }
 

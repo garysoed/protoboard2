@@ -5,15 +5,15 @@ import {of as observableOf, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../core/trigger-event';
-import {UnreservedTriggerSpec} from '../core/trigger-spec';
+import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
 
 
-export interface Config {
+export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
@@ -41,19 +41,24 @@ function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): Operat
   );
 }
 
+const DEFAULT_CONFIG: Config = {
+  count: 1,
+  trigger: TriggerType.T,
+};
+
 
 export function turnAction(
-    defaultConfig: Config,
-    trigger: UnreservedTriggerSpec,
+    defaultOverride: Partial<Config> = {},
     configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
 ): ActionSpec<Config> {
+  const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     action,
     actionName: 'Turn',
     configSpecs: {
       count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
+      trigger: attributeIn('pb-turn-trigger', triggerSpecParser(), defaultConfig.trigger),
       ...configSpecsOverride,
     },
-    trigger,
   };
 }

@@ -60,11 +60,11 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          rotateAction({stops: [0, 90, 180, 270]}, TriggerType.R),
-          flipAction({count: 2}, TriggerType.F),
-          turnAction({count: 2}, TriggerType.T),
-          rollAction({count: 2}, TriggerType.L),
-          pickAction(TriggerType.CLICK),
+          rotateAction({stops: [0, 90, 180, 270], trigger: TriggerType.R}),
+          flipAction({count: 2, trigger: TriggerType.F}),
+          turnAction({count: 2, trigger: TriggerType.T}),
+          rollAction({count: 2, trigger: TriggerType.L}),
+          pickAction({trigger: TriggerType.CLICK}),
         ],
         context,
         $,

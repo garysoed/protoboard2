@@ -10,13 +10,17 @@ import {ActionContext} from './action-context';
 
 export type ConfigSpecs<C> = {
   readonly [K in keyof C]: UnresolvedElementProperty<Element, Input<C[K]>>;
+};
+
+export interface TriggerConfig {
+  readonly trigger: UnreservedTriggerSpec;
 }
 
-export type Action<O extends ObjectSpec<any>, C> = (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
+export type Action<O extends ObjectSpec<any>, C> =
+    (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
 
-export interface ActionSpec<C> {
+export interface ActionSpec<C extends TriggerConfig> {
   readonly action: Action<any, C>;
   readonly actionName: string;
   readonly configSpecs: ConfigSpecs<C>;
-  readonly trigger: UnreservedTriggerSpec;
 }

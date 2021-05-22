@@ -1,5 +1,5 @@
 import {$resolveState} from 'grapevine';
-import {$asArray, $asMap, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
@@ -9,21 +9,16 @@ import {combineLatest, EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
-import {ActionSpec} from '../action/action-spec';
-import {helpAction} from '../action/help-action';
+import {ActionSpec, ConfigSpecs, TriggerConfig} from '../action/action-spec';
 import {ObjectSpec} from '../types/object-spec';
 
 import {TriggerEvent} from './trigger-event';
-import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType} from './trigger-spec';
+import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
-
-interface NormalizedActionSpec<C> extends Omit<ActionSpec<C>, 'trigger'> {
-  readonly trigger: DetailedTriggerSpec<TriggerType>;
-}
 
 export const $baseComponent = {
   api: {
@@ -39,35 +34,13 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
+      private readonly actionSpecs: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
       spec: S,
   ) {
     super(context, spec);
 
     this.setupActions();
-  }
-
-  @cache()
-  get actionsMap(): ReadonlyMap<DetailedTriggerSpec<TriggerType>, NormalizedActionSpec<{}>> {
-    const allActions: Array<NormalizedActionSpec<{}>> = $pipe(
-        this.triggerActions,
-        $map((spec) => {
-          const trigger = spec.trigger;
-          if (typeof trigger === 'string') {
-            return {...spec, trigger: {type: trigger}};
-          }
-          return {...spec, trigger};
-        }),
-        $asArray(),
-    );
-    allActions.push(helpAction(allActions));
-
-    return $pipe(
-        allActions,
-        $map(spec => [spec.trigger, spec] as const),
-        $asMap(),
-    );
   }
 
   /**
@@ -140,10 +113,8 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
         );
   }
 
-  private getConfig$<C extends {}>(
-      actionSpec: NormalizedActionSpec<C>,
-  ): Observable<C> {
-    const $host = host({...actionSpec.configSpecs});
+  private getConfig$<C>(configSpecs: ConfigSpecs<C>): Observable<C> {
+    const $host = host({...configSpecs});
     const configSpecMap: Map<keyof C, Observable<{}>> = new Map();
     for (const key in $host._) {
       configSpecMap.set(
@@ -172,31 +143,46 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
   }
 
   private setupActions(): void {
-    for (const [trigger, actionSpec] of this.actionsMap) {
-      this.addSetup(this.setupTrigger(trigger, actionSpec));
+    for (const actionSpec of this.actionSpecs) {
+      this.addSetup(this.setupTrigger(actionSpec));
     }
   }
 
-  private setupTrigger<C>(
-      triggerSpec: DetailedTriggerSpec<TriggerType>,
-      actionSpec: NormalizedActionSpec<C>,
+  private setupTrigger<C extends TriggerConfig>(
+      actionSpec: ActionSpec<C>,
   ): Observable<unknown> {
-    const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
-      this.createTriggerKey(triggerSpec) :
-      this.createTriggerClick(triggerSpec);
-    return trigger$
-        .pipe(
-            filter(event => {
-              return event.altKey === (triggerSpec.alt ?? false) &&
-                  event.ctrlKey === (triggerSpec.ctrl ?? false) &&
-                  event.metaKey === (triggerSpec.meta ?? false) &&
-                  event.shiftKey === (triggerSpec.shift ?? false);
-            }),
-            actionSpec.action({
-              config$: this.getConfig$(actionSpec),
-              objectId$: this.objectId$,
-              vine: this.context.vine,
-            }),
-        );
+    const config$ = this.getConfig$(actionSpec.configSpecs);
+    return config$.pipe(
+        switchMap(config => {
+          if (!config.trigger) {
+            return EMPTY;
+          }
+
+          const triggerSpec = normalizeTrigger(config.trigger);
+          const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
+            this.createTriggerKey(triggerSpec) :
+            this.createTriggerClick(triggerSpec);
+          return trigger$.pipe(
+              filter(event => {
+                return event.altKey === (triggerSpec.alt ?? false) &&
+                    event.ctrlKey === (triggerSpec.ctrl ?? false) &&
+                    event.metaKey === (triggerSpec.meta ?? false) &&
+                    event.shiftKey === (triggerSpec.shift ?? false);
+              }),
+              actionSpec.action({
+                config$,
+                objectId$: this.objectId$,
+                vine: this.context.vine,
+              }),
+          );
+        }),
+    );
   }
+}
+
+function normalizeTrigger(trigger: UnreservedTriggerSpec): DetailedTriggerSpec<TriggerType> {
+  if (typeof trigger === 'string') {
+    return {type: trigger};
+  }
+  return trigger;
 }

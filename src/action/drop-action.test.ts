@@ -33,10 +33,13 @@ test('@protoboard2/action/drop-action', init => {
     const context = createFakeActionContext<ContainerSpec<unknown, 'indexed'>, Config>({
       objectId$,
       vine: personaContext.vine,
-      config$: of({positioning: PositioningType.DEFAULT}),
+      config$: of({
+        positioning: PositioningType.DEFAULT,
+        trigger: TriggerType.D,
+      }),
     });
 
-    const action = dropAction({positioning: PositioningType.DEFAULT}, TriggerType.D).action;
+    const action = dropAction({positioning: PositioningType.DEFAULT, trigger: TriggerType.D}).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });
