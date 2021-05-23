@@ -6,8 +6,8 @@ import {of, ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
-import {$$activeSpec} from '../objects/active-spec';
 import {$setParent} from '../objects/content-map';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';

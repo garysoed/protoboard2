@@ -7,8 +7,8 @@ import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
+import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
-import {$$activeSpec} from '../objects/active-spec';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';

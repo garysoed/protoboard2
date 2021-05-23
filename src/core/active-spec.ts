@@ -3,7 +3,7 @@ import {StateId} from 'gs-tools/export/state';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {activeSpec, ActiveSpec} from '../core/active';
+import {activeSpec, ActiveSpec} from './active';
 
 
 export const $$activeSpec = source<BehaviorSubject<StateId<ActiveSpec>>>(

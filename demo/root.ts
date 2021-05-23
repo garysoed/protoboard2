@@ -10,7 +10,7 @@ import {map, tap} from 'rxjs/operators';
 import {$slot, LensDisplay, Slot, slotSpec, SlotSpec} from '../export';
 import {HelpOverlay} from '../src/action/help-overlay';
 import {$active, Active} from '../src/core/active';
-import {$$activeSpec} from '../src/objects/active-spec';
+import {$$activeSpec} from '../src/core/active-spec';
 
 import {Documentation} from './core/documentation';
 import {$drawer, Drawer} from './core/drawer';

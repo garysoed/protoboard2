@@ -6,7 +6,7 @@ import {identity, json} from 'nabu';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
-import {$$activeSpec} from '../src/objects/active-spec';
+import {$$activeSpec} from '../src/core/active-spec';
 import {$createSpecEntries} from '../src/objects/object-create-spec';
 import {slotSpec, SlotSpec} from '../src/region/slot';
 
