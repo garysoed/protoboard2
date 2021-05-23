@@ -9,9 +9,8 @@ import {dropAction, PositioningType} from '../action/drop-action';
 import {shuffleAction} from '../action/shuffle-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
-import {ContentSpec} from '../payload/is-container';
+import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
-import {containerSpec, ContainerSpec} from '../types/container-spec';
 
 import template from './deck.html';
 
@@ -28,7 +27,7 @@ export const $ = {
   }),
 };
 
-export type DeckSpec = ContainerSpec<'indexed'>;
+export type DeckSpec = IsContainer<'indexed'>;
 
 interface Input<P> {
   readonly type: string;
@@ -37,10 +36,7 @@ interface Input<P> {
 }
 
 export function deckSpec<P>(input: Input<P>): DeckSpec {
-  return containerSpec({
-    ...input,
-    containerType: 'indexed',
-  });
+  return {...input, containerType: 'indexed'};
 }
 
 @_p.customElement({

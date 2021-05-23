@@ -8,9 +8,8 @@ import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, switchMap, throttleTime} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {ContentSpec} from '../payload/is-container';
+import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
-import {containerSpec, ContainerSpec} from '../types/container-spec';
 
 import template from './active.html';
 
@@ -45,17 +44,17 @@ export const $ = {
   }),
 };
 
-export type ActiveSpec = ContainerSpec<'indexed'>;
+export type ActiveSpec = IsContainer<'indexed'>;
 
 interface Input {
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
 }
 
 export function activeSpec(input: Input): ActiveSpec {
-  return containerSpec({
-    ...input,
+  return {
     containerType: 'indexed',
-  });
+    $contentSpecs: input.$contentSpecs,
+  };
 }
 
 /**

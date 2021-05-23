@@ -9,8 +9,7 @@ import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
-import {ContentSpec} from '../payload/is-container';
-import {ContainerSpec} from '../types/container-spec';
+import {ContentSpec, IsContainer} from '../payload/is-container';
 
 import {Config, dropAction, PositioningType} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -28,8 +27,8 @@ test('@protoboard2/action/drop-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<ContainerSpec<'indexed'>>|null>(1);
-    const context = createFakeActionContext<ContainerSpec<'indexed'>, Config>({
+    const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>|null>(1);
+    const context = createFakeActionContext<IsContainer<'indexed'>, Config>({
       objectId$,
       vine: personaContext.vine,
       config$: of({

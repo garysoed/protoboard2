@@ -6,7 +6,7 @@ import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {$activeSpec} from '../core/active-spec';
 import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
-import {ContainerSpec} from '../types/container-spec';
+import {IsContainer} from '../payload/is-container';
 
 import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
@@ -22,7 +22,7 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function action(context: ActionContext<ContainerSpec<'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<IsContainer<'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
   const moveObjectFn$ = combineLatest([
     getObject$(context),
     $activeSpec.get(context.vine),

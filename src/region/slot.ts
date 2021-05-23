@@ -8,9 +8,8 @@ import {switchMap} from 'rxjs/operators';
 import {dropAction, PositioningType} from '../action/drop-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
-import {ContentSpec} from '../payload/is-container';
+import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
-import {containerSpec, ContainerSpec} from '../types/container-spec';
 
 import template from './slot.html';
 
@@ -31,7 +30,7 @@ export const $ = {
   }),
 };
 
-export type SlotSpec = ContainerSpec<'indexed'>;
+export type SlotSpec = IsContainer<'indexed'>;
 
 interface Input {
   readonly type: string;
@@ -39,10 +38,7 @@ interface Input {
 }
 
 export function slotSpec(input: Input): SlotSpec {
-  return containerSpec({
-    ...input,
-    containerType: 'indexed',
-  });
+  return {...input, containerType: 'indexed'};
 }
 
 @_p.customElement({

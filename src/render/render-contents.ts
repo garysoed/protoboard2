@@ -9,12 +9,11 @@ import {map, switchMap} from 'rxjs/operators';
 import {Indexed} from '../coordinate/indexed';
 import {$setParent} from '../objects/content-map';
 import {$getRenderSpec} from '../objects/render-object-spec';
-import {CoordinateTypes} from '../payload/is-container';
-import {ContainerSpec} from '../types/container-spec';
+import {CoordinateTypes, IsContainer} from '../payload/is-container';
 
 
 export function renderContents(
-    parentId: StateId<ContainerSpec<CoordinateTypes>>,
+    parentId: StateId<IsContainer<CoordinateTypes>>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   const stateService = $stateService.get(vine);
