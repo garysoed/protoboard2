@@ -1,12 +1,12 @@
 import {$resolveState} from 'grapevine';
-import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
+import {combineLatestObject} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
-import {Mutable} from 'gs-tools/export/typescript';
+import {mapObject} from 'gs-tools/export/typescript';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, PersonaContext} from 'persona';
-import {Input} from 'persona/export/internal';
-import {combineLatest, EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
+import {INPUT_TYPE, Resolved} from 'persona/export/internal';
+import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
@@ -20,6 +20,8 @@ import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedT
 const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
+
+type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
 
 export const $baseComponent = {
   api: {
@@ -116,35 +118,19 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
 
   private getConfig$<C extends TriggerConfig>(configSpecs: ConfigSpecs<C>): Observable<NormalizedTriggerConfig<C>> {
     const $host = host({...configSpecs});
-    const configSpecMap: Map<keyof C, Observable<{}>> = new Map();
-    for (const key in $host._) {
-      configSpecMap.set(
-          key,
-          ($host._[key] as Input<C[Extract<keyof C, string>]>).getValue(this.context),
-      );
-    }
+    const configSpecMap = mapObject<Resolved<Element, ConfigSpecs<C>>, ObservableConfig<C>>(
+        $host._,
+        (_, value) => {
+          INPUT_TYPE.assert(value);
+          return value.getValue(this.context);
+        },
+    );
 
-    const obsList: Observable<ReadonlyArray<readonly [keyof C, {}]>> = configSpecMap.size <= 0 ?
-      of<Array<[keyof C, {}]>>([]) :
-      combineLatest($pipe(
-          configSpecMap,
-          $map(([key, obs]) => obs.pipe(map(value => [key, value] as const))),
-          $asArray(),
-      ));
-    return obsList.pipe(
-        map(entries => {
-          const partialConfig: Partial<Mutable<NormalizedTriggerConfig<C>>> = {};
-          for (const [key, value] of entries) {
-            if (key !== 'trigger') {
-              partialConfig[key] = value as NormalizedTriggerConfig<C>[keyof C];
-              continue;
-            }
-
-            partialConfig.trigger = normalizeTrigger(value as UnreservedTriggerSpec) as NormalizedTriggerConfig<C>['trigger'];
-          }
-
-          return partialConfig as NormalizedTriggerConfig<C>;
-        }),
+    return combineLatestObject(configSpecMap).pipe(
+        map(rawConfig => ({
+          ...rawConfig,
+          trigger: normalizeTrigger(rawConfig.trigger),
+        })),
     );
   }
 
@@ -165,15 +151,15 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
           }
 
           const triggerSpec = normalizeTrigger(config.trigger);
-          const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type) ?
-            this.createTriggerKey(triggerSpec) :
-            this.createTriggerClick(triggerSpec);
+          const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type)
+            ? this.createTriggerKey(triggerSpec)
+            : this.createTriggerClick(triggerSpec);
           return trigger$.pipe(
               filter(event => {
-                return event.altKey === (triggerSpec.alt ?? false) &&
-                    event.ctrlKey === (triggerSpec.ctrl ?? false) &&
-                    event.metaKey === (triggerSpec.meta ?? false) &&
-                    event.shiftKey === (triggerSpec.shift ?? false);
+                return event.altKey === (triggerSpec.alt ?? false)
+                    && event.ctrlKey === (triggerSpec.ctrl ?? false)
+                    && event.metaKey === (triggerSpec.meta ?? false)
+                    && event.shiftKey === (triggerSpec.shift ?? false);
               }),
               actionSpec.action({
                 config$,

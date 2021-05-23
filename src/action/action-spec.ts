@@ -19,7 +19,7 @@ export interface TriggerConfig {
 export type Action<O extends ObjectSpec<any>, C> =
     (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
 
-export type NormalizedTriggerConfig<C extends TriggerConfig> = Exclude<C, 'trigger'> & {
+export type NormalizedTriggerConfig<C extends TriggerConfig> = C & {
   readonly trigger: DetailedTriggerSpec<TriggerType>;
 }
 
