@@ -7,7 +7,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {createIndexed} from '../../../src/coordinate/indexed';
 import {ContentSpec} from '../../../src/payload/is-container';
 import {slotSpec, SlotSpec} from '../../../src/region/slot';
-import {ObjectClass, ObjectSpec} from '../../../src/types/object-spec';
+import {ObjectSpec} from '../../../src/types/object-spec';
 import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
 import {$objectSpecIds} from '../getters/play-state';
@@ -130,7 +130,6 @@ function setToPlay(
 
       pieceObjectSpecIds.push(x.add({
         ...spec,
-        objectClass: ObjectClass.PIECE,
         type: PIECE_TYPE,
         payload,
       }));
@@ -147,7 +146,6 @@ function setToPlay(
       };
       regionObjectSpecIds.push(x.add({
         ...spec,
-        objectClass: ObjectClass.CONTAINER,
         type: REGION_TYPE,
         payload,
       }));

@@ -1,7 +1,6 @@
-import {ObjectClass, ObjectSpec} from './object-spec';
+import {ObjectSpec} from './object-spec';
 
 export interface PieceSpec<P> extends ObjectSpec<P> {
-  readonly objectClass: ObjectClass.PIECE;
 }
 
 interface Input<P> {
@@ -12,6 +11,5 @@ interface Input<P> {
 export function pieceSpec<P>(input: Input<P>): PieceSpec<P> {
   return {
     ...input,
-    objectClass: ObjectClass.PIECE,
   };
 }

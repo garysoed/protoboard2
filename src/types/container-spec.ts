@@ -2,11 +2,10 @@ import {StateId} from 'gs-tools/export/state';
 
 import {ContentSpec, CoordinateTypes, IsContainer} from '../payload/is-container';
 
-import {ObjectClass, ObjectSpec} from './object-spec';
+import {ObjectSpec} from './object-spec';
 
 
 export interface ContainerSpec<P, T extends CoordinateTypes> extends ObjectSpec<IsContainer<T> & P> {
-  readonly objectClass: ObjectClass.CONTAINER;
 }
 
 interface Input<P, T extends CoordinateTypes> {
@@ -21,7 +20,6 @@ export function containerSpec<P, T extends CoordinateTypes>(
 ): ContainerSpec<P, T> {
   return {
     type: input.type,
-    objectClass: ObjectClass.CONTAINER,
     payload: {
       ...input.payload,
       $contentSpecs: input.$contentSpecs,
