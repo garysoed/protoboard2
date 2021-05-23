@@ -5,7 +5,6 @@ import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {SlotSpec} from '../../../src/region/slot';
-import {ObjectSpec} from '../../../src/types/object-spec';
 import {PiecePayload} from '../types/piece-payload';
 import {PlayState} from '../types/play-state';
 import {RegionPayload} from '../types/region-payload';
@@ -27,7 +26,7 @@ export const $playState = source<Observable<PlayState|undefined>>(
       );
     },
 );
-export const $objectSpecIds = source<Observable<ReadonlyArray<StateId<ObjectSpec<PiecePayload|RegionPayload>>>>>(
+export const $objectSpecIds = source<Observable<ReadonlyArray<StateId<PiecePayload|RegionPayload>>>>(
     'objectSpecIds',
     vine =>  $playState.get(vine).pipe(
         map(playState => playState?.objectSpecIds ?? []),

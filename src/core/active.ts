@@ -11,7 +11,6 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {ContentSpec} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 import {containerSpec, ContainerSpec} from '../types/container-spec';
-import {ObjectSpec} from '../types/object-spec';
 
 import template from './active.html';
 
@@ -46,7 +45,7 @@ export const $ = {
   }),
 };
 
-export type ActiveSpec = ContainerSpec<{}, 'indexed'>;
+export type ActiveSpec = ContainerSpec<'indexed'>;
 
 interface Input {
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
@@ -55,7 +54,6 @@ interface Input {
 export function activeSpec(input: Input): ActiveSpec {
   return containerSpec({
     ...input,
-    payload: {},
     containerType: 'indexed',
   });
 }
@@ -91,14 +89,14 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   }
 
   @cache()
-  private get contentIds$(): Observable<ReadonlyArray<StateId<ObjectSpec<any>>>> {
+  private get contentIds$(): Observable<ReadonlyArray<StateId<unknown>>> {
     return this.objectSpec$.pipe(
         switchMap(spec => {
           if (!spec) {
             return observableOf(undefined);
           }
 
-          return $stateService.get(this.vine).resolve(spec.payload.$contentSpecs);
+          return $stateService.get(this.vine).resolve(spec.$contentSpecs);
         }),
         map(ids => $pipe(
             ids ?? [],

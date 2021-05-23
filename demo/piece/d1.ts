@@ -4,7 +4,7 @@ import {$icon, BaseThemedCtrl, Icon, registerSvg, _p} from 'mask';
 import {$div, element, PersonaContext, renderCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$slot, ObjectSpec, slotSpec, SlotSpec} from '../../export';
+import {$slot, slotSpec, SlotSpec} from '../../export';
 import {$registerRenderObject, RenderObjectFn} from '../../src/objects/render-object-spec';
 import {indexedContentSpec} from '../../src/payload/is-container';
 import {$d1, D1, d1Spec} from '../../src/piece/d1';
@@ -47,10 +47,7 @@ const $gem = source('gem', vine => $stateService.get(vine).modify(x => x.add(
     )),
 ));
 
-function renderD1Demo(
-    iconName: string,
-    objectId: StateId<ObjectSpec<unknown>>,
-): RenderObjectFn {
+function renderD1Demo(iconName: string, objectId: StateId<unknown>): RenderObjectFn {
   return () => {
     const icon$ = renderCustomElement({
       spec: $icon,

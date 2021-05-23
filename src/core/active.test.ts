@@ -9,7 +9,6 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {createIndexed} from '../coordinate/indexed';
 import {$registerRenderObject} from '../objects/render-object-spec';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
 import {$, Active, activeSpec} from './active';
@@ -57,7 +56,7 @@ test('@protoboard2/core/active', init => {
     });
 
     should('render the 1 item count correctly', () => {
-      const objectId = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
+      const objectId = _.stateService.modify(x => x.add({}));
       _.stateService.modify(x => x.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]));
 
       assert(_.el.getTextContent($.count)).to.equal('');
@@ -68,23 +67,23 @@ test('@protoboard2/core/active', init => {
           _.$contentSpecs,
           [
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(0),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(1),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(2),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(3),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(4),
             },
           ],
@@ -96,14 +95,13 @@ test('@protoboard2/core/active', init => {
 
   test('left$', () => {
     should('render left correctly', () => {
-      const testType = 'testType';
       const left = 123;
       const width = 456;
       const id = {};
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.width = `${width}px`;
-      const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
+      const $objectSpec = _.stateService.modify(x => x.add({}));
       $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
       const contentSpec = {
         objectId: $objectSpec,
@@ -130,7 +128,7 @@ test('@protoboard2/core/active', init => {
       _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [{
-            objectId:x.add(fakePieceSpec({payload: {}})),
+            objectId:x.add({}),
             coordinate: createIndexed(0),
           },
           ]),
@@ -144,19 +142,19 @@ test('@protoboard2/core/active', init => {
           _.$contentSpecs,
           [
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(0),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(1),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(2),
             },
             {
-              objectId: x.add(fakePieceSpec({payload: {}})),
+              objectId: x.add({}),
               coordinate: createIndexed(3),
             },
           ],
@@ -172,13 +170,12 @@ test('@protoboard2/core/active', init => {
     should('render top correctly', () => {
       const top = 123;
       const height = 456;
-      const testType = 'testType';
       const id = {};
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.height = `${height}px`;
 
-      const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
+      const $objectSpec = _.stateService.modify(x => x.add({}));
       $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
 
       const contentSpec = {
@@ -198,8 +195,6 @@ test('@protoboard2/core/active', init => {
   test('computeAllRects', () => {
     should('use the largest width and height', () => {
       const size = 123;
-      const testType1 = 'testType1';
-      const testType2 = 'testType2';
 
       const id1 = {};
       const content1 = setId(document.createElement('div'), id1);
@@ -213,12 +208,12 @@ test('@protoboard2/core/active', init => {
       content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
-      const $objectSpec1 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType1})));
+      const $objectSpec1 = _.stateService.modify(x => x.add({}));
       const spec1 = {
         objectId: $objectSpec1,
         coordinate: createIndexed(0),
       };
-      const $objectSpec2 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType2})));
+      const $objectSpec2 = _.stateService.modify(x => x.add({}));
       const spec2 = {
         objectId: $objectSpec2,
         coordinate: createIndexed(1),

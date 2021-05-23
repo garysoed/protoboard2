@@ -15,7 +15,6 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderMultifaced} from '../render/render-multifaced';
 import {renderRotatable} from '../render/render-rotatable';
-import {pieceSpec, PieceSpec} from '../types/piece-spec';
 
 import template from './d6.html';
 
@@ -39,24 +38,19 @@ export const $ = {
   styleTransform: style('transform'),
 };
 
-export type D6Spec = PieceSpec<IsMultifaced&IsRotatable>;
+export type D6Spec = IsMultifaced&IsRotatable;
 
-interface Input<P> {
+interface Input {
   readonly type: string;
-  readonly payload: P;
   readonly $currentFaceIndex: StateId<number>;
   readonly $rotationDeg: StateId<number>;
 }
 
-export function d6Spec<P>(input: Input<P>): D6Spec {
-  return pieceSpec({
-    type: input.type,
-    payload: {
-      ...input.payload,
-      $currentFaceIndex: input.$currentFaceIndex,
-      $rotationDeg: input.$rotationDeg,
-    },
-  });
+export function d6Spec(input: Input): D6Spec {
+  return {
+    $currentFaceIndex: input.$currentFaceIndex,
+    $rotationDeg: input.$rotationDeg,
+  };
 }
 
 /**

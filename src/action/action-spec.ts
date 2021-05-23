@@ -3,7 +3,6 @@ import {OperatorFunction} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
 import {DetailedTriggerSpec, TriggerType, UnreservedTriggerSpec} from '../core/trigger-spec';
-import {ObjectSpec} from '../types/object-spec';
 
 import {ActionContext} from './action-context';
 
@@ -16,8 +15,7 @@ export interface TriggerConfig {
   readonly trigger: UnreservedTriggerSpec;
 }
 
-export type Action<O extends ObjectSpec<any>, C> =
-    (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
+export type Action<O, C> = (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
 
 export type NormalizedTriggerConfig<C extends TriggerConfig> = C & {
   readonly trigger: DetailedTriggerSpec<TriggerType>;

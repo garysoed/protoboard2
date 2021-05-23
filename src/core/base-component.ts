@@ -11,7 +11,6 @@ import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/
 import {Logger} from 'santa';
 
 import {ActionSpec, ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
-import {ObjectSpec} from '../types/object-spec';
 
 import {TriggerEvent} from './trigger-event';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
@@ -26,7 +25,7 @@ type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
 export const $baseComponent = {
   api: {
     // TODO: Move to ctor
-    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<any>>()),
+    objectId: attributeIn('object-id', stateIdParser<unknown>()),
   },
 };
 
@@ -35,7 +34,7 @@ const $ = {
 };
 
 @_p.baseCustomElement({})
-export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof $> extends BaseThemedCtrl<S> {
+export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
       private readonly actionSpecs: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,

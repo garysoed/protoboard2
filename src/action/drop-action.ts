@@ -22,7 +22,7 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function action(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<ContainerSpec<'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
   const moveObjectFn$ = combineLatest([
     getObject$(context),
     $activeSpec.get(context.vine),
@@ -34,7 +34,7 @@ function action(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config
               return of(null);
             }
 
-            return $stateService.get(context.vine).resolve(activeState.payload.$contentSpecs).pipe(
+            return $stateService.get(context.vine).resolve(activeState.$contentSpecs).pipe(
                 switchMap(activeContents => {
                   const normalizedActiveContents = activeContents ?? [];
                   const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
@@ -43,8 +43,8 @@ function action(context: ActionContext<ContainerSpec<unknown, 'indexed'>, Config
                   }
 
                   return moveObject(
-                      activeState.payload,
-                      toState.payload,
+                      activeState,
+                      toState,
                       context.vine,
                   )
                       .pipe(

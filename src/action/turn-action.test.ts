@@ -5,8 +5,6 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {PieceSpec} from '../types/piece-spec';
 
 import {createFakeActionContext} from './testing/fake-action-context';
 import {Config, turnAction} from './turn-action';
@@ -27,12 +25,10 @@ test('@protoboard2/action/turn-action', init => {
     });
 
     const $faceIndex = stateService.modify(x => x.add(2));
-    const objectId = stateService.modify(x => x.add(fakePieceSpec({
-      payload: {$currentFaceIndex: $faceIndex},
-    })));
+    const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
 
     const config$ = new BehaviorSubject({count: 2, trigger: {type: TriggerType.T} as const});
-    const context = createFakeActionContext<PieceSpec<any>, Config>({
+    const context = createFakeActionContext<{}, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,

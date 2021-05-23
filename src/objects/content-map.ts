@@ -6,7 +6,7 @@ import {map, scan, startWith} from 'rxjs/operators';
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
-type ContainerStateId = StateId<ContainerSpec<any, CoordinateTypes>>;
+type ContainerStateId = StateId<ContainerSpec<CoordinateTypes>>;
 const $parentMapEntries$ = source<Subject<[string, ContainerStateId]>>(
     'parentMapEntries',
     () => new ReplaySubject(),
@@ -31,7 +31,7 @@ export const $getParent = source(
 
 export const $setParent = source(
     'setParent',
-    vine => (child: StateId<any>, parent: StateId<ContainerSpec<any, CoordinateTypes>>) => {
+    vine => (child: StateId<any>, parent: StateId<ContainerSpec<CoordinateTypes>>) => {
       $parentMapEntries$.get(vine).next([child.id, parent]);
     },
 );

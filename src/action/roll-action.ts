@@ -6,7 +6,6 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
@@ -17,7 +16,7 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<IsMultifaced, Config>): OperatorFunction<TriggerEvent, unknown> {
   const faceCount$ = context.config$.pipe(map(config => config.count));
   return pipe(
       withLatestFrom(getObject$(context), faceCount$),
@@ -31,7 +30,7 @@ function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): Operat
           throw new Error('Random produced no values');
         }
         const nextIndex = Math.floor(randomValue * faceCount);
-        $stateService.get(context.vine).modify(x => x.set(obj.payload.$currentFaceIndex, nextIndex));
+        $stateService.get(context.vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
       }),
   );
 }

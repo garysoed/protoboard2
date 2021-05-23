@@ -5,8 +5,6 @@ import {$div, attributeIn, element, host, PersonaContext, RenderSpec, single} fr
 import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {ObjectSpec} from '../types/object-spec';
-
 import {$getRenderSpec} from './render-object-spec';
 import template from './render.html';
 
@@ -14,7 +12,7 @@ import template from './render.html';
 export const $render = {
   tag: 'pb-render',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<unknown>>()),
+    objectId: attributeIn('object-id', stateIdParser<unknown>()),
   },
 };
 

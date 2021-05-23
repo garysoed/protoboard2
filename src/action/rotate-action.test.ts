@@ -5,9 +5,7 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsRotatable} from '../payload/is-rotatable';
-import {PieceSpec} from '../types/piece-spec';
 
 import {Config, rotateAction} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -28,13 +26,13 @@ test('@protoboard2/action/rotate-action', init => {
     });
 
     const $rotationDeg = stateService.modify(x => x.add(2));
-    const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {$rotationDeg}})));
+    const objectId = stateService.modify(x => x.add({$rotationDeg}));
 
     const config$ = new BehaviorSubject({
       stops: [11, 22, 33],
       trigger: {type: TriggerType.R} as const,
     });
-    const context = createFakeActionContext<PieceSpec<IsRotatable>, Config>({
+    const context = createFakeActionContext<IsRotatable, Config>({
       config$,
       objectId$: of(objectId),
       vine: personaContext.vine,

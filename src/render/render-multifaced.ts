@@ -5,11 +5,10 @@ import {Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 
 export function renderMultifaced(
-    isMultifaced$: Observable<PieceSpec<IsMultifaced>|undefined>,
+    isMultifaced$: Observable<IsMultifaced|undefined>,
     slotNameOutput: AttributeOutput<string|undefined>,
     context: PersonaContext,
 ): Observable<unknown> {
@@ -19,7 +18,7 @@ export function renderMultifaced(
           return observableOf(null);
         }
 
-        return $stateService.get(context.vine).resolve(isMultifaced.payload.$currentFaceIndex);
+        return $stateService.get(context.vine).resolve(isMultifaced.$currentFaceIndex);
       }),
       map(faceIndex => `face-${faceIndex ?? 0}`),
       slotNameOutput.output(context),

@@ -9,7 +9,6 @@ import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
-import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -29,8 +28,8 @@ test('@protoboard2/action/drop-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<ContainerSpec<unknown, 'indexed'>>|null>(1);
-    const context = createFakeActionContext<ContainerSpec<unknown, 'indexed'>, Config>({
+    const objectId$ = new ReplaySubject<StateId<ContainerSpec<'indexed'>>|null>(1);
+    const context = createFakeActionContext<ContainerSpec<'indexed'>, Config>({
       objectId$,
       vine: personaContext.vine,
       config$: of({
@@ -47,26 +46,25 @@ test('@protoboard2/action/drop-action', init => {
   test('onTrigger', () => {
     should('trigger correctly', () => {
       const otherSpec1 = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(0),
       };
       const otherSpec2 = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(1),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(0),
       };
       const movedSpec = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(1),
       };
 
       const $activeContentId$ = _.stateService
           .resolve($$activeSpec.get(_.personaContext.vine).getValue())
-          ._('payload')
           ._('$contentSpecs');
       run($activeContentId$.pipe(
           tap(id => {
@@ -86,16 +84,13 @@ test('@protoboard2/action/drop-action', init => {
 
       const $targetContentIds = _.stateService.modify(x => x.add([otherSpec1, otherSpec2]));
       const $objectSpec = _.stateService.modify(x => x.add(
-          fakeContainerSpec({
-            payload: {containerType: 'indexed' as const, $contentSpecs: $targetContentIds},
-          }),
+          {containerType: 'indexed' as const, $contentSpecs: $targetContentIds},
       ));
 
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           _.stateService.resolve($$activeSpec.get(_.personaContext.vine).getValue())
-              ._('payload')
               .$('$contentSpecs'),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(

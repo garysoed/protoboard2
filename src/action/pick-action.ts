@@ -8,7 +8,6 @@ import {$activeSpec} from '../core/active-spec';
 import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$getParent} from '../objects/content-map';
-import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext} from './action-context';
 import {ActionSpec, TriggerConfig} from './action-spec';
@@ -17,7 +16,7 @@ import {moveObject} from './util/move-object';
 
 export type Config = TriggerConfig;
 
-function action(context: ActionContext<PieceSpec<any>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<{}, Config>): OperatorFunction<TriggerEvent, unknown> {
   const fromObjectSpec$ = combineLatest([
     context.objectId$,
     $getParent.get(context.vine),
@@ -41,7 +40,7 @@ function action(context: ActionContext<PieceSpec<any>, Config>): OperatorFunctio
         if (!activeSpec) {
           return of(undefined);
         }
-        return $stateService.get(context.vine).resolve(activeSpec.payload.$contentSpecs);
+        return $stateService.get(context.vine).resolve(activeSpec.$contentSpecs);
       }),
   );
 
@@ -58,8 +57,8 @@ function action(context: ActionContext<PieceSpec<any>, Config>): OperatorFunctio
             }
 
             return moveObject(
-                fromObjectSpec.payload,
-                activeState.payload,
+                fromObjectSpec,
+                activeState,
                 context.vine,
             )
                 .pipe(

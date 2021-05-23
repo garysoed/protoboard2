@@ -9,9 +9,7 @@ import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
 import {$setParent} from '../objects/content-map';
-import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
-import {PieceSpec} from '../types/piece-spec';
 
 import {Config, pickAction} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -29,8 +27,8 @@ test('@protoboard2/action/pick-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<PieceSpec<{}>>|null>(1);
-    const context = createFakeActionContext<PieceSpec<any>, Config>({
+    const objectId$ = new ReplaySubject<StateId<{}>|null>(1);
+    const context = createFakeActionContext<{}, Config>({
       objectId$,
       vine: personaContext.vine,
     });
@@ -41,9 +39,9 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const movedId = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
+      const movedId = _.stateService.modify(x => x.add({}));
       const otherSpec1 = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(11),
       };
       const movedSpec = {
@@ -51,23 +49,21 @@ test('@protoboard2/action/pick-action', init => {
         coordinate: createIndexed(1),
       };
       const otherSpec2 = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(12),
       };
 
       const otherActiveSpec = {
-        objectId: _.stateService.modify(x => x.add(fakePieceSpec({payload: {}}))),
+        objectId: _.stateService.modify(x => x.add({})),
         coordinate: createIndexed(10),
       };
 
       const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec]));
       const $targetContentSpecs = _.stateService.modify(x => x.add([otherSpec1, movedSpec, otherSpec2]));
-      const $container = _.stateService.modify(x => x.add(fakeContainerSpec({
-        payload: {
-          containerType: 'indexed' as const,
-          $contentSpecs: $targetContentSpecs,
-        },
-      })));
+      const $container = _.stateService.modify(x => x.add({
+        containerType: 'indexed' as const,
+        $contentSpecs: $targetContentSpecs,
+      }));
 
       const $activeState = _.stateService.modify(x => x.add(activeSpec({
         $contentSpecs: $activeContentIds,

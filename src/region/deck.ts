@@ -28,7 +28,7 @@ export const $ = {
   }),
 };
 
-export type DeckSpec<P> = ContainerSpec<P, 'indexed'>;
+export type DeckSpec = ContainerSpec<'indexed'>;
 
 interface Input<P> {
   readonly type: string;
@@ -36,7 +36,7 @@ interface Input<P> {
   readonly payload: P;
 }
 
-export function deckSpec<P>(input: Input<P>): DeckSpec<P> {
+export function deckSpec<P>(input: Input<P>): DeckSpec {
   return containerSpec({
     ...input,
     containerType: 'indexed',
@@ -47,7 +47,7 @@ export function deckSpec<P>(input: Input<P>): DeckSpec<P> {
   ...$deck,
   template,
 })
-export class Deck extends BaseComponent<DeckSpec<unknown>, typeof $> {
+export class Deck extends BaseComponent<DeckSpec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [

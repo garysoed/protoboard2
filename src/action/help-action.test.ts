@@ -3,7 +3,6 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {ObjectSpec} from '../types/object-spec';
 
 import {TriggerConfig} from './action-spec';
 import {helpAction} from './help-action';
@@ -17,7 +16,7 @@ test('@protoboard2/action/help-action', init => {
   const _ = init(() => {
     const el = document.createElement('div');
     const vine = new Vine({appName: 'test'});
-    const context = createFakeActionContext<ObjectSpec<any>, TriggerConfig>({vine});
+    const context = createFakeActionContext<{}, TriggerConfig>({vine});
 
     const action = helpAction(of([
       {trigger: TRIGGER, actionName: 'test'},

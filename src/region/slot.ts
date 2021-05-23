@@ -31,7 +31,7 @@ export const $ = {
   }),
 };
 
-export type SlotSpec = ContainerSpec<{}, 'indexed'>;
+export type SlotSpec = ContainerSpec<'indexed'>;
 
 interface Input {
   readonly type: string;
@@ -42,7 +42,6 @@ export function slotSpec(input: Input): SlotSpec {
   return containerSpec({
     ...input,
     containerType: 'indexed',
-    payload: {},
   });
 }
 

@@ -14,7 +14,6 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderMultifaced} from '../render/render-multifaced';
 import {renderRotatable} from '../render/render-rotatable';
-import {PieceSpec} from '../types/piece-spec';
 
 import template from './d2.html';
 
@@ -39,7 +38,7 @@ export const $ = {
   }),
 };
 
-export type D2Spec = PieceSpec<IsMultifaced&IsRotatable>;
+export type D2Spec = IsMultifaced&IsRotatable;
 
 /**
  * Represents an object with two faces.

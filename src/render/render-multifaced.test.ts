@@ -5,9 +5,7 @@ import {attributeOut, host, stringParser} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
 
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 import {renderMultifaced} from './render-multifaced';
 
@@ -24,7 +22,7 @@ test('@protoboard2/render/render-multifaced', init => {
       shadowRoot,
     });
     const $ = host({slot: attributeOut('name', stringParser())});
-    const isMultifaced$ = new ReplaySubject<PieceSpec<IsMultifaced>>(1);
+    const isMultifaced$ = new ReplaySubject<IsMultifaced>(1);
 
     run(renderMultifaced(isMultifaced$, $._.slot, context));
 
@@ -33,7 +31,7 @@ test('@protoboard2/render/render-multifaced', init => {
 
   should('render the face name correctly', () => {
     const $currentFaceIndex = _.stateService.modify(x => x.add(2));
-    _.isMultifaced$.next(fakePieceSpec({payload: {$currentFaceIndex}}));
+    _.isMultifaced$.next({$currentFaceIndex});
 
     assert(_.el.getAttribute('name')).to.equal('face-2');
   });

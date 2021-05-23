@@ -8,7 +8,6 @@ import {map} from 'rxjs/operators';
 import {$baseComponent} from '../../src/core/base-component';
 import {IsContainer} from '../../src/payload/is-container';
 import {$slot} from '../../src/region/slot';
-import {ObjectSpec} from '../../src/types/object-spec';
 import {PieceSpec} from '../state/types/piece-spec';
 import {RegionSpec} from '../state/types/region-spec';
 
@@ -16,7 +15,7 @@ import {RegionSpec} from '../state/types/region-spec';
 export const ROOT_SLOT_TYPE = 'pbd.rootSlot';
 
 export function renderRootSlot(
-    objectId: StateId<ObjectSpec<IsContainer<'indexed'>>>,
+    objectId: StateId<IsContainer<'indexed'>>,
 ): Observable<RenderSpec> {
   return observableOf(renderCustomElement({
     spec: $slot,
@@ -28,7 +27,7 @@ export function renderRootSlot(
 export const SUPPLY_TYPE = 'pbd.supply';
 
 export function renderSupply(
-    objectId: StateId<ObjectSpec<IsContainer<'indexed'>>>,
+    objectId: StateId<IsContainer<'indexed'>>,
 ): Observable<RenderSpec|null> {
   return observableOf(renderCustomElement({
     spec: $slot,
@@ -41,7 +40,7 @@ export const PIECE_TYPE = 'pbd.piece';
 export const REGION_TYPE = 'pbd.region';
 
 export function renderDemoPiece(
-    objectId: StateId<ObjectSpec<PieceSpec>>,
+    objectId: StateId<PieceSpec>,
     vine: Vine,
 ): Observable<RenderSpec|null> {
   return $resolveState.get(vine)(objectId).pipe(
@@ -50,7 +49,7 @@ export function renderDemoPiece(
           return null;
         }
 
-        const icon$list = state.payload.icons.map((icon, index) => {
+        const icon$list = state.icons.map((icon, index) => {
           const icon$ = renderCustomElement({
             spec: $icon,
             inputs: {icon},
@@ -69,7 +68,7 @@ export function renderDemoPiece(
         });
 
         return renderElement({
-          tag: state.payload.componentTag,
+          tag: state.componentTag,
           children: icon$list,
           attrs: new Map([
             [$baseComponent.api.objectId.attrName, objectId.id],
@@ -81,7 +80,7 @@ export function renderDemoPiece(
 }
 
 export function renderDemoRegion(
-    objectId: StateId<ObjectSpec<RegionSpec>>,
+    objectId: StateId<RegionSpec>,
     vine: Vine,
 ): Observable<RenderSpec|null> {
   return $resolveState.get(vine)(objectId).pipe(
@@ -90,7 +89,7 @@ export function renderDemoRegion(
           return null;
         }
         return renderElement({
-          tag: state.payload.componentTag,
+          tag: state.componentTag,
           attrs: new Map([
             [$baseComponent.api.objectId.attrName, objectId.id],
           ]),

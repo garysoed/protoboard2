@@ -4,11 +4,10 @@ import {combineLatest, EMPTY, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 import {IsRotatable} from '../payload/is-rotatable';
-import {PieceSpec} from '../types/piece-spec';
 
 
 export function renderRotatable(
-    isRotatable$: Observable<PieceSpec<IsRotatable>|undefined>,
+    isRotatable$: Observable<IsRotatable|undefined>,
     slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
@@ -18,7 +17,7 @@ export function renderRotatable(
           return observableOf(undefined);
         }
 
-        return $stateService.get(context.vine).resolve(pieceSpec.payload.$rotationDeg);
+        return $stateService.get(context.vine).resolve(pieceSpec.$rotationDeg);
       }),
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );

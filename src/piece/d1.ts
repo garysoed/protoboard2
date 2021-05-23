@@ -10,7 +10,6 @@ import {$baseComponent, BaseComponent} from '../core/base-component';
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
-import {pieceSpec, PieceSpec} from '../types/piece-spec';
 
 import template from './d1.html';
 
@@ -25,7 +24,7 @@ export const $d1 = {
   api: {...$baseComponent.api},
 };
 
-export type D1Spec<P> = PieceSpec<IsRotatable&P>;
+export type D1Spec = IsRotatable;
 
 interface Input<P> {
   readonly type: string;
@@ -33,14 +32,10 @@ interface Input<P> {
   readonly $rotationDeg?: StateId<number>;
 }
 
-export function d1Spec<P>(input: Input<P>, x: Modifier): D1Spec<P> {
-  return pieceSpec({
-    type: input.type,
-    payload: {
-      ...input.payload,
-      $rotationDeg: input.$rotationDeg ?? x.add(0),
-    },
-  });
+export function d1Spec<P>(input: Input<P>, x: Modifier): D1Spec {
+  return {
+    $rotationDeg: input.$rotationDeg ?? x.add(0),
+  };
 }
 
 const $ = {
@@ -65,7 +60,7 @@ const $ = {
   template,
   api: {},
 })
-export class D1 extends BaseComponent<D1Spec<unknown>, typeof $> {
+export class D1 extends BaseComponent<D1Spec, typeof $> {
   /**
    * @internal
    */

@@ -4,9 +4,7 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject} from 'rxjs';
 
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsRotatable} from '../payload/is-rotatable';
-import {PieceSpec} from '../types/piece-spec';
 
 import {renderRotatable} from './render-rotatable';
 
@@ -22,7 +20,7 @@ test('@protoboard2/render/render-rotatable', init => {
       ],
       shadowRoot,
     });
-    const isRotatable$ = new ReplaySubject<PieceSpec<IsRotatable>|undefined>(1);
+    const isRotatable$ = new ReplaySubject<IsRotatable|undefined>(1);
 
     const slottedNodes$ = new ReplaySubject<readonly Node[]>(1);
     run(renderRotatable(isRotatable$, slottedNodes$, context));
@@ -33,7 +31,7 @@ test('@protoboard2/render/render-rotatable', init => {
   should('output the correct transform style', () => {
     const rotationDeg = 123;
     const $rotationDeg = _.stateService.modify(x => x.add(rotationDeg));
-    _.isRotatable$.next(fakePieceSpec({payload: {$rotationDeg}}));
+    _.isRotatable$.next({$rotationDeg});
 
     const targetEl = document.createElement('div');
     _.slottedNodes$.next([targetEl]);

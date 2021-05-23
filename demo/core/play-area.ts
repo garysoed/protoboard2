@@ -9,7 +9,6 @@ import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
-import {ObjectSpec} from '../../src/types/object-spec';
 import {$objectSpecIds, $supplyId} from '../state/getters/play-state';
 import {$setStaging} from '../state/setters/demo-state';
 import {GridArea} from '../state/types/region-state';
@@ -61,7 +60,7 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
     ];
   }
 
-  private getObjectIdAt(gridArea: GridArea): Observable<StateId<ObjectSpec<any>>|undefined> {
+  private getObjectIdAt(gridArea: GridArea): Observable<StateId<unknown>|undefined> {
     return this.objectSpecMap$.pipe(map(specMap => specMap.get(gridArea)));
   }
 
@@ -79,7 +78,7 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, StateId<ObjectSpec<any>>>> {
+  private get objectSpecMap$(): Observable<ReadonlyMap<GridArea, StateId<unknown>>> {
     return $objectSpecIds.get(this.vine).pipe(
         switchMap(specIds => {
           const pair$list = specIds.map(
@@ -88,15 +87,15 @@ export class PlayArea extends BaseThemedCtrl<typeof $> {
                   return null;
                 }
 
-                if (spec.payload.type !== 'region') {
+                if (spec.type !== 'region') {
                   return null;
                 }
 
-                if (!spec.payload.gridArea) {
+                if (!spec.gridArea) {
                   return null;
                 }
 
-                return [spec.payload.gridArea, id] as const;
+                return [spec.gridArea, id] as const;
               })),
           );
 

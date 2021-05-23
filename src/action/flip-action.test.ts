@@ -5,9 +5,7 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 import {Config, flipAction} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -28,12 +26,10 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     const $faceIndex = stateService.modify(x => x.add(2));
-    const objectSpec = fakePieceSpec({
-      payload: {$currentFaceIndex: $faceIndex},
-    });
+    const objectSpec = {$currentFaceIndex: $faceIndex};
 
     const config$ = new BehaviorSubject({count: 4, trigger: {type: TriggerType.F} as const});
-    const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
+    const context = createFakeActionContext<IsMultifaced, Config>({
       config$,
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       vine: personaContext.vine,

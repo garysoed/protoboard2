@@ -7,7 +7,6 @@ import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
-import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
@@ -17,7 +16,7 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-function action(context: ActionContext<PieceSpec<IsRotatable>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<IsRotatable, Config>): OperatorFunction<TriggerEvent, unknown> {
   const stateService = $stateService.get(context.vine);
   const stops$ = context.config$.pipe(map(config => config.stops));
   return pipe(
@@ -27,7 +26,7 @@ function action(context: ActionContext<PieceSpec<IsRotatable>, Config>): Operato
           return EMPTY;
         }
 
-        const $rotationDeg = obj.payload.$rotationDeg;
+        const $rotationDeg = obj.$rotationDeg;
         return stateService.resolve($rotationDeg).pipe(
             take(1),
             map(rotationDeg => rotationDeg ?? 0),

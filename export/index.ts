@@ -15,7 +15,6 @@ export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
 export {ContentSpec, indexedContentSpec} from '../src/payload/is-container';
-export {ObjectSpec} from '../src/types/object-spec';
 export {$render, Render} from '../src/objects/render';
 export {$active, Active, activeSpec} from '../src/core/active';
 export {$$activeSpec} from '../src/core/active-spec';

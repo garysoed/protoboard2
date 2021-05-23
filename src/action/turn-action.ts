@@ -7,7 +7,6 @@ import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
-import {PieceSpec} from '../types/piece-spec';
 
 import {ActionContext, getObject$} from './action-context';
 import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
@@ -19,7 +18,7 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'turn';
 
-function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): OperatorFunction<TriggerEvent, unknown> {
+function action(context: ActionContext<IsMultifaced, Config>): OperatorFunction<TriggerEvent, unknown> {
   const stateService = $stateService.get(context.vine);
   const faceCount$ = context.config$.pipe(map(config => config.count));
   return pipe(
@@ -29,7 +28,7 @@ function action(context: ActionContext<PieceSpec<IsMultifaced>, Config>): Operat
           return observableOf(null);
         }
 
-        const $faceIndex = obj.payload.$currentFaceIndex;
+        const $faceIndex = obj.$currentFaceIndex;
         return stateService.resolve($faceIndex).pipe(
             take(1),
             filterNonNullable(),

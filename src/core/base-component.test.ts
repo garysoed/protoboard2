@@ -8,8 +8,6 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext} from '../action/action-context';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
-import {fakePieceSpec} from '../objects/testing/fake-object-spec';
-import {PieceSpec} from '../types/piece-spec';
 
 import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerEvent} from './trigger-event';
@@ -31,7 +29,7 @@ function testAction(
     attrName: string,
 ): ActionSpec<ActionConfig> {
   return {
-    action: (context: ActionContext<PieceSpec<{}>, ActionConfig>) => pipe(
+    action: (context: ActionContext<{}, ActionConfig>) => pipe(
         withLatestFrom(context.config$),
         tap(([event, config]) => {
           onTrigger$.next({event, config});
@@ -49,7 +47,7 @@ const $ = {
   host: host($baseComponent.api),
 };
 
-class TestComponent extends BaseComponent<PieceSpec<{}>, typeof $> {
+class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
       triggerActionMap: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
@@ -169,7 +167,7 @@ test('@protoboard2/core/base-component', init => {
   test('objectId$', () => {
     should('emit the object ID if exists', () => {
       const stateService = new StateService();
-      const objectId = stateService.modify(x => x.add(fakePieceSpec({payload: {}})));
+      const objectId = stateService.modify(x => x.add({}));
       _.el.setAttribute('object-id', $baseComponent.api.objectId.createAttributePair(objectId)[1]);
 
       const objectId$ = createSpySubject(_.component.objectId$);

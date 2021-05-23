@@ -10,7 +10,6 @@ import {map} from 'rxjs/operators';
 import {createIndexed} from '../coordinate/indexed';
 import {$getParent} from '../objects/content-map';
 import {$registerRenderObject} from '../objects/render-object-spec';
-import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
 import {renderContents} from './render-contents';
@@ -37,7 +36,7 @@ test('@protoboard2/render/render-contents', init => {
       const $contentSpecs = x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
       return [
         $contentSpecs,
-        x.add(fakeContainerSpec({payload: {containerType: 'indexed', $contentSpecs}})),
+        x.add({containerType: 'indexed', $contentSpecs} as const),
       ];
     });
     run(renderContents($parentSpec, context.vine).pipe($._.content.output(context)));
@@ -47,22 +46,19 @@ test('@protoboard2/render/render-contents', init => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      const testType1 = 'testType1';
-      const $object1 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType1})));
+      const $object1 = _.stateService.modify(x => x.add({}));
       const $object1Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object1))),
       );
       const spec1 = {objectId: $object1, coordinate: createIndexed(0)};
 
-      const testType2 = 'testType2';
-      const $object2 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType2})));
+      const $object2 = _.stateService.modify(x => x.add({}));
       const $object2Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object2))),
       );
       const spec2 = {objectId: $object2, coordinate: createIndexed(1)};
 
-      const testType3 = 'testType3';
-      const $object3 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType3})));
+      const $object3 = _.stateService.modify(x => x.add({}));
       const $object3Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object3))),
       );

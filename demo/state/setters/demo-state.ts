@@ -7,8 +7,7 @@ import {map, switchMap} from 'rxjs/operators';
 import {createIndexed} from '../../../src/coordinate/indexed';
 import {ContentSpec} from '../../../src/payload/is-container';
 import {slotSpec, SlotSpec} from '../../../src/region/slot';
-import {ObjectSpec} from '../../../src/types/object-spec';
-import {PIECE_TYPE, REGION_TYPE, SUPPLY_TYPE} from '../../core/object-specs';
+import {SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
 import {$objectSpecIds} from '../getters/play-state';
 import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';
@@ -84,19 +83,19 @@ export const $setStaging = source(
 
 function setToStaging(
     demoState: DemoState,
-    objectSpecs: ReadonlyArray<ObjectSpec<PiecePayload|RegionPayload>>,
+    objectSpecs: ReadonlyArray<PiecePayload|RegionPayload>,
     stateService: StateService,
 ): void {
   stateService.modify(x => {
     // Delete the old play specs.
-    for (const {payload} of objectSpecs) {
-      switch (payload.type) {
+    for (const spec of objectSpecs) {
+      switch (spec.type) {
         case 'piece':
-          x.delete(payload.$currentFaceIndex);
-          x.delete(payload.$rotationDeg);
+          x.delete(spec.$currentFaceIndex);
+          x.delete(spec.$rotationDeg);
           break;
         case 'region':
-          x.delete(payload.$contentSpecs);
+          x.delete(spec.$contentSpecs);
           break;
       }
     }
@@ -117,37 +116,27 @@ function setToPlay(
 ): void {
   stateService.modify(x => {
     // User defined object specs.
-    const pieceObjectSpecIds: Array<StateId<ObjectSpec<PiecePayload>>> = [];
+    const pieceObjectSpecIds: Array<StateId<PiecePayload>> = [];
     for (const spec of pieceSpecs) {
       const $currentFaceIndex = x.add<number>(0);
       const $rotationDeg = x.add<number>(0);
-      const payload: PiecePayload = {
+
+      pieceObjectSpecIds.push(x.add<PiecePayload>({
         ...spec,
         type: 'piece',
         $currentFaceIndex,
         $rotationDeg,
-      };
-
-      pieceObjectSpecIds.push(x.add({
-        ...spec,
-        type: PIECE_TYPE,
-        payload,
       }));
     }
 
-    const regionObjectSpecIds: Array<StateId<ObjectSpec<RegionPayload>>> = [];
+    const regionObjectSpecIds: Array<StateId<RegionPayload>> = [];
     for (const spec of regionSpecs) {
-      const payload: RegionPayload = {
+      regionObjectSpecIds.push(x.add({
         ...spec,
         type: 'region',
         containerType: spec.containerType,
         $contentSpecs: x.add([]),
         gridArea: spec.gridArea,
-      };
-      regionObjectSpecIds.push(x.add({
-        ...spec,
-        type: REGION_TYPE,
-        payload,
       }));
     }
 

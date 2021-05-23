@@ -1,7 +1,6 @@
 import {StateId} from 'gs-tools/export/state';
 
 import {Indexed} from '../coordinate/indexed';
-import {ObjectSpec} from '../types/object-spec';
 
 
 export interface TypeCoordinateMapping {
@@ -9,7 +8,7 @@ export interface TypeCoordinateMapping {
 }
 
 export interface ContentSpec<C extends CoordinateTypes> {
-  readonly objectId: StateId<ObjectSpec<any>>;
+  readonly objectId: StateId<unknown>;
   readonly coordinate: TypeCoordinateMapping[C];
 }
 
@@ -21,7 +20,7 @@ export interface IsContainer<T extends CoordinateTypes> {
 }
 
 interface IndexedSpec {
-  readonly objectId: StateId<ObjectSpec<any>>;
+  readonly objectId: StateId<unknown>;
   readonly coordinate: Indexed;
 }
 export function indexedContentSpec(spec: IndexedSpec): ContentSpec<'indexed'> {

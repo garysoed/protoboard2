@@ -6,11 +6,10 @@ import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {CoordinateTypes, IsContainer, TypeCoordinateMapping} from '../../payload/is-container';
-import {ObjectSpec} from '../../types/object-spec';
 
 
 type MoveObjectFn<T extends CoordinateTypes> =
-    (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => void;
+    (movedObjectId: StateId<unknown>, toLocation: TypeCoordinateMapping[T]) => void;
 export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>(
     fromContainer: IsContainer<F>,
     toContainer: IsContainer<T>,
@@ -27,7 +26,7 @@ export function moveObject<F extends CoordinateTypes, T extends CoordinateTypes>
               return null;
             }
 
-            return (movedObjectId: StateId<ObjectSpec<any>>, toLocation: TypeCoordinateMapping[T]) => {
+            return (movedObjectId: StateId<unknown>, toLocation: TypeCoordinateMapping[T]) => {
               stateService.modify(x => {
                 x.set(
                     fromContainer.$contentSpecs,

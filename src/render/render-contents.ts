@@ -14,7 +14,7 @@ import {ContainerSpec} from '../types/container-spec';
 
 
 export function renderContents(
-    parentId: StateId<ContainerSpec<unknown, CoordinateTypes>>,
+    parentId: StateId<ContainerSpec<CoordinateTypes>>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   const stateService = $stateService.get(vine);
@@ -27,7 +27,7 @@ export function renderContents(
               return of([]);
             }
 
-            return stateService.resolve(containerSpec.payload.$contentSpecs).pipe(
+            return stateService.resolve(containerSpec.$contentSpecs).pipe(
                 switchMap(contentIds => {
                   const getRenderSpec = $getRenderSpec.get(vine);
                   const node$list = $pipe(
@@ -44,7 +44,7 @@ export function renderContents(
                   return node$list.length <= 0 ? of([]) : combineLatest(node$list);
                 }),
                 map(pairs => {
-                  switch (containerSpec.payload.containerType) {
+                  switch (containerSpec.containerType) {
                     case 'indexed':
                       return renderIndexed(new Map(pairs));
                   }
