@@ -37,7 +37,7 @@ test('@protoboard2/action/roll-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     })));
 
-    const config$ = new BehaviorSubject<Config>({count: 3, trigger: TriggerType.R});
+    const config$ = new BehaviorSubject({count: 3, trigger: {type: TriggerType.R} as const});
     const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(objectId),
@@ -61,7 +61,7 @@ test('@protoboard2/action/roll-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
-      _.config$.next({count: 4, trigger: TriggerType.R});
+      _.config$.next({count: 4, trigger: {type: TriggerType.R}});
 
       _.seed.values = [0.9];
 

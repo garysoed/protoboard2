@@ -32,7 +32,7 @@ test('@protoboard2/action/flip-action', init => {
       payload: {$currentFaceIndex: $faceIndex},
     });
 
-    const config$ = new BehaviorSubject<Config>({count: 4, trigger: TriggerType.F});
+    const config$ = new BehaviorSubject({count: 4, trigger: {type: TriggerType.F} as const});
     const context = createFakeActionContext<PieceSpec<IsMultifaced>, Config>({
       config$,
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
@@ -67,7 +67,7 @@ test('@protoboard2/action/flip-action', init => {
     should('use the config object', () => {
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.config$.next({count: 6, trigger: TriggerType.F});
+      _.config$.next({count: 6, trigger: {type: TriggerType.F}});
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 

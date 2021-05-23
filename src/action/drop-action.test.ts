@@ -35,7 +35,7 @@ test('@protoboard2/action/drop-action', init => {
       vine: personaContext.vine,
       config$: of({
         positioning: PositioningType.DEFAULT,
-        trigger: TriggerType.D,
+        trigger: {type: TriggerType.D},
       }),
     });
 

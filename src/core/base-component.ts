@@ -2,6 +2,7 @@ import {$resolveState} from 'grapevine';
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
+import {Mutable} from 'gs-tools/export/typescript';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, PersonaContext} from 'persona';
 import {Input} from 'persona/export/internal';
@@ -9,7 +10,7 @@ import {combineLatest, EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
-import {ActionSpec, ConfigSpecs, TriggerConfig} from '../action/action-spec';
+import {ActionSpec, ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
 import {ObjectSpec} from '../types/object-spec';
 
 import {TriggerEvent} from './trigger-event';
@@ -113,7 +114,7 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
         );
   }
 
-  private getConfig$<C>(configSpecs: ConfigSpecs<C>): Observable<C> {
+  private getConfig$<C extends TriggerConfig>(configSpecs: ConfigSpecs<C>): Observable<NormalizedTriggerConfig<C>> {
     const $host = host({...configSpecs});
     const configSpecMap: Map<keyof C, Observable<{}>> = new Map();
     for (const key in $host._) {
@@ -132,12 +133,17 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
       ));
     return obsList.pipe(
         map(entries => {
-          const partialConfig: Partial<C> = {};
+          const partialConfig: Partial<Mutable<NormalizedTriggerConfig<C>>> = {};
           for (const [key, value] of entries) {
-            partialConfig[key] = value as C[keyof C];
+            if (key !== 'trigger') {
+              partialConfig[key] = value as NormalizedTriggerConfig<C>[keyof C];
+              continue;
+            }
+
+            partialConfig.trigger = normalizeTrigger(value as UnreservedTriggerSpec) as NormalizedTriggerConfig<C>['trigger'];
           }
 
-          return partialConfig as C;
+          return partialConfig as NormalizedTriggerConfig<C>;
         }),
     );
   }
