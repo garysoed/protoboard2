@@ -55,7 +55,6 @@ interface Input {
 export function activeSpec(input: Input): ActiveSpec {
   return containerSpec({
     ...input,
-    type: '$active',
     payload: {},
     containerType: 'indexed',
   });

@@ -9,7 +9,6 @@ export interface ContainerSpec<P, T extends CoordinateTypes> extends ObjectSpec<
 }
 
 interface Input<P, T extends CoordinateTypes> {
-  readonly type: string;
   readonly containerType: T;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<T>>>;
   readonly payload: P;
@@ -19,7 +18,6 @@ export function containerSpec<P, T extends CoordinateTypes>(
     input: Input<P, T>,
 ): ContainerSpec<P, T> {
   return {
-    type: input.type,
     payload: {
       ...input.payload,
       $contentSpecs: input.$contentSpecs,
