@@ -159,10 +159,9 @@ function setToPlay(
             $asArray(),
         ),
     );
-    const $supply = x.add<SlotSpec<{}>>(slotSpec({
+    const $supply = x.add<SlotSpec>(slotSpec({
       type: SUPPLY_TYPE,
       $contentSpecs: $supplyContentSpecs,
-      payload: {},
     }));
 
     const playState: PlayState = {

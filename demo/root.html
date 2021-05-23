@@ -1,21 +1,24 @@
 <style>
-  pbd-documentation, pbd-play-area {
+  pbd-documentation {
     position: relative;
   }
 
-  #main #playArea {
-    display: none;
+  #lensContainer {
+    height: 36rem;
+    position: relative;
   }
 
-  #main.isPlaying #playArea {
-    display: block;
+  #sidebar {
+    width: 16rem;
   }
 
-  #main.isPlaying #stagingMode {
-    display: none;
+  #slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
   }
 
-  #stagingArea {
+  .slotContainer {
     position: relative;
   }
 </style>
@@ -27,12 +30,33 @@
     label="Protoboard"
     mk-body-1
 >
-  <div id="main" slot="main">
-    <div id="stagingMode" fill-parent layout="row">
-      <pbd-documentation flex></pbd-documentation>
-      <pbd-staging-area id="stagingArea" flex></pbd-staging-area>
+  <div id="main" layout="row" slot="main">
+    <pbd-documentation flex></pbd-documentation>
+    <div id="sidebar" layout="column">
+      <div id="lensContainer">
+        <pb-lens-display></pb-lens-display>
+      </div>
+      <div id="slots" flex>
+        <div class="slotContainer">
+          <pb-slot id="slot1"></pb-slot>
+        </div>
+        <div class="slotContainer">
+          <pb-slot id="slot2"></pb-slot>
+        </div>
+        <div class="slotContainer">
+          <pb-slot id="slot3"></pb-slot>
+        </div>
+        <div class="slotContainer">
+          <pb-slot id="slot4"></pb-slot>
+        </div>
+        <div class="slotContainer">
+          <pb-slot id="slot5"></pb-slot>
+        </div>
+        <div class="slotContainer">
+          <pb-slot id="slot6"></pb-slot>
+        </div>
+      </div>
     </div>
-    <pbd-play-area id="playArea" fill-parent></pbd-play-area>
   </div>
   <pbd-drawer id="drawer" slot="drawer"></pbd-drawer>
 </mk-root-layout>

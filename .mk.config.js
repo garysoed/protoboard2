@@ -21,10 +21,15 @@ declare({
 
 declare({
   name: 'demo',
-  as: shell({
-    bin: 'simpleserver',
-    flags: [
-      'demo/demo.conf.json',
+  as: parallel(({vars}) => ({
+    cmds: [
+      vars.webpackWatch,
+      shell({
+        bin: 'simpleserver',
+        flags: [
+          'demo/demo.conf.json',
+        ],
+      }),
     ],
-  }),
+  })),
 });

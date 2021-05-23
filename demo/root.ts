@@ -1,10 +1,13 @@
+import {$stateService, source} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
+import {StateId} from 'gs-tools/export/state';
 import {elementWithTagType} from 'gs-types';
 import {$rootLayout, BaseThemedCtrl, Overlay, RootLayout, _p} from 'mask';
 import {$div, api, classToggle, element, PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
+import {$slot, LensDisplay, ObjectSpec, Slot, slotSpec, SlotSpec} from '../export';
 import {HelpOverlay} from '../src/action/help-overlay';
 import {$active, Active} from '../src/core/active';
 import {$$activeSpec} from '../src/objects/active-spec';
@@ -25,7 +28,33 @@ const $ = {
     isPlaying: classToggle('isPlaying'),
   }),
   root: element('root', elementWithTagType('mk-root-layout'), api($rootLayout.api)),
+  slot1: element('slot1', $slot, {}),
+  slot2: element('slot2', $slot, {}),
+  slot3: element('slot3', $slot, {}),
+  slot4: element('slot4', $slot, {}),
+  slot5: element('slot5', $slot, {}),
+  slot6: element('slot6', $slot, {}),
 };
+
+type SlotName = 'slot1'|'slot2'|'slot3'|'slot4'|'slot5'|'slot6';
+
+interface State {
+  readonly slot1: StateId<SlotSpec>;
+  readonly slot2: StateId<SlotSpec>;
+  readonly slot3: StateId<SlotSpec>;
+  readonly slot4: StateId<SlotSpec>;
+  readonly slot5: StateId<SlotSpec>;
+  readonly slot6: StateId<SlotSpec>;
+}
+
+const $state = source<State>('rootState', vine => $stateService.get(vine).modify(x => ({
+  slot1: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  slot2: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  slot3: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  slot4: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  slot5: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  slot6: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+})));
 
 @_p.customElement({
   dependencies: [
@@ -34,8 +63,10 @@ const $ = {
     Drawer,
     HelpOverlay,
     Overlay,
+    LensDisplay,
     PlayArea,
     RootLayout,
+    Slot,
     StagingArea,
   ],
   tag: 'pbd-root',
@@ -58,7 +89,17 @@ export class Root extends BaseThemedCtrl<typeof $> {
           ),
       ),
       this.renderers.main.isPlaying(this.isPlaying$),
+      this.renderers.slot1.objectId(this.getObjectId('slot1')),
+      this.renderers.slot2.objectId(this.getObjectId('slot2')),
+      this.renderers.slot3.objectId(this.getObjectId('slot3')),
+      this.renderers.slot4.objectId(this.getObjectId('slot4')),
+      this.renderers.slot5.objectId(this.getObjectId('slot5')),
+      this.renderers.slot6.objectId(this.getObjectId('slot6')),
     ];
+  }
+
+  private getObjectId(slotName: SlotName): Observable<StateId<ObjectSpec<{}>>> {
+    return of($state.get(this.context.vine)[slotName]);
   }
 
   @cache()

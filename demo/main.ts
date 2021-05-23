@@ -80,10 +80,9 @@ function init(stateService: StateService): StateId<DemoState> {
   return stateService.modify(x => x.add({
     $isStaging: x.add(true),
     $playState: x.add<PlayState>({
-      $supply: x.add<SlotSpec<{}>>(slotSpec({
+      $supply: x.add<SlotSpec>(slotSpec({
         type: SUPPLY_TYPE,
         $contentSpecs: x.add([]),
-        payload: {},
       })),
       objectSpecIds: [
         x.add(activeSpec({

@@ -5,6 +5,6 @@ import {ObjectSpec} from '../../../src/types/object-spec';
 
 
 export interface PlayState {
-  readonly $supply: StateId<SlotSpec<{}>>;
+  readonly $supply: StateId<SlotSpec>;
   readonly objectSpecIds: ReadonlyArray<StateId<ObjectSpec<any>>>;
 }

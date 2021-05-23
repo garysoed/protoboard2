@@ -31,18 +31,18 @@ export const $ = {
   }),
 };
 
-export type SlotSpec<P> = ContainerSpec<P, 'indexed'>;
+export type SlotSpec = ContainerSpec<{}, 'indexed'>;
 
-interface Input<P> {
+interface Input {
   readonly type: string;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
-  readonly payload: P;
 }
 
-export function slotSpec<P>(input: Input<P>): SlotSpec<P> {
+export function slotSpec(input: Input): SlotSpec {
   return containerSpec({
     ...input,
     containerType: 'indexed',
+    payload: {},
   });
 }
 
@@ -50,7 +50,7 @@ export function slotSpec<P>(input: Input<P>): SlotSpec<P> {
   ...$slot,
   template,
 })
-export class Slot extends BaseComponent<SlotSpec<unknown>, typeof $> {
+export class Slot extends BaseComponent<SlotSpec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [

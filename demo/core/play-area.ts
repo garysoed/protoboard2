@@ -5,9 +5,9 @@ import {StateId} from 'gs-tools/export/state';
 import {$button, BaseThemedCtrl, Button, LineLayout, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {combineLatest, Observable, of as observableOf} from 'rxjs';
-import {map, tap, withLatestFrom, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {$render, Render} from '../../src/objects/render';
+import {$render} from '../../src/objects/render';
 import {Slot} from '../../src/region/slot';
 import {ObjectSpec} from '../../src/types/object-spec';
 import {$objectSpecIds, $supplyId} from '../state/getters/play-state';
@@ -16,7 +16,7 @@ import {GridArea} from '../state/types/region-state';
 
 import template from './play-area.html';
 
-
+// TODO: DELETE
 const $ = {
   clearButton: element('clearButton', $button, {}),
   renderSmall1: element('renderSmall1', $render, {}),
@@ -34,7 +34,6 @@ const $ = {
   dependencies: [
     Button,
     LineLayout,
-    Render,
     Slot,
   ],
   tag: 'pbd-play-area',

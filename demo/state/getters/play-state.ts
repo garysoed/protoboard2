@@ -35,7 +35,7 @@ export const $objectSpecIds = source<Observable<ReadonlyArray<StateId<ObjectSpec
 );
 
 
-export const $supplyId = source<Observable<StateId<SlotSpec<{}>>|null>>(
+export const $supplyId = source<Observable<StateId<SlotSpec>|null>>(
     'supplyId',
     vine => $playState.get(vine).pipe(map(state => state?.$supply ?? null)),
 );
