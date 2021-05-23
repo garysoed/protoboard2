@@ -9,7 +9,7 @@ import {map} from 'rxjs/operators';
 
 import {createIndexed} from '../coordinate/indexed';
 import {$getParent} from '../objects/content-map';
-import {$createSpecEntries} from '../objects/object-create-spec';
+import {$registerRenderObject} from '../objects/render-object-spec';
 import {fakeContainerSpec, fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
@@ -71,10 +71,10 @@ test('@protoboard2/render/render-contents', init => {
       const el1 = setId(document.createElement('div1'), {});
       const el2 = setId(document.createElement('div2'), {});
       const el3 = setId(document.createElement('div3'), {});
-      const createSpecEntries$ = $createSpecEntries.get(_.context.vine);
-      createSpecEntries$.next([testType1, () => observableOf(renderNode({node: el1, id: el1}))]);
-      createSpecEntries$.next([testType2, () => observableOf(renderNode({node: el2, id: el2}))]);
-      createSpecEntries$.next([testType3, () => observableOf(renderNode({node: el3, id: el3}))]);
+      const createSpecEntries$ = $registerRenderObject.get(_.context.vine);
+      createSpecEntries$($object1, () => observableOf(renderNode({node: el1, id: el1})));
+      createSpecEntries$($object2, () => observableOf(renderNode({node: el2, id: el2})));
+      createSpecEntries$($object3, () => observableOf(renderNode({node: el3, id: el3})));
 
       _.stateService.modify(x => x.set(_.$contentSpecs, []));
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);

@@ -8,7 +8,7 @@ import {of as observableOf} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {createIndexed} from '../coordinate/indexed';
-import {$createSpecEntries} from '../objects/object-create-spec';
+import {$registerRenderObject} from '../objects/render-object-spec';
 import {fakePieceSpec} from '../objects/testing/fake-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
@@ -103,9 +103,8 @@ test('@protoboard2/core/active', init => {
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.width = `${width}px`;
-      $createSpecEntries.get(_.tester.vine).next([testType, () => observableOf(renderNode({node: content, id}))]);
-      // TODO: RootStateBuilder
       const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
+      $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
@@ -178,11 +177,10 @@ test('@protoboard2/core/active', init => {
       const content = setId(document.createElement('div'), id);
       content.style.display = 'block';
       content.style.height = `${height}px`;
-      $createSpecEntries.get(_.tester.vine)
-          .next([testType, () => observableOf(renderNode({node: content, id}))]);
 
-      // TODO: RootStateBuilder
       const $objectSpec = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType})));
+      $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
+
       const contentSpec = {
         objectId: $objectSpec,
         coordinate: createIndexed(0),
@@ -215,10 +213,6 @@ test('@protoboard2/core/active', init => {
       content2.style.height = '1px';
       content2.style.width = `${size}px`;
 
-      const createSpecEntries$ = $createSpecEntries.get(_.tester.vine);
-      createSpecEntries$.next([testType1, () => observableOf(renderNode({node: content1, id: id1}))]);
-      createSpecEntries$.next([testType2, () => observableOf(renderNode({node: content2, id: id2}))]);
-
       const $objectSpec1 = _.stateService.modify(x => x.add(fakePieceSpec({payload: {}, type: testType1})));
       const spec1 = {
         objectId: $objectSpec1,
@@ -229,6 +223,10 @@ test('@protoboard2/core/active', init => {
         objectId: $objectSpec2,
         coordinate: createIndexed(1),
       };
+
+      const createSpecEntries$ = $registerRenderObject.get(_.tester.vine);
+      createSpecEntries$($objectSpec1, () => observableOf(renderNode({node: content1, id: id1})));
+      createSpecEntries$($objectSpec2, () => observableOf(renderNode({node: content2, id: id2})));
 
       _.stateService.modify(x => {
         x.set(_.$contentSpecs, [spec1, spec2]);

@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {Modifier, StateId} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$slot, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
@@ -30,15 +30,15 @@ export type D1Spec<P> = PieceSpec<IsRotatable&P>;
 interface Input<P> {
   readonly type: string;
   readonly payload: P;
-  readonly $rotationDeg: StateId<number>;
+  readonly $rotationDeg?: StateId<number>;
 }
 
-export function d1Spec<P>(input: Input<P>): D1Spec<P> {
+export function d1Spec<P>(input: Input<P>, x: Modifier): D1Spec<P> {
   return pieceSpec({
     type: input.type,
     payload: {
       ...input.payload,
-      $rotationDeg: input.$rotationDeg,
+      $rotationDeg: input.$rotationDeg ?? x.add(0),
     },
   });
 }

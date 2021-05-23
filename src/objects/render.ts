@@ -2,19 +2,19 @@ import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {$div, attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
-import {combineLatest, Observable, of as observableOf} from 'rxjs';
+import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {ObjectSpec} from '../types/object-spec';
 
-import {$getRenderSpec} from './object-create-spec';
+import {$getRenderSpec} from './render-object-spec';
 import template from './render.html';
 
 
 export const $render = {
   tag: 'pb-render',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<any>>()),
+    objectId: attributeIn('object-id', stateIdParser<ObjectSpec<unknown>>()),
   },
 };
 
@@ -42,18 +42,14 @@ export class Render extends BaseThemedCtrl<typeof $> {
   }
   @cache()
   private get object$(): Observable<RenderSpec|undefined> {
-    return combineLatest([
-      this.inputs.host.objectId,
-      $getRenderSpec.get(this.vine),
-    ])
-        .pipe(
-            switchMap(([objectId, getRenderSpec]) => {
-              if (!objectId) {
-                return observableOf(undefined);
-              }
-              return getRenderSpec(objectId, this.vine);
-            }),
-            mapNullableTo<RenderSpec|undefined>(undefined),
-        );
+    return this.inputs.host.objectId.pipe(
+        switchMap(objectId => {
+          if (!objectId) {
+            return observableOf(undefined);
+          }
+          return $getRenderSpec.get(this.vine)(objectId);
+        }),
+        mapNullableTo<RenderSpec|undefined>(undefined),
+    );
   }
 }

@@ -120,9 +120,9 @@ export abstract class BaseComponent<O extends ObjectSpec<any>, S extends typeof 
     const $host = host({...configSpecs});
     const configSpecMap = mapObject<Resolved<Element, ConfigSpecs<C>>, ObservableConfig<C>>(
         $host._,
-        (_, value) => {
+        <K extends keyof C>(_: K, value: Resolved<Element, ConfigSpecs<C>>[K]) => {
           INPUT_TYPE.assert(value);
-          return value.getValue(this.context);
+          return value.getValue(this.context) as ObservableConfig<C>[K];
         },
     );
 

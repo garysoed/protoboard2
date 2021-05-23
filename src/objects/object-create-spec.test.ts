@@ -34,7 +34,7 @@ test('@protoboard2/objects/object-create-spec', init => {
         type,
         payload: {},
         $rotationDeg: x.add(0),
-      })));
+      }, x)));
 
       $createSpecEntries.get(_.vine).next([type, () => observableOf(spec)]);
 
@@ -48,7 +48,7 @@ test('@protoboard2/objects/object-create-spec', init => {
         type,
         payload: {},
         $rotationDeg: x.add(0),
-      })));
+      }, x)));
 
       assert($getRenderSpec.get(_.vine).pipe(switchMap(fn => fn(id, _.vine))))
           .to.emitWith(null);

@@ -4,11 +4,11 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
 import {Decorator, NodeWithId, RenderSpec} from 'persona';
 import {combineLatest, EMPTY, Observable, of} from 'rxjs';
-import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 import {Indexed} from '../coordinate/indexed';
 import {$setParent} from '../objects/content-map';
-import {$getRenderSpec} from '../objects/object-create-spec';
+import {$getRenderSpec} from '../objects/render-object-spec';
 import {CoordinateTypes} from '../payload/is-container';
 import {ContainerSpec} from '../types/container-spec';
 
@@ -28,13 +28,12 @@ export function renderContents(
             }
 
             return stateService.resolve(containerSpec.payload.$contentSpecs).pipe(
-                withLatestFrom($getRenderSpec.get(vine)),
-                switchMap(([contentIds, getRenderSpec]) => {
+                switchMap(contentIds => {
+                  const getRenderSpec = $getRenderSpec.get(vine);
                   const node$list = $pipe(
                       contentIds ?? [],
                       $map(({objectId, coordinate}) => {
-                        return getRenderSpec(objectId, vine).pipe(
-                            take(1),
+                        return getRenderSpec(objectId).pipe(
                             filterNonNullable(),
                             map(spec => [coordinate, {id: objectId, spec}] as const),
                         );
