@@ -5,14 +5,13 @@ import {$saveConfig, $saveService, registerSvg, start, UrlThemeLoader} from 'mas
 import {identity, json} from 'nabu';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {activeSpec, ACTIVE_TYPE, renderActive} from '../src/core/active';
+import {activeSpec} from '../src/core/active';
 import {$$activeSpec} from '../src/core/active-spec';
-import {$createSpecEntries} from '../src/objects/object-create-spec';
 import {slotSpec, SlotSpec} from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
-import {PIECE_TYPE, REGION_TYPE, renderDemoPiece, renderDemoRegion, renderRootSlot, renderSupply, ROOT_SLOT_TYPE, SUPPLY_TYPE} from './core/object-specs';
+import {SUPPLY_TYPE} from './core/object-specs';
 import {Root} from './root';
 import {DemoState} from './state/types/demo-state';
 import {PieceSpec} from './state/types/piece-spec';
@@ -67,13 +66,6 @@ window.addEventListener('load', () => {
   $$activeSpec.get(vine).next(stateService.modify(x => x.add(activeSpec({
     $contentSpecs: x.add([]),
   }))));
-
-  const createSpecEntries$ = $createSpecEntries.get(vine);
-  createSpecEntries$.next([ACTIVE_TYPE, renderActive]);
-  createSpecEntries$.next([ROOT_SLOT_TYPE, renderRootSlot]);
-  createSpecEntries$.next([SUPPLY_TYPE, renderSupply]);
-  createSpecEntries$.next([PIECE_TYPE, renderDemoPiece]);
-  createSpecEntries$.next([REGION_TYPE, renderDemoRegion]);
 });
 
 function init(stateService: StateService): StateId<DemoState> {
