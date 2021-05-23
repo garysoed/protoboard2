@@ -19,3 +19,11 @@ export interface IsContainer<T extends CoordinateTypes> {
   readonly containerType: T;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<T>>>;
 }
+
+interface IndexedSpec {
+  readonly objectId: StateId<ObjectSpec<any>>;
+  readonly coordinate: Indexed;
+}
+export function indexedContentSpec(spec: IndexedSpec): ContentSpec<'indexed'> {
+  return spec;
+}

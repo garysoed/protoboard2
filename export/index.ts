@@ -15,7 +15,7 @@ export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
 export {$createSpecEntries, $createSpecMap} from '../src/objects/object-create-spec';
-export {ContentSpec} from '../src/payload/is-container';
+export {ContentSpec, indexedContentSpec} from '../src/payload/is-container';
 export {ObjectSpec} from '../src/types/object-spec';
 export {$render, Render} from '../src/objects/render';
 export {$active, Active, activeSpec} from '../src/core/active';

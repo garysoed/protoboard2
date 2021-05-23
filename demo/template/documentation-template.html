@@ -1,51 +1,16 @@
 <style>
-  #detailsSection {
-    padding: 0 1rem;
-  }
-
-  #display {
-    height: 16rem;
-  }
-
-  #drawer {
-    background-color: var(--mkThemePassiveBG);
-    bottom: 0;
-    position: absolute;
-    width: 100%;
-  }
-
-  #iconContainer {
-    height: 2rem;
+  #content::slotted(*) {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   #title {
     padding-left: 1rem;
     padding-right: 1rem;
   }
-
-  #root {
-    padding-right: 1rem;
-  }
 </style>
 
-<section fill-parent id="root" layout="column">
-  <section flex>
-    <h3 id="title" mk-display></h3>
-    <slot name="content"></slot>
-  </section>
-  <mk-drawer-layout id="drawer" max-size="48rem" min-size="4rem" mode="horizontal">
-    <section>
-      <mk-button id="drawerButton">
-        <mk-list-item-layout>
-          <div id="iconContainer" slot="bullet">
-            <mk-icon id="drawerIcon"></mk-icon>
-          </div>
-          <p slot="label">Details</p>
-        </mk-list-item-layout>
-      </mk-button>
-    </section>
-    <section id="detailsSection">
-      <slot name="details"></slot>
-    </section>
-  </mk-drawer-layout>
+<section flex>
+  <h3 id="title" mk-display></h3>
+  <slot id="content" name="content"></slot>
 </section>

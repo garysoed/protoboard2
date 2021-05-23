@@ -1,6 +1,34 @@
-<pbd-piece-template label="D1" id="template" piece-type="d1" component-tag="pb-d1">
-  <p mk-body-1 slot="details">
-    A D1 is the most basic component. It is a "dice" with 1 face. You can pick it up and drop it on
-    Zones. You can customize the content with any HTML elements and it will be displayed.
-  </p>
-</pbd-piece-template>
+<style>
+  .slotContainer {
+    display: inline-block;
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+  }
+</style>
+
+<pbd-documentation-template mk-body-1 label="D1" id="template">
+  <div slot="content">
+    <p>
+      A D1 is the most basic piece. It is a "dice" with 1 face. It represents any piece with only one
+      face.
+    </p>
+    <p>
+      Some examples:
+    </p>
+    <ul>
+      <li>
+        <p>Meeple</p>
+        <div class="slotContainer">
+          <pb-slot id="meepleSlot"></pb-slot>
+        </div>
+      </li>
+      <li>
+        <p>Gem</p>
+        <div class="slotContainer">
+          <pb-slot id="gemSlot"></pb-slot>
+        </div>
+      </li>
+    </ul>
+  </div>
+</pbd-documentation-template>
