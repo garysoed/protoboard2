@@ -1,4 +1,3 @@
-import {$stateService} from 'grapevine';
 import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
 import {LocalStorage} from 'gs-tools/export/store';
 import {$saveConfig, $saveService, registerSvg, start, UrlThemeLoader} from 'mask';
@@ -6,7 +5,6 @@ import {identity, json} from 'nabu';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {activeSpec} from '../src/core/active';
-import {$$activeSpec} from '../src/core/active-spec';
 import {slotSpec, SlotSpec} from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
@@ -61,11 +59,6 @@ window.addEventListener('load', () => {
     storage,
     initFn: init,
   });
-
-  const stateService = $stateService.get(vine);
-  $$activeSpec.get(vine).next(stateService.modify(x => x.add(activeSpec({
-    $contentSpecs: x.add([]),
-  }))));
 });
 
 function init(stateService: StateService): StateId<DemoState> {

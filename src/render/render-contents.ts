@@ -1,6 +1,5 @@
 import {$stateService, Vine} from 'grapevine';
-import {$asArray, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
-import {filterNonNullable} from 'gs-tools/export/rxjs';
+import {$asArray, $asMap, $filterNonNull, $map, $pipe, $sort, normal, withMap} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 import {Decorator, NodeWithId, RenderSpec} from 'persona';
 import {combineLatest, EMPTY, Observable, of} from 'rxjs';
@@ -13,46 +12,45 @@ import {CoordinateTypes, IsContainer} from '../payload/is-container';
 
 
 export function renderContents(
-    parentId: StateId<IsContainer<CoordinateTypes>>,
+    containerId: StateId<IsContainer<CoordinateTypes>>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   const stateService = $stateService.get(vine);
-  const containerSpec$ = stateService.resolve(parentId);
+  const containerSpec$ = stateService.resolve(containerId);
 
-  return containerSpec$
+  return combineLatest([containerSpec$, containerSpec$.$('$contentSpecs')])
       .pipe(
-          switchMap(containerSpec => {
+          switchMap(([containerSpec, contentIds]) => {
             if (!containerSpec) {
               return of([]);
             }
 
-            return stateService.resolve(containerSpec.$contentSpecs).pipe(
-                switchMap(contentIds => {
-                  const getRenderSpec = $getRenderSpec.get(vine);
-                  const node$list = $pipe(
-                      contentIds ?? [],
-                      $map(({objectId, coordinate}) => {
-                        return getRenderSpec(objectId).pipe(
-                            filterNonNullable(),
-                            map(spec => [coordinate, {id: objectId, spec}] as const),
-                        );
-                      }),
-                      $asArray(),
-                  );
 
-                  return node$list.length <= 0 ? of([]) : combineLatest(node$list);
+            const getRenderSpec = $getRenderSpec.get(vine);
+            const node$list = $pipe(
+                contentIds ?? [],
+                $map(({objectId, coordinate}) => {
+                  return getRenderSpec(objectId).pipe(
+                      map(spec => spec ? [coordinate, {id: objectId, spec}] as const : null),
+                  );
                 }),
+                $asArray(),
+            );
+
+            const nodes$ = node$list.length <= 0 ? of([]) : combineLatest(node$list);
+            return nodes$.pipe(
                 map(pairs => {
+                  const contents = $pipe(pairs, $filterNonNull(), $asMap());
                   switch (containerSpec.containerType) {
                     case 'indexed':
-                      return renderIndexed(new Map(pairs));
+                      return renderIndexed(contents);
                   }
                 }),
                 map(renderSpecs => $pipe(
                     renderSpecs,
                     $map(({id, spec}) => {
                       const decorator: Decorator<NodeWithId<Node>> = () => {
-                        $setParent.get(vine)(id, parentId);
+                        $setParent.get(vine)(id, containerId);
                         return EMPTY;
                       };
 

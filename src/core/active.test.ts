@@ -12,6 +12,7 @@ import {$registerRenderObject} from '../objects/render-object-spec';
 import {ContentSpec} from '../payload/is-container';
 
 import {$, Active, activeSpec} from './active';
+import {$$activeSpec} from './active-spec';
 
 
 const dest = new WebConsoleDestination({installTrigger: true});
@@ -33,19 +34,13 @@ test('@protoboard2/core/active', init => {
 
     const $contentSpecs = stateService.modify(x => x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]));
 
-    const $activeSpec = stateService.modify(x => x.add(activeSpec({$contentSpecs})));
-    const root = {
-      $activeState: $activeSpec,
-      containerIds: [],
-      objectSpecIds: [$activeSpec],
-    };
+    stateService.modify(x => x.set($$activeSpec.get(tester.vine), activeSpec({$contentSpecs})));
 
     // Need to add to body so the dimensions work.
     const el = tester.createElement(Active);
-    el.setAttribute($.host._.objectId, $activeSpec);
     document.body.appendChild(el.element);
 
-    return {$contentSpecs, el, root, stateService, tester};
+    return {$contentSpecs, el, stateService, tester};
   });
 
   test('itemCount$', _, () => {

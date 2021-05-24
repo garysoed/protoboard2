@@ -82,7 +82,7 @@ export class Root extends BaseThemedCtrl<typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.active.objectId($$activeSpec.get(this.vine).pipe(map(id => id ?? undefined))),
+      this.renderers.active.objectId(of($$activeSpec.get(this.vine))),
       this.renderers.drawer.drawerExpanded(
           this.inputs.root.drawerExpanded.pipe(
               map(expanded => expanded ?? false),

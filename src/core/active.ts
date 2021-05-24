@@ -1,16 +1,16 @@
 import {$stateService} from 'grapevine';
-import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$div, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
-import {map, share, switchMap, throttleTime} from 'rxjs/operators';
+import {map, share, throttleTime} from 'rxjs/operators';
 
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
+import {$$activeSpec} from './active-spec';
 import template from './active.html';
 
 
@@ -77,38 +77,25 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.count.text(this.itemCount$),
+      this.renderers.count.text(this.itemCountDisplay$),
       this.renderers.root.classMultiple(this.multipleItems$),
       this.renderers.root.left(this.left$),
       this.renderers.root.top(this.top$),
-      this.renderers.root.content(this.objectId$.pipe(
-          switchMap(objectId => renderContents(objectId, this.vine)),
-      )),
+      this.renderers.root.content(renderContents($$activeSpec.get(this.vine), this.vine)),
     ];
   }
 
   @cache()
-  private get contentIds$(): Observable<ReadonlyArray<StateId<unknown>>> {
-    return this.objectSpec$.pipe(
-        switchMap(spec => {
-          if (!spec) {
-            return observableOf(undefined);
-          }
-
-          return $stateService.get(this.vine).resolve(spec.$contentSpecs);
-        }),
-        map(ids => $pipe(
-            ids ?? [],
-            $map(spec => spec.objectId),
-            $asArray(),
-        )),
+  private get itemCount$(): Observable<number> {
+    return $stateService.get(this.vine).resolve($$activeSpec.get(this.vine)).$('$contentSpecs').pipe(
+        map(ids => (ids?.length) ?? 0),
     );
   }
 
   @cache()
-  private get itemCount$(): Observable<string> {
-    return this.contentIds$.pipe(
-        map(ids => ids.length > COUNT_THRESHOLD ? `+${ids.length - COUNT_THRESHOLD}` : ''),
+  private get itemCountDisplay$(): Observable<string> {
+    return this.itemCount$.pipe(
+        map(count => count > COUNT_THRESHOLD ? `+${count - COUNT_THRESHOLD}` : ''),
     );
   }
 
@@ -132,7 +119,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
 
   @cache()
   private get multipleItems$(): Observable<boolean> {
-    return this.contentIds$.pipe(map(ids => ids.length > COUNT_THRESHOLD));
+    return this.itemCount$.pipe(map(count => count > COUNT_THRESHOLD));
   }
 
   @cache()

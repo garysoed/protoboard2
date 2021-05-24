@@ -6,7 +6,6 @@ import {of, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
-import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
@@ -63,7 +62,7 @@ test('@protoboard2/action/drop-action', init => {
       };
 
       const $activeContentId$ = _.stateService
-          .resolve($$activeSpec.get(_.personaContext.vine).getValue())
+          .resolve($$activeSpec.get(_.personaContext.vine))
           ._('$contentSpecs');
       run($activeContentId$.pipe(
           tap(id => {
@@ -74,12 +73,10 @@ test('@protoboard2/action/drop-action', init => {
           }),
       ));
 
-      const $activeContentIds = _.stateService.modify(x => x.add(
-          activeSpec({
-            $contentSpecs: x.add([otherActiveSpec, movedSpec]),
-          })),
-      );
-      $$activeSpec.get(_.personaContext.vine).next($activeContentIds);
+      _.stateService.modify(x => x.set($$activeSpec.get(_.personaContext.vine), {
+        containerType: 'indexed',
+        $contentSpecs: x.add([otherActiveSpec, movedSpec]),
+      }));
 
       const $targetContentIds = _.stateService.modify(x => x.add([otherSpec1, otherSpec2]));
       const $objectSpec = _.stateService.modify(x => x.add(
@@ -89,8 +86,7 @@ test('@protoboard2/action/drop-action', init => {
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
-          _.stateService.resolve($$activeSpec.get(_.personaContext.vine).getValue())
-              .$('$contentSpecs'),
+          _.stateService.resolve($$activeSpec.get(_.personaContext.vine)).$('$contentSpecs'),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));

@@ -65,13 +65,14 @@ test('@protoboard2/action/pick-action', init => {
         $contentSpecs: $targetContentSpecs,
       }));
 
-      const $activeState = _.stateService.modify(x => x.add(activeSpec({
-        $contentSpecs: $activeContentIds,
-      })));
-      $$activeSpec.get(_.personaContext.vine).next($activeState);
+      _.stateService.modify(x => x.set(
+          $$activeSpec.get(_.personaContext.vine),
+          activeSpec({
+            $contentSpecs: $activeContentIds,
+          })));
 
       const setParent = $setParent.get(_.personaContext.vine);
-      setParent(otherActiveSpec.objectId, $activeState);
+      setParent(otherActiveSpec.objectId, $$activeSpec.get(_.personaContext.vine));
       setParent(otherSpec1.objectId, $container);
       setParent(movedSpec.objectId, $container);
       setParent(otherSpec2.objectId, $container);
