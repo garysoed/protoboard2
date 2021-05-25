@@ -60,7 +60,7 @@ function renderD1Demo(iconName: string, objectId: StateId<unknown>): RenderObjec
       spec: $div,
       id: objectId.id,
       attrs: new Map([
-        ['style', 'height: 3rem; width: 3rem;'],
+        ['style', 'height: 4rem; width: 4rem;'],
         ['slot', 'face-0'],
       ]),
       children: [icon$],
