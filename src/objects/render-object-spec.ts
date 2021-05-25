@@ -16,10 +16,10 @@ const $renderObjectSpec = source<Subject<RenderObjectSpec>>(
     () => new ReplaySubject(),
 );
 
-const $renderObjectMap = source<Observable<ReadonlyMap<StateId<unknown>, RenderObjectFn>>>(
+const $renderObjectMap = source<Observable<ReadonlyMap<string, RenderObjectFn>>>(
     'renderObjectMap',
     vine => $renderObjectSpec.get(vine).pipe(
-        scan((specMap, entry) => new Map([...specMap, [entry.objectId, entry.renderFn]]), new Map()),
+        scan((specMap, entry) => new Map([...specMap, [entry.objectId.id, entry.renderFn]]), new Map()),
         startWith(new Map()),
     ));
 
@@ -36,7 +36,7 @@ export const $getRenderSpec = source<RenderFn>(
     'render',
     vine => (objectId: StateId<unknown>) => $renderObjectMap.get(vine).pipe(
         switchMap(renderMap => {
-          const renderFn = renderMap.get(objectId);
+          const renderFn = renderMap.get(objectId.id);
           if (!renderFn) {
             return of(null);
           }

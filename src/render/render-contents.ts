@@ -25,7 +25,6 @@ export function renderContents(
               return of([]);
             }
 
-
             const getRenderSpec = $getRenderSpec.get(vine);
             const node$list = $pipe(
                 contentIds ?? [],
