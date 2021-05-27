@@ -2,13 +2,14 @@ import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Config, rollAction} from './roll-action';
+import {Config, rollAction, rollActionConfigSpecs} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {$random} from './util/random';
 
@@ -39,7 +40,7 @@ test('@protoboard2/action/roll-action', init => {
       objectId$: of(objectId),
       vine,
     });
-    const action = rollAction({count: 3}).action;
+    const action = rollAction(host(rollActionConfigSpecs({}))._).action;
 
     return {$faceIndex, action, config$, context, el, seed, stateService};
   });

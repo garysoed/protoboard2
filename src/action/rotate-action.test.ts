@@ -1,13 +1,14 @@
 import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
-import {Config, rotateAction} from './rotate-action';
+import {Config, rotateAction, rotateActionConfigSpecs} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -37,7 +38,7 @@ test('@protoboard2/action/rotate-action', init => {
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = rotateAction({stops: [11, 22, 33]}).action;
+    const action = rotateAction(host(rotateActionConfigSpecs({}))._).action;
 
     return {$rotationDeg, action, config$, context, el, stateService};
   });

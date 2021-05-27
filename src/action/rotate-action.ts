@@ -9,7 +9,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -56,18 +56,19 @@ const DEFAULT_CONFIG: Config = {
   trigger: TriggerType.R,
 };
 
-export function rotateAction(
-    defaultOverride: Partial<Config> = {},
-    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
-): ActionSpec<Config> {
+export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
+    trigger: attributeIn('pb-rotate-trigger', triggerSpecParser(), defaultConfig.trigger),
+  };
+}
+
+
+export function rotateAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Rotate',
-    configSpecs: {
-      stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
-      trigger: attributeIn('pb-rotate-trigger', triggerSpecParser(), defaultConfig.trigger),
-      ...configSpecsOverride,
-    },
+    configSpecs,
   };
 }

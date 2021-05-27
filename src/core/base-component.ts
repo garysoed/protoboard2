@@ -5,7 +5,7 @@ import {StateId} from 'gs-tools/export/state';
 import {mapObject} from 'gs-tools/export/typescript';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, PersonaContext} from 'persona';
-import {INPUT_TYPE, Resolved} from 'persona/export/internal';
+import {INPUT_TYPE} from 'persona/export/internal';
 import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -65,9 +65,7 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   @cache()
   get objectSpec$(): Observable<O|undefined> {
     return this.objectId$
-        .pipe(
-            switchMap(objectId => $resolveState.get(this.context.vine)(objectId)),
-        );
+        .pipe(switchMap(objectId => $resolveState.get(this.context.vine)(objectId)));
   }
 
   private createTriggerClick(
@@ -116,10 +114,9 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   }
 
   private getConfig$<C extends TriggerConfig>(configSpecs: ConfigSpecs<C>): Observable<NormalizedTriggerConfig<C>> {
-    const $host = host({...configSpecs});
-    const configSpecMap = mapObject<Resolved<Element, ConfigSpecs<C>>, ObservableConfig<C>>(
-        $host._,
-        <K extends keyof C>(_: K, value: Resolved<Element, ConfigSpecs<C>>[K]) => {
+    const configSpecMap = mapObject<ConfigSpecs<C>, ObservableConfig<C>>(
+        configSpecs,
+        <K extends keyof C>(_: K, value: ConfigSpecs<C>[K]) => {
           INPUT_TYPE.assert(value);
           return value.getValue(this.context) as ObservableConfig<C>[K];
         },

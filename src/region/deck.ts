@@ -5,10 +5,9 @@ import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {dropAction, PositioningType} from '../action/drop-action';
-import {shuffleAction} from '../action/shuffle-action';
+import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
+import {shuffleAction, shuffleActionConfigSpecs} from '../action/shuffle-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
@@ -17,7 +16,11 @@ import template from './deck.html';
 
 export const $deck = {
   tag: 'pb-deck',
-  api: {...$baseComponent.api},
+  api: {
+    ...$baseComponent.api,
+    dropAction: dropActionConfigSpecs({}),
+    shuffleAction: shuffleActionConfigSpecs({}),
+  },
 };
 
 export const $ = {
@@ -47,8 +50,8 @@ export class Deck extends BaseComponent<DeckSpec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          dropAction({positioning: PositioningType.DEFAULT, trigger: TriggerType.D}),
-          shuffleAction({trigger: TriggerType.S}),
+          dropAction($.host._.dropAction),
+          shuffleAction($.host._.shuffleAction),
         ],
         context,
         $,

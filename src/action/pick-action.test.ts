@@ -1,17 +1,17 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of, ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
-import {TriggerType} from '../core/trigger-spec';
 import {$setParent} from '../objects/content-map';
 import {ContentSpec} from '../payload/is-container';
 
-import {Config, pickAction} from './pick-action';
+import {Config, pickAction, pickActionConfigSpecs} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -32,7 +32,7 @@ test('@protoboard2/action/pick-action', init => {
       objectId$,
       vine: personaContext.vine,
     });
-    const action = pickAction({trigger: TriggerType.P}).action;
+    const action = pickAction(host(pickActionConfigSpecs({}))._).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

@@ -9,7 +9,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -46,18 +46,19 @@ const DEFAULT_CONFIG: Config = {
 };
 
 
-export function turnAction(
-    defaultOverride: Partial<Config> = {},
-    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
-): ActionSpec<Config> {
+export function turnActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
+    trigger: attributeIn('pb-turn-trigger', triggerSpecParser(), defaultConfig.trigger),
+  };
+}
+
+
+export function turnAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Turn',
-    configSpecs: {
-      count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
-      trigger: attributeIn('pb-turn-trigger', triggerSpecParser(), defaultConfig.trigger),
-      ...configSpecsOverride,
-    },
+    configSpecs,
   };
 }

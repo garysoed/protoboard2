@@ -1,6 +1,7 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of, ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
@@ -10,7 +11,7 @@ import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 
-import {Config, dropAction, PositioningType} from './drop-action';
+import {Config, dropAction, dropActionConfigSpecs, PositioningType} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -36,7 +37,7 @@ test('@protoboard2/action/drop-action', init => {
       }),
     });
 
-    const action = dropAction({positioning: PositioningType.DEFAULT, trigger: TriggerType.D}).action;
+    const action = dropAction(host(dropActionConfigSpecs({}))._).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

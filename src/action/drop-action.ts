@@ -9,7 +9,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 
 
@@ -86,22 +86,22 @@ const DEFAULT_CONFIG: Config = {
   trigger: TriggerType.D,
 };
 
-export function dropAction(
-    defaultOverride: Partial<Config>,
-    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
-): ActionSpec<Config> {
+export function dropActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    trigger: attributeIn('pb-drop-trigger', triggerSpecParser(), defaultConfig.trigger),
+    positioning: attributeIn(
+        'pb-drop-positioning',
+        enumParser<PositioningType>(PositioningType),
+        defaultConfig.positioning,
+    ),
+  };
+}
+
+export function dropAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Drop',
-    configSpecs: {
-      trigger: attributeIn('pb-drop-trigger', triggerSpecParser(), defaultConfig.trigger),
-      positioning: attributeIn(
-          'pb-drop-positioning',
-          enumParser<PositioningType>(PositioningType),
-          defaultConfig.positioning,
-      ),
-      ...configSpecsOverride,
-    },
+    configSpecs,
   };
 }

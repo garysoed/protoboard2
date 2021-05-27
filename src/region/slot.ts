@@ -5,9 +5,8 @@ import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {dropAction, PositioningType} from '../action/drop-action';
+import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
-import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
@@ -18,6 +17,7 @@ export const $slot = {
   tag: 'pb-slot',
   api: {
     ...$baseComponent.api,
+    dropAction: dropActionConfigSpecs({}),
   },
 };
 
@@ -49,7 +49,7 @@ export class Slot extends BaseComponent<SlotSpec, typeof $> {
   constructor(context: PersonaContext) {
     super(
         [
-          dropAction({positioning: PositioningType.DEFAULT, trigger: TriggerType.D}),
+          dropAction($.host._.dropAction),
         ],
         context,
         $,

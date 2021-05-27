@@ -8,7 +8,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {$random} from './util/random';
 
 
@@ -40,19 +40,19 @@ const DEFAULT_CONFIG: Config = {
   trigger: TriggerType.L,
 };
 
-
-export function rollAction(
-    defaultOverride: Partial<Config> = {},
-    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
-): ActionSpec<Config> {
+export function rollActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
+    trigger: attributeIn('pb-roll-trigger', triggerSpecParser(), defaultConfig.trigger),
+  };
+}
+
+
+export function rollAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Roll',
-    configSpecs: {
-      count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
-      trigger: attributeIn('pb-roll-trigger', triggerSpecParser(), defaultConfig.trigger),
-      ...configSpecsOverride,
-    },
+    configSpecs,
   };
 }

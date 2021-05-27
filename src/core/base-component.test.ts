@@ -36,10 +36,10 @@ function testAction(
         }),
     ),
     actionName: 'test',
-    configSpecs: {
+    configSpecs: host({
       value: attributeIn(attrName, integerParser(), 0),
       trigger: attributeIn('pb-test-trigger', triggerSpecParser(), trigger),
-    },
+    })._,
   };
 }
 

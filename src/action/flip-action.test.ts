@@ -1,13 +1,14 @@
 import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Config, flipAction} from './flip-action';
+import {Config, flipAction, flipActionConfigSpecs} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 
 
@@ -34,7 +35,7 @@ test('@protoboard2/action/flip-action', init => {
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       vine: personaContext.vine,
     });
-    const action = flipAction({count: 4, trigger: TriggerType.F}).action;
+    const action = flipAction(host(flipActionConfigSpecs({}))._).action;
 
     return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });

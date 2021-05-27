@@ -1,13 +1,14 @@
 import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
+import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 
 import {createFakeActionContext} from './testing/fake-action-context';
-import {Config, turnAction} from './turn-action';
+import {Config, turnAction, turnActionConfigSpecs} from './turn-action';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -33,7 +34,7 @@ test('@protoboard2/action/turn-action', init => {
       objectId$: of(objectId),
       vine: personaContext.vine,
     });
-    const action = turnAction({count: 2}).action;
+    const action = turnAction(host(turnActionConfigSpecs({}))._).action;
 
     return {$faceIndex, action, config$, context, el, personaContext, stateService};
   });

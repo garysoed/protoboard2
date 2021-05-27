@@ -1,6 +1,6 @@
 import {Vine} from 'grapevine';
 import {$asMap, $map, $pipe} from 'gs-tools/export/collect';
-import {constantIn} from 'persona';
+import {constantIn, host} from 'persona';
 import {Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -49,8 +49,8 @@ export function helpAction(
   return {
     action: context => action(actionDescriptions$, context.vine),
     actionName: 'Help',
-    configSpecs: {
+    configSpecs: host({
       trigger: constantIn(of({type: TriggerType.QUESTION, shift: true})),
-    },
+    })._,
   };
 }

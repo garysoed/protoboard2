@@ -10,7 +10,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$getParent} from '../objects/content-map';
 
 import {ActionContext} from './action-context';
-import {ActionSpec, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 
 
@@ -98,15 +98,17 @@ const DEFAULT_CONFIG: Config = {
   trigger: TriggerType.P,
 };
 
-export function pickAction(
-    defaultOverride: Partial<Config>,
-): ActionSpec<Config> {
+export function pickActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    trigger: attributeIn('pb-pick-trigger', triggerSpecParser(), defaultConfig.trigger),
+  };
+}
+
+export function pickAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Pick',
-    configSpecs: {
-      trigger: attributeIn('pb-drop-trigger', triggerSpecParser(), defaultConfig.trigger),
-    },
+    configSpecs,
   };
 }

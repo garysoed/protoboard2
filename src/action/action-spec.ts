@@ -1,4 +1,4 @@
-import {Input, UnresolvedElementProperty} from 'persona/export/internal';
+import {Input, Resolved, UnresolvedAttributeInput, UnresolvedElementProperty} from 'persona/export/internal';
 import {OperatorFunction} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
@@ -7,9 +7,14 @@ import {DetailedTriggerSpec, TriggerType, UnreservedTriggerSpec} from '../core/t
 import {ActionContext} from './action-context';
 
 
-export type ConfigSpecs<C> = {
-  readonly [K in keyof C]: UnresolvedElementProperty<Element, Input<C[K]>>;
+export type UnresolvedConfigSpecs<C> = {
+  readonly [K in keyof C]: UnresolvedAttributeInput<C[K]>;
 };
+
+export type ConfigSpecs<C> = Resolved<
+  Element,
+  {readonly [K in keyof C]: UnresolvedElementProperty<Element, Input<C[K]>>}
+>;
 
 export interface TriggerConfig {
   readonly trigger: UnreservedTriggerSpec;

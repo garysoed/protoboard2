@@ -9,7 +9,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
 import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -47,18 +47,18 @@ const DEFAULT_CONFIG: Config = {
   trigger: TriggerType.F,
 };
 
-export function flipAction(
-    defaultOverride: Partial<Config> = {},
-    configSpecsOverride: Partial<ConfigSpecs<Config>> = {},
-): ActionSpec<Config> {
+export function flipActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
+  return {
+    count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
+    trigger: attributeIn('pb-flip-trigger', triggerSpecParser(), defaultConfig.trigger),
+  };
+}
+
+export function flipAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
     action,
     actionName: 'Flip',
-    configSpecs: {
-      count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
-      trigger: attributeIn('pb-flip-trigger', triggerSpecParser(), defaultConfig.trigger),
-      ...configSpecsOverride,
-    },
+    configSpecs,
   };
 }
