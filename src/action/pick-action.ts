@@ -95,7 +95,7 @@ function action(context: ActionContext<{}, Config>): OperatorFunction<TriggerEve
 }
 
 const DEFAULT_CONFIG: Config = {
-  trigger: TriggerType.P,
+  trigger: TriggerType.CLICK,
 };
 
 export function pickActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
