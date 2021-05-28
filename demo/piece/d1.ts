@@ -1,17 +1,18 @@
 import {$stateService, source} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, Icon, _p} from 'mask';
-import {element, PersonaContext, renderCustomElement} from 'persona';
+import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {$slot, slotSpec, SlotSpec} from '../../export';
-import {$registerRenderObject, RenderObjectFn} from '../../src/objects/render-object-spec';
+import {$registerRenderObject} from '../../src/objects/render-object-spec';
 import {indexedContentSpec} from '../../src/payload/is-container';
-import {$d1, D1, d1Spec} from '../../src/piece/d1';
-import {$renderedFace, FaceType, RenderedFace} from '../core/rendered-face';
+import {D1, d1Spec} from '../../src/piece/d1';
+import {FaceType, RenderedFace} from '../core/rendered-face';
 import {PieceTemplate} from '../template/piece-template';
 
 import template from './d1.html';
+import {renderPiece} from './render-piece';
 
 
 enum DemoPieceType {
@@ -46,26 +47,6 @@ const $$gem = source('$gem', vine => $stateService.get(vine).modify(x => x.add(
     )),
 ));
 
-function renderD1Demo(iconName: FaceType, objectId: StateId<unknown>): RenderObjectFn {
-  return () => {
-    const iconContainer$ = renderCustomElement({
-      spec: $renderedFace,
-      id: objectId.id,
-      attrs: new Map([['slot', 'face-0']]),
-      inputs: {
-        faceType: iconName,
-      },
-    });
-
-    return of(renderCustomElement({
-      spec: $d1,
-      inputs: {objectId},
-      id: objectId.id,
-      children: [iconContainer$],
-    }));
-  };
-}
-
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
   meepleSlot: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([
     indexedContentSpec({
@@ -98,8 +79,8 @@ const $ = {
     const registerRenderObject = $registerRenderObject.get(vine);
     const $meeple = $$meeple.get(vine);
     const $gem = $$gem.get(vine);
-    registerRenderObject($meeple, renderD1Demo(FaceType.MEEPLE, $meeple));
-    registerRenderObject($gem, renderD1Demo(FaceType.GEM, $gem));
+    registerRenderObject($meeple, renderPiece([FaceType.MEEPLE], $meeple));
+    registerRenderObject($gem, renderPiece([FaceType.GEM], $gem));
   },
   dependencies: [
     D1,
