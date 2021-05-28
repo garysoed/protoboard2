@@ -46,12 +46,12 @@ interface State {
 }
 
 const $state = source<State>('rootState', vine => $stateService.get(vine).modify(x => ({
-  $slot1: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
-  $slot2: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
-  $slot3: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
-  $slot4: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
-  $slot5: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
-  $slot6: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([])})),
+  $slot1: x.add(slotSpec({$contentSpecs: x.add([])})),
+  $slot2: x.add(slotSpec({$contentSpecs: x.add([])})),
+  $slot3: x.add(slotSpec({$contentSpecs: x.add([])})),
+  $slot4: x.add(slotSpec({$contentSpecs: x.add([])})),
+  $slot5: x.add(slotSpec({$contentSpecs: x.add([])})),
+  $slot6: x.add(slotSpec({$contentSpecs: x.add([])})),
 })));
 
 @_p.customElement({

@@ -7,7 +7,6 @@ import {map, switchMap} from 'rxjs/operators';
 import {createIndexed} from '../../../src/coordinate/indexed';
 import {ContentSpec} from '../../../src/payload/is-container';
 import {slotSpec, SlotSpec} from '../../../src/region/slot';
-import {SUPPLY_TYPE} from '../../core/object-specs';
 import {$demoState} from '../getters/demo-state';
 import {$objectSpecIds} from '../getters/play-state';
 import {$pieceSpecs, $regionSpecs} from '../getters/staging-state';
@@ -149,7 +148,6 @@ function setToPlay(
         ),
     );
     const $supply = x.add<SlotSpec>(slotSpec({
-      type: SUPPLY_TYPE,
       $contentSpecs: $supplyContentSpecs,
     }));
 

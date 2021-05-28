@@ -9,7 +9,6 @@ import {slotSpec, SlotSpec} from '../src/region/slot';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
-import {SUPPLY_TYPE} from './core/object-specs';
 import {Root} from './root';
 import {DemoState} from './state/types/demo-state';
 import {PieceSpec} from './state/types/piece-spec';
@@ -66,7 +65,6 @@ function init(stateService: StateService): StateId<DemoState> {
     $isStaging: x.add(true),
     $playState: x.add<PlayState>({
       $supply: x.add<SlotSpec>(slotSpec({
-        type: SUPPLY_TYPE,
         $contentSpecs: x.add([]),
       })),
       objectSpecIds: [

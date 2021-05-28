@@ -33,7 +33,6 @@ export const $ = {
 export type SlotSpec = IsContainer<'indexed'>;
 
 interface Input {
-  readonly type: string;
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
 }
 

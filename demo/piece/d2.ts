@@ -1,33 +1,87 @@
+import {$stateService, source} from 'grapevine';
+import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, Icon, _p} from 'mask';
-import {PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {element, PersonaContext} from 'persona';
+import {Observable, of} from 'rxjs';
 
-import {D2} from '../../src/piece/d2';
+import {$registerRenderObject, $slot, D2, D2Spec, d2Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
+import {FaceType, RenderedFace} from '../core/rendered-face';
 import {PieceTemplate} from '../template/piece-template';
 
 import template from './d2.html';
+import {renderPiece} from './render-piece';
 
+interface State {
+  readonly cardSlot: StateId<SlotSpec>;
+  readonly coinSlot: StateId<SlotSpec>;
+}
+
+const $$card = source<StateId<D2Spec>>(
+    '$card',
+    vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))),
+);
+
+const $$coin = source<StateId<D2Spec>>(
+    '$coin',
+    vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))),
+);
+
+
+const $state = source<State>('d2state', vine => $stateService.get(vine).modify(x => ({
+  cardSlot: x.add(slotSpec({
+    $contentSpecs: x.add(indexedContentSpecs([$$card.get(vine)])),
+  })),
+  coinSlot: x.add(slotSpec({
+    $contentSpecs: x.add(indexedContentSpecs([$$coin.get(vine)])),
+  })),
+})));
 
 export const $d2Demo = {
   tag: 'pbd-d2',
   api: {},
 };
 
+const $ = {
+  cardSlot: element('cardSlot', $slot, {}),
+  coinSlot: element('coinSlot', $slot, {}),
+};
+
 @_p.customElement({
   ...$d2Demo,
+  configure: vine => {
+    const $card = $$card.get(vine);
+    const $coin = $$coin.get(vine);
+    const registerRenderObject = $registerRenderObject.get(vine);
+    registerRenderObject(
+        $card,
+        renderPiece([FaceType.CARD_BACK, FaceType.CARD_FRONT], $card),
+    );
+
+    registerRenderObject(
+        $coin,
+        renderPiece([FaceType.COIN_FRONT, FaceType.COIN_BACK], $coin),
+    );
+  },
   dependencies: [
-    PieceTemplate,
-    Icon,
     D2,
+    Icon,
+    Lens,
+    PieceTemplate,
+    RenderedFace,
+    Slot,
   ],
   template,
 })
-export class D2Demo extends BaseThemedCtrl<{}> {
+export class D2Demo extends BaseThemedCtrl<typeof $> {
   constructor(context: PersonaContext) {
-    super(context, {});
+    super(context, $);
   }
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    return [];
+    const state = $state.get(this.context.vine);
+    return [
+      this.renderers.cardSlot.objectId(of(state.cardSlot)),
+      this.renderers.coinSlot.objectId(of(state.coinSlot)),
+    ];
   }
 }

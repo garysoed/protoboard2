@@ -4,10 +4,7 @@ import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$slot, Lens, Slot, slotSpec, SlotSpec} from '../../export';
-import {$registerRenderObject} from '../../src/objects/render-object-spec';
-import {indexedContentSpec} from '../../src/payload/is-container';
-import {D1, d1Spec} from '../../src/piece/d1';
+import {$registerRenderObject, $slot, D1, d1Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
 import {PieceTemplate} from '../template/piece-template';
 
@@ -31,18 +28,12 @@ const $$gem = source(
 );
 
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
-  meepleSlot: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([
-    indexedContentSpec({
-      objectId: $$meeple.get(vine),
-      coordinate: {index: 0},
-    }),
-  ])})),
-  gemSlot: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([
-    indexedContentSpec({
-      objectId: $$gem.get(vine),
-      coordinate: {index: 0},
-    }),
-  ])})),
+  meepleSlot: x.add(slotSpec({
+    $contentSpecs: x.add(indexedContentSpecs([$$meeple.get(vine)])),
+  })),
+  gemSlot: x.add(slotSpec({
+    $contentSpecs: x.add(indexedContentSpecs([$$gem.get(vine)])),
+  })),
 })));
 
 

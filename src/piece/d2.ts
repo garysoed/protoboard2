@@ -1,4 +1,5 @@
 import {cache} from 'gs-tools/export/data';
+import {Modifier} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
 import {Observable} from 'rxjs';
@@ -45,6 +46,13 @@ export const $ = {
 };
 
 export type D2Spec = IsMultifaced&IsRotatable;
+
+export function d2Spec(partial: Partial<D2Spec>, x: Modifier): D2Spec {
+  return {
+    $currentFaceIndex: partial.$currentFaceIndex ?? x.add(0),
+    $rotationDeg: partial.$rotationDeg ?? x.add(0),
+  };
+}
 
 /**
  * Represents an object with two faces.

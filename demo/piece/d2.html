@@ -1,5 +1,33 @@
-<pbd-piece-template id="template" label="D2" piece-type="d2" component-tag="pb-d2">
-  <p mk-body-1 slot="details">
-    A D2 is the most is a piece with 2 faces. Some examples include coins and cards.
-  </p>
-</pbd-piece-template>
+<style>
+  .slotContainer {
+    display: inline-block;
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+  }
+</style>
+
+<pbd-documentation-template mk-body-1 label="D2" id="template">
+  <div slot="content">
+    <p>
+      A D2 is a piece with 2 faces.
+    </p>
+    <p>
+      Some examples:
+    </p>
+    <ul>
+      <li>
+        <p>Card</p>
+        <div class="slotContainer">
+          <pb-slot id="cardSlot"></pb-slot>
+        </div>
+      </li>
+      <li>
+        <p>Coin</p>
+        <div class="slotContainer">
+          <pb-slot id="coinSlot"></pb-slot>
+        </div>
+      </li>
+    </ul>
+  </div>
+</pbd-documentation-template>

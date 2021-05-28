@@ -1,3 +1,4 @@
+import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {StateId} from 'gs-tools/export/state';
 
 import {Indexed} from '../coordinate/indexed';
@@ -19,10 +20,16 @@ export interface IsContainer<T extends CoordinateTypes> {
   readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<T>>>;
 }
 
-interface IndexedSpec {
-  readonly objectId: StateId<unknown>;
-  readonly coordinate: Indexed;
-}
-export function indexedContentSpec(spec: IndexedSpec): ContentSpec<'indexed'> {
-  return spec;
+export function indexedContentSpecs(
+    specs: ReadonlyArray<StateId<unknown>>,
+): ReadonlyArray<ContentSpec<'indexed'>> {
+  return $pipe(
+      specs,
+      $zip(countableIterable()),
+      $map(([objectId, index]) => ({
+        objectId,
+        coordinate: {index},
+      })),
+      $asArray(),
+  );
 }

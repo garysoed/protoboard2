@@ -24,8 +24,6 @@ export function renderRootSlot(
   }));
 }
 
-export const SUPPLY_TYPE = 'pbd.supply';
-
 export function renderSupply(
     objectId: StateId<IsContainer<'indexed'>>,
 ): Observable<RenderSpec|null> {

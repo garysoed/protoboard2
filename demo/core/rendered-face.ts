@@ -5,6 +5,10 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {Lens} from '../../src/core/lens';
+import cardBackSvg from '../asset/card_back.svg';
+import cardFrontSvg from '../asset/card_front.svg';
+import coinFrontSvg from '../asset/coin.svg';
+import coinBackSvg from '../asset/coin_back.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
@@ -12,8 +16,12 @@ import meepleSvg from '../asset/meeple.svg';
 import template from './rendered-face.html';
 
 export enum FaceType {
-  MEEPLE = 'meeple',
+  CARD_BACK = 'cardback',
+  CARD_FRONT = 'cardfront',
+  COIN_BACK = 'coinback',
+  COIN_FRONT = 'coinfront',
   GEM = 'gem',
+  MEEPLE = 'meeple',
 }
 
 export const $renderedFace = {
@@ -33,8 +41,12 @@ const $ = {
 @_p.customElement({
   ...$renderedFace,
   configure: vine => {
-    registerSvg(vine, FaceType.MEEPLE, {type: 'embed', content: meepleSvg});
+    registerSvg(vine, FaceType.CARD_BACK, {type: 'embed', content: cardBackSvg});
+    registerSvg(vine, FaceType.CARD_FRONT, {type: 'embed', content: cardFrontSvg});
+    registerSvg(vine, FaceType.COIN_BACK, {type: 'embed', content: coinBackSvg});
+    registerSvg(vine, FaceType.COIN_FRONT, {type: 'embed', content: coinFrontSvg});
     registerSvg(vine, FaceType.GEM, {type: 'embed', content: gemSvg});
+    registerSvg(vine, FaceType.MEEPLE, {type: 'embed', content: meepleSvg});
   },
   dependencies: [
     Icon,
@@ -68,6 +80,14 @@ export class RenderedFace extends BaseThemedCtrl<typeof $> {
           }
 
           switch (faceType) {
+            case FaceType.CARD_BACK:
+              return 'Card Back';
+            case FaceType.CARD_FRONT:
+              return 'Card Front';
+            case FaceType.COIN_BACK:
+              return 'Coin Back';
+            case FaceType.COIN_FRONT:
+              return 'Coin Front';
             case FaceType.GEM:
               return 'Gem';
             case FaceType.MEEPLE:
