@@ -4,7 +4,7 @@ import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$slot, slotSpec, SlotSpec} from '../../export';
+import {$slot, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {$registerRenderObject} from '../../src/objects/render-object-spec';
 import {indexedContentSpec} from '../../src/payload/is-container';
 import {D1, d1Spec} from '../../src/piece/d1';
@@ -85,8 +85,10 @@ const $ = {
   dependencies: [
     D1,
     Icon,
+    Lens,
     PieceTemplate,
     RenderedFace,
+    Slot,
   ],
   template,
 })
