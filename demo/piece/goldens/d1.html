@@ -1,0 +1,145 @@
+<pbd-d1><style>
+  .slotContainer {
+    display: inline-block;
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+  }
+</style>
+
+<pbd-documentation-template mk-body-1="" label="D1" id="template"><style>
+  #content::slotted(*) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  #title {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+</style>
+
+<section flex="">
+  <h3 id="title" mk-display="">D1</h3>
+  <slot id="content" name="content"><div slot="content">
+    <p>
+      A D1 is the most basic piece. It is a "dice" with 1 face. It represents any piece with only one
+      face.
+    </p>
+    <p>
+      Some examples:
+    </p>
+    <ul>
+      <li>
+        <p>Meeple</p>
+        <div class="slotContainer">
+          <pb-slot id="meepleSlot" object-id="6"><style>
+  #root {
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mkThemeBG);
+    border: 1px solid var(--mkThemeFG);
+    box-sizing: border-box;
+    flex-wrap: wrap;
+  }
+</style>
+
+<div id="root" fill-parent="" mk-action-2="" layout="row">
+  <!-- #content--><pb-d1 object-id="2"><slot id="slot" name="face-0"><pbd-rendered-face face-type="meeple" slot="face-0"><style>
+  #summary {
+    height: 4rem;
+    width: 4rem;
+  }
+</style>
+<pb-lens><style>
+  #details {
+    display: none;
+  }
+</style>
+
+<div id="root">
+  <slot name="summary"><div id="summary" slot="summary">
+    <mk-icon id="icon" aria-hidden="true" role="presentation" icon="meeple"><style>
+  :host {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #root > svg #foreground {
+    fill: var(--mkThemeFG) !important;
+  }
+</style>
+<span id="root">
+  <!-- #content --><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" sodipodi:docname="meeple.svg" inkscape:version="1.0 (4035a4f, 2020-05-01)" id="svg4170" xml:space="preserve" enable-background="new 0 0 100 100" viewBox="0 0 24 24" y="0px" x="0px" version="1.1" fill="#000000" height="100%"><metadata id="metadata4178"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"></dc:type><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs id="defs4176"></defs><sodipodi:namedview inkscape:document-rotation="0" inkscape:current-layer="svg4170" inkscape:window-maximized="0" inkscape:window-y="23" inkscape:window-x="0" inkscape:cy="50" inkscape:cx="26.655897" inkscape:zoom="6.19" showgrid="false" id="namedview4174" inkscape:window-height="825" inkscape:window-width="1393" inkscape:pageshadow="2" inkscape:pageopacity="0" guidetolerance="10" gridtolerance="10" objecttolerance="10" borderopacity="1" bordercolor="#666666" pagecolor="#ffffff"></sodipodi:namedview><path style="clip-rule:evenodd;fill-rule:evenodd;stroke-width:0.24" inkscape:connector-curvature="0" id="foreground" d="M 23.998076,10.324561 C 24.136796,7.0228813 16.233117,5.4153614 15.890637,5.0390414 15.719997,4.8518415 16.286637,-0.00359817 11.999997,1.8323824e-6 7.7133575,-0.00359817 8.2797575,4.8518415 8.1091175,5.0390414 c -0.34248,0.37632 -8.2456793,1.9838399 -8.10719931,5.2855196 0.13823999,3.30192 4.33223961,1.60608 5.22671951,2.57784 0.7824,0.85056 -3.6669596,6.294959 -4.1647196,9.752159 C 0.90167812,23.78136 1.2184781,24 2.313598,24 c 1.9862398,0 3.8824797,-0.0012 5.6287195,-0.0012 0.78888,0 1.0694399,-0.45336 1.4764799,-1.07808 0.9009606,-1.38288 1.9891206,-3.60576 2.5811996,-3.60552 0.59184,-2.4e-4 1.68024,2.22264 2.5812,3.60528 0.40704,0.62496 0.68736,1.07808 1.47624,1.07808 1.746,0 3.64248,0.0012 5.62872,0.0012 1.09512,0 1.41216,-0.21864 1.24968,-1.34544 -0.49752,-3.4572 -4.94664,-8.901599 -4.16472,-9.752159 0.89448,-0.97152 5.088959,0.72432 5.226959,-2.5776 z"></path></svg>
+</span>
+<link rel="stylesheet" href="base/test.css"></mk-icon>
+  </div></slot>
+</div>
+<slot id="details" name="details"><div slot="details">
+    <h3 id="name">Meeple</h3>
+    <p mk-body-1="">More detailed information on the piece goes here.</p>
+  </div></slot><link rel="stylesheet" href="base/test.css"></pb-lens><link rel="stylesheet" href="base/test.css"></pbd-rendered-face></slot>
+<link rel="stylesheet" href="base/test.css"></pb-d1>
+</div>
+<link rel="stylesheet" href="base/test.css"></pb-slot>
+        </div>
+      </li>
+      <li>
+        <p>Gem</p>
+        <div class="slotContainer">
+          <pb-slot id="gemSlot" object-id="8"><style>
+  #root {
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mkThemeBG);
+    border: 1px solid var(--mkThemeFG);
+    box-sizing: border-box;
+    flex-wrap: wrap;
+  }
+</style>
+
+<div id="root" fill-parent="" mk-action-2="" layout="row">
+  <!-- #content--><pb-d1 object-id="4"><slot id="slot" name="face-0"><pbd-rendered-face face-type="gem" slot="face-0"><style>
+  #summary {
+    height: 4rem;
+    width: 4rem;
+  }
+</style>
+<pb-lens><style>
+  #details {
+    display: none;
+  }
+</style>
+
+<div id="root">
+  <slot name="summary"><div id="summary" slot="summary">
+    <mk-icon id="icon" aria-hidden="true" role="presentation" icon="gem"><style>
+  :host {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #root > svg #foreground {
+    fill: var(--mkThemeFG) !important;
+  }
+</style>
+<span id="root">
+  <!-- #content --><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" sodipodi:docname="gem.svg" inkscape:version="1.0 (4035a4f, 2020-05-01)" xml:space="preserve" viewBox="0 0 24 24" height="100%" y="0px" x="0px" id="Capa_1" version="1.1"><metadata id="metadata4240"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"></dc:type><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs id="defs4238"></defs><sodipodi:namedview inkscape:document-rotation="0" inkscape:current-layer="Capa_1" inkscape:window-maximized="0" inkscape:window-y="23" inkscape:window-x="0" inkscape:cy="58.978027" inkscape:cx="-43.197886" inkscape:zoom="2.8405145" showgrid="false" id="namedview4236" inkscape:window-height="792" inkscape:window-width="1323" inkscape:pageshadow="2" inkscape:pageopacity="0" guidetolerance="10" gridtolerance="10" objecttolerance="10" borderopacity="1" bordercolor="#666666" pagecolor="#ffffff"></sodipodi:namedview><path style="stroke-width:0.0392157" d="m 10.413765,2.9165315 0.500862,-0.582785 H 5.4396078 L 0,8.6057075 H 5.5206667 Z M 6.8312941,8.6061385 H 17.171686 L 14.360549,5.3364135 12.002118,2.5935505 8.438,6.7374725 Z M 0.06615686,9.5997465 10.346392,20.417551 5.4302353,9.5997465 Z M 17.483098,9.5989235 h -0.895922 l -3.766784,8.23e-4 H 6.5198431 l 5.4494119,11.9901955 0.03502,0.07635 5.192117,-11.434274 z M 13.66902,20.402179 23.93302,9.6001785 H 18.573608 Z M 24,8.6057075 l -5.441333,-6.272 H 13.08749 l 5.39353,6.272 z" id="foreground" inkscape:connector-curvature="0"></path><g id="g4206"></g><g id="g4208"></g><g id="g4210"></g><g id="g4212"></g><g id="g4214"></g><g id="g4216"></g><g id="g4218"></g><g id="g4220"></g><g id="g4222"></g><g id="g4224"></g><g id="g4226"></g><g id="g4228"></g><g id="g4230"></g><g id="g4232"></g><g id="g4234"></g></svg>
+</span>
+<link rel="stylesheet" href="base/test.css"></mk-icon>
+  </div></slot>
+</div>
+<slot id="details" name="details"><div slot="details">
+    <h3 id="name">Gem</h3>
+    <p mk-body-1="">More detailed information on the piece goes here.</p>
+  </div></slot><link rel="stylesheet" href="base/test.css"></pb-lens><link rel="stylesheet" href="base/test.css"></pbd-rendered-face></slot>
+<link rel="stylesheet" href="base/test.css"></pb-d1>
+</div>
+<link rel="stylesheet" href="base/test.css"></pb-slot>
+        </div>
+      </li>
+    </ul>
+  </div></slot>
+</section>
+<link rel="stylesheet" href="base/test.css"></pbd-documentation-template>
+<link rel="stylesheet" href="base/test.css"></pbd-d1>
