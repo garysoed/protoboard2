@@ -15,37 +15,20 @@ import template from './d1.html';
 import {renderPiece} from './render-piece';
 
 
-enum DemoPieceType {
-  MEEPLE,
-  GEM,
-}
-
-const D1DEMO_TYPE = 'd1demo';
-
 interface State {
   readonly meepleSlot: StateId<SlotSpec>;
   readonly gemSlot: StateId<SlotSpec>;
 }
 
-const $$meeple = source('$meeple', vine => $stateService.get(vine).modify(x => x.add(
-    d1Spec(
-        {
-          type: D1DEMO_TYPE,
-          payload: {type: DemoPieceType.MEEPLE},
-        },
-        x,
-    )),
-));
+const $$meeple = source(
+    '$meeple',
+    vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))),
+);
 
-const $$gem = source('$gem', vine => $stateService.get(vine).modify(x => x.add(
-    d1Spec(
-        {
-          type: D1DEMO_TYPE,
-          payload: {type: DemoPieceType.GEM},
-        },
-        x,
-    )),
-));
+const $$gem = source(
+    '$gem',
+    vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))),
+);
 
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
   meepleSlot: x.add(slotSpec({type: 'slot', $contentSpecs: x.add([

@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier, StateId} from 'gs-tools/export/state';
+import {Modifier} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$slot, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
@@ -29,15 +29,9 @@ export const $d1 = {
 
 export type D1Spec = IsRotatable;
 
-interface Input<P> {
-  readonly type: string;
-  readonly payload: P;
-  readonly $rotationDeg?: StateId<number>;
-}
-
-export function d1Spec<P>(input: Input<P>, x: Modifier): D1Spec {
+export function d1Spec(partial: Partial<D1Spec>, x: Modifier): D1Spec {
   return {
-    $rotationDeg: input.$rotationDeg ?? x.add(0),
+    $rotationDeg: partial.$rotationDeg ?? x.add(0),
   };
 }
 
