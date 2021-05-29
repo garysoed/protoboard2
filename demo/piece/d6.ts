@@ -22,7 +22,7 @@ const $$dice = source<StateId<D6Spec>>(
 );
 
 const $state = source<State>('d6state', vine => $stateService.get(vine).modify(x => ({
-  diceSlot: x.add(slotSpec({$contentSpecs: x.add(indexedContentSpecs([$$dice.get(vine)]))})),
+  diceSlot: x.add(slotSpec({$contentSpecs: x.add(indexedContentSpecs([$$dice.get(vine)]))}, x)),
 })));
 
 export const $d6Demo = {

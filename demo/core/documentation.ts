@@ -9,6 +9,7 @@ import {$d1Demo, D1Demo} from '../piece/d1';
 import {$d2Demo, D2Demo} from '../piece/d2';
 import {$d6Demo, D6Demo} from '../piece/d6';
 import {$deckDemo, DeckDemo} from '../region/deck';
+import {$slotDemo, SlotDemo} from '../region/slot';
 
 import template from './documentation.html';
 import {$instruction, Instruction} from './instruction';
@@ -34,6 +35,7 @@ const $ = {
     D6Demo,
     DeckDemo,
     Instruction,
+    SlotDemo,
   ],
   template,
 })
@@ -65,6 +67,8 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
                   return $deckDemo;
                 case Views.INSTRUCTION:
                   return $instruction;
+                case Views.SLOT:
+                  return $slotDemo;
                 default:
                   assertUnreachable(location.type);
               }

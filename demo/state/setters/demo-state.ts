@@ -149,7 +149,7 @@ function setToPlay(
     );
     const $supply = x.add<SlotSpec>(slotSpec({
       $contentSpecs: $supplyContentSpecs,
-    }));
+    }, x));
 
     const playState: PlayState = {
       $supply,

@@ -29,12 +29,14 @@ const $$coin = source<StateId<D2Spec>>(
 
 
 const $state = source<State>('d2state', vine => $stateService.get(vine).modify(x => ({
-  cardSlot: x.add(slotSpec({
-    $contentSpecs: x.add(indexedContentSpecs([$$card.get(vine)])),
-  })),
-  coinSlot: x.add(slotSpec({
-    $contentSpecs: x.add(indexedContentSpecs([$$coin.get(vine)])),
-  })),
+  cardSlot: x.add(slotSpec(
+      {$contentSpecs: x.add(indexedContentSpecs([$$card.get(vine)]))},
+      x,
+  )),
+  coinSlot: x.add(slotSpec(
+      {$contentSpecs: x.add(indexedContentSpecs([$$coin.get(vine)]))},
+      x,
+  )),
 })));
 
 export const $d2Demo = {

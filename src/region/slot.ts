@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {Modifier, StateId} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
@@ -33,11 +33,14 @@ export const $ = {
 export type SlotSpec = IsContainer<'indexed'>;
 
 interface Input {
-  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
+  readonly $contentSpecs?: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
 }
 
-export function slotSpec(input: Input): SlotSpec {
-  return {...input, containerType: 'indexed'};
+export function slotSpec(input: Input, x: Modifier): SlotSpec {
+  return {
+    containerType: 'indexed',
+    $contentSpecs: input.$contentSpecs ?? x.add([]),
+  };
 }
 
 @_p.customElement({

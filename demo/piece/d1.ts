@@ -28,12 +28,14 @@ const $$gem = source(
 );
 
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
-  meepleSlot: x.add(slotSpec({
-    $contentSpecs: x.add(indexedContentSpecs([$$meeple.get(vine)])),
-  })),
-  gemSlot: x.add(slotSpec({
-    $contentSpecs: x.add(indexedContentSpecs([$$gem.get(vine)])),
-  })),
+  meepleSlot: x.add(slotSpec(
+      {$contentSpecs: x.add(indexedContentSpecs([$$meeple.get(vine)]))},
+      x,
+  )),
+  gemSlot: x.add(slotSpec(
+      {$contentSpecs: x.add(indexedContentSpecs([$$gem.get(vine)]))},
+      x,
+  )),
 })));
 
 
