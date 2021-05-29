@@ -6,10 +6,11 @@ import {Observable, of} from 'rxjs';
 
 import {$registerRenderObject, $slot, D6, d6Spec, D6Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
-import {PieceTemplate} from '../template/piece-template';
+import {DocumentationTemplate} from '../template/documentation-template';
 
 import template from './d6.html';
 import {renderPiece} from './render-piece';
+
 
 interface State {
   readonly diceSlot: StateId<SlotSpec>;
@@ -55,9 +56,9 @@ const $ = {
   },
   dependencies: [
     D6,
+    DocumentationTemplate,
     Icon,
     Lens,
-    PieceTemplate,
     RenderedFace,
     Slot,
   ],

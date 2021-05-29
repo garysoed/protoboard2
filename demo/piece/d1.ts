@@ -6,7 +6,7 @@ import {Observable, of} from 'rxjs';
 
 import {$registerRenderObject, $slot, D1, d1Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
-import {PieceTemplate} from '../template/piece-template';
+import {DocumentationTemplate} from '../template/documentation-template';
 
 import template from './d1.html';
 import {renderPiece} from './render-piece';
@@ -58,9 +58,9 @@ const $ = {
   },
   dependencies: [
     D1,
+    DocumentationTemplate,
     Icon,
     Lens,
-    PieceTemplate,
     RenderedFace,
     Slot,
   ],
