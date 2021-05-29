@@ -1,6 +1,6 @@
 import {Snapshot, StateId, StateService} from 'gs-tools/export/state';
 import {LocalStorage} from 'gs-tools/export/store';
-import {$saveConfig, $saveService, registerSvg, start, UrlThemeLoader} from 'mask';
+import {$saveConfig, registerSvg, start, UrlThemeLoader} from 'mask';
 import {identity, json} from 'nabu';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
@@ -49,9 +49,6 @@ window.addEventListener('load', () => {
       json(),
   );
 
-  const saveService = $saveService.get(vine);
-  saveService.setSaving(true);
-  saveService.run().subscribe();
   $saveConfig.get(vine).next({
     loadOnInit: true,
     saveId: 'save',
