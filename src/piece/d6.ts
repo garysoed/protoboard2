@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {Modifier} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser, style} from 'persona';
 import {Observable} from 'rxjs';
@@ -46,16 +46,11 @@ export const $ = {
 
 export type D6Spec = IsMultifaced&IsRotatable;
 
-interface Input {
-  readonly type: string;
-  readonly $currentFaceIndex: StateId<number>;
-  readonly $rotationDeg: StateId<number>;
-}
 
-export function d6Spec(input: Input): D6Spec {
+export function d6Spec(partial: Partial<D6Spec>, x: Modifier): D6Spec {
   return {
-    $currentFaceIndex: input.$currentFaceIndex,
-    $rotationDeg: input.$rotationDeg,
+    $currentFaceIndex: partial.$currentFaceIndex ?? x.add(0),
+    $rotationDeg: partial.$rotationDeg ?? x.add(0),
   };
 }
 

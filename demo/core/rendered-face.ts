@@ -9,6 +9,12 @@ import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';
 import coinBackSvg from '../asset/coin_back.svg';
+import dicePip1Svg from '../asset/dice_pip_1.svg';
+import dicePip2Svg from '../asset/dice_pip_2.svg';
+import dicePip3Svg from '../asset/dice_pip_3.svg';
+import dicePip4Svg from '../asset/dice_pip_4.svg';
+import dicePip5Svg from '../asset/dice_pip_5.svg';
+import dicePip6Svg from '../asset/dice_pip_6.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
@@ -20,6 +26,12 @@ export enum FaceType {
   CARD_FRONT = 'cardfront',
   COIN_BACK = 'coinback',
   COIN_FRONT = 'coinfront',
+  DICE_PIP_1 = 'dicepip1',
+  DICE_PIP_2 = 'dicepip2',
+  DICE_PIP_3 = 'dicepip3',
+  DICE_PIP_4 = 'dicepip4',
+  DICE_PIP_5 = 'dicepip5',
+  DICE_PIP_6 = 'dicepip6',
   GEM = 'gem',
   MEEPLE = 'meeple',
 }
@@ -47,6 +59,12 @@ const $ = {
     registerSvg(vine, FaceType.COIN_FRONT, {type: 'embed', content: coinFrontSvg});
     registerSvg(vine, FaceType.GEM, {type: 'embed', content: gemSvg});
     registerSvg(vine, FaceType.MEEPLE, {type: 'embed', content: meepleSvg});
+    registerSvg(vine, FaceType.DICE_PIP_1, {type: 'embed', content: dicePip1Svg});
+    registerSvg(vine, FaceType.DICE_PIP_2, {type: 'embed', content: dicePip2Svg});
+    registerSvg(vine, FaceType.DICE_PIP_3, {type: 'embed', content: dicePip3Svg});
+    registerSvg(vine, FaceType.DICE_PIP_4, {type: 'embed', content: dicePip4Svg});
+    registerSvg(vine, FaceType.DICE_PIP_5, {type: 'embed', content: dicePip5Svg});
+    registerSvg(vine, FaceType.DICE_PIP_6, {type: 'embed', content: dicePip6Svg});
   },
   dependencies: [
     Icon,
@@ -88,6 +106,18 @@ export class RenderedFace extends BaseThemedCtrl<typeof $> {
               return 'Coin Back';
             case FaceType.COIN_FRONT:
               return 'Coin Front';
+            case FaceType.DICE_PIP_1:
+              return 'Dice 1 (pip)';
+            case FaceType.DICE_PIP_2:
+              return 'Dice 2 (pip)';
+            case FaceType.DICE_PIP_3:
+              return 'Dice 3 (pip)';
+            case FaceType.DICE_PIP_4:
+              return 'Dice 4 (pip)';
+            case FaceType.DICE_PIP_5:
+              return 'Dice 5 (pip)';
+            case FaceType.DICE_PIP_6:
+              return 'Dice 6 (pip)';
             case FaceType.GEM:
               return 'Gem';
             case FaceType.MEEPLE:

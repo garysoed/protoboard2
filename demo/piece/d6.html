@@ -1,5 +1,21 @@
-<pbd-piece-template id="template" label="D6" piece-type="d6" component-tag="pb-d6">
-  <p mk-body-1 slot="details">
-    A D6 is the most is a piece with 6 faces. Some examples include dice.
-  </p>
-</pbd-piece-template>
+<style>
+  .slotContainer {
+    display: inline-block;
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+  }
+</style>
+
+<pbd-documentation-template mk-body-1 label="D6" id="template">
+  <div slot="content">
+    <p>
+      A D6 is a piece with six faces. The most obvious example is a six sided die.
+    </p>
+    <p>
+      <div class="slotContainer">
+        <pb-slot id="diceSlot"></pb-slot>
+      </div>
+    </p>
+  </div>
+</pbd-documentation-template>
