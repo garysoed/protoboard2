@@ -1,4 +1,4 @@
-import {assert, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, createSpyInstance, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
 import {$div, attributeIn, element, host, integerParser, PersonaContext} from 'persona';
@@ -8,10 +8,11 @@ import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionContext} from '../action/action-context';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 
 import {$baseComponent, BaseComponent} from './base-component';
 import {TriggerEvent} from './trigger-event';
-import {triggerSpecParser, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
+import {DetailedTriggerSpec, triggerSpecParser, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
 interface ActionConfig extends TriggerConfig {
@@ -22,6 +23,8 @@ interface TestValue {
   readonly event: TriggerEvent;
   readonly config: ActionConfig;
 }
+
+const ACTION_NAME = 'test';
 
 function testAction(
     onTrigger$: Subject<TestValue>,
@@ -35,7 +38,7 @@ function testAction(
           onTrigger$.next({event, config});
         }),
     ),
-    actionName: 'test',
+    actionName: ACTION_NAME,
     configSpecs: host({
       value: attributeIn(attrName, integerParser(), 0),
       trigger: attributeIn('pb-test-trigger', triggerSpecParser(), trigger),
@@ -74,7 +77,13 @@ test('@protoboard2/core/base-component', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     shadowRoot.appendChild(targetEl);
 
-    const personaContext = createFakeContext({shadowRoot});
+    const mockHelpService = createSpyInstance(HelpService);
+    const personaContext = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $helpService, withValue: mockHelpService},
+      ],
+    });
     const onClick$ = new Subject<TestValue>();
     const onKey$ = new Subject<TestValue>();
     const component = new TestComponent(
@@ -97,6 +106,7 @@ test('@protoboard2/core/base-component', init => {
     return {
       component,
       el,
+      mockHelpService,
       onClick$,
       onKey$,
       personaContext,
@@ -172,6 +182,46 @@ test('@protoboard2/core/base-component', init => {
 
       const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectId.id]);
+    });
+  });
+
+  test('setupAction', () => {
+    should('set up the help action', () => {
+      // Hover over the element.
+      _.el.dispatchEvent(new CustomEvent('mouseenter'));
+      _.el.dispatchEvent(Object.assign(
+          new CustomEvent('mousemove'),
+          {offsetX: 12, offsetY: 34},
+      ));
+
+      // Press the key
+      window.dispatchEvent(new KeyboardEvent(
+          'keydown',
+          {
+            key: TriggerType.QUESTION,
+            altKey: false,
+            ctrlKey: false,
+            metaKey: false,
+            shiftKey: true,
+          },
+      ));
+
+      assert(_.mockHelpService.show).to.haveBeenCalledWith(
+          arrayThat<ActionTrigger>().haveExactElements([
+            objectThat<ActionTrigger>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+                type: TriggerType.CLICK,
+              }),
+              actionName: ACTION_NAME,
+            }),
+            objectThat<ActionTrigger>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+                type: KEY,
+              }),
+              actionName: ACTION_NAME,
+            }),
+          ]),
+      );
     });
   });
 
@@ -255,7 +305,7 @@ test('@protoboard2/core/base-component', init => {
     });
   });
 
-  test('getConfig$', _, init => {
+  test('normalizeConfig$', _, init => {
     const _ = init(_ => {
       const value$ = createSpySubject(_.onClick$.pipe(map(({config}) => config.value)));
       return {..._, value$};

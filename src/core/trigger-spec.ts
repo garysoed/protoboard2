@@ -55,8 +55,7 @@ export interface DetailedTriggerSpec<T> {
   readonly shift?: boolean;
 }
 
-export type UnreservedTriggerSpec =
-    UnreservedTriggerKey|DetailedTriggerSpec<UnreservedTriggerKey>;
+export type UnreservedTriggerSpec = UnreservedTriggerKey|DetailedTriggerSpec<TriggerType>;
 export type TriggerSpec = TriggerType|DetailedTriggerSpec<TriggerType>;
 
 export function isKeyTrigger(triggerType: TriggerType): boolean {

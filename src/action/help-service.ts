@@ -16,10 +16,8 @@ export class HelpService {
     this.actions$.next([]);
   }
 
-  show(actions: ReadonlyMap<TriggerSpec, string>): void {
-    this.actions$.next(
-        [...actions].map(([trigger, actionName]) => ({actionName, trigger})),
-    );
+  show(actions: readonly ActionTrigger[]): void {
+    this.actions$.next(actions);
   }
 }
 

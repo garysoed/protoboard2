@@ -6,11 +6,13 @@ import {mapObject} from 'gs-tools/export/typescript';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, onDom, PersonaContext} from 'persona';
 import {INPUT_TYPE} from 'persona/export/internal';
-import {EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
+import {combineLatest, EMPTY, fromEvent, merge, Observable, of} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {ActionSpec, ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
+import {helpAction} from '../action/help-action';
+import {ActionTrigger} from '../action/help-service';
 
 import {TriggerEvent} from './trigger-event';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
@@ -19,6 +21,7 @@ import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType, UnreservedT
 const LOG = new Logger('pb.core.BaseComponent');
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
+
 
 type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
 
@@ -113,7 +116,9 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
         );
   }
 
-  private getConfig$<C extends TriggerConfig>(configSpecs: ConfigSpecs<C>): Observable<NormalizedTriggerConfig<C>> {
+  private normalizeConfig<C extends TriggerConfig>(
+      configSpecs: ConfigSpecs<C>,
+  ): Observable<NormalizedTriggerConfig<C>> {
     const configSpecMap = mapObject<ConfigSpecs<C>, ObservableConfig<C>>(
         configSpecs,
         <K extends keyof C>(_: K, value: ConfigSpecs<C>[K]) => {
@@ -131,22 +136,34 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   }
 
   private setupActions(): void {
-    for (const actionSpec of this.actionSpecs) {
-      this.addSetup(this.setupTrigger(actionSpec));
+    const actionDescriptions: Array<Observable<ActionTrigger>> = [];
+    for (const actionSpec of this.actionSpecs as ReadonlyArray<ActionSpec<TriggerConfig>>) {
+      const config$ = this.normalizeConfig(actionSpec.configSpecs);
+      actionDescriptions.push(
+          config$.pipe(
+              map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
+          ),
+      );
+      this.addSetup(this.setupTrigger(actionSpec, config$));
     }
+
+    const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
+    const helpActionSpec = helpAction(actionDescriptions$);
+    const helpConfig$ = this.normalizeConfig(helpActionSpec.configSpecs);
+    this.addSetup(this.setupTrigger(helpActionSpec, helpConfig$));
   }
 
   private setupTrigger<C extends TriggerConfig>(
       actionSpec: ActionSpec<C>,
+      config$: Observable<NormalizedTriggerConfig<C>>,
   ): Observable<unknown> {
-    const config$ = this.getConfig$(actionSpec.configSpecs);
     return config$.pipe(
         switchMap(config => {
           if (!config.trigger) {
             return EMPTY;
           }
 
-          const triggerSpec = normalizeTrigger(config.trigger);
+          const triggerSpec = config.trigger;
           const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type)
             ? this.createTriggerKey(triggerSpec)
             : this.createTriggerClick(triggerSpec);
