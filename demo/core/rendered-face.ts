@@ -4,7 +4,7 @@ import {$h3, $p, attributeIn, element, enumParser, host, PersonaContext} from 'p
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {Lens} from '../../src/core/lens';
+import {Lens} from '../../src/face/lens';
 import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';

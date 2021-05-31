@@ -1,5 +1,5 @@
-export {Lens, $lens} from '../src/core/lens';
-export {LensDisplay} from '../src/core/lens-display';
+export {Lens, $lens} from '../src/face/lens';
+export {LensDisplay} from '../src/face/lens-display';
 
 // action
 export {pickAction} from '../src/action/pick-action';
