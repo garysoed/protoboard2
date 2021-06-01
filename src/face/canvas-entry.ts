@@ -8,6 +8,12 @@ export interface CanvasLine {
   readonly configName: string;
 }
 
+export interface CanvasHalfLine {
+  readonly fromX: number;
+  readonly fromY: number;
+  readonly configName: string;
+}
+
 export interface CanvasIcon {
   readonly x: number;
   readonly y: number;
@@ -18,4 +24,5 @@ export interface CanvasIcon {
 export interface CanvasEntry {
   readonly icons: StateId<readonly CanvasIcon[]>;
   readonly lines: StateId<readonly CanvasLine[]>;
+  readonly halfLine: StateId<CanvasHalfLine|null>;
 }
