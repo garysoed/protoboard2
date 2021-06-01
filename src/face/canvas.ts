@@ -68,27 +68,29 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
             canvasConfigService.lineConfig$,
         ),
         switchMap(([[icons, lines], iconConfigs, lineConfigs]) => {
-          const renderIconSpecs = $pipe(
+          const renderIconEls = $pipe(
               icons ?? [],
               $map(icon => this.renderIcon(icon, iconConfigs)),
               $filterNonNull(),
               $asArray(),
           );
 
-          const renderLineSpecs = $pipe(
+          const renderLineEls = $pipe(
               lines ?? [],
               $map(line => this.renderLine(line, lineConfigs)),
               $filterNonNull(),
               $asArray(),
           );
 
-          const renderSpecs = [...renderIconSpecs, ...renderLineSpecs];
+          const nodeObsList = [...renderIconEls, ...renderLineEls];
 
-          if (renderSpecs.length <= 0) {
+          if (nodeObsList.length <= 0) {
             return of([]);
           }
 
-          return combineLatest(renderSpecs);
+          return combineLatest(
+              nodeObsList.map(node$ => node$.pipe(map(node => renderNode({node, id: {}})))),
+          );
         }),
     );
   }
@@ -96,7 +98,7 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
   private renderIcon(
       icon: CanvasIcon,
       iconConfigs: ReadonlyMap<string, IconConfig>,
-  ): Observable<RenderSpec>|null {
+  ): Observable<Node>|null {
     const config = iconConfigs.get(icon.configName);
     if (!config) {
       return null;
@@ -119,14 +121,13 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
             height: `${config.height}`,
           });
         }),
-        map(svgEl => renderNode({node: svgEl, id: {}})),
     );
   }
 
   private renderLine(
       line: CanvasLine,
       lineConfigs: ReadonlyMap<string, LineConfig>,
-  ): Observable<RenderSpec>|null {
+  ): Observable<Node>|null {
     const config = lineConfigs.get(line.configName);
     if (!config) {
       return null;
@@ -143,9 +144,6 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
       strokeDashoffset: config.dashOffset,
       strokeLinecap: config.linecap,
       strokeWidth: config.width,
-    })
-        .pipe(
-            map(svgEl => renderNode({node: svgEl, id: {}})),
-        );
+    });
   }
 }
