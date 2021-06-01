@@ -2,7 +2,6 @@ import {renderSvg} from 'almagest';
 import {$stateService} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
 import {$svgService, BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {$svg, attributeIn, element, host, multi, PersonaContext, renderNode, RenderSpec} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -10,14 +9,9 @@ import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {IconConfig, LineConfig} from './canvas-config';
 import {$canvasConfigService} from './canvas-config-service';
-import {CanvasIcon, CanvasLine} from './canvas-entry';
+import {CanvasEntry, CanvasIcon, CanvasLine} from './canvas-entry';
 import template from './canvas.html';
 
-
-export interface CanvasEntry {
-  readonly icons: StateId<readonly CanvasIcon[]>;
-  readonly lines: StateId<readonly CanvasLine[]>;
-}
 
 export const $canvas = {
   tag: 'pb-canvas',

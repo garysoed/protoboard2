@@ -6,9 +6,9 @@ import {registerSvg, _p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
 import {PersonaTesterFactory} from 'persona/export/testing';
 
-import {$, Canvas, CanvasEntry} from './canvas';
+import {$, Canvas} from './canvas';
 import {$canvasConfigService} from './canvas-config-service';
-import {CanvasIcon, CanvasLine} from './canvas-entry';
+import {CanvasEntry, CanvasIcon, CanvasLine} from './canvas-entry';
 import goldenDefault from './goldens/canvas__default.html';
 import goldenNoconfig from './goldens/canvas__noconfig.html';
 import goldenNoicon from './goldens/canvas__noicon.html';
