@@ -7,4 +7,11 @@ export interface LineConfig {
   readonly width?: string;
 }
 
-export type CanvasConfig = LineConfig;
+export interface IconConfig {
+  readonly type: 'icon';
+  readonly svgName: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+export type CanvasConfig = IconConfig|LineConfig;
