@@ -1,27 +1,21 @@
 import {$resolveState} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {combineLatestObject} from 'gs-tools/export/rxjs';
 import {StateId} from 'gs-tools/export/state';
-import {mapObject} from 'gs-tools/export/typescript';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, PersonaContext} from 'persona';
-import {INPUT_TYPE} from 'persona/export/internal';
 import {combineLatest, EMPTY, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
-import {ActionSpec, ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
+import {ActionSpec, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
+import {normalizeConfig} from '../action/util/normalize-config';
 import {createTrigger} from '../action/util/setup-trigger';
-
-import {DetailedTriggerSpec, TriggerType, UnreservedTriggerSpec} from './trigger-spec';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
 
-
-type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
 
 export const $baseComponent = {
   api: {
@@ -69,29 +63,10 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
         .pipe(switchMap(objectId => $resolveState.get(this.context.vine)(objectId)));
   }
 
-  private normalizeConfig<C extends TriggerConfig>(
-      configSpecs: ConfigSpecs<C>,
-  ): Observable<NormalizedTriggerConfig<C>> {
-    const configSpecMap = mapObject<ConfigSpecs<C>, ObservableConfig<C>>(
-        configSpecs,
-        <K extends keyof C>(_: K, value: ConfigSpecs<C>[K]) => {
-          INPUT_TYPE.assert(value);
-          return value.getValue(this.context) as ObservableConfig<C>[K];
-        },
-    );
-
-    return combineLatestObject(configSpecMap).pipe(
-        map(rawConfig => ({
-          ...rawConfig,
-          trigger: normalizeTrigger(rawConfig.trigger),
-        })),
-    );
-  }
-
   private setupActions(): void {
     const actionDescriptions: Array<Observable<ActionTrigger>> = [];
     for (const actionSpec of this.actionSpecs as ReadonlyArray<ActionSpec<TriggerConfig>>) {
-      const config$ = this.normalizeConfig(actionSpec.configSpecs);
+      const config$ = normalizeConfig(actionSpec.configSpecs, this.context);
       actionDescriptions.push(
           config$.pipe(
               map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
@@ -102,7 +77,7 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
 
     const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
     const helpActionSpec = helpAction(actionDescriptions$);
-    const helpConfig$ = this.normalizeConfig(helpActionSpec.configSpecs);
+    const helpConfig$ = normalizeConfig(helpActionSpec.configSpecs, this.context);
     this.addSetup(this.setupTrigger(helpActionSpec, helpConfig$));
   }
 
@@ -118,11 +93,4 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
         }),
     );
   }
-}
-
-function normalizeTrigger(trigger: UnreservedTriggerSpec): DetailedTriggerSpec<TriggerType> {
-  if (typeof trigger === 'string') {
-    return {type: trigger};
-  }
-  return trigger;
 }
