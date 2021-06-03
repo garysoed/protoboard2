@@ -11,6 +11,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 
 import {Config, rollAction, rollActionConfigSpecs} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {triggerKey} from './testing/trigger-key';
 import {$random} from './util/random';
 
 
@@ -23,7 +24,7 @@ test('@protoboard2/action/roll-action', init => {
     const seed = new FakeSeed();
     const stateService = fakeStateService();
 
-    const {vine} = createFakeContext({
+    const personaContext = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $random, withValue: fromSeed(seed)},
@@ -38,7 +39,8 @@ test('@protoboard2/action/roll-action', init => {
     const context = createFakeActionContext<IsMultifaced, Config>({
       config$,
       objectId$: of(objectId),
-      vine,
+      personaContext,
+      vine: personaContext.vine,
     });
     const action = rollAction(host(rollActionConfigSpecs({}))._).action;
 
@@ -50,7 +52,8 @@ test('@protoboard2/action/roll-action', init => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerKey(_.el, {key: TriggerType.L});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
     });
@@ -62,7 +65,8 @@ test('@protoboard2/action/roll-action', init => {
 
       _.seed.values = [0.9];
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerKey(_.el, {key: TriggerType.L});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });

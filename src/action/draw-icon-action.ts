@@ -1,13 +1,12 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
-import {OperatorFunction, pipe} from 'rxjs';
 import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {CanvasEntry} from '../face/canvas-entry';
 
-import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {getObject$} from './action-context';
+import {Action, ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config extends TriggerConfig {
@@ -16,45 +15,47 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-function action(context: ActionContext<CanvasEntry, Config>): OperatorFunction<TriggerEvent, unknown> {
-  const stateService = $stateService.get(context.vine);
-  const entry$ = getObject$(context);
-  const icons$ = entry$.pipe(
-      switchMap(entry => {
-        return stateService.resolve(entry?.icons);
-      }),
-  );
-  return pipe(
-      withLatestFrom(entry$, icons$, context.config$),
-      tap(([, entry, icons, config]) => {
-        if (!entry) {
-          return;
-        }
-
-        const existingIcons = icons ?? [];
-
-        const existingEntry = $pipe(
-            existingIcons,
-            $find(icon => {
-              return icon.configName === config.configName
-                  && icon.x === config.x
-                  && icon.y === config.y;
-            }),
-        );
-
-        stateService.modify(x => {
-          if (!existingEntry) {
-            x.set(entry.icons, [...existingIcons, config]);
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry, Config> {
+  return context => {
+    const stateService = $stateService.get(context.vine);
+    const entry$ = getObject$(context);
+    const icons$ = entry$.pipe(
+        switchMap(entry => {
+          return stateService.resolve(entry?.icons);
+        }),
+    );
+    return createTrigger(configSpecs, context.personaContext).pipe(
+        withLatestFrom(entry$, icons$, context.config$),
+        tap(([, entry, icons, config]) => {
+          if (!entry) {
             return;
           }
 
-          x.set(
-              entry.icons,
-              $pipe(existingIcons, $filter(icon => icon !== existingEntry), $asArray()),
+          const existingIcons = icons ?? [];
+
+          const existingEntry = $pipe(
+              existingIcons,
+              $find(icon => {
+                return icon.configName === config.configName
+                    && icon.x === config.x
+                    && icon.y === config.y;
+              }),
           );
-        });
-      }),
-  );
+
+          stateService.modify(x => {
+            if (!existingEntry) {
+              x.set(entry.icons, [...existingIcons, config]);
+              return;
+            }
+
+            x.set(
+                entry.icons,
+                $pipe(existingIcons, $filter(icon => icon !== existingEntry), $asArray()),
+            );
+          });
+        }),
+    );
+  };
 }
 
 export function drawIconAction(
@@ -62,7 +63,7 @@ export function drawIconAction(
     actionName: string,
 ): ActionSpec<Config> {
   return {
-    action,
+    action: actionFactory(configSpecs),
     actionName,
     configSpecs,
   };

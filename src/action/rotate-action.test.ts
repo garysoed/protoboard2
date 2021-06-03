@@ -10,6 +10,7 @@ import {IsRotatable} from '../payload/is-rotatable';
 
 import {Config, rotateAction, rotateActionConfigSpecs} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {triggerKey} from './testing/trigger-key';
 
 
 test('@protoboard2/action/rotate-action', init => {
@@ -36,6 +37,7 @@ test('@protoboard2/action/rotate-action', init => {
     const context = createFakeActionContext<IsRotatable, Config>({
       config$,
       objectId$: of(objectId),
+      personaContext,
       vine: personaContext.vine,
     });
     const action = rotateAction(host(rotateActionConfigSpecs({}))._).action;
@@ -47,7 +49,8 @@ test('@protoboard2/action/rotate-action', init => {
     should('change the rotation to the next index', () => {
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerKey(_.el, {key: TriggerType.R});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
     });
@@ -57,7 +60,8 @@ test('@protoboard2/action/rotate-action', init => {
 
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerKey(_.el, {key: TriggerType.R});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
     });

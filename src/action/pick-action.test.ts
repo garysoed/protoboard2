@@ -3,7 +3,7 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {of, ReplaySubject} from 'rxjs';
+import {ReplaySubject} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
@@ -13,6 +13,7 @@ import {ContentSpec} from '../payload/is-container';
 
 import {Config, pickAction, pickActionConfigSpecs} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {triggerClick} from './testing/trigger-click';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -30,6 +31,7 @@ test('@protoboard2/action/pick-action', init => {
     const objectId$ = new ReplaySubject<StateId<{}>|null>(1);
     const context = createFakeActionContext<{}, Config>({
       objectId$,
+      personaContext,
       vine: personaContext.vine,
     });
     const action = pickAction(host(pickActionConfigSpecs({}))._).action;
@@ -84,7 +86,8 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerClick(_.el);
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),

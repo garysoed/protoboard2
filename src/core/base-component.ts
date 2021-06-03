@@ -11,7 +11,6 @@ import {ActionSpec, NormalizedTriggerConfig, TriggerConfig} from '../action/acti
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
 import {normalizeConfig} from '../action/util/normalize-config';
-import {createTrigger} from '../action/util/setup-trigger';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -85,12 +84,11 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
       actionSpec: ActionSpec<C>,
       config$: Observable<NormalizedTriggerConfig<C>>,
   ): Observable<unknown> {
-    return createTrigger(config$, this.context).pipe(
-        actionSpec.action({
-          config$,
-          objectId$: this.objectId$,
-          vine: this.context.vine,
-        }),
-    );
+    return actionSpec.action({
+      config$,
+      objectId$: this.objectId$,
+      vine: this.context.vine,
+      personaContext: this.context,
+    });
   }
 }

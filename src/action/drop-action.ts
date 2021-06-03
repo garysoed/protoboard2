@@ -1,16 +1,16 @@
 import {$stateService} from 'grapevine';
 import {attributeIn, enumParser} from 'persona';
-import {combineLatest, of, OperatorFunction, pipe} from 'rxjs';
+import {combineLatest, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
-import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
-import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {getObject$} from './action-context';
+import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
+import {createTrigger} from './util/setup-trigger';
 
 
 export enum PositioningType {
@@ -22,56 +22,58 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function action(context: ActionContext<IsContainer<'indexed'>, Config>): OperatorFunction<TriggerEvent, unknown> {
-  const moveObjectFn$ = combineLatest([
-    getObject$(context),
-    $activeSpec.get(context.vine),
-    context.config$,
-  ])
-      .pipe(
-          switchMap(([toState, activeState, config]) => {
-            if (!toState || !activeState) {
-              return of(null);
-            }
+function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed'>, Config> {
+  return context => {
+    const moveObjectFn$ = combineLatest([
+      getObject$(context),
+      $activeSpec.get(context.vine),
+      context.config$,
+    ])
+        .pipe(
+            switchMap(([toState, activeState, config]) => {
+              if (!toState || !activeState) {
+                return of(null);
+              }
 
-            return $stateService.get(context.vine).resolve(activeState.$contentSpecs).pipe(
-                switchMap(activeContents => {
-                  const normalizedActiveContents = activeContents ?? [];
-                  const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
-                  if (!movedObjectSpec) {
-                    return of(null);
-                  }
+              return $stateService.get(context.vine).resolve(activeState.$contentSpecs).pipe(
+                  switchMap(activeContents => {
+                    const normalizedActiveContents = activeContents ?? [];
+                    const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
+                    if (!movedObjectSpec) {
+                      return of(null);
+                    }
 
-                  return moveObject(
-                      activeState,
-                      toState,
-                      context.vine,
-                  )
-                      .pipe(
-                          map(fn => {
-                            if (!fn) {
-                              return null;
-                            }
+                    return moveObject(
+                        activeState,
+                        toState,
+                        context.vine,
+                    )
+                        .pipe(
+                            map(fn => {
+                              if (!fn) {
+                                return null;
+                              }
 
-                            return () => {
-                              fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
-                            };
-                          }),
-                      );
-                }),
-            );
-          }),
-      );
-  return pipe(
-      withLatestFrom(moveObjectFn$),
-      tap(([, moveObjectFn]) => {
-        if (!moveObjectFn) {
-          return;
-        }
+                              return () => {
+                                fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
+                              };
+                            }),
+                        );
+                  }),
+              );
+            }),
+        );
+    return createTrigger(config, context.personaContext).pipe(
+        withLatestFrom(moveObjectFn$),
+        tap(([, moveObjectFn]) => {
+          if (!moveObjectFn) {
+            return;
+          }
 
-        moveObjectFn();
-      }),
-  );
+          moveObjectFn();
+        }),
+    );
+  };
 }
 
 function locate(positioning: PositioningType): number {
@@ -100,7 +102,7 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function dropAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
-    action,
+    action: actionFactory(configSpecs),
     actionName: 'Drop',
     configSpecs,
   };

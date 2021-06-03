@@ -1,15 +1,15 @@
 import {$stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, integerParser} from 'persona';
-import {of, OperatorFunction, pipe} from 'rxjs';
+import {of} from 'rxjs';
 import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {getObject$} from './action-context';
+import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config extends TriggerConfig {
@@ -18,28 +18,30 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'flip';
 
-function action(context: ActionContext<IsMultifaced, Config>): OperatorFunction<TriggerEvent, unknown> {
-  const stateService = $stateService.get(context.vine);
-  const faceCount$ = context.config$.pipe(map(config => config.count));
-  return pipe(
-      withLatestFrom(getObject$(context), faceCount$),
-      switchMap(([, obj, faceCount]) => {
-        if (!obj) {
-          return of(null);
-        }
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced, Config> {
+  return context => {
+    const stateService = $stateService.get(context.vine);
+    const faceCount$ = context.config$.pipe(map(config => config.count));
+    return createTrigger(configSpecs, context.personaContext).pipe(
+        withLatestFrom(getObject$(context), faceCount$),
+        switchMap(([, obj, faceCount]) => {
+          if (!obj) {
+            return of(null);
+          }
 
-        // TODO: Fix
-        const $faceIndex = obj.$currentFaceIndex;
-        return stateService.resolve($faceIndex).pipe(
-            take(1),
-            filterNonNullable(),
-            stateService.modifyOperator((x, faceIndex) => x.set(
-                $faceIndex,
-                ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
-            )),
-        );
-      }),
-  );
+          // TODO: Fix
+          const $faceIndex = obj.$currentFaceIndex;
+          return stateService.resolve($faceIndex).pipe(
+              take(1),
+              filterNonNullable(),
+              stateService.modifyOperator((x, faceIndex) => x.set(
+                  $faceIndex,
+                  ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
+              )),
+          );
+        }),
+    );
+  };
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -57,7 +59,7 @@ export function flipActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function flipAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
-    action,
+    action: actionFactory(configSpecs),
     actionName: 'Flip',
     configSpecs,
   };

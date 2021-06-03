@@ -1,5 +1,6 @@
 import {$resolveState, Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
+import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
@@ -7,6 +8,7 @@ import {switchMap} from 'rxjs/operators';
 export interface ActionContext<O, C> {
   readonly config$: Observable<C>
   readonly objectId$: Observable<StateId<O>|null>;
+  readonly personaContext: PersonaContext;
   readonly vine: Vine;
 }
 

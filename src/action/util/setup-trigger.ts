@@ -4,7 +4,9 @@ import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/
 
 import {TriggerEvent} from '../../core/trigger-event';
 import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType} from '../../core/trigger-spec';
-import {NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
+import {ConfigSpecs, TriggerConfig} from '../action-spec';
+
+import {normalizeConfig} from './normalize-config';
 
 
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
@@ -57,10 +59,10 @@ function createTriggerKey(
 }
 
 export function createTrigger<C extends TriggerConfig>(
-    config$: Observable<NormalizedTriggerConfig<C>>,
+    configSpecs: ConfigSpecs<C>,
     context: PersonaContext,
 ): Observable<TriggerEvent> {
-  return config$.pipe(
+  return normalizeConfig(configSpecs, context).pipe(
       switchMap(config => {
         if (!config.trigger) {
           return EMPTY;
@@ -81,3 +83,4 @@ export function createTrigger<C extends TriggerConfig>(
       }),
   );
 }
+

@@ -1,38 +1,39 @@
 import {$stateService} from 'grapevine';
 import {attributeIn, integerParser} from 'persona';
-import {OperatorFunction, pipe} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {ActionContext, getObject$} from './action-context';
-import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {getObject$} from './action-context';
+import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {$random} from './util/random';
+import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function action(context: ActionContext<IsMultifaced, Config>): OperatorFunction<TriggerEvent, unknown> {
-  const faceCount$ = context.config$.pipe(map(config => config.count));
-  return pipe(
-      withLatestFrom(getObject$(context), faceCount$),
-      tap(([, obj, faceCount]) => {
-        if (!obj) {
-          return;
-        }
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced, Config> {
+  return context => {
+    const faceCount$ = context.config$.pipe(map(config => config.count));
+    return createTrigger(configSpecs, context.personaContext).pipe(
+        withLatestFrom(getObject$(context), faceCount$),
+        tap(([, obj, faceCount]) => {
+          if (!obj) {
+            return;
+          }
 
-        const randomValue = $random.get(context.vine).next();
-        if (randomValue === null) {
-          throw new Error('Random produced no values');
-        }
-        const nextIndex = Math.floor(randomValue * faceCount);
-        $stateService.get(context.vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
-      }),
-  );
+          const randomValue = $random.get(context.vine).next();
+          if (randomValue === null) {
+            throw new Error('Random produced no values');
+          }
+          const nextIndex = Math.floor(randomValue * faceCount);
+          $stateService.get(context.vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
+        }),
+    );
+  };
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -51,7 +52,7 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function rollAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
-    action,
+    action: actionFactory(configSpecs),
     actionName: 'Roll',
     configSpecs,
   };

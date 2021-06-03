@@ -1,7 +1,6 @@
 import {Input, Resolved, UnresolvedAttributeInput, UnresolvedElementProperty} from 'persona/export/internal';
-import {OperatorFunction} from 'rxjs';
+import {Observable} from 'rxjs';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {DetailedTriggerSpec, TriggerType, UnreservedTriggerSpec} from '../core/trigger-spec';
 
 import {ActionContext} from './action-context';
@@ -20,7 +19,7 @@ export interface TriggerConfig {
   readonly trigger: UnreservedTriggerSpec;
 }
 
-export type Action<O, C> = (context: ActionContext<O, C>) => OperatorFunction<TriggerEvent, unknown>;
+export type Action<O, C> = (context: ActionContext<O, C>) => Observable<unknown>;
 
 export type NormalizedTriggerConfig<C extends TriggerConfig> = C & {
   readonly trigger: DetailedTriggerSpec<TriggerType>;

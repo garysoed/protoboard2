@@ -10,6 +10,7 @@ import {CanvasEntry, CanvasIcon} from '../face/canvas-entry';
 
 import {Config, drawIconAction} from './draw-icon-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {triggerClick} from './testing/trigger-click';
 
 
 test('@protoboard2/src/action/draw-icon-action', init => {
@@ -33,6 +34,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
     }));
     const context = createFakeActionContext<CanvasEntry, Config>({
       objectId$: of(objectId),
+      personaContext,
       vine: personaContext.vine,
       config$: of({
         x: 10,
@@ -51,7 +53,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
         })._,
         'testAction',
     ).action;
-    return {action, context, iconsId, stateService};
+    return {action, context, el, iconsId, stateService};
   });
 
   should('add the icon to the state if one does not exist', () => {
@@ -59,7 +61,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+    run(_.action(_.context));
+    triggerClick(_.el);
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([]),
@@ -84,7 +87,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+    run(_.action(_.context));
+    triggerClick(_.el);
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([

@@ -13,6 +13,7 @@ import {ContentSpec, IsContainer} from '../payload/is-container';
 
 import {Config, dropAction, dropActionConfigSpecs, PositioningType} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
+import {triggerKey} from './testing/trigger-key';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -30,10 +31,11 @@ test('@protoboard2/action/drop-action', init => {
     const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>|null>(1);
     const context = createFakeActionContext<IsContainer<'indexed'>, Config>({
       objectId$,
+      personaContext,
       vine: personaContext.vine,
       config$: of({
         positioning: PositioningType.DEFAULT,
-        trigger: {type: TriggerType.D},
+        trigger: {type: TriggerType.CLICK},
       }),
     });
 
@@ -92,7 +94,8 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
-      run(of({mouseX: 0, mouseY: 0}).pipe(_.action(_.context)));
+      run(_.action(_.context));
+      triggerKey(_.el, {key: TriggerType.D});
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),

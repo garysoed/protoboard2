@@ -1,17 +1,16 @@
 import {attributeIn} from 'persona';
-import {NEVER, OperatorFunction} from 'rxjs';
-import {switchMapTo} from 'rxjs/operators';
+import {NEVER} from 'rxjs';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 
-import {ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+
 
 type Config = TriggerConfig;
 
 
-function action(): OperatorFunction<TriggerEvent, unknown> {
-  return switchMapTo(NEVER);
+function actionFactory(): Action<unknown, Config> {
+  return () => NEVER;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -28,7 +27,7 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
 
 export function shuffleAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
   return {
-    action,
+    action: actionFactory(),
     actionName: 'Shuffle',
     configSpecs,
   };

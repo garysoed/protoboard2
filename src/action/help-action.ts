@@ -1,29 +1,30 @@
-import {Vine} from 'grapevine';
 import {constantIn, host} from 'persona';
-import {Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
-import {TriggerEvent} from '../core/trigger-event';
 import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
 
 import {Action, ConfigSpecs} from './action-spec';
 import {$helpService, ActionTrigger} from './help-service';
+import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config {
   readonly trigger: DetailedTriggerSpec<TriggerType>;
 }
 
-function action(
+function actionFactory(
+    configSpecs: ConfigSpecs<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
-    vine: Vine,
-): OperatorFunction<TriggerEvent, unknown> {
-  return pipe(
-      withLatestFrom(actionTriggers$),
-      tap(([, actionDescriptions]) => {
-        $helpService.get(vine).show(actionDescriptions);
-      }),
-  );
+): Action<{}, Config> {
+  return context => {
+    return createTrigger(configSpecs, context.personaContext).pipe(
+        withLatestFrom(actionTriggers$),
+        tap(([, actionDescriptions]) => {
+          $helpService.get(context.personaContext.vine).show(actionDescriptions);
+        }),
+    );
+  };
 }
 
 export interface HelpActionSpec {
@@ -35,11 +36,12 @@ export interface HelpActionSpec {
 export function helpAction(
     actionTriggers$: Observable<readonly ActionTrigger[]>,
 ): HelpActionSpec {
+  const configSpecs = host({
+    trigger: constantIn(of({type: TriggerType.QUESTION, shift: true})),
+  })._;
   return {
-    action: context => action(actionTriggers$, context.vine),
+    action: actionFactory(configSpecs, actionTriggers$),
     actionName: 'Help',
-    configSpecs: host({
-      trigger: constantIn(of({type: TriggerType.QUESTION, shift: true})),
-    })._,
+    configSpecs,
   };
 }
