@@ -17,6 +17,7 @@ export interface Config extends TriggerConfig {
 
 function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
   return context => {
+    const vine = context.personaContext.vine;
     return createTrigger(configSpecs, context.personaContext).pipe(
         withLatestFrom(getObject$(context)),
         tap(([{config}, obj]) => {
@@ -24,12 +25,12 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
             return;
           }
 
-          const randomValue = $random.get(context.vine).next();
+          const randomValue = $random.get(vine).next();
           if (randomValue === null) {
             throw new Error('Random produced no values');
           }
           const nextIndex = Math.floor(randomValue * config.count);
-          $stateService.get(context.vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
+          $stateService.get(vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
         }),
     );
   };

@@ -20,7 +20,7 @@ export const KEY = 'turn';
 
 function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
   return context => {
-    const stateService = $stateService.get(context.vine);
+    const stateService = $stateService.get(context.personaContext.vine);
     return createTrigger(configSpecs, context.personaContext).pipe(
         withLatestFrom(getObject$(context)),
         switchMap(([{config}, obj]) => {

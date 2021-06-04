@@ -24,9 +24,10 @@ export interface Config extends TriggerConfig {
 
 function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed'>> {
   return context => {
+    const vine = context.personaContext.vine;
     const moveObjectFn$ = combineLatest([
       getObject$(context),
-      $activeSpec.get(context.vine),
+      $activeSpec.get(vine),
     ])
         .pipe(
             switchMap(([toState, activeState]) => {
@@ -34,7 +35,7 @@ function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed
                 return of(null);
               }
 
-              return $stateService.get(context.vine).resolve(activeState.$contentSpecs).pipe(
+              return $stateService.get(vine).resolve(activeState.$contentSpecs).pipe(
                   switchMap(activeContents => {
                     const normalizedActiveContents = activeContents ?? [];
                     const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
@@ -45,7 +46,7 @@ function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed
                     return moveObject(
                         activeState,
                         toState,
-                        context.vine,
+                        vine,
                     )
                         .pipe(
                             map(fn => {

@@ -17,9 +17,10 @@ export type Config = TriggerConfig;
 
 function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
   return context => {
+    const vine = context.personaContext.vine;
     const fromObjectSpec$ = combineLatest([
       context.objectId$,
-      $getParent.get(context.vine),
+      $getParent.get(vine),
     ])
         .pipe(
             map(([objectId, getParent]) => {
@@ -32,21 +33,21 @@ function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
               if (!fromObjectId) {
                 return of(null);
               }
-              return $resolveState.get(context.vine)(fromObjectId);
+              return $resolveState.get(vine)(fromObjectId);
             }),
         );
-    const activeContents$ = $activeSpec.get(context.vine).pipe(
+    const activeContents$ = $activeSpec.get(vine).pipe(
         switchMap(activeSpec => {
           if (!activeSpec) {
             return of(undefined);
           }
-          return $stateService.get(context.vine).resolve(activeSpec.$contentSpecs);
+          return $stateService.get(vine).resolve(activeSpec.$contentSpecs);
         }),
     );
 
     const moveFn$ = combineLatest([
       fromObjectSpec$,
-      $activeSpec.get(context.vine),
+      $activeSpec.get(vine),
       activeContents$,
       context.objectId$,
     ])
@@ -59,7 +60,7 @@ function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
               return moveObject(
                   fromObjectSpec,
                   activeState,
-                  context.vine,
+                  vine,
               )
                   .pipe(
                       map(fn => {

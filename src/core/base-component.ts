@@ -84,7 +84,6 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   ): Observable<unknown> {
     return actionSpec.action({
       objectId$: this.objectId$,
-      vine: this.context.vine,
       personaContext: this.context,
     });
   }

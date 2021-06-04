@@ -17,7 +17,7 @@ export interface Config extends TriggerConfig {
 
 function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry> {
   return context => {
-    const stateService = $stateService.get(context.vine);
+    const stateService = $stateService.get(context.personaContext.vine);
     const entry$ = getObject$(context);
     const icons$ = entry$.pipe(
         switchMap(entry => {
