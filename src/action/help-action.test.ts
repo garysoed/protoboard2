@@ -4,7 +4,6 @@ import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 
-import {TriggerConfig} from './action-spec';
 import {helpAction} from './help-action';
 import {$helpService, ActionTrigger} from './help-service';
 import {createFakeActionContext} from './testing/fake-action-context';
@@ -18,7 +17,7 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const context = createFakeActionContext<{}, TriggerConfig>({
+    const context = createFakeActionContext<{}>({
       vine: personaContext.vine,
       personaContext,
     });

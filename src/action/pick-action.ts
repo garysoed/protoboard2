@@ -15,7 +15,7 @@ import {createTrigger} from './util/setup-trigger';
 
 export type Config = TriggerConfig;
 
-function actionFactory(config: ConfigSpecs<Config>): Action<{}, Config> {
+function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
   return context => {
     const fromObjectSpec$ = combineLatest([
       context.objectId$,

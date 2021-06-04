@@ -1,6 +1,6 @@
 import {$stateService} from 'grapevine';
 import {attributeIn, integerParser} from 'persona';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -15,12 +15,11 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced, Config> {
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
   return context => {
-    const faceCount$ = context.config$.pipe(map(config => config.count));
     return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(getObject$(context), faceCount$),
-        tap(([, obj, faceCount]) => {
+        withLatestFrom(getObject$(context)),
+        tap(([{config}, obj]) => {
           if (!obj) {
             return;
           }
@@ -29,7 +28,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced, C
           if (randomValue === null) {
             throw new Error('Random produced no values');
           }
-          const nextIndex = Math.floor(randomValue * faceCount);
+          const nextIndex = Math.floor(randomValue * config.count);
           $stateService.get(context.vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
         }),
     );

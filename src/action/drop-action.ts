@@ -22,15 +22,14 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed'>, Config> {
+function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed'>> {
   return context => {
     const moveObjectFn$ = combineLatest([
       getObject$(context),
       $activeSpec.get(context.vine),
-      context.config$,
     ])
         .pipe(
-            switchMap(([toState, activeState, config]) => {
+            switchMap(([toState, activeState]) => {
               if (!toState || !activeState) {
                 return of(null);
               }
@@ -54,7 +53,7 @@ function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed
                                 return null;
                               }
 
-                              return () => {
+                              return (config: Config) => {
                                 fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
                               };
                             }),
@@ -65,12 +64,12 @@ function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed
         );
     return createTrigger(config, context.personaContext).pipe(
         withLatestFrom(moveObjectFn$),
-        tap(([, moveObjectFn]) => {
+        tap(([{config}, moveObjectFn]) => {
           if (!moveObjectFn) {
             return;
           }
 
-          moveObjectFn();
+          moveObjectFn(config);
         }),
     );
   };

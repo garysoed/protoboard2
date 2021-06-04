@@ -19,14 +19,14 @@ export interface TriggerConfig {
   readonly trigger: UnreservedTriggerSpec;
 }
 
-export type Action<O, C> = (context: ActionContext<O, C>) => Observable<unknown>;
+export type Action<O> = (context: ActionContext<O>) => Observable<unknown>;
 
 export type NormalizedTriggerConfig<C extends TriggerConfig> = C & {
   readonly trigger: DetailedTriggerSpec<TriggerType>;
 }
 
 export interface ActionSpec<C extends TriggerConfig> {
-  readonly action: Action<any, NormalizedTriggerConfig<C>>;
+  readonly action: Action<any>;
   readonly actionName: string;
   readonly configSpecs: ConfigSpecs<C>;
 }

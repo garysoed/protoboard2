@@ -16,13 +16,12 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsRotatable, Config> {
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsRotatable> {
   return context => {
     const stateService = $stateService.get(context.vine);
-    const stops$ = context.config$.pipe(map(config => config.stops));
     return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(getObject$(context), stops$),
-        switchMap(([, obj, stops]) => {
+        withLatestFrom(getObject$(context)),
+        switchMap(([{config}, obj]) => {
           if (!obj) {
             return EMPTY;
           }
@@ -32,6 +31,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsRotatable, Co
               take(1),
               map(rotationDeg => rotationDeg ?? 0),
               tap(rotationDeg => {
+                const stops = config.stops;
                 const rotationIndex = $pipe(
                     stops,
                     $zip(countableIterable()),

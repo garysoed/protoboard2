@@ -3,7 +3,7 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {of, ReplaySubject} from 'rxjs';
+import {ReplaySubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
@@ -11,7 +11,7 @@ import {$$activeSpec} from '../core/active-spec';
 import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 
-import {Config, dropAction, dropActionConfigSpecs, PositioningType} from './drop-action';
+import {dropAction, dropActionConfigSpecs} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 
@@ -29,14 +29,10 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>|null>(1);
-    const context = createFakeActionContext<IsContainer<'indexed'>, Config>({
+    const context = createFakeActionContext<IsContainer<'indexed'>>({
       objectId$,
       personaContext,
       vine: personaContext.vine,
-      config$: of({
-        positioning: PositioningType.DEFAULT,
-        trigger: {type: TriggerType.CLICK},
-      }),
     });
 
     const action = dropAction(host(dropActionConfigSpecs({}))._).action;

@@ -7,7 +7,7 @@ import {combineLatest, EMPTY, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
-import {ActionSpec, NormalizedTriggerConfig, TriggerConfig} from '../action/action-spec';
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
 import {normalizeConfig} from '../action/util/normalize-config';
@@ -71,21 +71,18 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
               map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
           ),
       );
-      this.addSetup(this.setupTrigger(actionSpec, config$));
+      this.addSetup(this.setupTrigger(actionSpec));
     }
 
     const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
     const helpActionSpec = helpAction(actionDescriptions$);
-    const helpConfig$ = normalizeConfig(helpActionSpec.configSpecs, this.context);
-    this.addSetup(this.setupTrigger(helpActionSpec, helpConfig$));
+    this.addSetup(this.setupTrigger(helpActionSpec));
   }
 
   private setupTrigger<C extends TriggerConfig>(
       actionSpec: ActionSpec<C>,
-      config$: Observable<NormalizedTriggerConfig<C>>,
   ): Observable<unknown> {
     return actionSpec.action({
-      config$,
       objectId$: this.objectId$,
       vine: this.context.vine,
       personaContext: this.context,

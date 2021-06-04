@@ -8,7 +8,7 @@ import {of} from 'rxjs';
 import {TriggerType} from '../core/trigger-spec';
 import {CanvasEntry, CanvasIcon} from '../face/canvas-entry';
 
-import {Config, drawIconAction} from './draw-icon-action';
+import {drawIconAction} from './draw-icon-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerClick} from './testing/trigger-click';
 
@@ -32,16 +32,10 @@ test('@protoboard2/src/action/draw-icon-action', init => {
       lines: x.add([]),
       halfLine: x.add(null),
     }));
-    const context = createFakeActionContext<CanvasEntry, Config>({
+    const context = createFakeActionContext<CanvasEntry>({
       objectId$: of(objectId),
       personaContext,
       vine: personaContext.vine,
-      config$: of({
-        x: 10,
-        y: 20,
-        configName: CONFIG_NAME,
-        trigger: {type: TriggerType.CLICK},
-      }),
     });
 
     const action = drawIconAction(

@@ -3,12 +3,12 @@ import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-te
 import {fakeStateService} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {BehaviorSubject, of} from 'rxjs';
+import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Config, flipAction, flipActionConfigSpecs} from './flip-action';
+import {flipAction, flipActionConfigSpecs} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 
@@ -30,20 +30,19 @@ test('@protoboard2/action/flip-action', init => {
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectSpec = {$currentFaceIndex: $faceIndex};
 
-    const config$ = new BehaviorSubject({count: 4, trigger: {type: TriggerType.F} as const});
-    const context = createFakeActionContext<IsMultifaced, Config>({
-      config$,
+    const context = createFakeActionContext<IsMultifaced>({
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       personaContext,
       vine: personaContext.vine,
     });
     const action = flipAction(host(flipActionConfigSpecs({}))._).action;
 
-    return {$faceIndex, action, config$, context, el, personaContext, stateService};
+    return {$faceIndex, action, context, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
     should('increase the face by half the face count', () => {
+      _.el.setAttribute('pb-flip-count', '4');
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       run(_.action(_.context));
@@ -53,6 +52,7 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     should('wrap the face index by the count', () => {
+      _.el.setAttribute('pb-flip-count', '4');
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
@@ -65,10 +65,10 @@ test('@protoboard2/action/flip-action', init => {
     });
 
     should('use the config object', () => {
+      _.el.setAttribute('pb-flip-count', '4');
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.config$.next({count: 6, trigger: {type: TriggerType.F}});
-
+      _.el.setAttribute('pb-flip-count', '6');
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
       run(_.action(_.context));

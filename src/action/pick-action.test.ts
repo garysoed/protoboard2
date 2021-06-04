@@ -11,7 +11,7 @@ import {$$activeSpec} from '../core/active-spec';
 import {$setParent} from '../objects/content-map';
 import {ContentSpec} from '../payload/is-container';
 
-import {Config, pickAction, pickActionConfigSpecs} from './pick-action';
+import {pickAction, pickActionConfigSpecs} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerClick} from './testing/trigger-click';
 
@@ -29,7 +29,7 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<{}>|null>(1);
-    const context = createFakeActionContext<{}, Config>({
+    const context = createFakeActionContext<{}>({
       objectId$,
       personaContext,
       vine: personaContext.vine,

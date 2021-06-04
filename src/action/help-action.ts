@@ -16,7 +16,7 @@ export interface Config {
 function actionFactory(
     configSpecs: ConfigSpecs<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
-): Action<{}, Config> {
+): Action<{}> {
   return context => {
     return createTrigger(configSpecs, context.personaContext).pipe(
         withLatestFrom(actionTriggers$),
@@ -28,7 +28,7 @@ function actionFactory(
 }
 
 export interface HelpActionSpec {
-  readonly action: Action<any, Config>;
+  readonly action: Action<any>;
   readonly actionName: string;
   readonly configSpecs: ConfigSpecs<Config>;
 }

@@ -15,7 +15,7 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry, Config> {
+function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry> {
   return context => {
     const stateService = $stateService.get(context.vine);
     const entry$ = getObject$(context);
@@ -25,8 +25,8 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry, Co
         }),
     );
     return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(entry$, icons$, context.config$),
-        tap(([, entry, icons, config]) => {
+        withLatestFrom(entry$, icons$),
+        tap(([{config}, entry, icons]) => {
           if (!entry) {
             return;
           }

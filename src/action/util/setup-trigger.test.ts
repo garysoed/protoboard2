@@ -4,11 +4,12 @@ import {createFakeContext} from 'persona/export/testing';
 import {of} from 'rxjs';
 
 import {TriggerEvent} from '../../core/trigger-event';
-import {TriggerType} from '../../core/trigger-spec';
+import {DetailedTriggerSpec, TriggerType} from '../../core/trigger-spec';
+import {NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
 import {triggerClick} from '../testing/trigger-click';
 import {triggerKey} from '../testing/trigger-key';
 
-import {createTrigger} from './setup-trigger';
+import {createTrigger, TriggerContext} from './setup-trigger';
 
 
 test('@protoboard2/src/action/util/setup-trigger', init => {
@@ -33,7 +34,14 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
       triggerClick(_.el);
 
       assert(onTrigger$).to.emitWith(
-          objectThat<TriggerEvent>().haveProperties({mouseX: 0, mouseY: 0}),
+          objectThat<TriggerContext<TriggerConfig>>().haveProperties({
+            config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+                type: TriggerType.CLICK,
+              }),
+            }),
+            triggerEvent: objectThat<TriggerEvent>().haveProperties({mouseX: 0, mouseY: 0}),
+          }),
       );
     });
   });
@@ -60,7 +68,16 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
           },
       );
 
-      assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}));
+      assert(onTrigger$).to.emitWith(
+          objectThat<TriggerContext<TriggerConfig>>().haveProperties({
+            config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+                type: TriggerType.T,
+              }),
+            }),
+            triggerEvent: objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}),
+          }),
+      );
     });
 
     should('not emit when the wrong key was pressed', () => {
@@ -108,6 +125,7 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
     });
   });
 
+
   test('createTrigger', () => {
     should('trigger if modifiers match', () => {
       const onTrigger$ = createSpySubject(createTrigger(
@@ -138,7 +156,11 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
           },
       );
 
-      assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}));
+      assert(onTrigger$).to.emitWith(
+          objectThat<TriggerContext<any>>().haveProperties({
+            triggerEvent: objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}),
+          }),
+      );
     });
 
     should('default modifiers to false', () => {
@@ -166,7 +188,11 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
           },
       );
 
-      assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}));
+      assert(onTrigger$).to.emitWith(
+          objectThat<TriggerContext<any>>().haveProperties({
+            triggerEvent: objectThat<TriggerEvent>().haveProperties({mouseX, mouseY}),
+          }),
+      );
     });
   });
 });

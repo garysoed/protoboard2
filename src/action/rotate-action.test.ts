@@ -3,12 +3,12 @@ import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {BehaviorSubject, of} from 'rxjs';
+import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
-import {Config, rotateAction, rotateActionConfigSpecs} from './rotate-action';
+import {rotateAction, rotateActionConfigSpecs} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 
@@ -30,23 +30,19 @@ test('@protoboard2/action/rotate-action', init => {
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$rotationDeg}));
 
-    const config$ = new BehaviorSubject({
-      stops: [11, 22, 33],
-      trigger: {type: TriggerType.R} as const,
-    });
-    const context = createFakeActionContext<IsRotatable, Config>({
-      config$,
+    const context = createFakeActionContext<IsRotatable>({
       objectId$: of(objectId),
       personaContext,
       vine: personaContext.vine,
     });
     const action = rotateAction(host(rotateActionConfigSpecs({}))._).action;
 
-    return {$rotationDeg, action, config$, context, el, stateService};
+    return {$rotationDeg, action, context, el, stateService};
   });
 
   test('handleTrigger$', () => {
     should('change the rotation to the next index', () => {
+      _.el.setAttribute('pb-rotate-stops', '[\'11\' \'22\' \'33\']');
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
       run(_.action(_.context));
@@ -56,8 +52,7 @@ test('@protoboard2/action/rotate-action', init => {
     });
 
     should('handle rotations that are more than 360', () => {
-      _.config$.next({stops: [123, 456, 678], trigger: {type: TriggerType.R}});
-
+      _.el.setAttribute('pb-rotate-stops', '[\'123\' \'456\' \'678\']');
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
       run(_.action(_.context));

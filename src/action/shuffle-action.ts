@@ -9,7 +9,7 @@ import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} f
 type Config = TriggerConfig;
 
 
-function actionFactory(): Action<unknown, Config> {
+function actionFactory(): Action<unknown> {
   return () => NEVER;
 }
 
