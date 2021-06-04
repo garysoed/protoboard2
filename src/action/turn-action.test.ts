@@ -32,7 +32,6 @@ test('@protoboard2/action/turn-action', init => {
     const context = createFakeActionContext<{}>({
       objectId$: of(objectId),
       personaContext,
-      vine: personaContext.vine,
     });
     const action = turnAction(host(turnActionConfigSpecs({}))._).action;
 

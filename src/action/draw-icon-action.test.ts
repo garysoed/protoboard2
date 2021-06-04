@@ -35,7 +35,6 @@ test('@protoboard2/src/action/draw-icon-action', init => {
     const context = createFakeActionContext<CanvasEntry>({
       objectId$: of(objectId),
       personaContext,
-      vine: personaContext.vine,
     });
 
     const action = drawIconAction(

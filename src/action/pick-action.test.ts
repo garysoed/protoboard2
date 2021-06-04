@@ -32,7 +32,6 @@ test('@protoboard2/action/pick-action', init => {
     const context = createFakeActionContext<{}>({
       objectId$,
       personaContext,
-      vine: personaContext.vine,
     });
     const action = pickAction(host(pickActionConfigSpecs({}))._).action;
 

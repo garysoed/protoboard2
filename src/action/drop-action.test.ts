@@ -32,7 +32,6 @@ test('@protoboard2/action/drop-action', init => {
     const context = createFakeActionContext<IsContainer<'indexed'>>({
       objectId$,
       personaContext,
-      vine: personaContext.vine,
     });
 
     const action = dropAction(host(dropActionConfigSpecs({}))._).action;

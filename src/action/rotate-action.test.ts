@@ -33,7 +33,6 @@ test('@protoboard2/action/rotate-action', init => {
     const context = createFakeActionContext<IsRotatable>({
       objectId$: of(objectId),
       personaContext,
-      vine: personaContext.vine,
     });
     const action = rotateAction(host(rotateActionConfigSpecs({}))._).action;
 

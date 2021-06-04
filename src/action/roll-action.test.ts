@@ -38,7 +38,6 @@ test('@protoboard2/action/roll-action', init => {
     const context = createFakeActionContext<IsMultifaced>({
       objectId$: of(objectId),
       personaContext,
-      vine: personaContext.vine,
     });
     const action = rollAction(host(rollActionConfigSpecs({}))._).action;
 

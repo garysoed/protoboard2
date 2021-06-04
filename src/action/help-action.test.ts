@@ -18,7 +18,6 @@ test('@protoboard2/action/help-action', init => {
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
     const context = createFakeActionContext<{}>({
-      vine: personaContext.vine,
       personaContext,
     });
 

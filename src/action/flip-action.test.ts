@@ -33,7 +33,6 @@ test('@protoboard2/action/flip-action', init => {
     const context = createFakeActionContext<IsMultifaced>({
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       personaContext,
-      vine: personaContext.vine,
     });
     const action = flipAction(host(flipActionConfigSpecs({}))._).action;
 
