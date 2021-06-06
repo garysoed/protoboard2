@@ -11,7 +11,7 @@ export type UnresolvedConfigSpecs<C> = {
 };
 
 export interface TriggerConfig {
-  readonly trigger: TriggerSpec;
+  readonly trigger: TriggerSpec|null;
 }
 
 export type Action<O> = (context: ActionContext<O>) => Observable<unknown>;

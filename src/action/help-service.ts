@@ -6,7 +6,7 @@ import {TriggerSpec} from '../core/trigger-spec';
 
 export interface ActionTrigger {
   readonly actionName: string;
-  readonly trigger: TriggerSpec;
+  readonly trigger: TriggerSpec|null;
 }
 
 export class HelpService {

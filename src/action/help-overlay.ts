@@ -102,7 +102,11 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   }
 }
 
-function triggerKeySpecToString(triggerSpec: TriggerSpec): string {
+function triggerKeySpecToString(triggerSpec: TriggerSpec|null): string {
+  if (!triggerSpec) {
+    return 'Disabled';
+  }
+
   const keys: string[] = [];
   if (triggerSpec.alt) {
     keys.push(SpecialKeys.ALT);

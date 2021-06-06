@@ -1,11 +1,11 @@
 import {source} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {debug} from 'gs-tools/export/rxjs';
 import {assertUnreachable} from 'gs-tools/export/typescript';
-import {ReplaySubject, Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 import {scan, shareReplay, startWith} from 'rxjs/operators';
 
 import {CanvasConfig, IconConfig, LineConfig} from './canvas-config';
+
 
 export const $canvasConfigService = source('canvasConfigService', () => new CanvasConfigService());
 
@@ -33,7 +33,6 @@ export class CanvasConfigService {
     return this.onIconConfigs$.pipe(
         scan((acc, entry) => new Map([...acc, entry]), new Map<string, IconConfig>()),
         startWith(new Map()),
-        debug(null, 'iconConfig'),
         shareReplay({bufferSize: 1, refCount: false}),
     );
   }
