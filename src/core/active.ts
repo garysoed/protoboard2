@@ -6,6 +6,7 @@ import {$div, classToggle, element, host, multi, PersonaContext, renderCustomEle
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, throttleTime} from 'rxjs/operators';
 
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
@@ -71,7 +72,12 @@ export function activeSpec(input: Input): ActiveSpec {
 })
 export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super([], context, $);
+    super(context, $);
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return [];
   }
 
   @cache()

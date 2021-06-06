@@ -4,6 +4,7 @@ import {_p} from 'mask';
 import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser, style} from 'persona';
 import {Observable} from 'rxjs';
 
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {flipAction, flipActionConfigSpecs} from '../action/flip-action';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rollAction, rollActionConfigSpecs} from '../action/roll-action';
@@ -67,19 +68,20 @@ export function d6Spec(partial: Partial<D6Spec>, x: Modifier): D6Spec {
 })
 export class D6 extends BaseComponent<D6Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(
-        [
-          rotateAction($.host._.rotateAction),
-          flipAction($.host._.flipAction),
-          turnAction($.host._.turnAction),
-          rollAction($.host._.rollAction),
-          pickAction($.host._.pickAction),
-        ],
-        context,
-        $,
-    );
+    super(context, $);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.face.slotted, context));
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return [
+      rotateAction($.host._.rotateAction),
+      flipAction($.host._.flipAction),
+      turnAction($.host._.turnAction),
+      rollAction($.host._.rollAction),
+      pickAction($.host._.pickAction),
+    ];
   }
 
   @cache()

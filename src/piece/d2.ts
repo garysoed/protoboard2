@@ -4,6 +4,7 @@ import {_p} from 'mask';
 import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
 import {Observable} from 'rxjs';
 
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {flipAction, flipActionConfigSpecs} from '../action/flip-action';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rollAction, rollActionConfigSpecs} from '../action/roll-action';
@@ -71,21 +72,22 @@ export function d2Spec(partial: Partial<D2Spec>, x: Modifier): D2Spec {
 })
 export class D2 extends BaseComponent<D2Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(
-        [
-          rotateAction($.host._.rotateAction),
-          flipAction($.host._.flipAction),
-          turnAction($.host._.turnAction),
-          rollAction($.host._.rollAction),
-          pickAction($.host._.pickAction),
-        ],
-        context,
-        $,
-    );
+    super(context, $);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(
         renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context),
     );
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return [
+      rotateAction($.host._.rotateAction),
+      flipAction($.host._.flipAction),
+      turnAction($.host._.turnAction),
+      rollAction($.host._.rollAction),
+      pickAction($.host._.pickAction),
+    ];
   }
 
   @cache()

@@ -3,7 +3,7 @@ import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {attributeIn, host, PersonaContext} from 'persona';
-import {combineLatest, EMPTY, Observable, of} from 'rxjs';
+import {combineLatest, EMPTY, Observable, of, defer, merge} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
@@ -30,7 +30,6 @@ const $ = {
 @_p.baseCustomElement({})
 export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtrl<S> {
   constructor(
-      private readonly actionSpecs: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
       spec: S,
   ) {
@@ -38,6 +37,8 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
 
     this.setupActions();
   }
+
+  protected abstract get actions(): ReadonlyArray<ActionSpec<TriggerConfig>>;
 
   /**
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
@@ -63,20 +64,25 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   }
 
   private setupActions(): void {
-    const actionDescriptions: Array<Observable<ActionTrigger>> = [];
-    for (const actionSpec of this.actionSpecs as ReadonlyArray<ActionSpec<TriggerConfig>>) {
-      const config$ = normalizeConfig(actionSpec.configSpecs, this.context);
-      actionDescriptions.push(
-          config$.pipe(
-              map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
-          ),
-      );
-      this.addSetup(this.setupTrigger(actionSpec));
-    }
+    this.addSetup(defer(() => {
+      const obs: Array<Observable<unknown>> = [];
+      const actionDescriptions: Array<Observable<ActionTrigger>> = [];
+      for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<TriggerConfig>>) {
+        const config$ = normalizeConfig(actionSpec.configSpecs, this.context);
+        actionDescriptions.push(
+            config$.pipe(
+                map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
+            ),
+        );
+        obs.push(this.setupTrigger(actionSpec));
+      }
 
-    const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
-    const helpActionSpec = helpAction(actionDescriptions$);
-    this.addSetup(this.setupTrigger(helpActionSpec));
+      const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
+      const helpActionSpec = helpAction(actionDescriptions$);
+      obs.push(this.setupTrigger(helpActionSpec));
+
+      return merge(...obs);
+    }));
   }
 
   private setupTrigger<C extends TriggerConfig>(

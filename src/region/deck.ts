@@ -5,6 +5,7 @@ import {$div, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {shuffleAction, shuffleActionConfigSpecs} from '../action/shuffle-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
@@ -48,14 +49,15 @@ export function deckSpec<P>(input: Input<P>): DeckSpec {
 })
 export class Deck extends BaseComponent<DeckSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(
-        [
-          dropAction($.host._.dropAction),
-          shuffleAction($.host._.shuffleAction),
-        ],
-        context,
-        $,
-    );
+    super(context, $);
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return [
+      dropAction($.host._.dropAction),
+      shuffleAction($.host._.shuffleAction),
+    ];
   }
 
   @cache()

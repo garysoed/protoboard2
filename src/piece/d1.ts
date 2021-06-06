@@ -4,6 +4,7 @@ import {_p} from 'mask';
 import {$slot, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
+import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
 import {$baseComponent, BaseComponent} from '../core/base-component';
@@ -62,16 +63,17 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
    * @internal
    */
   constructor(context: PersonaContext) {
-    super(
-        [
-          rotateAction($.host._.rotateAction),
-          pickAction($.host._.pickAction),
-        ],
-        context,
-        $,
-    );
+    super(context, $);
 
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context));
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return [
+      rotateAction($.host._.rotateAction),
+      pickAction($.host._.pickAction),
+    ];
   }
 
   @cache()

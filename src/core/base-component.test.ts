@@ -40,10 +40,15 @@ const $ = {
 
 class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
-      triggerActionMap: ReadonlyArray<ActionSpec<any>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
   ) {
-    super(triggerActionMap, context, $);
+    super(context, $);
+  }
+
+  @cache()
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+    return this.triggerActions;
   }
 
   @cache()
