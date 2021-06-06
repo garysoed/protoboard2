@@ -36,7 +36,7 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
       assert(onTrigger$).to.emitWith(
           objectThat<TriggerContext<TriggerConfig>>().haveProperties({
             config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
-              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec>().haveProperties({
                 type: TriggerType.CLICK,
               }),
             }),
@@ -71,7 +71,7 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
       assert(onTrigger$).to.emitWith(
           objectThat<TriggerContext<TriggerConfig>>().haveProperties({
             config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
-              trigger: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+              trigger: objectThat<DetailedTriggerSpec>().haveProperties({
                 type: TriggerType.T,
               }),
             }),

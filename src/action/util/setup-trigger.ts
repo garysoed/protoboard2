@@ -3,10 +3,11 @@ import {EMPTY, fromEvent, merge, Observable} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../../core/trigger-event';
-import {DetailedTriggerSpec, isKeyTrigger, TriggerSpec, TriggerType} from '../../core/trigger-spec';
+import {DetailedTriggerSpec, isKeyTrigger} from '../../core/trigger-spec';
 import {ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
 
 import {normalizeConfig} from './normalize-config';
+
 
 export interface TriggerContext<C extends TriggerConfig> {
   readonly triggerEvent: TriggerEvent;
@@ -17,7 +18,7 @@ export interface TriggerContext<C extends TriggerConfig> {
 type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
 
 function createTriggerClick(
-    triggerSpec: DetailedTriggerSpec<TriggerSpec>,
+    triggerSpec: DetailedTriggerSpec,
     context: PersonaContext,
 ): Observable<MouseEvent&TriggerEvent> {
   const targetEl = triggerSpec.targetEl ?? host({});
@@ -32,7 +33,7 @@ function createTriggerClick(
 }
 
 function createTriggerKey(
-    triggerSpec: DetailedTriggerSpec<TriggerType>,
+    triggerSpec: DetailedTriggerSpec,
     context: PersonaContext,
 ): Observable<KeyboardEvent&TriggerEvent> {
   const targetEl = triggerSpec.targetEl ?? host({});

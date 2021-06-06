@@ -36,17 +36,14 @@ export enum TriggerType {
 
 export const TRIGGER_TYPE_TYPE = enumType<TriggerType>(TriggerType);
 
-export interface DetailedTriggerSpec<T> {
-  readonly type: T;
+export interface DetailedTriggerSpec {
+  readonly type: TriggerType;
   readonly targetEl?: Selector<Element, {}>;
   readonly alt?: boolean;
   readonly ctrl?: boolean;
   readonly meta?: boolean;
   readonly shift?: boolean;
 }
-
-export type UnreservedTriggerSpec = DetailedTriggerSpec<TriggerType>;
-export type TriggerSpec = TriggerType|DetailedTriggerSpec<TriggerType>;
 
 export function isKeyTrigger(triggerType: TriggerType): boolean {
   return triggerType !== TriggerType.CLICK;
@@ -83,13 +80,13 @@ class BooleanFlagParser implements Converter<boolean|undefined, string> {
   }
 }
 
-class UnreservedTriggerSpecParser implements Converter<UnreservedTriggerSpec, string> {
+class DetailedTriggerSpecParser implements Converter<DetailedTriggerSpec, string> {
   private readonly altParser = new BooleanFlagParser('alt');
   private readonly ctrlParser = new BooleanFlagParser('ctrl');
   private readonly metaParser = new BooleanFlagParser('meta');
   private readonly shiftParser = new BooleanFlagParser('shift');
 
-  convertBackward(value: string): Result<UnreservedTriggerSpec> {
+  convertBackward(value: string): Result<DetailedTriggerSpec> {
     const [typePart, options] = value.split(':');
     if (!TRIGGER_TYPE_TYPE.check(typePart)) {
       return {success: false};
@@ -137,7 +134,7 @@ class UnreservedTriggerSpecParser implements Converter<UnreservedTriggerSpec, st
     return {success: true, result: {...triggerOptions, type: typePart}};
   }
 
-  convertForward(input: UnreservedTriggerSpec): Result<string> {
+  convertForward(input: DetailedTriggerSpec): Result<string> {
     if (typeof input === 'string') {
       return {success: true, result: input};
     }
@@ -162,6 +159,6 @@ class UnreservedTriggerSpecParser implements Converter<UnreservedTriggerSpec, st
   }
 }
 
-export function triggerSpecParser(): Converter<UnreservedTriggerSpec, string> {
-  return new UnreservedTriggerSpecParser();
+export function triggerSpecParser(): Converter<DetailedTriggerSpec, string> {
+  return new DetailedTriggerSpecParser();
 }

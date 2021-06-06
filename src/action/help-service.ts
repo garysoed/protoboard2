@@ -1,12 +1,12 @@
 import {source} from 'grapevine';
 import {BehaviorSubject} from 'rxjs';
 
-import {TriggerSpec} from '../core/trigger-spec';
+import {DetailedTriggerSpec} from '../core/trigger-spec';
 
 
 export interface ActionTrigger {
   readonly actionName: string;
-  readonly trigger: TriggerSpec;
+  readonly trigger: DetailedTriggerSpec;
 }
 
 export class HelpService {

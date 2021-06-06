@@ -38,7 +38,9 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should('add the isVisible class if there is an action in the help service', () => {
-      $helpService.get(_.tester.vine).show([{trigger: TriggerType.CLICK, actionName: ACTION_NAME}]);
+      $helpService.get(_.tester.vine).show(
+          [{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}],
+      );
 
       assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(true);
     });
@@ -58,7 +60,7 @@ test('@protoboard2/action/help-overlay', init => {
 
     should('render deletion correctly', () => {
       const service = $helpService.get(_.tester.vine);
-      service.show([{trigger: TriggerType.CLICK, actionName: ACTION_NAME}]);
+      service.show([{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}]);
       service.show([]);
 
       assert(_.el.flattenContent()).to.matchSnapshot('renderEmpty');
@@ -67,7 +69,9 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('setupHandleClick', () => {
     should('hide the help when clicked', () => {
-      $helpService.get(_.tester.vine).show([{trigger: TriggerType.CLICK, actionName: ACTION_NAME}]);
+      $helpService.get(_.tester.vine).show([
+        {trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME},
+      ]);
 
       _.el.dispatchEvent($.root._.click);
 

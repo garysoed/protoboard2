@@ -10,7 +10,7 @@ import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config {
-  readonly trigger: DetailedTriggerSpec<TriggerType>;
+  readonly trigger: DetailedTriggerSpec;
 }
 
 function actionFactory(

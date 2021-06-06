@@ -9,7 +9,7 @@ test('@protoboard2/core/trigger-spec', () => {
       should('convert true values correctly', () => {
         assert(triggerSpecParser().convertBackward('p:meta')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+          result: objectThat<DetailedTriggerSpec>().haveProperties({
             type: TriggerType.P,
             meta: true,
           }),
@@ -19,7 +19,7 @@ test('@protoboard2/core/trigger-spec', () => {
       should('convert false values correctly', () => {
         assert(triggerSpecParser().convertBackward('p:nometa')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+          result: objectThat<DetailedTriggerSpec>().haveProperties({
             type: TriggerType.P,
             meta: false,
           }),
@@ -29,14 +29,14 @@ test('@protoboard2/core/trigger-spec', () => {
       should('convert empty strings correctly', () => {
         assert(triggerSpecParser().convertBackward('p:||')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({type: TriggerType.P}),
+          result: objectThat<DetailedTriggerSpec>().haveProperties({type: TriggerType.P}),
         });
       });
 
       should('fail if the string doesn\'t match', () => {
         assert(triggerSpecParser().convertBackward('p:blah')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({type: TriggerType.P}),
+          result: objectThat<DetailedTriggerSpec>().haveProperties({type: TriggerType.P}),
         });
       });
     });
@@ -70,7 +70,7 @@ test('@protoboard2/core/trigger-spec', () => {
       should('convert trigger with options correctly', () => {
         assert(triggerSpecParser().convertBackward('p:meta|alt|noctrl')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+          result: objectThat<DetailedTriggerSpec>().haveProperties({
             type: TriggerType.P,
             alt: true,
             ctrl: false,
@@ -82,7 +82,7 @@ test('@protoboard2/core/trigger-spec', () => {
       should('exclude invalid options', () => {
         assert(triggerSpecParser().convertBackward('p:meta|blah|noctrl')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({
+          result: objectThat<DetailedTriggerSpec>().haveProperties({
             type: TriggerType.P,
             ctrl: false,
             meta: true,
@@ -93,7 +93,7 @@ test('@protoboard2/core/trigger-spec', () => {
       should('convert triggers without any options', () => {
         assert(triggerSpecParser().convertBackward('p')).to.haveProperties({
           success: true,
-          result: objectThat<DetailedTriggerSpec<TriggerType>>().haveProperties({type: TriggerType.P}),
+          result: objectThat<DetailedTriggerSpec>().haveProperties({type: TriggerType.P}),
         });
       });
 
