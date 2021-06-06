@@ -11,7 +11,7 @@ import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
 
 import {$baseComponent, BaseComponent} from './base-component';
-import {DetailedTriggerSpec, triggerSpecParser, TriggerType} from './trigger-spec';
+import {TriggerSpec, triggerSpecParser, TriggerType} from './trigger-spec';
 
 
 interface ActionConfig extends TriggerConfig {
@@ -21,7 +21,7 @@ interface ActionConfig extends TriggerConfig {
 const ACTION_NAME = 'test';
 
 function testAction(
-    trigger: DetailedTriggerSpec,
+    trigger: TriggerSpec,
     attrName: string,
 ): ActionSpec<ActionConfig> {
   return {
@@ -124,13 +124,13 @@ test('@protoboard2/core/base-component', init => {
       assert(_.mockHelpService.show).to.haveBeenCalledWith(
           arrayThat<ActionTrigger>().haveExactElements([
             objectThat<ActionTrigger>().haveProperties({
-              trigger: objectThat<DetailedTriggerSpec>().haveProperties({
+              trigger: objectThat<TriggerSpec>().haveProperties({
                 type: TriggerType.CLICK,
               }),
               actionName: ACTION_NAME,
             }),
             objectThat<ActionTrigger>().haveProperties({
-              trigger: objectThat<DetailedTriggerSpec>().haveProperties({
+              trigger: objectThat<TriggerSpec>().haveProperties({
                 type: KEY,
               }),
               actionName: ACTION_NAME,

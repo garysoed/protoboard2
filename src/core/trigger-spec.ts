@@ -36,7 +36,7 @@ export enum TriggerType {
 
 export const TRIGGER_TYPE_TYPE = enumType<TriggerType>(TriggerType);
 
-export interface DetailedTriggerSpec {
+export interface TriggerSpec {
   readonly type: TriggerType;
   readonly targetEl?: Selector<Element, {}>;
   readonly alt?: boolean;
@@ -80,13 +80,13 @@ class BooleanFlagParser implements Converter<boolean|undefined, string> {
   }
 }
 
-class DetailedTriggerSpecParser implements Converter<DetailedTriggerSpec, string> {
+class TriggerSpecParser implements Converter<TriggerSpec, string> {
   private readonly altParser = new BooleanFlagParser('alt');
   private readonly ctrlParser = new BooleanFlagParser('ctrl');
   private readonly metaParser = new BooleanFlagParser('meta');
   private readonly shiftParser = new BooleanFlagParser('shift');
 
-  convertBackward(value: string): Result<DetailedTriggerSpec> {
+  convertBackward(value: string): Result<TriggerSpec> {
     const [typePart, options] = value.split(':');
     if (!TRIGGER_TYPE_TYPE.check(typePart)) {
       return {success: false};
@@ -134,7 +134,7 @@ class DetailedTriggerSpecParser implements Converter<DetailedTriggerSpec, string
     return {success: true, result: {...triggerOptions, type: typePart}};
   }
 
-  convertForward(input: DetailedTriggerSpec): Result<string> {
+  convertForward(input: TriggerSpec): Result<string> {
     if (typeof input === 'string') {
       return {success: true, result: input};
     }
@@ -159,6 +159,6 @@ class DetailedTriggerSpecParser implements Converter<DetailedTriggerSpec, string
   }
 }
 
-export function triggerSpecParser(): Converter<DetailedTriggerSpec, string> {
-  return new DetailedTriggerSpecParser();
+export function triggerSpecParser(): Converter<TriggerSpec, string> {
+  return new TriggerSpecParser();
 }

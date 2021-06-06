@@ -2,7 +2,7 @@ import {constantIn, host} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
-import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
+import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
 import {Action, ConfigSpecs} from './action-spec';
 import {$helpService, ActionTrigger} from './help-service';
@@ -10,7 +10,7 @@ import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config {
-  readonly trigger: DetailedTriggerSpec;
+  readonly trigger: TriggerSpec;
 }
 
 function actionFactory(

@@ -5,7 +5,7 @@ import {$div, $tbody, $template, classToggle, element, multi, onDom, PersonaCont
 import {Observable, of as observableOf} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
-import {DetailedTriggerSpec, TriggerType} from '../core/trigger-spec';
+import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
 import template from './help-overlay.html';
 import {$helpService} from './help-service';
@@ -102,7 +102,7 @@ export class HelpOverlay extends BaseThemedCtrl<typeof $> {
   }
 }
 
-function triggerKeySpecToString(triggerSpec: DetailedTriggerSpec): string {
+function triggerKeySpecToString(triggerSpec: TriggerSpec): string {
   const keys: string[] = [];
   if (triggerSpec.alt) {
     keys.push(SpecialKeys.ALT);

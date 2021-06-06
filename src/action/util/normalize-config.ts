@@ -5,7 +5,7 @@ import {INPUT_TYPE} from 'persona/export/internal';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {DetailedTriggerSpec} from '../../core/trigger-spec';
+import {TriggerSpec} from '../../core/trigger-spec';
 import {ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
 
 
@@ -39,7 +39,7 @@ export function normalizeConfig<C extends TriggerConfig>(
 }
 
 
-function normalizeTrigger(trigger: DetailedTriggerSpec): DetailedTriggerSpec {
+function normalizeTrigger(trigger: TriggerSpec): TriggerSpec {
   if (typeof trigger === 'string') {
     return {type: trigger};
   }
