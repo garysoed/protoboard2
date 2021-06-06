@@ -1,8 +1,12 @@
+import {renderSvg} from 'almagest';
+import {cache} from 'gs-tools/export/data';
 import {BaseThemedCtrl, _p} from 'mask';
-import {PersonaContext} from 'persona';
+import {$div, element, PersonaContext, renderNode, RenderSpec, single} from 'persona';
 import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {Canvas} from '../../src/face/canvas';
+import canvasBgSvg from '../asset/canvas_bg.svg';
 import {DocumentationTemplate} from '../template/documentation-template';
 
 import template from './canvas.html';
@@ -13,7 +17,9 @@ export const $canvasDemo = {
 };
 
 const $ = {
-
+  background: element('background', $div, {
+    content: single('#content'),
+  }),
 };
 
 @_p.customElement({
@@ -30,6 +36,22 @@ export class CanvasDemo extends BaseThemedCtrl<typeof $> {
   }
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    return [];
+    return [
+      this.renderers.background.content(this.backgroundSvg$),
+    ];
+  }
+
+  @cache()
+  private get backgroundSvg$(): Observable<RenderSpec> {
+    return renderSvg({
+      type: 'template',
+      content: canvasBgSvg,
+    })
+        .pipe(
+            map(el => renderNode({
+              node: el,
+              id: {},
+            })),
+        );
   }
 }
