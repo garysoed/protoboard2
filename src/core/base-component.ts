@@ -10,7 +10,7 @@ import {Logger} from 'santa';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
-import {compileConfig} from '../action/util/normalize-config';
+import {compileConfig} from '../action/util/compile-config';
 
 
 const LOG = new Logger('pb.core.BaseComponent');

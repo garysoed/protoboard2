@@ -6,7 +6,7 @@ import {TriggerEvent} from '../../core/trigger-event';
 import {TriggerSpec, isKeyTrigger} from '../../core/trigger-spec';
 import {ConfigSpecs, TriggerConfig} from '../action-spec';
 
-import {compileConfig} from './normalize-config';
+import {compileConfig} from './compile-config';
 
 
 export interface TriggerContext<C extends TriggerConfig> {
