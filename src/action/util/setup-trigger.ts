@@ -4,14 +4,14 @@ import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/
 
 import {TriggerEvent} from '../../core/trigger-event';
 import {TriggerSpec, isKeyTrigger} from '../../core/trigger-spec';
-import {ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
+import {ConfigSpecs, TriggerConfig} from '../action-spec';
 
-import {normalizeConfig} from './normalize-config';
+import {compileConfig} from './normalize-config';
 
 
 export interface TriggerContext<C extends TriggerConfig> {
   readonly triggerEvent: TriggerEvent;
-  readonly config: NormalizedTriggerConfig<C>;
+  readonly config: C;
 }
 
 
@@ -68,7 +68,7 @@ export function createTrigger<C extends TriggerConfig>(
     configSpecs: ConfigSpecs<C>,
     context: PersonaContext,
 ): Observable<TriggerContext<C>> {
-  return normalizeConfig(configSpecs, context).pipe(
+  return compileConfig(configSpecs, context).pipe(
       switchMap(config => {
         if (!config.trigger) {
           return EMPTY;

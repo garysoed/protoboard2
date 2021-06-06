@@ -5,7 +5,7 @@ import {of} from 'rxjs';
 
 import {TriggerType} from '../../core/trigger-spec';
 
-import {normalizeConfig} from './normalize-config';
+import {compileConfig} from './normalize-config';
 
 
 interface TestValue {
@@ -22,10 +22,10 @@ test('@protoboard2/src/action/util/normalize-config', init => {
     return {context};
   });
 
-  test('normalizeConfig$', () => {
+  test('compileConfig', () => {
     should('update the configuration when attribute is specified', () => {
       const value$ = createSpySubject(
-          normalizeConfig(
+          compileConfig(
               host({
                 a: constantIn(of(123)),
                 b: constantIn(of('abc')),

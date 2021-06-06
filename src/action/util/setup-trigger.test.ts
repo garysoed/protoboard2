@@ -5,7 +5,7 @@ import {of} from 'rxjs';
 
 import {TriggerEvent} from '../../core/trigger-event';
 import {TriggerSpec, TriggerType} from '../../core/trigger-spec';
-import {NormalizedTriggerConfig, TriggerConfig} from '../action-spec';
+import {TriggerConfig} from '../action-spec';
 import {triggerClick} from '../testing/trigger-click';
 import {triggerKey} from '../testing/trigger-key';
 
@@ -35,7 +35,7 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
 
       assert(onTrigger$).to.emitWith(
           objectThat<TriggerContext<TriggerConfig>>().haveProperties({
-            config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
+            config: objectThat<TriggerConfig>().haveProperties({
               trigger: objectThat<TriggerSpec>().haveProperties({
                 type: TriggerType.CLICK,
               }),
@@ -70,7 +70,7 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
 
       assert(onTrigger$).to.emitWith(
           objectThat<TriggerContext<TriggerConfig>>().haveProperties({
-            config: objectThat<NormalizedTriggerConfig<TriggerConfig>>().haveProperties({
+            config: objectThat<TriggerConfig>().haveProperties({
               trigger: objectThat<TriggerSpec>().haveProperties({
                 type: TriggerType.T,
               }),

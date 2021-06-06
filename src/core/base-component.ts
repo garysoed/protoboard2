@@ -10,7 +10,7 @@ import {Logger} from 'santa';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
-import {normalizeConfig} from '../action/util/normalize-config';
+import {compileConfig} from '../action/util/normalize-config';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -68,7 +68,7 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
       const obs: Array<Observable<unknown>> = [];
       const actionDescriptions: Array<Observable<ActionTrigger>> = [];
       for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<TriggerConfig>>) {
-        const config$ = normalizeConfig(actionSpec.configSpecs, this.context);
+        const config$ = compileConfig(actionSpec.configSpecs, this.context);
         actionDescriptions.push(
             config$.pipe(
                 map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
