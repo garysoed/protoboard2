@@ -5,6 +5,7 @@ import {$div, element, PersonaContext, renderCustomElement, RenderSpec, single} 
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import {$canvasDemo, CanvasDemo} from '../piece/canvas';
 import {$d1Demo, D1Demo} from '../piece/d1';
 import {$d2Demo, D2Demo} from '../piece/d2';
 import {$d6Demo, D6Demo} from '../piece/d6';
@@ -29,6 +30,7 @@ const $ = {
 @_p.customElement({
   ...$documentation,
   dependencies: [
+    CanvasDemo,
     D1Demo,
     D2Demo,
     D6Demo,
@@ -55,6 +57,8 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
         .pipe(
             map(location => {
               switch (location.type) {
+                case Views.CANVAS:
+                  return $canvasDemo;
                 case Views.D1:
                   return $d1Demo;
                 case Views.D2:
