@@ -1,5 +1,5 @@
 import {$asArray, $filterNonNull, $last, $map, $pipe, $scan} from 'gs-tools/export/collect';
-import {enumType, equalType, intersectType, notType, Type, unionType} from 'gs-types';
+import {enumType} from 'gs-types';
 import {Converter, Result} from 'nabu';
 import {Selector} from 'persona';
 
@@ -34,17 +34,7 @@ export enum TriggerType {
   CLICK = 'click',
 }
 
-type ReservedTriggerKey = TriggerType.QUESTION;
-export type UnreservedTriggerKey = Exclude<TriggerType, ReservedTriggerKey>;
-
-const RESERVED_TRIGGER_KEY_TYPE: Type<ReservedTriggerKey> = unionType([
-  equalType(TriggerType.QUESTION),
-]);
-
-const UNRESERVED_TRIGGER_KEY_TYPE: Type<UnreservedTriggerKey> = intersectType([
-  notType<TriggerType, ReservedTriggerKey>(RESERVED_TRIGGER_KEY_TYPE),
-  enumType<TriggerType>(TriggerType),
-]);
+export const TRIGGER_TYPE_TYPE = enumType<TriggerType>(TriggerType);
 
 export interface DetailedTriggerSpec<T> {
   readonly type: T;
@@ -55,7 +45,7 @@ export interface DetailedTriggerSpec<T> {
   readonly shift?: boolean;
 }
 
-export type UnreservedTriggerSpec = UnreservedTriggerKey|DetailedTriggerSpec<TriggerType>;
+export type UnreservedTriggerSpec = DetailedTriggerSpec<TriggerType>;
 export type TriggerSpec = TriggerType|DetailedTriggerSpec<TriggerType>;
 
 export function isKeyTrigger(triggerType: TriggerType): boolean {
@@ -101,12 +91,12 @@ class UnreservedTriggerSpecParser implements Converter<UnreservedTriggerSpec, st
 
   convertBackward(value: string): Result<UnreservedTriggerSpec> {
     const [typePart, options] = value.split(':');
-    if (!UNRESERVED_TRIGGER_KEY_TYPE.check(typePart)) {
+    if (!TRIGGER_TYPE_TYPE.check(typePart)) {
       return {success: false};
     }
 
     if (!options) {
-      return {success: true, result: typePart};
+      return {success: true, result: {type: typePart}};
     }
 
     const triggerOptions = $pipe(
@@ -141,7 +131,7 @@ class UnreservedTriggerSpecParser implements Converter<UnreservedTriggerSpec, st
     );
 
     if (!triggerOptions) {
-      return {success: true, result: typePart};
+      return {success: true, result: {type: typePart}};
     }
 
     return {success: true, result: {...triggerOptions, type: typePart}};

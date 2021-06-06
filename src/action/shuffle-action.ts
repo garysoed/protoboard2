@@ -14,7 +14,7 @@ function actionFactory(): Action<unknown> {
 }
 
 const DEFAULT_CONFIG: Config = {
-  trigger: TriggerType.S,
+  trigger: {type: TriggerType.S},
 };
 
 export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

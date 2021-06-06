@@ -97,7 +97,7 @@ function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
 }
 
 const DEFAULT_CONFIG: Config = {
-  trigger: TriggerType.CLICK,
+  trigger: {type: TriggerType.CLICK},
 };
 
 export function pickActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

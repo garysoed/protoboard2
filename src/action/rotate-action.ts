@@ -55,7 +55,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsRotatable> {
 
 const DEFAULT_CONFIG: Config = {
   stops: [0, 90, 180, 270],
-  trigger: TriggerType.R,
+  trigger: {type: TriggerType.R},
 };
 
 export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

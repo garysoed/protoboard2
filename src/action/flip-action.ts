@@ -47,7 +47,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
 
 const DEFAULT_CONFIG: Config = {
   count: 1,
-  trigger: TriggerType.F,
+  trigger: {type: TriggerType.F},
 };
 
 export function flipActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

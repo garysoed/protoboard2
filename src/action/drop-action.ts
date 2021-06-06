@@ -85,7 +85,7 @@ function locate(positioning: PositioningType): number {
 
 const DEFAULT_CONFIG: Config = {
   positioning: PositioningType.DEFAULT,
-  trigger: TriggerType.D,
+  trigger: {type: TriggerType.D},
 };
 
 export function dropActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

@@ -38,7 +38,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
 
 const DEFAULT_CONFIG: Config = {
   count: 1,
-  trigger: TriggerType.L,
+  trigger: {type: TriggerType.L},
 };
 
 export function rollActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {

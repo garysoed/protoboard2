@@ -44,7 +44,7 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
 
 const DEFAULT_CONFIG: Config = {
   count: 1,
-  trigger: TriggerType.T,
+  trigger: {type: TriggerType.T},
 };
 
 
