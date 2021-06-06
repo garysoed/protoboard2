@@ -11,10 +11,10 @@ import {ConfigSpecs, NormalizedTriggerConfig, TriggerConfig} from '../action-spe
 
 type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
 
-export function normalizeConfig<C extends TriggerConfig>(
+export function compileConfig<C extends TriggerConfig> (
     configSpecs: ConfigSpecs<C>,
     context: PersonaContext,
-): Observable<NormalizedTriggerConfig<C>> {
+): Observable<C> {
   const configSpecMap = mapObject<ConfigSpecs<C>, ObservableConfig<C>>(
       configSpecs,
       <K extends keyof C>(_: K, value: ConfigSpecs<C>[K]) => {
@@ -23,7 +23,14 @@ export function normalizeConfig<C extends TriggerConfig>(
       },
   );
 
-  return combineLatestObject(configSpecMap).pipe(
+  return combineLatestObject(configSpecMap);
+}
+
+export function normalizeConfig<C extends TriggerConfig>(
+    configSpecs: ConfigSpecs<C>,
+    context: PersonaContext,
+): Observable<NormalizedTriggerConfig<C>> {
+  return compileConfig(configSpecs, context).pipe(
       map(rawConfig => ({
         ...rawConfig,
         trigger: normalizeTrigger(rawConfig.trigger),
