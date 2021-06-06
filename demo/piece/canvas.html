@@ -4,6 +4,30 @@
     width: 130px;
     position: relative;
   }
+
+  #circleNode, #noneNode, #squareNode, #triangleNode {
+    position: absolute;
+  }
+
+  #circleNode {
+    top: 0;
+    left: 0;
+  }
+
+  #noneNode {
+    bottom: 0;
+    right: 0;
+  }
+
+  #squareNode {
+    top: 0;
+    right: 0;
+  }
+
+  #triangleNode {
+    bottom: 0;
+    left: 0;
+  }
 </style>
 
 <pbd-documentation-template mk-body-1 label="Canvas">
@@ -16,11 +40,30 @@
       <div id="background">
         <!-- #content -->
       </div>
-      <pb-canvas fill-parent></pb-canvas>
-      <pbd-canvas-node></pbd-canvas-node>
-      <pbd-canvas-node></pbd-canvas-node>
-      <pbd-canvas-node></pbd-canvas-node>
-      <pbd-canvas-node></pbd-canvas-node>
+      <pb-canvas id="canvas" fill-parent></pb-canvas>
+      <pbd-canvas-node
+          id="squareNode"
+          icon-type="canvas_square"
+          x="100"
+          y="0"
+      ></pbd-canvas-node>
+      <pbd-canvas-node
+          id="circleNode"
+          icon-type="canvas_circle"
+          x="0"
+          y="0"
+      ></pbd-canvas-node>
+      <pbd-canvas-node
+          id="triangleNode"
+          icon-type="canvas_triangle"
+          x="0"
+          y="100"
+      ></pbd-canvas-node>
+      <pbd-canvas-node
+          id="noneNode"
+          x="100"
+          y="100"
+      ></pbd-canvas-node>
     </div>
   </div>
 </pbd-documentation-template>

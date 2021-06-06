@@ -30,3 +30,5 @@ export {vhex, VHex, Direction as VHexDirection, distance as vhexDistance} from '
 export {Tile} from '../src/tiling/types';
 
 export {$registerRenderObject} from '../src/objects/render-object-spec';
+
+export {BaseComponent, $baseComponent} from '../src/core/base-component';

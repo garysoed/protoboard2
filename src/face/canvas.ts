@@ -2,6 +2,7 @@ import {renderSvg} from 'almagest';
 import {$stateService} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
+import {Modifier} from 'gs-tools/export/state';
 import {$svgService, BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {$svg, attributeIn, element, host, multi, onDom, PersonaContext, renderNode, RenderSpec, single} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -19,6 +20,14 @@ export const $canvas = {
     objectId: attributeIn('object-id', stateIdParser<CanvasEntry>()),
   },
 };
+
+export function canvasSpec(partial: Partial<CanvasEntry>, x: Modifier): CanvasEntry {
+  return {
+    icons: partial.icons ?? x.add([]),
+    lines: partial.lines ?? x.add([]),
+    halfLine: partial.halfLine ?? x.add(null),
+  };
+}
 
 export const $ = {
   host: host($canvas.api),

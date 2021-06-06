@@ -1,7 +1,8 @@
 import {source} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
+import {debug} from 'gs-tools/export/rxjs';
 import {assertUnreachable} from 'gs-tools/export/typescript';
-import {Subject, Observable} from 'rxjs';
+import {ReplaySubject, Observable} from 'rxjs';
 import {scan, shareReplay, startWith} from 'rxjs/operators';
 
 import {CanvasConfig, IconConfig, LineConfig} from './canvas-config';
@@ -9,8 +10,8 @@ import {CanvasConfig, IconConfig, LineConfig} from './canvas-config';
 export const $canvasConfigService = source('canvasConfigService', () => new CanvasConfigService());
 
 export class CanvasConfigService {
-  private readonly onIconConfigs$ = new Subject<[string, IconConfig]>();
-  private readonly onLineConfigs$ = new Subject<[string, LineConfig]>();
+  private readonly onIconConfigs$ = new ReplaySubject<[string, IconConfig]>();
+  private readonly onLineConfigs$ = new ReplaySubject<[string, LineConfig]>();
   readonly iconConfig$ = this.createIconConfig();
   readonly lineConfig$ = this.createLineConfig();
 
@@ -32,6 +33,7 @@ export class CanvasConfigService {
     return this.onIconConfigs$.pipe(
         scan((acc, entry) => new Map([...acc, entry]), new Map<string, IconConfig>()),
         startWith(new Map()),
+        debug(null, 'iconConfig'),
         shareReplay({bufferSize: 1, refCount: false}),
     );
   }
