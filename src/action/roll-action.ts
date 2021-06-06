@@ -1,12 +1,13 @@
 import {$stateService} from 'grapevine';
 import {attributeIn, integerParser} from 'persona';
+import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
 import {getObject$} from './action-context';
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {$random} from './util/random';
 import {createTrigger} from './util/setup-trigger';
 
@@ -15,12 +16,13 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
+function actionFactory(config$: Observable<Config>): Action<IsMultifaced> {
   return context => {
     const vine = context.personaContext.vine;
-    return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(getObject$(context)),
-        tap(([{config}, obj]) => {
+    return config$.pipe(
+        createTrigger(context.personaContext),
+        withLatestFrom(config$, getObject$(context)),
+        tap(([, config, obj]) => {
           if (!obj) {
             return;
           }
@@ -50,10 +52,10 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 }
 
 
-export function rollAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function rollAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName: 'Roll',
-    configSpecs,
+    config$,
   };
 }

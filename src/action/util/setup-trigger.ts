@@ -1,12 +1,10 @@
 import {host, onDom, PersonaContext} from 'persona';
-import {EMPTY, fromEvent, merge, Observable} from 'rxjs';
+import {EMPTY, fromEvent, merge, Observable, OperatorFunction, pipe} from 'rxjs';
 import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../../core/trigger-event';
-import {TriggerSpec, isKeyTrigger} from '../../core/trigger-spec';
-import {ConfigSpecs, TriggerConfig} from '../action-spec';
-
-import {compileConfig} from './compile-config';
+import {isKeyTrigger, TriggerSpec} from '../../core/trigger-spec';
+import {TriggerConfig} from '../action-spec';
 
 
 export interface TriggerContext<C extends TriggerConfig> {
@@ -65,10 +63,9 @@ function createTriggerKey(
 }
 
 export function createTrigger<C extends TriggerConfig>(
-    configSpecs: ConfigSpecs<C>,
     context: PersonaContext,
-): Observable<TriggerContext<C>> {
-  return compileConfig(configSpecs, context).pipe(
+): OperatorFunction<C, TriggerEvent> {
+  return pipe(
       switchMap(config => {
         if (!config.trigger) {
           return EMPTY;
@@ -85,10 +82,6 @@ export function createTrigger<C extends TriggerConfig>(
                 && event.metaKey === (triggerSpec.meta ?? false)
                 && event.shiftKey === (triggerSpec.shift ?? false);
             }),
-            map(triggerEvent => ({
-              triggerEvent,
-              config,
-            })),
         );
       }),
   );

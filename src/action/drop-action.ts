@@ -1,6 +1,6 @@
 import {$stateService} from 'grapevine';
 import {attributeIn, enumParser} from 'persona';
-import {combineLatest, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
@@ -8,7 +8,7 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
 import {getObject$} from './action-context';
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 import {createTrigger} from './util/setup-trigger';
 
@@ -22,7 +22,7 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed'>> {
+function actionFactory(config$: Observable<Config>): Action<IsContainer<'indexed'>> {
   return context => {
     const vine = context.personaContext.vine;
     const moveObjectFn$ = combineLatest([
@@ -63,9 +63,10 @@ function actionFactory(config: ConfigSpecs<Config>): Action<IsContainer<'indexed
               );
             }),
         );
-    return createTrigger(config, context.personaContext).pipe(
-        withLatestFrom(moveObjectFn$),
-        tap(([{config}, moveObjectFn]) => {
+    return config$.pipe(
+        createTrigger(context.personaContext),
+        withLatestFrom(config$, moveObjectFn$),
+        tap(([, config, moveObjectFn]) => {
           if (!moveObjectFn) {
             return;
           }
@@ -100,10 +101,10 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function dropAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function dropAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName: 'Drop',
-    configSpecs,
+    config$,
   };
 }

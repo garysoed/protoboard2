@@ -1,14 +1,14 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {attributeIn, integerParser, listParser} from 'persona';
-import {EMPTY} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
 import {getObject$} from './action-context';
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {createTrigger} from './util/setup-trigger';
 
 
@@ -16,12 +16,13 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsRotatable> {
+function actionFactory(config$: Observable<Config>): Action<IsRotatable> {
   return context => {
     const stateService = $stateService.get(context.personaContext.vine);
-    return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(getObject$(context)),
-        switchMap(([{config}, obj]) => {
+    return config$.pipe(
+        createTrigger(context.personaContext),
+        withLatestFrom(config$, getObject$(context)),
+        switchMap(([, config, obj]) => {
           if (!obj) {
             return EMPTY;
           }
@@ -67,10 +68,10 @@ export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): Unres
 }
 
 
-export function rotateAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function rotateAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName: 'Rotate',
-    configSpecs,
+    config$,
   };
 }

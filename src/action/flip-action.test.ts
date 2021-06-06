@@ -11,6 +11,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {flipAction, flipActionConfigSpecs} from './flip-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
+import {compileConfig} from './util/compile-config';
 
 
 test('@protoboard2/action/flip-action', init => {
@@ -34,7 +35,9 @@ test('@protoboard2/action/flip-action', init => {
       objectId$: of(stateService.modify(x => x.add(objectSpec))),
       personaContext,
     });
-    const action = flipAction(host(flipActionConfigSpecs({}))._).action;
+    const action = flipAction(
+        compileConfig(host(flipActionConfigSpecs({}))._, personaContext),
+    ).action;
 
     return {$faceIndex, action, context, el, personaContext, stateService};
   });

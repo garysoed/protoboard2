@@ -1,13 +1,18 @@
 import {combineLatestObject} from 'gs-tools/export/rxjs';
 import {mapObject} from 'gs-tools/export/typescript';
 import {PersonaContext} from 'persona';
-import {INPUT_TYPE} from 'persona/export/internal';
+import {Input, INPUT_TYPE, Resolved, UnresolvedElementProperty} from 'persona/export/internal';
 import {Observable} from 'rxjs';
 
-import {ConfigSpecs, TriggerConfig} from '../action-spec';
+import {TriggerConfig} from '../action-spec';
 
 
 type ObservableConfig<C> = {readonly [K in keyof C]: Observable<C[K]>};
+
+export type ConfigSpecs<C> = Resolved<
+  Element,
+  {readonly [K in keyof C]: UnresolvedElementProperty<Element, Input<C[K]>>}
+>;
 
 export function compileConfig<C extends TriggerConfig> (
     configSpecs: ConfigSpecs<C>,

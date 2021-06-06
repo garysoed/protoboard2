@@ -11,6 +11,7 @@ import {IsRotatable} from '../payload/is-rotatable';
 import {rotateAction, rotateActionConfigSpecs} from './rotate-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
+import {compileConfig} from './util/compile-config';
 
 
 test('@protoboard2/action/rotate-action', init => {
@@ -34,7 +35,9 @@ test('@protoboard2/action/rotate-action', init => {
       objectId$: of(objectId),
       personaContext,
     });
-    const action = rotateAction(host(rotateActionConfigSpecs({}))._).action;
+    const action = rotateAction(
+        compileConfig(host(rotateActionConfigSpecs({}))._, personaContext),
+    ).action;
 
     return {$rotationDeg, action, context, el, stateService};
   });

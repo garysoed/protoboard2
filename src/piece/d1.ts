@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
+import {compileConfig} from '../action/util/compile-config';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
@@ -71,8 +72,8 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
   @cache()
   protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
-      rotateAction($.host._.rotateAction),
-      pickAction($.host._.pickAction),
+      rotateAction(compileConfig($.host._.rotateAction, this.context)),
+      pickAction(compileConfig($.host._.pickAction, this.context)),
     ];
   }
 

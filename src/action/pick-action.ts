@@ -1,21 +1,21 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {attributeIn} from 'persona';
-import {combineLatest, of} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$getParent} from '../objects/content-map';
 
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 import {createTrigger} from './util/setup-trigger';
 
 
 export type Config = TriggerConfig;
 
-function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
+function actionFactory(config$: Observable<Config>): Action<{}> {
   return context => {
     const vine = context.personaContext.vine;
     const fromObjectSpec$ = combineLatest([
@@ -83,7 +83,8 @@ function actionFactory(config: ConfigSpecs<Config>): Action<{}> {
             }),
         );
 
-    return createTrigger(config, context.personaContext).pipe(
+    return config$.pipe(
+        createTrigger(context.personaContext),
         withLatestFrom(moveFn$),
         tap(([, moveFn]) => {
           if (!moveFn) {
@@ -107,10 +108,10 @@ export function pickActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function pickAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function pickAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName: 'Pick',
-    configSpecs,
+    config$,
   };
 }

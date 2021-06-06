@@ -1,9 +1,9 @@
 import {arrayThat, assert, createSpyInstance, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
-import {$div, attributeIn, element, host, integerParser, PersonaContext} from 'persona';
+import {$div, element, host, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
@@ -11,7 +11,7 @@ import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
 
 import {$baseComponent, BaseComponent} from './base-component';
-import {TriggerSpec, triggerSpecParser, TriggerType} from './trigger-spec';
+import {TriggerSpec, TriggerType} from './trigger-spec';
 
 
 interface ActionConfig extends TriggerConfig {
@@ -20,17 +20,14 @@ interface ActionConfig extends TriggerConfig {
 
 const ACTION_NAME = 'test';
 
-function testAction(
-    trigger: TriggerSpec,
-    attrName: string,
-): ActionSpec<ActionConfig> {
+function testAction(trigger: TriggerSpec): ActionSpec<ActionConfig> {
   return {
     action: () => EMPTY,
     actionName: ACTION_NAME,
-    configSpecs: host({
-      value: attributeIn(attrName, integerParser(), 0),
-      trigger: attributeIn('pb-test-trigger', triggerSpecParser(), trigger),
-    })._,
+    config$: of({
+      value: 0,
+      trigger,
+    }),
   };
 }
 
@@ -76,14 +73,8 @@ test('@protoboard2/core/base-component', init => {
     });
     const component = new TestComponent(
         [
-          testAction(
-              {type: TriggerType.CLICK, targetEl: $targetEl},
-              'pb-test-value',
-          ),
-          testAction(
-              {type: KEY, targetEl: $targetEl},
-              'pb-test2-value',
-          ),
+          testAction({type: TriggerType.CLICK, targetEl: $targetEl}),
+          testAction({type: KEY, targetEl: $targetEl}),
         ],
         personaContext,
     );

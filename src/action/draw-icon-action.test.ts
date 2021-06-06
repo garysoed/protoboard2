@@ -1,7 +1,6 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {constantIn, host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of} from 'rxjs';
 
@@ -38,12 +37,12 @@ test('@protoboard2/src/action/draw-icon-action', init => {
     });
 
     const action = drawIconAction(
-        host({
-          x: constantIn(of(10)),
-          y: constantIn(of(20)),
-          configName: constantIn(of(CONFIG_NAME)),
-          trigger: constantIn(of({type: TriggerType.CLICK})),
-        })._,
+        of({
+          x: 10,
+          y: 20,
+          configName: CONFIG_NAME,
+          trigger: {type: TriggerType.CLICK},
+        }),
         'testAction',
     ).action;
     return {action, context, el, iconsId, stateService};

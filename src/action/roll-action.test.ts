@@ -12,6 +12,7 @@ import {IsMultifaced} from '../payload/is-multifaced';
 import {rollAction, rollActionConfigSpecs} from './roll-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
+import {compileConfig} from './util/compile-config';
 import {$random} from './util/random';
 
 
@@ -39,7 +40,9 @@ test('@protoboard2/action/roll-action', init => {
       objectId$: of(objectId),
       personaContext,
     });
-    const action = rollAction(host(rollActionConfigSpecs({}))._).action;
+    const action = rollAction(
+        compileConfig(host(rollActionConfigSpecs({}))._, personaContext),
+    ).action;
 
     return {$faceIndex, action, context, el, seed, stateService};
   });

@@ -7,6 +7,7 @@ import {switchMap} from 'rxjs/operators';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
+import {compileConfig} from '../action/util/compile-config';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
@@ -59,7 +60,7 @@ export class Slot extends BaseComponent<SlotSpec, typeof $> {
   @cache()
   protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
-      dropAction($.host._.dropAction),
+      dropAction(compileConfig($.host._.dropAction, this.context)),
     ];
   }
 

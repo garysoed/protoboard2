@@ -1,14 +1,14 @@
 import {$stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, integerParser} from 'persona';
-import {of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
 import {getObject$} from './action-context';
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {createTrigger} from './util/setup-trigger';
 
 
@@ -18,12 +18,13 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'flip';
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<IsMultifaced> {
+function actionFactory(config$: Observable<Config>): Action<IsMultifaced> {
   return context => {
     const stateService = $stateService.get(context.personaContext.vine);
-    return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(getObject$(context)),
-        switchMap(([{config}, obj]) => {
+    return config$.pipe(
+        createTrigger(context.personaContext),
+        withLatestFrom(config$, getObject$(context)),
+        switchMap(([, config, obj]) => {
           if (!obj) {
             return of(null);
           }
@@ -58,10 +59,10 @@ export function flipActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function flipAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function flipAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName: 'Flip',
-    configSpecs,
+    config$,
   };
 }

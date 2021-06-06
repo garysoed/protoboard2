@@ -14,6 +14,7 @@ import {ContentSpec, IsContainer} from '../payload/is-container';
 import {dropAction, dropActionConfigSpecs} from './drop-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
+import {compileConfig} from './util/compile-config';
 
 
 test('@protoboard2/action/drop-action', init => {
@@ -34,7 +35,9 @@ test('@protoboard2/action/drop-action', init => {
       personaContext,
     });
 
-    const action = dropAction(host(dropActionConfigSpecs({}))._).action;
+    const action = dropAction(
+        compileConfig(host(dropActionConfigSpecs({}))._, personaContext),
+    ).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

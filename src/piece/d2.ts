@@ -10,6 +10,7 @@ import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rollAction, rollActionConfigSpecs} from '../action/roll-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
 import {turnAction, turnActionConfigSpecs} from '../action/turn-action';
+import {compileConfig} from '../action/util/compile-config';
 import {$baseComponent, BaseComponent} from '../core/base-component';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {IsRotatable} from '../payload/is-rotatable';
@@ -82,11 +83,11 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
   @cache()
   protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
-      rotateAction($.host._.rotateAction),
-      flipAction($.host._.flipAction),
-      turnAction($.host._.turnAction),
-      rollAction($.host._.rollAction),
-      pickAction($.host._.pickAction),
+      rotateAction(compileConfig($.host._.rotateAction, this.context)),
+      flipAction(compileConfig($.host._.flipAction, this.context)),
+      turnAction(compileConfig($.host._.turnAction, this.context)),
+      rollAction(compileConfig($.host._.rollAction, this.context)),
+      pickAction(compileConfig($.host._.pickAction, this.context)),
     ];
   }
 

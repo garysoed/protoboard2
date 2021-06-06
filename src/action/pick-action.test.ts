@@ -14,6 +14,7 @@ import {ContentSpec} from '../payload/is-container';
 import {pickAction, pickActionConfigSpecs} from './pick-action';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerClick} from './testing/trigger-click';
+import {compileConfig} from './util/compile-config';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -33,7 +34,8 @@ test('@protoboard2/action/pick-action', init => {
       objectId$,
       personaContext,
     });
-    const action = pickAction(host(pickActionConfigSpecs({}))._).action;
+    const action = pickAction(compileConfig(host(pickActionConfigSpecs({}))._, personaContext))
+        .action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

@@ -1,10 +1,9 @@
-import {constantIn, host} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
-import {Action, ConfigSpecs} from './action-spec';
+import {Action} from './action-spec';
 import {$helpService, ActionTrigger} from './help-service';
 import {createTrigger} from './util/setup-trigger';
 
@@ -14,11 +13,12 @@ export interface Config {
 }
 
 function actionFactory(
-    configSpecs: ConfigSpecs<Config>,
+    config$: Observable<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
 ): Action<{}> {
   return context => {
-    return createTrigger(configSpecs, context.personaContext).pipe(
+    return config$.pipe(
+        createTrigger(context.personaContext),
         withLatestFrom(actionTriggers$),
         tap(([, actionDescriptions]) => {
           $helpService.get(context.personaContext.vine).show(actionDescriptions);
@@ -30,18 +30,16 @@ function actionFactory(
 export interface HelpActionSpec {
   readonly action: Action<any>;
   readonly actionName: string;
-  readonly configSpecs: ConfigSpecs<Config>;
+  readonly config$: Observable<Config>;
 }
 
 export function helpAction(
     actionTriggers$: Observable<readonly ActionTrigger[]>,
 ): HelpActionSpec {
-  const configSpecs = host({
-    trigger: constantIn(of({type: TriggerType.QUESTION, shift: true})),
-  })._;
+  const config$ = of({trigger: {type: TriggerType.QUESTION, shift: true}});
   return {
-    action: actionFactory(configSpecs, actionTriggers$),
+    action: actionFactory(config$, actionTriggers$),
     actionName: 'Help',
-    configSpecs,
+    config$,
   };
 }

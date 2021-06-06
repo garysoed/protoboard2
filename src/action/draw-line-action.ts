@@ -1,11 +1,12 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
+import {Observable} from 'rxjs';
 import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {CanvasEntry} from '../face/canvas-entry';
 
 import {getObject$} from './action-context';
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig} from './action-spec';
+import {Action, ActionSpec, TriggerConfig} from './action-spec';
 import {createTrigger} from './util/setup-trigger';
 
 
@@ -15,7 +16,7 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry> {
+function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
   return context => {
     const stateService = $stateService.get(context.personaContext.vine);
     const entry$ = getObject$(context);
@@ -29,9 +30,10 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry> {
           return stateService.resolve(entry?.halfLine);
         }),
     );
-    return createTrigger(configSpecs, context.personaContext).pipe(
-        withLatestFrom(entry$, lines$, halfLine$),
-        tap(([{config}, entry, lines, halfLine]) => {
+    return config$.pipe(
+        createTrigger(context.personaContext),
+        withLatestFrom(config$, entry$, lines$, halfLine$),
+        tap(([, config, entry, lines, halfLine]) => {
           if (!entry) {
             return;
           }
@@ -104,12 +106,12 @@ function actionFactory(configSpecs: ConfigSpecs<Config>): Action<CanvasEntry> {
 }
 
 export function drawLineAction(
-    configSpecs: ConfigSpecs<Config>,
+    config$: Observable<Config>,
     actionName: string,
 ): ActionSpec<Config> {
   return {
-    action: actionFactory(configSpecs),
+    action: actionFactory(config$),
     actionName,
-    configSpecs,
+    config$,
   };
 }

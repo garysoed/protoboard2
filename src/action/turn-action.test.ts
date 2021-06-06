@@ -10,6 +10,7 @@ import {TriggerType} from '../core/trigger-spec';
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {turnAction, turnActionConfigSpecs} from './turn-action';
+import {compileConfig} from './util/compile-config';
 
 
 test('@protoboard2/action/turn-action', init => {
@@ -33,7 +34,9 @@ test('@protoboard2/action/turn-action', init => {
       objectId$: of(objectId),
       personaContext,
     });
-    const action = turnAction(host(turnActionConfigSpecs({}))._).action;
+    const action = turnAction(
+        compileConfig(host(turnActionConfigSpecs({}))._, personaContext),
+    ).action;
 
     return {$faceIndex, action, context, el, personaContext, stateService};
   });

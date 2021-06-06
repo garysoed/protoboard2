@@ -1,9 +1,9 @@
 import {attributeIn} from 'persona';
-import {NEVER} from 'rxjs';
+import {NEVER, Observable} from 'rxjs';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 
-import {Action, ActionSpec, ConfigSpecs, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 type Config = TriggerConfig;
@@ -25,10 +25,10 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
 }
 
 
-export function shuffleAction(configSpecs: ConfigSpecs<Config>): ActionSpec<Config> {
+export function shuffleAction(config$: Observable<Config>): ActionSpec<Config> {
   return {
     action: actionFactory(),
     actionName: 'Shuffle',
-    configSpecs,
+    config$,
   };
 }

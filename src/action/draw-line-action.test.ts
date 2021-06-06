@@ -1,7 +1,6 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {constantIn, host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of} from 'rxjs';
 
@@ -38,36 +37,16 @@ test('@protoboard2/src/action/draw-line-action', init => {
       personaContext,
     });
 
-    const action1 = drawLineAction(
-        host({
-          x: constantIn(of(10)),
-          y: constantIn(of(20)),
-          configName: constantIn(of(CONFIG_NAME)),
-          trigger: constantIn(of({type: TriggerType.A})),
-        })._,
+    const action = drawLineAction(
+        of({
+          x: 10,
+          y: 20,
+          configName: CONFIG_NAME,
+          trigger: {type: TriggerType.A},
+        }),
         'testAction',
     ).action;
-
-    const action2 = drawLineAction(
-        host({
-          x: constantIn(of(30)),
-          y: constantIn(of(40)),
-          configName: constantIn(of(CONFIG_NAME)),
-          trigger: constantIn(of({type: TriggerType.B})),
-        })._,
-        'testAction',
-    ).action;
-
-    const action3 = drawLineAction(
-        host({
-          x: constantIn(of(50)),
-          y: constantIn(of(60)),
-          configName: constantIn(of('otherConfig')),
-          trigger: constantIn(of({type: TriggerType.C})),
-        })._,
-        'testAction',
-    ).action;
-    return {action1, action2, action3, context, el, halfLineId, linesId, stateService};
+    return {action, context, el, halfLineId, linesId, stateService};
   });
 
   should('add the linehalf if one does not exist', () => {
@@ -76,7 +55,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
@@ -102,7 +81,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
@@ -137,7 +116,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
@@ -163,7 +142,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
@@ -193,7 +172,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
@@ -232,7 +211,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action1(_.context));
+    run(_.action(_.context));
     triggerKey(_.el, {key: TriggerType.A});
 
     assert(halfLine$).to.emitSequence([
