@@ -25,7 +25,7 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
 }
 
 
-export function shuffleAction(config$: Observable<Config>): ActionSpec<Config> {
+export function shuffleAction(config$: Observable<Config>): ActionSpec<unknown, Config> {
   return {
     action: actionFactory(),
     actionName: 'Shuffle',

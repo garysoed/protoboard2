@@ -16,8 +16,8 @@ export interface TriggerConfig {
 
 export type Action<O> = (context: ActionContext<O>) => Observable<unknown>;
 
-export interface ActionSpec<C extends TriggerConfig> {
-  readonly action: Action<any>;
+export interface ActionSpec<O, C extends TriggerConfig> {
+  readonly action: Action<O>;
   readonly actionName: string;
   readonly config$: Observable<C>;
 }

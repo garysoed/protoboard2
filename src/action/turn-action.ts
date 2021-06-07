@@ -58,7 +58,7 @@ export function turnActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 }
 
 
-export function turnAction(config$: Observable<Config>): ActionSpec<Config> {
+export function turnAction(config$: Observable<Config>): ActionSpec<IsMultifaced, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Turn',

@@ -1,8 +1,9 @@
 import {$resolveState} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {attributeIn, host, PersonaContext} from 'persona';
+import {BaseThemedCtrl, _p} from 'mask';
+import {PersonaContext} from 'persona';
+import {Input} from 'persona/export/internal';
 import {combineLatest, defer, EMPTY, merge, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
@@ -14,20 +15,12 @@ import {ActionTrigger} from '../action/help-service';
 
 const LOG = new Logger('pb.core.BaseComponent');
 
-
-export const $baseComponent = {
-  api: {
-    // TODO: Move to ctor
-    objectId: attributeIn('object-id', stateIdParser<unknown>()),
-  },
-};
-
-const $ = {
-  host: host($baseComponent.api),
-};
+interface HostSelector<O> {
+  readonly host: {readonly _: {readonly objectId: Input<StateId<O>|undefined>}}
+}
 
 @_p.baseCustomElement({})
-export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtrl<S> {
+export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseThemedCtrl<S> {
   constructor(
       context: PersonaContext,
       spec: S,
@@ -37,14 +30,14 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
     this.setupActions();
   }
 
-  protected abstract get actions(): ReadonlyArray<ActionSpec<TriggerConfig>>;
+  protected abstract get actions(): ReadonlyArray<ActionSpec<O, TriggerConfig>>;
 
   /**
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
    */
   @cache()
   get objectId$(): Observable<StateId<O>> {
-    return $.host._.objectId.getValue(this.context).pipe(
+    return this.inputs.host.objectId.pipe(
         switchMap(objectId => {
           if (!objectId) {
             LOG.warning('No object-id found');
@@ -66,7 +59,7 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
     this.addSetup(defer(() => {
       const obs: Array<Observable<unknown>> = [];
       const actionDescriptions: Array<Observable<ActionTrigger>> = [];
-      for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<TriggerConfig>>) {
+      for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<O, TriggerConfig>>) {
         actionDescriptions.push(
             actionSpec.config$.pipe(
                 map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
@@ -84,7 +77,7 @@ export abstract class BaseComponent<O, S extends typeof $> extends BaseThemedCtr
   }
 
   private setupTrigger<C extends TriggerConfig>(
-      actionSpec: ActionSpec<C>,
+      actionSpec: ActionSpec<O, C>,
   ): Observable<unknown> {
     return actionSpec.action({
       objectId$: this.objectId$,

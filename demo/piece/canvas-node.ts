@@ -8,7 +8,7 @@ import {map} from 'rxjs/operators';
 import {ActionSpec, TriggerConfig} from '../../src/action/action-spec';
 import {drawIconAction} from '../../src/action/draw-icon-action';
 import {drawLineAction} from '../../src/action/draw-line-action';
-import {$baseComponent, BaseComponent} from '../../src/core/base-component';
+import {BaseComponent} from '../../src/core/base-component';
 import {TriggerSpec, TriggerType} from '../../src/core/trigger-spec';
 import {$canvasConfigService} from '../../src/face/canvas-config-service';
 import {CanvasEntry} from '../../src/face/canvas-entry';
@@ -41,11 +41,10 @@ export const $canvasNode = {
   },
 };
 
-interface State {}
+type State = CanvasEntry;
 
 const $ = {
   host: host({
-    ...$baseComponent.api,
     ...$canvasNode.api,
   }),
 };
@@ -132,7 +131,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
     super(context, $);
   }
 
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<State, TriggerConfig>> {
     return [
       drawIconAction(
           combineLatestObject({

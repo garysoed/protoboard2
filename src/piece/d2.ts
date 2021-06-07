@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {Modifier} from 'gs-tools/export/state';
-import {_p} from 'mask';
-import {$slot, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
+import {stateIdParser, _p} from 'mask';
+import {$slot, attributeIn, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
 import {Observable} from 'rxjs';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
@@ -11,7 +11,7 @@ import {rollAction, rollActionConfigSpecs} from '../action/roll-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
 import {turnAction, turnActionConfigSpecs} from '../action/turn-action';
 import {compileConfig} from '../action/util/compile-config';
-import {$baseComponent, BaseComponent} from '../core/base-component';
+import {BaseComponent} from '../core/base-component';
 import {IsMultifaced} from '../payload/is-multifaced';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderMultifaced} from '../render/render-multifaced';
@@ -27,7 +27,7 @@ import template from './d2.html';
  */
 export const $d2 = {
   api: {
-    ...$baseComponent.api,
+    objectId: attributeIn('object-id', stateIdParser<D2Spec>()),
     rotateAction: rotateActionConfigSpecs({}),
     flipAction: flipActionConfigSpecs({count: 2}),
     turnAction: turnActionConfigSpecs({count: 2}),
@@ -81,7 +81,7 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<D2Spec, TriggerConfig>> {
     return [
       rotateAction(compileConfig($.host._.rotateAction, this.context)),
       flipAction(compileConfig($.host._.flipAction, this.context)),

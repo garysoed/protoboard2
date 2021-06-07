@@ -101,7 +101,7 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function dropAction(config$: Observable<Config>): ActionSpec<Config> {
+export function dropAction(config$: Observable<Config>): ActionSpec<IsContainer<'indexed'>, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Drop',

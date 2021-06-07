@@ -4,6 +4,7 @@ import {renderCustomElement} from 'persona';
 import {of} from 'rxjs';
 
 import {RenderObjectFn} from '../../src/objects/render-object-spec';
+import {IsRotatable} from '../../src/payload/is-rotatable';
 import {$d1} from '../../src/piece/d1';
 import {$d2} from '../../src/piece/d2';
 import {$d6} from '../../src/piece/d6';
@@ -12,7 +13,7 @@ import {$renderedFace, FaceType} from '../core/rendered-face';
 
 export function renderPiece(
     faceTypes: readonly FaceType[],
-    objectId: StateId<unknown>,
+    objectId: StateId<IsRotatable>,
 ): RenderObjectFn {
   return () => {
     const faces = $pipe(

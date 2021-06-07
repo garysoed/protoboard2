@@ -1,13 +1,13 @@
 import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
-import {_p} from 'mask';
-import {$div, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
+import {stateIdParser, _p} from 'mask';
+import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, throttleTime} from 'rxjs/operators';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
-import {$baseComponent, BaseComponent} from '../core/base-component';
+import {BaseComponent} from '../core/base-component';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
@@ -28,7 +28,7 @@ export const $active = {
   tag: 'pb-active',
   api: {
     // TODO: Should not require object-id
-    ...$baseComponent.api,
+    objectId: attributeIn('object-id', stateIdParser<ActiveSpec>()),
   },
 };
 
@@ -76,7 +76,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<ActiveSpec, TriggerConfig>> {
     return [];
   }
 

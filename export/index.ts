@@ -31,4 +31,4 @@ export {Tile} from '../src/tiling/types';
 
 export {$registerRenderObject} from '../src/objects/render-object-spec';
 
-export {BaseComponent, $baseComponent} from '../src/core/base-component';
+export {BaseComponent} from '../src/core/base-component';

@@ -2,7 +2,6 @@ import {renderSvg} from 'almagest';
 import {$stateService} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {debug} from 'gs-tools/export/rxjs';
 import {Modifier} from 'gs-tools/export/state';
 import {$svgService, BaseThemedCtrl, stateIdParser, _p} from 'mask';
 import {$svg, attributeIn, element, host, multi, onDom, PersonaContext, renderNode, RenderSpec, single} from 'persona';
@@ -72,7 +71,6 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
           }
 
           return this.inputs.root.onMouseMove.pipe(
-              debug(null, 'mousemove'),
               switchMap(event => {
                 const spec = this.renderLine(
                     {

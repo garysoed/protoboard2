@@ -68,7 +68,7 @@ export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): Unres
 }
 
 
-export function rotateAction(config$: Observable<Config>): ActionSpec<Config> {
+export function rotateAction(config$: Observable<Config>): ActionSpec<IsRotatable, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Rotate',

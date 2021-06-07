@@ -63,7 +63,7 @@ function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
 export function drawIconAction(
     config$: Observable<Config>,
     actionName: string,
-): ActionSpec<Config> {
+): ActionSpec<CanvasEntry, Config> {
   return {
     action: actionFactory(config$),
     actionName,

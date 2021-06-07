@@ -6,6 +6,7 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
+import {IsMultifaced} from '../payload/is-multifaced';
 
 import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
@@ -30,7 +31,7 @@ test('@protoboard2/action/turn-action', init => {
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
 
-    const context = createFakeActionContext<{}>({
+    const context = createFakeActionContext<IsMultifaced>({
       objectId$: of(objectId),
       personaContext,
     });

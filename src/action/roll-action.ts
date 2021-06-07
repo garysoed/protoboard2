@@ -52,7 +52,7 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 }
 
 
-export function rollAction(config$: Observable<Config>): ActionSpec<Config> {
+export function rollAction(config$: Observable<Config>): ActionSpec<IsMultifaced, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Roll',

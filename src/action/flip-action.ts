@@ -59,7 +59,7 @@ export function flipActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function flipAction(config$: Observable<Config>): ActionSpec<Config> {
+export function flipAction(config$: Observable<Config>): ActionSpec<IsMultifaced, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Flip',

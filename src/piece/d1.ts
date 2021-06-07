@@ -1,14 +1,14 @@
 import {cache} from 'gs-tools/export/data';
 import {Modifier} from 'gs-tools/export/state';
-import {_p} from 'mask';
-import {$slot, element, host, PersonaContext, slotted} from 'persona';
+import {stateIdParser, _p} from 'mask';
+import {$slot, attributeIn, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
 import {compileConfig} from '../action/util/compile-config';
-import {$baseComponent, BaseComponent} from '../core/base-component';
+import {BaseComponent} from '../core/base-component';
 import {IsRotatable} from '../payload/is-rotatable';
 import {renderRotatable} from '../render/render-rotatable';
 
@@ -23,7 +23,7 @@ import template from './d1.html';
 export const $d1 = {
   tag: 'pb-d1',
   api: {
-    ...$baseComponent.api,
+    objectId: attributeIn('object-id', stateIdParser<D1Spec>()),
     pickAction: pickActionConfigSpecs({}),
     rotateAction: rotateActionConfigSpecs({}),
   },
@@ -70,7 +70,7 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<D1Spec, TriggerConfig>> {
     return [
       rotateAction(compileConfig($.host._.rotateAction, this.context)),
       pickAction(compileConfig($.host._.pickAction, this.context)),

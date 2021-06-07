@@ -1,7 +1,8 @@
 import {arrayThat, assert, createSpyInstance, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
-import {$div, element, host, PersonaContext} from 'persona';
+import {stateIdParser} from 'mask';
+import {$div, attributeIn, element, host, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {EMPTY, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -10,7 +11,7 @@ import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
 
-import {$baseComponent, BaseComponent} from './base-component';
+import {BaseComponent} from './base-component';
 import {TriggerSpec, TriggerType} from './trigger-spec';
 
 
@@ -20,7 +21,7 @@ interface ActionConfig extends TriggerConfig {
 
 const ACTION_NAME = 'test';
 
-function testAction(trigger: TriggerSpec): ActionSpec<ActionConfig> {
+function testAction(trigger: TriggerSpec): ActionSpec<{}, ActionConfig> {
   return {
     action: () => EMPTY,
     actionName: ACTION_NAME,
@@ -31,20 +32,24 @@ function testAction(trigger: TriggerSpec): ActionSpec<ActionConfig> {
   };
 }
 
+const $api = {
+  objectId: attributeIn('object-id', stateIdParser<{}>()),
+};
+
 const $ = {
-  host: host($baseComponent.api),
+  host: host($api),
 };
 
 class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<{}, any>>,
       context: PersonaContext,
   ) {
     super(context, $);
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<{}, TriggerConfig>> {
     return this.triggerActions;
   }
 
@@ -92,7 +97,7 @@ test('@protoboard2/core/base-component', init => {
     should('emit the object ID if exists', () => {
       const stateService = new StateService();
       const objectId = stateService.modify(x => x.add({}));
-      _.el.setAttribute('object-id', $baseComponent.api.objectId.createAttributePair(objectId)[1]);
+      _.el.setAttribute('object-id', $api.objectId.createAttributePair(objectId)[1]);
 
       const objectId$ = createSpySubject(_.component.objectId$);
       assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectId.id]);

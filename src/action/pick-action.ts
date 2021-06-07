@@ -108,7 +108,7 @@ export function pickActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function pickAction(config$: Observable<Config>): ActionSpec<Config> {
+export function pickAction(config$: Observable<Config>): ActionSpec<{}, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Pick',
