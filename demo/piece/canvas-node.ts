@@ -2,11 +2,12 @@ import {cache} from 'gs-tools/export/data';
 import {combineLatestObject} from 'gs-tools/export/rxjs';
 import {registerSvg, stateIdParser, _p} from 'mask';
 import {attributeIn, enumParser, host, integerParser, PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionSpec, TriggerConfig} from '../../src/action/action-spec';
 import {drawIconAction} from '../../src/action/draw-icon-action';
+import {drawLineAction} from '../../src/action/draw-line-action';
 import {$baseComponent, BaseComponent} from '../../src/core/base-component';
 import {TriggerSpec, TriggerType} from '../../src/core/trigger-spec';
 import {$canvasConfigService} from '../../src/face/canvas-config-service';
@@ -22,6 +23,12 @@ enum IconType {
   CIRCLE = 'canvas_circle',
   SQUARE = 'canvas_square',
   TRIANGLE = 'canvas_triangle',
+}
+
+enum LineType {
+  CYAN = 'cyan_line',
+  MAGENTA = 'magenta_line',
+  YELLOW = 'yellow_line',
 }
 
 export const $canvasNode = {
@@ -43,6 +50,8 @@ const $ = {
   }),
 };
 
+const WIDTH = 30;
+const HEIGHT = 30;
 
 @_p.customElement({
   ...$canvasNode,
@@ -58,8 +67,8 @@ const $ = {
         {
           type: 'icon',
           svgName: IconType.CIRCLE,
-          height: 30,
-          width: 30,
+          height: HEIGHT,
+          width: WIDTH,
         },
     );
     canvasConfigService.addConfig(
@@ -67,8 +76,8 @@ const $ = {
         {
           type: 'icon',
           svgName: IconType.SQUARE,
-          height: 30,
-          width: 30,
+          height: HEIGHT,
+          width: WIDTH,
         },
     );
     canvasConfigService.addConfig(
@@ -76,8 +85,43 @@ const $ = {
         {
           type: 'icon',
           svgName: IconType.TRIANGLE,
-          height: 30,
-          width: 30,
+          height: HEIGHT,
+          width: WIDTH,
+        },
+    );
+
+    // Line configs
+    canvasConfigService.addConfig(
+        LineType.CYAN,
+        {
+          type: 'line',
+          color: 'cyan',
+          dashArray: ['5', '15'],
+          dashOffset: '0',
+          linecap: 'round',
+          width: '5',
+        },
+    );
+    canvasConfigService.addConfig(
+        LineType.MAGENTA,
+        {
+          type: 'line',
+          color: 'magenta',
+          dashArray: ['5', '15'],
+          dashOffset: '5',
+          linecap: 'round',
+          width: '5',
+        },
+    );
+    canvasConfigService.addConfig(
+        LineType.YELLOW,
+        {
+          type: 'line',
+          color: 'yellow',
+          dashArray: ['5', '15'],
+          dashOffset: '10',
+          linecap: 'round',
+          width: '5',
         },
     );
   },
@@ -99,6 +143,33 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
           }),
           'Draw icon',
       ),
+      drawLineAction(
+          combineLatestObject({
+            configName: of(LineType.CYAN),
+            x: this.lineX$,
+            y: this.lineY$,
+            trigger: of({type: TriggerType.A}),
+          }),
+          'Draw cyan line',
+      ),
+      drawLineAction(
+          combineLatestObject({
+            configName: of(LineType.MAGENTA),
+            x: this.lineX$,
+            y: this.lineY$,
+            trigger: of({type: TriggerType.S}),
+          }),
+          'Draw magenta line',
+      ),
+      drawLineAction(
+          combineLatestObject({
+            configName: of(LineType.YELLOW),
+            x: this.lineX$,
+            y: this.lineY$,
+            trigger: of({type: TriggerType.D}),
+          }),
+          'Draw yellow line',
+      ),
     ];
   }
 
@@ -116,6 +187,16 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
     return this.inputs.host.iconType.pipe(
         map(iconType => iconType ? {type: TriggerType.Q} : null),
     );
+  }
+
+  @cache()
+  private get lineX$(): Observable<number> {
+    return this.x$.pipe(map(x => x + WIDTH / 2));
+  }
+
+  @cache()
+  private get lineY$(): Observable<number> {
+    return this.y$.pipe(map(y => y + HEIGHT / 2));
   }
 
   @cache()
