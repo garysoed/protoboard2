@@ -2,13 +2,13 @@ import {cache} from 'gs-tools/export/data';
 import {combineLatestObject} from 'gs-tools/export/rxjs';
 import {registerSvg, stateIdParser, _p} from 'mask';
 import {attributeIn, enumParser, host, integerParser, PersonaContext} from 'persona';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionSpec, TriggerConfig} from '../../src/action/action-spec';
 import {drawIconAction} from '../../src/action/draw-icon-action';
 import {$baseComponent, BaseComponent} from '../../src/core/base-component';
-import {TriggerType} from '../../src/core/trigger-spec';
+import {TriggerSpec, TriggerType} from '../../src/core/trigger-spec';
 import {$canvasConfigService} from '../../src/face/canvas-config-service';
 import {CanvasEntry} from '../../src/face/canvas-entry';
 import canvasCircle from '../asset/canvas_circle.svg';
@@ -95,7 +95,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             configName: this.iconConfigName$,
             x: this.x$,
             y: this.y$,
-            trigger: of({type: TriggerType.Q}),
+            trigger: this.iconTrigger$,
           }),
           'Draw icon',
       ),
@@ -109,6 +109,13 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
   @cache()
   private get iconConfigName$(): Observable<string> {
     return this.inputs.host.iconType.pipe(map(iconType => iconType ?? ''));
+  }
+
+  @cache()
+  private get iconTrigger$(): Observable<TriggerSpec|null> {
+    return this.inputs.host.iconType.pipe(
+        map(iconType => iconType ? {type: TriggerType.Q} : null),
+    );
   }
 
   @cache()
