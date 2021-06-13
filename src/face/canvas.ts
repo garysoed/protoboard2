@@ -13,7 +13,7 @@ import {$canvasConfigService} from './canvas-config-service';
 import {CanvasEntry, CanvasIcon, CanvasLine} from './canvas-entry';
 import template from './canvas.html';
 
-
+// TODO: Add warnings for missing configs.
 export const $canvas = {
   tag: 'pb-canvas',
   api: {
