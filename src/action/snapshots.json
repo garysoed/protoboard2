@@ -1,4 +1,0 @@
-{
-  "helpOverlay.render": "\"\n      <!-- #rows--><tr><td><mk-keyboard a=\"test\">alt meta (click)</mk-keyboard></td><td>Pick</td></tr>\n    \"",
-  "helpOverlay.renderEmpty": "\"\n      <!-- #rows-->\n    \""
-}
