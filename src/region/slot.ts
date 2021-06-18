@@ -58,7 +58,7 @@ export class Slot extends BaseComponent<SlotSpec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<SlotSpec, TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
       dropAction(compileConfig($.host._.dropAction, this.context), this.objectId$, this.context),
     ];

@@ -20,7 +20,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsRotatable>,
     personaContext: PersonaContext,
-): Action<IsRotatable> {
+): Action {
   return () => {
     const stateService = $stateService.get(personaContext.vine);
     return config$.pipe(
@@ -76,7 +76,7 @@ export function rotateAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsRotatable>,
     context: PersonaContext,
-): ActionSpec<IsRotatable, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Rotate',

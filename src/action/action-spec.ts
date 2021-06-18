@@ -13,11 +13,10 @@ export interface TriggerConfig {
   readonly trigger: TriggerSpec|null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type Action<O> = (obj?: any) => Observable<unknown>;
+export type Action = () => Observable<unknown>;
 
-export interface ActionSpec<O, C extends TriggerConfig> {
-  readonly action: Action<O>;
+export interface ActionSpec<C extends TriggerConfig> {
+  readonly action: Action;
   readonly actionName: string;
   readonly config$: Observable<C>;
   readonly trigger$: Observable<TriggerEvent>;

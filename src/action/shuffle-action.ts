@@ -10,7 +10,7 @@ import {createTrigger} from './util/setup-trigger';
 type Config = TriggerConfig;
 
 
-function actionFactory(): Action<unknown> {
+function actionFactory(): Action {
   return () => NEVER;
 }
 
@@ -29,7 +29,7 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
 export function shuffleAction(
     config$: Observable<Config>,
     context: PersonaContext,
-): ActionSpec<unknown, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(),
     actionName: 'Shuffle',

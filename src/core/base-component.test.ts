@@ -22,7 +22,7 @@ interface ActionConfig extends TriggerConfig {
 
 const ACTION_NAME = 'test';
 
-function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec<{}, ActionConfig> {
+function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec<ActionConfig> {
   const config$ = of({
     value: 0,
     trigger,
@@ -45,14 +45,14 @@ const $ = {
 
 class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<{}, any>>,
+      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
       context: PersonaContext,
   ) {
     super(context, $);
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<{}, TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return this.triggerActions;
   }
 

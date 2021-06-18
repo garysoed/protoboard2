@@ -33,7 +33,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
     this.setupActions();
   }
 
-  protected abstract get actions(): ReadonlyArray<ActionSpec<O, TriggerConfig>>;
+  protected abstract get actions(): ReadonlyArray<ActionSpec<TriggerConfig>>;
 
   protected createTrigger(): OperatorFunction<TriggerConfig, TriggerEvent> {
     return pipe(createTrigger(this.context));
@@ -66,7 +66,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
     this.addSetup(defer(() => {
       const obs: Array<Observable<unknown>> = [];
       const actionDescriptions: Array<Observable<ActionTrigger>> = [];
-      for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<O, TriggerConfig>>) {
+      for (const actionSpec of this.actions as ReadonlyArray<ActionSpec<TriggerConfig>>) {
         actionDescriptions.push(
             actionSpec.config$.pipe(
                 map(config => ({actionName: actionSpec.actionName, trigger: config.trigger})),
@@ -84,7 +84,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
   }
 
   private setupTrigger<C extends TriggerConfig>(
-      actionSpec: ActionSpec<O, C>,
+      actionSpec: ActionSpec<C>,
   ): Observable<unknown> {
     return actionSpec.action();
   }

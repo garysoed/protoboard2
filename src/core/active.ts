@@ -76,7 +76,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<ActiveSpec, TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [];
   }
 

@@ -21,7 +21,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<CanvasEntry>,
     personaContext: PersonaContext,
-): Action<CanvasEntry> {
+): Action {
   return () => {
     const stateService = $stateService.get(personaContext.vine);
     const entry$ = objectId$.pipe($resolveStateOp.get(personaContext.vine)());
@@ -70,7 +70,7 @@ export function drawIconAction(
     objectId$: ObjectIdObs<CanvasEntry>,
     actionName: string,
     context: PersonaContext,
-): ActionSpec<CanvasEntry, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName,

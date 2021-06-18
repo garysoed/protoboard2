@@ -12,7 +12,6 @@ import {TriggerType} from '../core/trigger-spec';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 
 import {dropAction, dropActionConfigSpecs} from './drop-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {compileConfig} from './util/compile-config';
 
@@ -30,18 +29,13 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>>(1);
-    const context = createFakeActionContext<IsContainer<'indexed'>>({
-      objectId$,
-      personaContext,
-    });
-
     const action = dropAction(
         compileConfig(host(dropActionConfigSpecs({}))._, personaContext),
         objectId$,
         personaContext,
     ).action;
 
-    return {action, context, el, objectId$, personaContext, stateService};
+    return {action, el, objectId$, personaContext, stateService};
   });
 
   test('onTrigger', () => {

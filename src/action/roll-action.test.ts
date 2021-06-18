@@ -7,10 +7,8 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {IsMultifaced} from '../payload/is-multifaced';
 
 import {rollAction, rollActionConfigSpecs} from './roll-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {compileConfig} from './util/compile-config';
 import {$random} from './util/random';
@@ -35,18 +33,13 @@ test('@protoboard2/action/roll-action', init => {
 
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
-
-    const context = createFakeActionContext<IsMultifaced>({
-      objectId$: of(objectId),
-      personaContext,
-    });
     const action = rollAction(
         compileConfig(host(rollActionConfigSpecs({}))._, personaContext),
         of(objectId),
         personaContext,
     ).action;
 
-    return {$faceIndex, action, context, el, seed, stateService};
+    return {$faceIndex, action, el, seed, stateService};
   });
 
   test('handleTrigger', () => {
@@ -55,7 +48,7 @@ test('@protoboard2/action/roll-action', init => {
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
       _.seed.values = [0.9];
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.L});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(2);
@@ -68,7 +61,7 @@ test('@protoboard2/action/roll-action', init => {
       _.el.setAttribute('pb-roll-count', '4');
       _.seed.values = [0.9];
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.L});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);

@@ -131,7 +131,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
     super(context, $);
   }
 
-  protected get actions(): ReadonlyArray<ActionSpec<State, TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
       drawIconAction(
           combineLatestObject({

@@ -6,9 +6,7 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {IsMultifaced} from '../payload/is-multifaced';
 
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {turnAction, turnActionConfigSpecs} from './turn-action';
 import {compileConfig} from './util/compile-config';
@@ -30,18 +28,13 @@ test('@protoboard2/action/turn-action', init => {
 
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
-
-    const context = createFakeActionContext<IsMultifaced>({
-      objectId$: of(objectId),
-      personaContext,
-    });
     const action = turnAction(
         compileConfig(host(turnActionConfigSpecs({}))._, personaContext),
         of(objectId),
         personaContext,
     ).action;
 
-    return {$faceIndex, action, context, el, personaContext, stateService};
+    return {$faceIndex, action, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
@@ -49,7 +42,7 @@ test('@protoboard2/action/turn-action', init => {
       _.el.setAttribute('pb-turn-count', '2');
       _.stateService.modify(x => x.set(_.$faceIndex, 0));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.T});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(1);
@@ -61,7 +54,7 @@ test('@protoboard2/action/turn-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.T});
       triggerKey(_.el, {key: TriggerType.T});
 
@@ -75,7 +68,7 @@ test('@protoboard2/action/turn-action', init => {
       _.el.setAttribute('pb-turn-count', '4');
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.T});
       triggerKey(_.el, {key: TriggerType.T});
 

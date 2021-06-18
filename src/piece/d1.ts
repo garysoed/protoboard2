@@ -70,7 +70,7 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<D1Spec, TriggerConfig>> {
+  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
     return [
       rotateAction(compileConfig($.host._.rotateAction, this.context), this.objectId$, this.context),
       pickAction(compileConfig($.host._.pickAction, this.context), this.objectId$, this.context),

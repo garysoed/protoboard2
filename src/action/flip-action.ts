@@ -22,7 +22,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     personaContext: PersonaContext,
-): Action<IsMultifaced> {
+): Action {
   return () => {
     const stateService = $stateService.get(personaContext.vine);
     return config$.pipe(
@@ -67,7 +67,7 @@ export function flipAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     context: PersonaContext,
-): ActionSpec<IsMultifaced, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Flip',

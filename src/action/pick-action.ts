@@ -20,7 +20,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<{}>,
     personaContext: PersonaContext,
-): Action<{}> {
+): Action {
   return () => {
     const vine = personaContext.vine;
     const fromObjectSpec$ = combineLatest([
@@ -117,7 +117,7 @@ export function pickAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<{}>,
     context: PersonaContext,
-): ActionSpec<{}, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Pick',

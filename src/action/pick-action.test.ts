@@ -12,7 +12,6 @@ import {$setParent} from '../objects/content-map';
 import {ContentSpec} from '../payload/is-container';
 
 import {pickAction, pickActionConfigSpecs} from './pick-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerClick} from './testing/trigger-click';
 import {compileConfig} from './util/compile-config';
 
@@ -30,17 +29,13 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<{}>>(1);
-    const context = createFakeActionContext<{}>({
-      objectId$,
-      personaContext,
-    });
     const action = pickAction(
         compileConfig(host(pickActionConfigSpecs({}))._, personaContext),
         objectId$,
         personaContext,
     ).action;
 
-    return {action, context, el, objectId$, personaContext, stateService};
+    return {action, el, objectId$, personaContext, stateService};
   });
 
   test('onTrigger', () => {
@@ -90,7 +85,7 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerClick(_.el);
 
       assert(activeIds$).to.emitSequence([

@@ -20,7 +20,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     personaContext: PersonaContext,
-): Action<IsMultifaced> {
+): Action {
   return () => {
     const vine = personaContext.vine;
     return config$.pipe(
@@ -60,7 +60,7 @@ export function rollAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     context: PersonaContext,
-): ActionSpec<IsMultifaced, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Roll',

@@ -6,10 +6,8 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {IsMultifaced} from '../payload/is-multifaced';
 
 import {flipAction, flipActionConfigSpecs} from './flip-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {compileConfig} from './util/compile-config';
 
@@ -32,17 +30,13 @@ test('@protoboard2/action/flip-action', init => {
     const objectSpec = {$currentFaceIndex: $faceIndex};
     const objectId$ = of(stateService.modify(x => x.add(objectSpec)));
 
-    const context = createFakeActionContext<IsMultifaced>({
-      objectId$,
-      personaContext,
-    });
     const action = flipAction(
         compileConfig(host(flipActionConfigSpecs({}))._, personaContext),
         objectId$,
         personaContext,
     ).action;
 
-    return {$faceIndex, action, context, el, personaContext, stateService};
+    return {$faceIndex, action, el, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
@@ -50,7 +44,7 @@ test('@protoboard2/action/flip-action', init => {
       _.el.setAttribute('pb-flip-count', '4');
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.F});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
@@ -62,7 +56,7 @@ test('@protoboard2/action/flip-action', init => {
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.F});
       triggerKey(_.el, {key: TriggerType.F});
 
@@ -76,7 +70,7 @@ test('@protoboard2/action/flip-action', init => {
       _.el.setAttribute('pb-flip-count', '6');
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.F});
       triggerKey(_.el, {key: TriggerType.F});
 

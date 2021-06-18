@@ -18,7 +18,7 @@ function actionFactory(
     config$: Observable<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
     personaContext: PersonaContext,
-): Action<{}> {
+): Action {
   return () => {
     return config$.pipe(
         createTrigger(personaContext),
@@ -31,7 +31,7 @@ function actionFactory(
 }
 
 export interface HelpActionSpec {
-  readonly action: Action<any>;
+  readonly action: Action;
   readonly actionName: string;
   readonly config$: Observable<Config>;
   readonly trigger$: Observable<TriggerEvent>;

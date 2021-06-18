@@ -26,7 +26,7 @@ function actionFactory(
     config$: Observable<Config>,
     objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
     personaContext: PersonaContext,
-): Action<IsContainer<'indexed'>> {
+): Action {
   return () => {
     const vine = personaContext.vine;
     const moveObjectFn$ = combineLatest([
@@ -109,7 +109,7 @@ export function dropAction(
     config$: Observable<Config>,
     objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
     context: PersonaContext,
-): ActionSpec<IsContainer<'indexed'>, Config> {
+): ActionSpec<Config> {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Drop',

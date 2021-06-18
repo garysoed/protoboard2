@@ -6,10 +6,8 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {of} from 'rxjs';
 
 import {TriggerType} from '../core/trigger-spec';
-import {IsRotatable} from '../payload/is-rotatable';
 
 import {rotateAction, rotateActionConfigSpecs} from './rotate-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerKey} from './testing/trigger-key';
 import {compileConfig} from './util/compile-config';
 
@@ -30,18 +28,13 @@ test('@protoboard2/action/rotate-action', init => {
 
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$rotationDeg}));
-
-    const context = createFakeActionContext<IsRotatable>({
-      objectId$: of(objectId),
-      personaContext,
-    });
     const action = rotateAction(
         compileConfig(host(rotateActionConfigSpecs({}))._, personaContext),
         of(objectId),
         personaContext,
     ).action;
 
-    return {$rotationDeg, action, context, el, stateService};
+    return {$rotationDeg, action, el, stateService};
   });
 
   test('handleTrigger$', () => {
@@ -49,7 +42,7 @@ test('@protoboard2/action/rotate-action', init => {
       _.el.setAttribute('pb-rotate-stops', '[\'11\' \'22\' \'33\']');
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.R});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
@@ -59,7 +52,7 @@ test('@protoboard2/action/rotate-action', init => {
       _.el.setAttribute('pb-rotate-stops', '[\'123\' \'456\' \'678\']');
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.R});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
