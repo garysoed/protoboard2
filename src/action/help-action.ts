@@ -17,13 +17,14 @@ export interface Config {
 function actionFactory(
     config$: Observable<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
+    personaContext: PersonaContext,
 ): Action<{}> {
-  return context => {
+  return () => {
     return config$.pipe(
-        createTrigger(context.personaContext),
+        createTrigger(personaContext),
         withLatestFrom(actionTriggers$),
         tap(([, actionDescriptions]) => {
-          $helpService.get(context.personaContext.vine).show(actionDescriptions);
+          $helpService.get(personaContext.vine).show(actionDescriptions);
         }),
     );
   };
@@ -42,7 +43,7 @@ export function helpAction(
 ): HelpActionSpec {
   const config$ = of({trigger: {type: TriggerType.QUESTION, shift: true}});
   return {
-    action: actionFactory(config$, actionTriggers$),
+    action: actionFactory(config$, actionTriggers$, context),
     actionName: 'Help',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

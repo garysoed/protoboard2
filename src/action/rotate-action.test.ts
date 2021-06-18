@@ -37,6 +37,7 @@ test('@protoboard2/action/rotate-action', init => {
     });
     const action = rotateAction(
         compileConfig(host(rotateActionConfigSpecs({}))._, personaContext),
+        of(objectId),
         personaContext,
     ).action;
 

@@ -30,13 +30,15 @@ test('@protoboard2/action/flip-action', init => {
 
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectSpec = {$currentFaceIndex: $faceIndex};
+    const objectId$ = of(stateService.modify(x => x.add(objectSpec)));
 
     const context = createFakeActionContext<IsMultifaced>({
-      objectId$: of(stateService.modify(x => x.add(objectSpec))),
+      objectId$,
       personaContext,
     });
     const action = flipAction(
         compileConfig(host(flipActionConfigSpecs({}))._, personaContext),
+        objectId$,
         personaContext,
     ).action;
 

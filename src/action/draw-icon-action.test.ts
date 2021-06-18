@@ -8,7 +8,6 @@ import {TriggerType} from '../core/trigger-spec';
 import {CanvasEntry, CanvasIcon} from '../face/canvas-entry';
 
 import {drawIconAction} from './draw-icon-action';
-import {createFakeActionContext} from './testing/fake-action-context';
 import {triggerClick} from './testing/trigger-click';
 
 
@@ -31,10 +30,6 @@ test('@protoboard2/src/action/draw-icon-action', init => {
       lines: x.add([]),
       halfLine: x.add(null),
     }));
-    const context = createFakeActionContext<CanvasEntry>({
-      objectId$: of(objectId),
-      personaContext,
-    });
 
     const action = drawIconAction(
         of({
@@ -43,10 +38,11 @@ test('@protoboard2/src/action/draw-icon-action', init => {
           configName: CONFIG_NAME,
           trigger: {type: TriggerType.CLICK},
         }),
+        of(objectId),
         'testAction',
         personaContext,
     ).action;
-    return {action, context, el, iconsId, stateService};
+    return {action, el, iconsId, stateService};
   });
 
   should('add the icon to the state if one does not exist', () => {
@@ -54,7 +50,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(_.action(_.context));
+    run(_.action());
     triggerClick(_.el);
 
     assert(icons$).to.emitSequence([
@@ -80,7 +76,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(_.action(_.context));
+    run(_.action());
     triggerClick(_.el);
 
     assert(icons$).to.emitSequence([

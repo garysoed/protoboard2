@@ -29,7 +29,7 @@ test('@protoboard2/action/drop-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>|null>(1);
+    const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>>(1);
     const context = createFakeActionContext<IsContainer<'indexed'>>({
       objectId$,
       personaContext,
@@ -37,6 +37,7 @@ test('@protoboard2/action/drop-action', init => {
 
     const action = dropAction(
         compileConfig(host(dropActionConfigSpecs({}))._, personaContext),
+        objectId$,
         personaContext,
     ).action;
 
@@ -93,7 +94,7 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
-      run(_.action(_.context));
+      run(_.action());
       triggerKey(_.el, {key: TriggerType.D});
 
       assert(activeIds$).to.emitSequence([

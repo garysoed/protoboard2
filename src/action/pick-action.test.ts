@@ -29,13 +29,14 @@ test('@protoboard2/action/pick-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<{}>|null>(1);
+    const objectId$ = new ReplaySubject<StateId<{}>>(1);
     const context = createFakeActionContext<{}>({
       objectId$,
       personaContext,
     });
     const action = pickAction(
         compileConfig(host(pickActionConfigSpecs({}))._, personaContext),
+        objectId$,
         personaContext,
     ).action;
 

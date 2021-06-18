@@ -1,4 +1,5 @@
-import {$stateService} from 'grapevine';
+import {$resolveStateOp, $stateService} from 'grapevine';
+import {StateId} from 'gs-tools/export/state';
 import {attributeIn, enumParser, PersonaContext} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -7,7 +8,6 @@ import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
-import {getObject$} from './action-context';
 import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
 import {createTrigger} from './util/setup-trigger';
@@ -22,11 +22,15 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function actionFactory(config$: Observable<Config>): Action<IsContainer<'indexed'>> {
-  return context => {
-    const vine = context.personaContext.vine;
+function actionFactory(
+    config$: Observable<Config>,
+    objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
+    personaContext: PersonaContext,
+): Action<IsContainer<'indexed'>> {
+  return () => {
+    const vine = personaContext.vine;
     const moveObjectFn$ = combineLatest([
-      getObject$(context),
+      objectId$.pipe($resolveStateOp.get(personaContext.vine)()),
       $activeSpec.get(vine),
     ])
         .pipe(
@@ -64,7 +68,7 @@ function actionFactory(config$: Observable<Config>): Action<IsContainer<'indexed
             }),
         );
     return config$.pipe(
-        createTrigger(context.personaContext),
+        createTrigger(personaContext),
         withLatestFrom(config$, moveObjectFn$),
         tap(([, config, moveObjectFn]) => {
           if (!moveObjectFn) {
@@ -84,7 +88,7 @@ function locate(positioning: PositioningType): number {
   }
 }
 
-const DEFAULT_CONFIG: Config = {
+const DEFAULT_CONFIG = {
   positioning: PositioningType.DEFAULT,
   trigger: {type: TriggerType.D},
 };
@@ -103,10 +107,11 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function dropAction(
     config$: Observable<Config>,
+    objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
     context: PersonaContext,
 ): ActionSpec<IsContainer<'indexed'>, Config> {
   return {
-    action: actionFactory(config$),
+    action: actionFactory(config$, objectId$, context),
     actionName: 'Drop',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

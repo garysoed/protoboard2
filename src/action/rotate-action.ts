@@ -1,4 +1,4 @@
-import {$stateService} from 'grapevine';
+import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {attributeIn, integerParser, listParser, PersonaContext} from 'persona';
 import {EMPTY, Observable} from 'rxjs';
@@ -7,8 +7,8 @@ import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
-import {getObject$} from './action-context';
 import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {ObjectIdObs} from './object-id-obs';
 import {createTrigger} from './util/setup-trigger';
 
 
@@ -16,12 +16,16 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-function actionFactory(config$: Observable<Config>): Action<IsRotatable> {
-  return context => {
-    const stateService = $stateService.get(context.personaContext.vine);
+function actionFactory(
+    config$: Observable<Config>,
+    objectId$: ObjectIdObs<IsRotatable>,
+    personaContext: PersonaContext,
+): Action<IsRotatable> {
+  return () => {
+    const stateService = $stateService.get(personaContext.vine);
     return config$.pipe(
-        createTrigger(context.personaContext),
-        withLatestFrom(config$, getObject$(context)),
+        createTrigger(personaContext),
+        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
         switchMap(([, config, obj]) => {
           if (!obj) {
             return EMPTY;
@@ -70,10 +74,11 @@ export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): Unres
 
 export function rotateAction(
     config$: Observable<Config>,
+    objectId$: ObjectIdObs<IsRotatable>,
     context: PersonaContext,
 ): ActionSpec<IsRotatable, Config> {
   return {
-    action: actionFactory(config$),
+    action: actionFactory(config$, objectId$, context),
     actionName: 'Rotate',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

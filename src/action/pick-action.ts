@@ -9,17 +9,22 @@ import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$getParent} from '../objects/content-map';
 
 import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {ObjectIdObs} from './object-id-obs';
 import {moveObject} from './util/move-object';
 import {createTrigger} from './util/setup-trigger';
 
 
 export type Config = TriggerConfig;
 
-function actionFactory(config$: Observable<Config>): Action<{}> {
-  return context => {
-    const vine = context.personaContext.vine;
+function actionFactory(
+    config$: Observable<Config>,
+    objectId$: ObjectIdObs<{}>,
+    personaContext: PersonaContext,
+): Action<{}> {
+  return () => {
+    const vine = personaContext.vine;
     const fromObjectSpec$ = combineLatest([
-      context.objectId$,
+      objectId$,
       $getParent.get(vine),
     ])
         .pipe(
@@ -49,7 +54,7 @@ function actionFactory(config$: Observable<Config>): Action<{}> {
       fromObjectSpec$,
       $activeSpec.get(vine),
       activeContents$,
-      context.objectId$,
+      objectId$,
     ])
         .pipe(
             switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
@@ -84,7 +89,7 @@ function actionFactory(config$: Observable<Config>): Action<{}> {
         );
 
     return config$.pipe(
-        createTrigger(context.personaContext),
+        createTrigger(personaContext),
         withLatestFrom(moveFn$),
         tap(([, moveFn]) => {
           if (!moveFn) {
@@ -110,10 +115,11 @@ export function pickActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function pickAction(
     config$: Observable<Config>,
+    objectId$: ObjectIdObs<{}>,
     context: PersonaContext,
 ): ActionSpec<{}, Config> {
   return {
-    action: actionFactory(config$),
+    action: actionFactory(config$, objectId$, context),
     actionName: 'Pick',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

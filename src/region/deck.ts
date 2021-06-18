@@ -56,7 +56,11 @@ export class Deck extends BaseComponent<DeckSpec, typeof $> {
   @cache()
   protected get actions(): ReadonlyArray<ActionSpec<DeckSpec, TriggerConfig>> {
     return [
-      dropAction(compileConfig($.host._.dropAction, this.context), this.context),
+      dropAction(
+          compileConfig($.host._.dropAction, this.context),
+          this.objectId$,
+          this.context,
+      ),
       shuffleAction(compileConfig($.host._.shuffleAction, this.context), this.context),
     ];
   }

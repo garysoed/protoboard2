@@ -37,6 +37,7 @@ test('@protoboard2/action/turn-action', init => {
     });
     const action = turnAction(
         compileConfig(host(turnActionConfigSpecs({}))._, personaContext),
+        of(objectId),
         personaContext,
     ).action;
 

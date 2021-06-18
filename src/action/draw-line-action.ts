@@ -1,4 +1,4 @@
-import {$stateService} from 'grapevine';
+import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
 import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
@@ -6,8 +6,8 @@ import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {CanvasEntry} from '../face/canvas-entry';
 
-import {getObject$} from './action-context';
 import {Action, ActionSpec, TriggerConfig} from './action-spec';
+import {ObjectIdObs} from './object-id-obs';
 import {createTrigger} from './util/setup-trigger';
 
 
@@ -17,10 +17,14 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
-  return context => {
-    const stateService = $stateService.get(context.personaContext.vine);
-    const entry$ = getObject$(context);
+function actionFactory(
+    config$: Observable<Config>,
+    objectId$: ObjectIdObs<CanvasEntry>,
+    personaContext: PersonaContext,
+): Action<CanvasEntry> {
+  return () => {
+    const stateService = $stateService.get(personaContext.vine);
+    const entry$ = objectId$.pipe($resolveStateOp.get(personaContext.vine)());
     const lines$ = entry$.pipe(
         switchMap(entry => {
           return stateService.resolve(entry?.lines);
@@ -32,7 +36,7 @@ function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
         }),
     );
     return config$.pipe(
-        createTrigger(context.personaContext),
+        createTrigger(personaContext),
         withLatestFrom(config$, entry$, lines$, halfLine$),
         tap(([, config, entry, lines, halfLine]) => {
           if (!entry) {
@@ -108,11 +112,12 @@ function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
 
 export function drawLineAction(
     config$: Observable<Config>,
+    objectId$: ObjectIdObs<CanvasEntry>,
     actionName: string,
     context: PersonaContext,
 ): ActionSpec<CanvasEntry, Config> {
   return {
-    action: actionFactory(config$),
+    action: actionFactory(config$, objectId$, context),
     actionName,
     config$,
     trigger$: config$.pipe(createTrigger(context)),

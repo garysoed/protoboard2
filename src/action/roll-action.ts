@@ -1,4 +1,4 @@
-import {$stateService} from 'grapevine';
+import {$resolveStateOp, $stateService} from 'grapevine';
 import {attributeIn, integerParser, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
@@ -6,8 +6,8 @@ import {tap, withLatestFrom} from 'rxjs/operators';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {getObject$} from './action-context';
 import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {ObjectIdObs} from './object-id-obs';
 import {$random} from './util/random';
 import {createTrigger} from './util/setup-trigger';
 
@@ -16,12 +16,16 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function actionFactory(config$: Observable<Config>): Action<IsMultifaced> {
-  return context => {
-    const vine = context.personaContext.vine;
+function actionFactory(
+    config$: Observable<Config>,
+    objectId$: ObjectIdObs<IsMultifaced>,
+    personaContext: PersonaContext,
+): Action<IsMultifaced> {
+  return () => {
+    const vine = personaContext.vine;
     return config$.pipe(
-        createTrigger(context.personaContext),
-        withLatestFrom(config$, getObject$(context)),
+        createTrigger(personaContext),
+        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
         tap(([, config, obj]) => {
           if (!obj) {
             return;
@@ -54,10 +58,11 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 
 export function rollAction(
     config$: Observable<Config>,
+    objectId$: ObjectIdObs<IsMultifaced>,
     context: PersonaContext,
 ): ActionSpec<IsMultifaced, Config> {
   return {
-    action: actionFactory(config$),
+    action: actionFactory(config$, objectId$, context),
     actionName: 'Roll',
     config$,
     trigger$: config$.pipe(createTrigger(context)),
