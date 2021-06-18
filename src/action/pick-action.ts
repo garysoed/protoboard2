@@ -1,6 +1,6 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
-import {attributeIn} from 'persona';
+import {attributeIn, PersonaContext} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -108,10 +108,14 @@ export function pickActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function pickAction(config$: Observable<Config>): ActionSpec<{}, Config> {
+export function pickAction(
+    config$: Observable<Config>,
+    context: PersonaContext,
+): ActionSpec<{}, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Pick',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

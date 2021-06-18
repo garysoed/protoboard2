@@ -1,6 +1,6 @@
 import {$stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {attributeIn, integerParser} from 'persona';
+import {attributeIn, integerParser, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 import {switchMap, take, withLatestFrom} from 'rxjs/operators';
 
@@ -59,10 +59,14 @@ export function flipActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function flipAction(config$: Observable<Config>): ActionSpec<IsMultifaced, Config> {
+export function flipAction(
+    config$: Observable<Config>,
+    context: PersonaContext,
+): ActionSpec<IsMultifaced, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Flip',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

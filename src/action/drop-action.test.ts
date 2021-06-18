@@ -37,6 +37,7 @@ test('@protoboard2/action/drop-action', init => {
 
     const action = dropAction(
         compileConfig(host(dropActionConfigSpecs({}))._, personaContext),
+        personaContext,
     ).action;
 
     return {action, context, el, objectId$, personaContext, stateService};

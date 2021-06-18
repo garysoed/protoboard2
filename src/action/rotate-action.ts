@@ -1,6 +1,6 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {attributeIn, integerParser, listParser} from 'persona';
+import {attributeIn, integerParser, listParser, PersonaContext} from 'persona';
 import {EMPTY, Observable} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -68,10 +68,14 @@ export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): Unres
 }
 
 
-export function rotateAction(config$: Observable<Config>): ActionSpec<IsRotatable, Config> {
+export function rotateAction(
+    config$: Observable<Config>,
+    context: PersonaContext,
+): ActionSpec<IsRotatable, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Rotate',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

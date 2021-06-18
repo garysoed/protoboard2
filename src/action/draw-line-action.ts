@@ -1,5 +1,6 @@
 import {$stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
+import {PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -108,10 +109,12 @@ function actionFactory(config$: Observable<Config>): Action<CanvasEntry> {
 export function drawLineAction(
     config$: Observable<Config>,
     actionName: string,
+    context: PersonaContext,
 ): ActionSpec<CanvasEntry, Config> {
   return {
     action: actionFactory(config$),
     actionName,
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

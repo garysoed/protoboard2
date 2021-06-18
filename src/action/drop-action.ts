@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {attributeIn, enumParser} from 'persona';
+import {attributeIn, enumParser, PersonaContext} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
@@ -101,10 +101,14 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   };
 }
 
-export function dropAction(config$: Observable<Config>): ActionSpec<IsContainer<'indexed'>, Config> {
+export function dropAction(
+    config$: Observable<Config>,
+    context: PersonaContext,
+): ActionSpec<IsContainer<'indexed'>, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Drop',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

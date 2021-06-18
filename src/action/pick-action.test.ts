@@ -34,8 +34,10 @@ test('@protoboard2/action/pick-action', init => {
       objectId$,
       personaContext,
     });
-    const action = pickAction(compileConfig(host(pickActionConfigSpecs({}))._, personaContext))
-        .action;
+    const action = pickAction(
+        compileConfig(host(pickActionConfigSpecs({}))._, personaContext),
+        personaContext,
+    ).action;
 
     return {action, context, el, objectId$, personaContext, stateService};
   });

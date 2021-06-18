@@ -21,9 +21,12 @@ test('@protoboard2/action/help-action', init => {
       personaContext,
     });
 
-    const action = helpAction(of([
-      {trigger: TRIGGER, actionName: 'test'},
-    ])).action;
+    const action = helpAction(
+        of([
+          {trigger: TRIGGER, actionName: 'test'},
+        ]),
+        personaContext,
+    ).action;
 
     return {action, context, el, vine: personaContext.vine};
   });

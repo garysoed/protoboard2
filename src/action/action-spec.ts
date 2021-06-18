@@ -1,6 +1,7 @@
 import {UnresolvedAttributeInput} from 'persona/export/internal';
 import {Observable} from 'rxjs';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerSpec} from '../core/trigger-spec';
 
 import {ActionContext} from './action-context';
@@ -20,4 +21,5 @@ export interface ActionSpec<O, C extends TriggerConfig> {
   readonly action: Action<O>;
   readonly actionName: string;
   readonly config$: Observable<C>;
+  readonly trigger$: Observable<TriggerEvent>;
 }

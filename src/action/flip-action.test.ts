@@ -37,6 +37,7 @@ test('@protoboard2/action/flip-action', init => {
     });
     const action = flipAction(
         compileConfig(host(flipActionConfigSpecs({}))._, personaContext),
+        personaContext,
     ).action;
 
     return {$faceIndex, action, context, el, personaContext, stateService};

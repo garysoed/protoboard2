@@ -42,6 +42,7 @@ test('@protoboard2/action/roll-action', init => {
     });
     const action = rollAction(
         compileConfig(host(rollActionConfigSpecs({}))._, personaContext),
+        personaContext,
     ).action;
 
     return {$faceIndex, action, context, el, seed, stateService};

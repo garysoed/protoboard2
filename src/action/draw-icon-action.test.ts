@@ -44,6 +44,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
           trigger: {type: TriggerType.CLICK},
         }),
         'testAction',
+        personaContext,
     ).action;
     return {action, context, el, iconsId, stateService};
   });

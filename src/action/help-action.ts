@@ -1,6 +1,8 @@
+import {PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerSpec, TriggerType} from '../core/trigger-spec';
 
 import {Action} from './action-spec';
@@ -31,15 +33,18 @@ export interface HelpActionSpec {
   readonly action: Action<any>;
   readonly actionName: string;
   readonly config$: Observable<Config>;
+  readonly trigger$: Observable<TriggerEvent>;
 }
 
 export function helpAction(
     actionTriggers$: Observable<readonly ActionTrigger[]>,
+    context: PersonaContext,
 ): HelpActionSpec {
   const config$ = of({trigger: {type: TriggerType.QUESTION, shift: true}});
   return {
     action: actionFactory(config$, actionTriggers$),
     actionName: 'Help',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }

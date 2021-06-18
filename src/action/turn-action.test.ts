@@ -37,6 +37,7 @@ test('@protoboard2/action/turn-action', init => {
     });
     const action = turnAction(
         compileConfig(host(turnActionConfigSpecs({}))._, personaContext),
+        personaContext,
     ).action;
 
     return {$faceIndex, action, context, el, personaContext, stateService};

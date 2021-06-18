@@ -141,6 +141,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             trigger: this.iconTrigger$,
           }),
           'Draw icon',
+          this.context,
       ),
       drawLineAction(
           combineLatestObject({
@@ -150,6 +151,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             trigger: of({type: TriggerType.A}),
           }),
           'Draw cyan line',
+          this.context,
       ),
       drawLineAction(
           combineLatestObject({
@@ -159,6 +161,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             trigger: of({type: TriggerType.S}),
           }),
           'Draw magenta line',
+          this.context,
       ),
       drawLineAction(
           combineLatestObject({
@@ -168,6 +171,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             trigger: of({type: TriggerType.D}),
           }),
           'Draw yellow line',
+          this.context,
       ),
     ];
   }

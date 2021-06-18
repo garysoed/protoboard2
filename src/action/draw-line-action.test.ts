@@ -45,6 +45,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
           trigger: {type: TriggerType.A},
         }),
         'testAction',
+        personaContext,
     ).action;
     return {action, context, el, halfLineId, linesId, stateService};
   });

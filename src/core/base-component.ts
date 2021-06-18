@@ -4,13 +4,16 @@ import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, _p} from 'mask';
 import {PersonaContext} from 'persona';
 import {Input} from 'persona/export/internal';
-import {combineLatest, defer, EMPTY, merge, Observable, of} from 'rxjs';
+import {combineLatest, defer, EMPTY, merge, Observable, of, pipe, OperatorFunction} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
+import {createTrigger} from '../action/util/setup-trigger';
+
+import {TriggerEvent} from './trigger-event';
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -31,6 +34,10 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
   }
 
   protected abstract get actions(): ReadonlyArray<ActionSpec<O, TriggerConfig>>;
+
+  protected createTrigger(): OperatorFunction<TriggerConfig, TriggerEvent> {
+    return pipe(createTrigger(this.context));
+  }
 
   /**
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
@@ -69,7 +76,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
       }
 
       const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
-      const helpActionSpec = helpAction(actionDescriptions$);
+      const helpActionSpec = helpAction(actionDescriptions$, this.context);
       obs.push(this.setupTrigger(helpActionSpec));
 
       return merge(...obs);

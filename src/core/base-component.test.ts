@@ -10,6 +10,7 @@ import {map} from 'rxjs/operators';
 import {ActionSpec, TriggerConfig} from '../action/action-spec';
 import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
+import {createTrigger} from '../action/util/setup-trigger';
 
 import {BaseComponent} from './base-component';
 import {TriggerSpec, TriggerType} from './trigger-spec';
@@ -21,14 +22,16 @@ interface ActionConfig extends TriggerConfig {
 
 const ACTION_NAME = 'test';
 
-function testAction(trigger: TriggerSpec): ActionSpec<{}, ActionConfig> {
+function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec<{}, ActionConfig> {
+  const config$ = of({
+    value: 0,
+    trigger,
+  });
   return {
     action: () => EMPTY,
     actionName: ACTION_NAME,
-    config$: of({
-      value: 0,
-      trigger,
-    }),
+    config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }
 
@@ -78,8 +81,8 @@ test('@protoboard2/core/base-component', init => {
     });
     const component = new TestComponent(
         [
-          testAction({type: TriggerType.CLICK, targetEl: $targetEl}),
-          testAction({type: KEY, targetEl: $targetEl}),
+          testAction({type: TriggerType.CLICK, targetEl: $targetEl}, personaContext),
+          testAction({type: KEY, targetEl: $targetEl}, personaContext),
         ],
         personaContext,
     );

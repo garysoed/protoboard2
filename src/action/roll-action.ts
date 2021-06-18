@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {attributeIn, integerParser} from 'persona';
+import {attributeIn, integerParser, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -52,10 +52,14 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
 }
 
 
-export function rollAction(config$: Observable<Config>): ActionSpec<IsMultifaced, Config> {
+export function rollAction(
+    config$: Observable<Config>,
+    context: PersonaContext,
+): ActionSpec<IsMultifaced, Config> {
   return {
     action: actionFactory(config$),
     actionName: 'Roll',
     config$,
+    trigger$: config$.pipe(createTrigger(context)),
   };
 }
