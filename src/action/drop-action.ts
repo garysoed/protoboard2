@@ -106,11 +106,11 @@ export function dropAction(
     config$: Observable<Config>,
     objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Drop',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

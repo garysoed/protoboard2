@@ -113,11 +113,11 @@ export function pickAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<{}>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(objectId$, context),
     actionName: 'Pick',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

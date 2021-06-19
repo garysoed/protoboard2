@@ -5,7 +5,7 @@ import {$div, attributeIn, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {ActionSpec} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {shuffleAction, shuffleActionConfigSpecs} from '../action/shuffle-action';
 import {compileConfig} from '../action/util/compile-config';
@@ -54,7 +54,7 @@ export class Deck extends BaseComponent<DeckSpec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): readonly ActionSpec[] {
     return [
       dropAction(
           compileConfig($.host._.dropAction, this.context),

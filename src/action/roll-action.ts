@@ -1,7 +1,7 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {attributeIn, integerParser, PersonaContext} from 'persona';
 import {Observable, pipe} from 'rxjs';
-import {tap, withLatestFrom} from 'rxjs/operators';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -57,11 +57,11 @@ export function rollAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Roll',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

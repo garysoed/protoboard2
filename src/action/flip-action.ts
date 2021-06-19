@@ -67,11 +67,11 @@ export function flipAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsMultifaced>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Flip',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

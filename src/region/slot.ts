@@ -5,7 +5,7 @@ import {$div, attributeIn, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {ActionSpec} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {compileConfig} from '../action/util/compile-config';
 import {BaseComponent} from '../core/base-component';
@@ -58,7 +58,7 @@ export class Slot extends BaseComponent<SlotSpec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): readonly ActionSpec[] {
     return [
       dropAction(compileConfig($.host._.dropAction, this.context), this.objectId$, this.context),
     ];

@@ -4,7 +4,7 @@ import {stateIdParser, _p} from 'mask';
 import {$slot, attributeIn, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
-import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {ActionSpec} from '../action/action-spec';
 import {pickAction, pickActionConfigSpecs} from '../action/pick-action';
 import {rotateAction, rotateActionConfigSpecs} from '../action/rotate-action';
 import {compileConfig} from '../action/util/compile-config';
@@ -70,7 +70,7 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): readonly ActionSpec[] {
     return [
       rotateAction(compileConfig($.host._.rotateAction, this.context), this.objectId$, this.context),
       pickAction(compileConfig($.host._.pickAction, this.context), this.objectId$, this.context),

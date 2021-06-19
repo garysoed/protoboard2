@@ -5,7 +5,7 @@ import {attributeIn, enumParser, host, integerParser, PersonaContext} from 'pers
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {ActionSpec, TriggerConfig} from '../../src/action/action-spec';
+import {ActionSpec} from '../../src/action/action-spec';
 import {drawIconAction} from '../../src/action/draw-icon-action';
 import {drawLineAction} from '../../src/action/draw-line-action';
 import {BaseComponent} from '../../src/core/base-component';
@@ -131,7 +131,7 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
     super(context, $);
   }
 
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): readonly ActionSpec[] {
     return [
       drawIconAction(
           combineLatestObject({

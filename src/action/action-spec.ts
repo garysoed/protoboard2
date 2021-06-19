@@ -15,9 +15,9 @@ export interface TriggerConfig {
 
 export type Action = OperatorFunction<TriggerEvent, unknown>;
 
-export interface ActionSpec<C extends TriggerConfig> {
+export interface ActionSpec {
   readonly action: Action;
   readonly actionName: string;
-  readonly config$: Observable<C>;
+  readonly triggerSpec$: Observable<TriggerSpec|null>;
   readonly trigger$: Observable<TriggerEvent>;
 }

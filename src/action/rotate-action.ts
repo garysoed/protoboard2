@@ -73,11 +73,11 @@ export function rotateAction(
     config$: Observable<Config>,
     objectId$: ObjectIdObs<IsRotatable>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName: 'Rotate',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

@@ -2,7 +2,7 @@ import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
 import {PersonaContext} from 'persona';
 import {Observable, pipe} from 'rxjs';
-import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {CanvasEntry} from '../face/canvas-entry';
 
@@ -112,11 +112,11 @@ export function drawLineAction(
     objectId$: ObjectIdObs<CanvasEntry>,
     actionName: string,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(config$, objectId$, context),
     actionName,
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }

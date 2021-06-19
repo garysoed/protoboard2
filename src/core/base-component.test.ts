@@ -7,7 +7,7 @@ import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testin
 import {EMPTY, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {ActionSpec} from '../action/action-spec';
 import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
 import {createTrigger} from '../action/util/setup-trigger';
@@ -16,13 +16,9 @@ import {BaseComponent} from './base-component';
 import {TriggerSpec, TriggerType} from './trigger-spec';
 
 
-interface ActionConfig extends TriggerConfig {
-  readonly value: number;
-}
-
 const ACTION_NAME = 'test';
 
-function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec<ActionConfig> {
+function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec {
   const config$ = of({
     value: 0,
     trigger,
@@ -30,7 +26,7 @@ function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec<A
   return {
     action: () => EMPTY,
     actionName: ACTION_NAME,
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }
@@ -45,14 +41,14 @@ const $ = {
 
 class TestComponent extends BaseComponent<{}, typeof $> {
   constructor(
-      private readonly triggerActions: ReadonlyArray<ActionSpec<any>>,
+      private readonly triggerActions: readonly ActionSpec[],
       context: PersonaContext,
   ) {
     super(context, $);
   }
 
   @cache()
-  protected get actions(): ReadonlyArray<ActionSpec<TriggerConfig>> {
+  protected get actions(): readonly ActionSpec[] {
     return this.triggerActions;
   }
 

@@ -1,5 +1,6 @@
 import {attributeIn, PersonaContext} from 'persona';
 import {NEVER, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 
@@ -29,11 +30,11 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
 export function shuffleAction(
     config$: Observable<Config>,
     context: PersonaContext,
-): ActionSpec<Config> {
+): ActionSpec {
   return {
     action: actionFactory(),
     actionName: 'Shuffle',
-    config$,
+    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
     trigger$: config$.pipe(createTrigger(context)),
   };
 }
