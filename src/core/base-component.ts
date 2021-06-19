@@ -86,6 +86,8 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
   private setupTrigger<C extends TriggerConfig>(
       actionSpec: ActionSpec<C>,
   ): Observable<unknown> {
-    return actionSpec.action();
+    return actionSpec.trigger$.pipe(
+        actionSpec.action,
+    );
   }
 }

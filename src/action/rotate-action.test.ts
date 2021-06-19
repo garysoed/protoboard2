@@ -1,15 +1,13 @@
 import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
-import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {of, ReplaySubject, Subject} from 'rxjs';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 
-import {rotateAction, rotateActionConfigSpecs} from './rotate-action';
-import {triggerKey} from './testing/trigger-key';
-import {compileConfig} from './util/compile-config';
+import {Config, rotateAction} from './rotate-action';
 
 
 test('@protoboard2/action/rotate-action', init => {
@@ -28,32 +26,34 @@ test('@protoboard2/action/rotate-action', init => {
 
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$rotationDeg}));
+    const config$ = new ReplaySubject<Config>(1);
     const action = rotateAction(
-        compileConfig(host(rotateActionConfigSpecs({}))._, personaContext),
+        config$,
         of(objectId),
         personaContext,
     ).action;
 
-    return {$rotationDeg, action, el, stateService};
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
+
+    return {$rotationDeg, action, config$, el, onTrigger$, stateService};
   });
 
   test('handleTrigger$', () => {
     should('change the rotation to the next index', () => {
-      _.el.setAttribute('pb-rotate-stops', '[\'11\' \'22\' \'33\']');
+      _.config$.next({stops: [11, 22, 33], trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.R});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
     });
 
     should('handle rotations that are more than 360', () => {
-      _.el.setAttribute('pb-rotate-stops', '[\'123\' \'456\' \'678\']');
+      _.config$.next({stops: [123, 456, 678], trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.R});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
     });

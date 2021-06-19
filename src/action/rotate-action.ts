@@ -1,7 +1,7 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {attributeIn, integerParser, listParser, PersonaContext} from 'persona';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
@@ -21,41 +21,38 @@ function actionFactory(
     objectId$: ObjectIdObs<IsRotatable>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const stateService = $stateService.get(personaContext.vine);
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
-        switchMap(([, config, obj]) => {
-          if (!obj) {
-            return EMPTY;
-          }
+  const stateService = $stateService.get(personaContext.vine);
+  return pipe(
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      switchMap(([, config, obj]) => {
+        if (!obj) {
+          return EMPTY;
+        }
 
-          const $rotationDeg = obj.$rotationDeg;
-          return stateService.resolve($rotationDeg).pipe(
-              take(1),
-              map(rotationDeg => rotationDeg ?? 0),
-              tap(rotationDeg => {
-                const stops = config.stops;
-                const rotationIndex = $pipe(
-                    stops,
-                    $zip(countableIterable()),
-                    $map(([stop, index]) => {
-                      const distance = Math.abs((stop % 360) - (rotationDeg % 360));
-                      return [distance, index] as [number, number];
-                    }),
-                    $asArray(),
-                    $sort(withMap(([value]) => value, normal())),
-                )[0][1];
+        const $rotationDeg = obj.$rotationDeg;
+        return stateService.resolve($rotationDeg).pipe(
+            take(1),
+            map(rotationDeg => rotationDeg ?? 0),
+            tap(rotationDeg => {
+              const stops = config.stops;
+              const rotationIndex = $pipe(
+                  stops,
+                  $zip(countableIterable()),
+                  $map(([stop, index]) => {
+                    const distance = Math.abs((stop % 360) - (rotationDeg % 360));
+                    return [distance, index] as [number, number];
+                  }),
+                  $asArray(),
+                  $sort(withMap(([value]) => value, normal())),
+              )[0][1];
 
-                const newIndex = (rotationIndex + 1) % stops.length;
-                stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
-              }),
-              share(),
-          );
-        }),
-    );
-  };
+              const newIndex = (rotationIndex + 1) % stops.length;
+              stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
+            }),
+            share(),
+        );
+      }),
+  );
 }
 
 const DEFAULT_CONFIG: Config = {

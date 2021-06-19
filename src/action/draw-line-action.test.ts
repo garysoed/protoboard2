@@ -2,13 +2,13 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {CanvasEntry, CanvasHalfLine, CanvasLine} from '../face/canvas-entry';
 
 import {drawLineAction} from './draw-line-action';
-import {triggerKey} from './testing/trigger-key';
 
 
 test('@protoboard2/src/action/draw-line-action', init => {
@@ -43,7 +43,11 @@ test('@protoboard2/src/action/draw-line-action', init => {
         'testAction',
         personaContext,
     ).action;
-    return {action, el, halfLineId, linesId, stateService};
+
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
+
+    return {action, el, halfLineId, linesId, onTrigger$, stateService};
   });
 
   should('add the linehalf if one does not exist', () => {
@@ -52,8 +56,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       null,
@@ -78,8 +81,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       objectThat<CanvasHalfLine>().haveProperties({
@@ -113,8 +115,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       objectThat<CanvasHalfLine>().haveProperties({
@@ -139,8 +140,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       objectThat<CanvasHalfLine>().haveProperties({
@@ -169,8 +169,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       objectThat<CanvasHalfLine>().haveProperties({
@@ -208,8 +207,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
     const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
 
-    run(_.action());
-    triggerKey(_.el, {key: TriggerType.A});
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(halfLine$).to.emitSequence([
       objectThat<CanvasHalfLine>().haveProperties({

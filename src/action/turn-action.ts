@@ -1,7 +1,7 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable, of} from 'rxjs';
+import {Observable, of, pipe} from 'rxjs';
 import {switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
@@ -23,28 +23,25 @@ function actionFactory(
     objectId$: ObjectIdObs<IsMultifaced>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const stateService = $stateService.get(personaContext.vine);
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
-        switchMap(([, config, obj]) => {
-          if (!obj) {
-            return of(null);
-          }
+  const stateService = $stateService.get(personaContext.vine);
+  return pipe(
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      switchMap(([, config, obj]) => {
+        if (!obj) {
+          return of(null);
+        }
 
-          const faceCount = config.count;
-          const $faceIndex = obj.$currentFaceIndex;
-          return stateService.resolve($faceIndex).pipe(
-              take(1),
-              filterNonNullable(),
-              stateService.modifyOperator((x, faceIndex) => {
-                x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
-              }),
-          );
-        }),
-    );
-  };
+        const faceCount = config.count;
+        const $faceIndex = obj.$currentFaceIndex;
+        return stateService.resolve($faceIndex).pipe(
+            take(1),
+            filterNonNullable(),
+            stateService.modifyOperator((x, faceIndex) => {
+              x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
+            }),
+        );
+      }),
+  );
 }
 
 const DEFAULT_CONFIG: Config = {

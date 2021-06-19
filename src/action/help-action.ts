@@ -1,5 +1,5 @@
 import {PersonaContext} from 'persona';
-import {Observable, of} from 'rxjs';
+import {Observable, of, pipe} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../core/trigger-event';
@@ -15,19 +15,15 @@ export interface Config {
 }
 
 function actionFactory(
-    config$: Observable<Config>,
     actionTriggers$: Observable<readonly ActionTrigger[]>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(actionTriggers$),
-        tap(([, actionDescriptions]) => {
-          $helpService.get(personaContext.vine).show(actionDescriptions);
-        }),
-    );
-  };
+  return pipe(
+      withLatestFrom(actionTriggers$),
+      tap(([, actionDescriptions]) => {
+        $helpService.get(personaContext.vine).show(actionDescriptions);
+      }),
+  );
 }
 
 export interface HelpActionSpec {
@@ -43,7 +39,7 @@ export function helpAction(
 ): HelpActionSpec {
   const config$ = of({trigger: {type: TriggerType.QUESTION, shift: true}});
   return {
-    action: actionFactory(config$, actionTriggers$, context),
+    action: actionFactory(actionTriggers$, context),
     actionName: 'Help',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

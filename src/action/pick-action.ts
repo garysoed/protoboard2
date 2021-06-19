@@ -1,7 +1,7 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {attributeIn, PersonaContext} from 'persona';
-import {combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, Observable, of, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
@@ -17,89 +17,85 @@ import {createTrigger} from './util/setup-trigger';
 export type Config = TriggerConfig;
 
 function actionFactory(
-    config$: Observable<Config>,
     objectId$: ObjectIdObs<{}>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const vine = personaContext.vine;
-    const fromObjectSpec$ = combineLatest([
-      objectId$,
-      $getParent.get(vine),
-    ])
-        .pipe(
-            map(([objectId, getParent]) => {
-              if (!objectId) {
-                return null;
-              }
-              return getParent(objectId);
-            }),
-            switchMap(fromObjectId => {
-              if (!fromObjectId) {
-                return of(null);
-              }
-              return $resolveState.get(vine)(fromObjectId);
-            }),
-        );
-    const activeContents$ = $activeSpec.get(vine).pipe(
-        switchMap(activeSpec => {
-          if (!activeSpec) {
-            return of(undefined);
-          }
-          return $stateService.get(vine).resolve(activeSpec.$contentSpecs);
-        }),
-    );
+  const vine = personaContext.vine;
+  const fromObjectSpec$ = combineLatest([
+    objectId$,
+    $getParent.get(vine),
+  ])
+      .pipe(
+          map(([objectId, getParent]) => {
+            if (!objectId) {
+              return null;
+            }
+            return getParent(objectId);
+          }),
+          switchMap(fromObjectId => {
+            if (!fromObjectId) {
+              return of(null);
+            }
+            return $resolveState.get(vine)(fromObjectId);
+          }),
+      );
+  const activeContents$ = $activeSpec.get(vine).pipe(
+      switchMap(activeSpec => {
+        if (!activeSpec) {
+          return of(undefined);
+        }
+        return $stateService.get(vine).resolve(activeSpec.$contentSpecs);
+      }),
+  );
 
-    const moveFn$ = combineLatest([
-      fromObjectSpec$,
-      $activeSpec.get(vine),
-      activeContents$,
-      objectId$,
-    ])
-        .pipe(
-            switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
-              if (!fromObjectSpec || !activeState || !movedObjectId) {
-                return of(null);
-              }
+  const moveFn$ = combineLatest([
+    fromObjectSpec$,
+    $activeSpec.get(vine),
+    activeContents$,
+    objectId$,
+  ])
+      .pipe(
+          switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
+            if (!fromObjectSpec || !activeState || !movedObjectId) {
+              return of(null);
+            }
 
-              return moveObject(
-                  fromObjectSpec,
-                  activeState,
-                  vine,
-              )
-                  .pipe(
-                      map(fn => {
-                        if (!fn) {
-                          return null;
-                        }
+            return moveObject(
+                fromObjectSpec,
+                activeState,
+                vine,
+            )
+                .pipe(
+                    map(fn => {
+                      if (!fn) {
+                        return null;
+                      }
 
-                        return () => {
-                          const destIndex = $pipe(
-                              activeContents ?? [],
-                              $map(content => content.coordinate.index),
-                              $asArray(),
-                              $max(normal()),
-                          );
+                      return () => {
+                        const destIndex = $pipe(
+                            activeContents ?? [],
+                            $map(content => content.coordinate.index),
+                            $asArray(),
+                            $max(normal()),
+                        );
 
-                          fn(movedObjectId, {index: (destIndex ?? 0) + 1});
-                        };
-                      }),
-                  );
-            }),
-        );
+                        fn(movedObjectId, {index: (destIndex ?? 0) + 1});
+                      };
+                    }),
+                );
+          }),
+      );
 
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(moveFn$),
-        tap(([, moveFn]) => {
-          if (!moveFn) {
-            return;
-          }
+  return pipe(
+      withLatestFrom(moveFn$),
+      tap(([, moveFn]) => {
+        if (!moveFn) {
+          return;
+        }
 
-          moveFn();
-        }),
-    );
-  };
+        moveFn();
+      }),
+  );
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -119,7 +115,7 @@ export function pickAction(
     context: PersonaContext,
 ): ActionSpec<Config> {
   return {
-    action: actionFactory(config$, objectId$, context),
+    action: actionFactory(objectId$, context),
     actionName: 'Pick',
     config$,
     trigger$: config$.pipe(createTrigger(context)),

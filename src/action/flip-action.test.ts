@@ -1,15 +1,13 @@
 import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
-import {host} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {of, ReplaySubject, Subject} from 'rxjs';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 
-import {flipAction, flipActionConfigSpecs} from './flip-action';
-import {triggerKey} from './testing/trigger-key';
-import {compileConfig} from './util/compile-config';
+import {Config, flipAction} from './flip-action';
 
 
 test('@protoboard2/action/flip-action', init => {
@@ -29,50 +27,51 @@ test('@protoboard2/action/flip-action', init => {
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectSpec = {$currentFaceIndex: $faceIndex};
     const objectId$ = of(stateService.modify(x => x.add(objectSpec)));
+    const config$ = new ReplaySubject<Config>(1);
 
     const action = flipAction(
-        compileConfig(host(flipActionConfigSpecs({}))._, personaContext),
+        config$,
         objectId$,
         personaContext,
     ).action;
 
-    return {$faceIndex, action, el, personaContext, stateService};
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
+
+    return {config$, $faceIndex, action, onTrigger$, personaContext, stateService};
   });
 
   test('handleTrigger', () => {
     should('increase the face by half the face count', () => {
-      _.el.setAttribute('pb-flip-count', '4');
+      _.config$.next({count: 4, trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.F});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(_.stateService.resolve(_.$faceIndex)).to.emitWith(3);
     });
 
     should('wrap the face index by the count', () => {
-      _.el.setAttribute('pb-flip-count', '4');
+      _.config$.next({count: 4, trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.F});
-      triggerKey(_.el, {key: TriggerType.F});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(faceIndex$).to.emitSequence([1, 3, 1]);
     });
 
     should('use the config object', () => {
-      _.el.setAttribute('pb-flip-count', '4');
+      _.config$.next({count: 4, trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$faceIndex, 1));
 
-      _.el.setAttribute('pb-flip-count', '6');
+      _.config$.next({count: 6, trigger: {type: TriggerType.CLICK}});
       const faceIndex$ = createSpySubject(_.stateService.resolve(_.$faceIndex));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.F});
-      triggerKey(_.el, {key: TriggerType.F});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(faceIndex$).to.emitSequence([1, 4, 1]);
     });

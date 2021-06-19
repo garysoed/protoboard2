@@ -1,8 +1,7 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
-import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable, of} from 'rxjs';
-import {switchMap, take, withLatestFrom} from 'rxjs/operators';
+import {Observable, pipe} from 'rxjs';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -23,31 +22,32 @@ function actionFactory(
     objectId$: ObjectIdObs<IsMultifaced>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const stateService = $stateService.get(personaContext.vine);
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
-        switchMap(([, config, obj]) => {
-          if (!obj) {
-            return of(null);
-          }
+  const stateService = $stateService.get(personaContext.vine);
+  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(personaContext.vine)()).pipe(
+      map(obj => {
+        return obj?.$currentFaceIndex;
+      }),
+  );
+  const faceIndex$ = faceIndexId$.pipe(
+      switchMap(faceIndexId => {
+        return stateService.resolve(faceIndexId);
+      }),
+  );
 
-          const faceCount = config.count;
+  return pipe(
+      withLatestFrom(config$, faceIndex$, faceIndexId$),
+      tap(([, config, faceIndex, faceIndexId]) => {
+        if (faceIndex === undefined || faceIndexId === undefined) {
+          return;
+        }
 
-          // TODO: Fix
-          const $faceIndex = obj.$currentFaceIndex;
-          return stateService.resolve($faceIndex).pipe(
-              take(1),
-              filterNonNullable(),
-              stateService.modifyOperator((x, faceIndex) => x.set(
-                  $faceIndex,
-                  ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
-              )),
-          );
-        }),
-    );
-  };
+        const faceCount = config.count;
+        stateService.modify(x => x.set(
+            faceIndexId,
+            ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
+        ));
+      }),
+  );
 }
 
 const DEFAULT_CONFIG: Config = {

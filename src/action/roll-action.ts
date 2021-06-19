@@ -1,6 +1,6 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, pipe} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
@@ -21,25 +21,22 @@ function actionFactory(
     objectId$: ObjectIdObs<IsMultifaced>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const vine = personaContext.vine;
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
-        tap(([, config, obj]) => {
-          if (!obj) {
-            return;
-          }
+  const vine = personaContext.vine;
+  return pipe(
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      tap(([, config, obj]) => {
+        if (!obj) {
+          return;
+        }
 
-          const randomValue = $random.get(vine).next();
-          if (randomValue === null) {
-            throw new Error('Random produced no values');
-          }
-          const nextIndex = Math.floor(randomValue * config.count);
-          $stateService.get(vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
-        }),
-    );
-  };
+        const randomValue = $random.get(vine).next();
+        if (randomValue === null) {
+          throw new Error('Random produced no values');
+        }
+        const nextIndex = Math.floor(randomValue * config.count);
+        $stateService.get(vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
+      }),
+  );
 }
 
 const DEFAULT_CONFIG: Config = {

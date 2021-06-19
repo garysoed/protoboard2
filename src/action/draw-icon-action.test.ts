@@ -2,13 +2,13 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 
+import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {CanvasEntry, CanvasIcon} from '../face/canvas-entry';
 
 import {drawIconAction} from './draw-icon-action';
-import {triggerClick} from './testing/trigger-click';
 
 
 test('@protoboard2/src/action/draw-icon-action', init => {
@@ -42,7 +42,10 @@ test('@protoboard2/src/action/draw-icon-action', init => {
         'testAction',
         personaContext,
     ).action;
-    return {action, el, iconsId, stateService};
+
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
+    return {action, iconsId, onTrigger$, stateService};
   });
 
   should('add the icon to the state if one does not exist', () => {
@@ -50,8 +53,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(_.action());
-    triggerClick(_.el);
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([]),
@@ -76,8 +78,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    run(_.action());
-    triggerClick(_.el);
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([

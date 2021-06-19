@@ -3,16 +3,15 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject} from 'rxjs';
+import {ReplaySubject, Subject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$$activeSpec} from '../core/active-spec';
-import {TriggerType} from '../core/trigger-spec';
+import {TriggerEvent} from '../core/trigger-event';
 import {ContentSpec, IsContainer} from '../payload/is-container';
 
 import {dropAction, dropActionConfigSpecs} from './drop-action';
-import {triggerKey} from './testing/trigger-key';
 import {compileConfig} from './util/compile-config';
 
 
@@ -35,7 +34,10 @@ test('@protoboard2/action/drop-action', init => {
         personaContext,
     ).action;
 
-    return {action, el, objectId$, personaContext, stateService};
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
+
+    return {action, el, objectId$, onTrigger$, personaContext, stateService};
   });
 
   test('onTrigger', () => {
@@ -88,8 +90,7 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
-      run(_.action());
-      triggerKey(_.el, {key: TriggerType.D});
+      _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
         arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),

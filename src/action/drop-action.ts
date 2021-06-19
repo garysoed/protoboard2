@@ -1,7 +1,7 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
 import {attributeIn, enumParser, PersonaContext} from 'persona';
-import {combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, Observable, of, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
@@ -27,58 +27,55 @@ function actionFactory(
     objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
     personaContext: PersonaContext,
 ): Action {
-  return () => {
-    const vine = personaContext.vine;
-    const moveObjectFn$ = combineLatest([
-      objectId$.pipe($resolveStateOp.get(personaContext.vine)()),
-      $activeSpec.get(vine),
-    ])
-        .pipe(
-            switchMap(([toState, activeState]) => {
-              if (!toState || !activeState) {
-                return of(null);
-              }
+  const vine = personaContext.vine;
+  const moveObjectFn$ = combineLatest([
+    objectId$.pipe($resolveStateOp.get(personaContext.vine)()),
+    $activeSpec.get(vine),
+  ])
+      .pipe(
+          switchMap(([toState, activeState]) => {
+            if (!toState || !activeState) {
+              return of(null);
+            }
 
-              return $stateService.get(vine).resolve(activeState.$contentSpecs).pipe(
-                  switchMap(activeContents => {
-                    const normalizedActiveContents = activeContents ?? [];
-                    const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
-                    if (!movedObjectSpec) {
-                      return of(null);
-                    }
+            return $stateService.get(vine).resolve(activeState.$contentSpecs).pipe(
+                switchMap(activeContents => {
+                  const normalizedActiveContents = activeContents ?? [];
+                  const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
+                  if (!movedObjectSpec) {
+                    return of(null);
+                  }
 
-                    return moveObject(
-                        activeState,
-                        toState,
-                        vine,
-                    )
-                        .pipe(
-                            map(fn => {
-                              if (!fn) {
-                                return null;
-                              }
+                  return moveObject(
+                      activeState,
+                      toState,
+                      vine,
+                  )
+                      .pipe(
+                          map(fn => {
+                            if (!fn) {
+                              return null;
+                            }
 
-                              return (config: Config) => {
-                                fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
-                              };
-                            }),
-                        );
-                  }),
-              );
-            }),
-        );
-    return config$.pipe(
-        createTrigger(personaContext),
-        withLatestFrom(config$, moveObjectFn$),
-        tap(([, config, moveObjectFn]) => {
-          if (!moveObjectFn) {
-            return;
-          }
+                            return (config: Config) => {
+                              fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
+                            };
+                          }),
+                      );
+                }),
+            );
+          }),
+      );
+  return pipe(
+      withLatestFrom(config$, moveObjectFn$),
+      tap(([, config, moveObjectFn]) => {
+        if (!moveObjectFn) {
+          return;
+        }
 
-          moveObjectFn(config);
-        }),
-    );
-  };
+        moveObjectFn(config);
+      }),
+  );
 }
 
 function locate(positioning: PositioningType): number {
