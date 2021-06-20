@@ -72,8 +72,16 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
   @cache()
   protected get actions(): readonly ActionSpec[] {
     return [
-      rotateAction(compileConfig($.host._.rotateAction, this.context), this.objectId$, this.context),
-      pickAction(compileConfig($.host._.pickAction, this.context), this.objectId$, this.context),
+      this.createActionSpec(
+          rotateAction,
+          compileConfig($.host._.rotateAction, this.context),
+          'Rotate',
+      ),
+      this.createActionSpec(
+          pickAction,
+          compileConfig($.host._.pickAction, this.context),
+          'Pick',
+      ),
     ];
   }
 

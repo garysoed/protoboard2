@@ -1,14 +1,12 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
-import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable, pipe} from 'rxjs';
+import {attributeIn, integerParser} from 'persona';
+import {pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
-import {createTrigger} from './util/setup-trigger';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -17,13 +15,9 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'flip';
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    personaContext: PersonaContext,
-): Action {
-  const stateService = $stateService.get(personaContext.vine);
-  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(personaContext.vine)()).pipe(
+export function flipAction({config$, objectId$, context}: ActionParams<Config, IsMultifaced>): Action {
+  const stateService = $stateService.get(context.vine);
+  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(context.vine)()).pipe(
       map(obj => {
         return obj?.$currentFaceIndex;
       }),
@@ -60,18 +54,5 @@ export function flipActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   return {
     count: attributeIn('pb-flip-count', integerParser(), defaultConfig.count),
     trigger: attributeIn('pb-flip-trigger', triggerSpecParser(), defaultConfig.trigger),
-  };
-}
-
-export function flipAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName: 'Flip',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

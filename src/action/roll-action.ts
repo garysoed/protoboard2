@@ -1,29 +1,23 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
-import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable, pipe} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {attributeIn, integerParser} from 'persona';
+import {pipe} from 'rxjs';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {$random} from './util/random';
-import {createTrigger} from './util/setup-trigger';
 
 
 export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    personaContext: PersonaContext,
-): Action {
-  const vine = personaContext.vine;
+export function rollAction({config$, objectId$, context}: ActionParams<Config, IsMultifaced>): Action {
+  const vine = context.vine;
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(context.vine)())),
       tap(([, config, obj]) => {
         if (!obj) {
           return;
@@ -49,19 +43,5 @@ export function rollActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   return {
     count: attributeIn('pb-roll-count', integerParser(), defaultConfig.count),
     trigger: attributeIn('pb-roll-trigger', triggerSpecParser(), defaultConfig.trigger),
-  };
-}
-
-
-export function rollAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName: 'Roll',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

@@ -20,7 +20,7 @@ test('@protoboard2/action/drop-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $stateService, withValue: stateService},
@@ -28,16 +28,16 @@ test('@protoboard2/action/drop-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>>(1);
-    const action = dropAction(
-        compileConfig(host(dropActionConfigSpecs({}))._, personaContext),
-        objectId$,
-        personaContext,
-    ).action;
+    const action = dropAction({
+      config$: compileConfig(host(dropActionConfigSpecs({}))._, context),
+      objectId$,
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, objectId$, onTrigger$, personaContext, stateService};
+    return {action, el, objectId$, onTrigger$, personaContext: context, stateService};
   });
 
   test('onTrigger', () => {

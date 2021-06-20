@@ -17,7 +17,7 @@ test('@protoboard2/action/turn-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       overrides: [
         {override: $stateService, withValue: stateService},
       ],
@@ -27,16 +27,16 @@ test('@protoboard2/action/turn-action', init => {
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
     const config$ = new ReplaySubject<Config>(1);
-    const action = turnAction(
-        config$,
-        of(objectId),
-        personaContext,
-    ).action;
+    const action = turnAction({
+      config$,
+      objectId$: of(objectId),
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {$faceIndex, action, config$, el, onTrigger$, personaContext, stateService};
+    return {$faceIndex, action, config$, el, onTrigger$, personaContext: context, stateService};
   });
 
   test('handleTrigger', () => {

@@ -17,7 +17,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $stateService, withValue: stateService},
@@ -31,17 +31,16 @@ test('@protoboard2/src/action/draw-icon-action', init => {
       halfLine: x.add(null),
     }));
 
-    const action = drawIconAction(
-        of({
-          x: 10,
-          y: 20,
-          configName: CONFIG_NAME,
-          trigger: {type: TriggerType.CLICK},
-        }),
-        of(objectId),
-        'testAction',
-        personaContext,
-    ).action;
+    const action = drawIconAction({
+      config$: of({
+        x: 10,
+        y: 20,
+        configName: CONFIG_NAME,
+        trigger: {type: TriggerType.CLICK},
+      }),
+      objectId$: of(objectId),
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));

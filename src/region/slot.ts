@@ -60,7 +60,7 @@ export class Slot extends BaseComponent<SlotSpec, typeof $> {
   @cache()
   protected get actions(): readonly ActionSpec[] {
     return [
-      dropAction(compileConfig($.host._.dropAction, this.context), this.objectId$, this.context),
+      this.createActionSpec(dropAction, compileConfig($.host._.dropAction, this.context), 'Drop'),
     ];
   }
 

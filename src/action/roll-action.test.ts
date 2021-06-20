@@ -21,7 +21,7 @@ test('@protoboard2/action/roll-action', init => {
     const seed = new FakeSeed();
     const stateService = fakeStateService();
 
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $random, withValue: fromSeed(seed)},
@@ -32,11 +32,11 @@ test('@protoboard2/action/roll-action', init => {
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
     const config$ = new ReplaySubject<Config>(1);
-    const action = rollAction(
-        config$,
-        of(objectId),
-        personaContext,
-    ).action;
+    const action = rollAction({
+      config$,
+      objectId$: of(objectId),
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));

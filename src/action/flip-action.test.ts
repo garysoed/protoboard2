@@ -17,7 +17,7 @@ test('@protoboard2/action/flip-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $stateService, withValue: stateService},
@@ -29,16 +29,16 @@ test('@protoboard2/action/flip-action', init => {
     const objectId$ = of(stateService.modify(x => x.add(objectSpec)));
     const config$ = new ReplaySubject<Config>(1);
 
-    const action = flipAction(
-        config$,
-        objectId$,
-        personaContext,
-    ).action;
+    const action = flipAction({
+      config$,
+      objectId$,
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {config$, $faceIndex, action, onTrigger$, personaContext, stateService};
+    return {config$, $faceIndex, action, onTrigger$, personaContext: context, stateService};
   });
 
   test('handleTrigger', () => {

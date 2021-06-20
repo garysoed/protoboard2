@@ -4,16 +4,20 @@ import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, _p} from 'mask';
 import {PersonaContext} from 'persona';
 import {Input} from 'persona/export/internal';
-import {combineLatest, defer, EMPTY, merge, Observable, of, pipe, OperatorFunction} from 'rxjs';
+import {combineLatest, defer, EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {Logger} from 'santa';
 
-import {ActionSpec, TriggerConfig} from '../action/action-spec';
+import {Action, ActionParams, ActionSpec, TriggerConfig} from '../action/action-spec';
 import {helpAction} from '../action/help-action';
 import {ActionTrigger} from '../action/help-service';
 import {createTrigger} from '../action/util/setup-trigger';
 
 import {TriggerEvent} from './trigger-event';
+import {TriggerType} from './trigger-spec';
+
+
+type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
 
 
 const LOG = new Logger('pb.core.BaseComponent');
@@ -34,6 +38,19 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
   }
 
   protected abstract get actions(): readonly ActionSpec[];
+
+  protected createActionSpec<C extends TriggerConfig>(
+      factory: ActionFactory<C, O>,
+      config$: Observable<C>,
+      actionName: string,
+  ): ActionSpec {
+    return {
+      action: factory({config$, objectId$: this.objectId$, context: this.context}),
+      actionName,
+      triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
+      trigger$: config$.pipe(createTrigger(this.context)),
+    };
+  }
 
   protected createTrigger(): OperatorFunction<TriggerConfig, TriggerEvent> {
     return pipe(createTrigger(this.context));
@@ -75,9 +92,17 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
         obs.push(this.setupTrigger(actionSpec));
       }
 
-      const actionDescriptions$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
-      const helpActionSpec = helpAction(actionDescriptions$, this.context);
-      obs.push(this.setupTrigger(helpActionSpec));
+      const actionTriggers$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
+      obs.push(this.setupTrigger(this.createActionSpec(
+          helpAction,
+          actionTriggers$.pipe(
+              map(actionTriggers => ({
+                actionTriggers,
+                trigger: {type: TriggerType.QUESTION, shift: true},
+              })),
+          ),
+          'Help',
+      )));
 
       return merge(...obs);
     }));

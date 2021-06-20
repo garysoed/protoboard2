@@ -1,6 +1,6 @@
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {createFakeContext} from 'persona/export/testing';
-import {of, Subject} from 'rxjs';
+import {of, Subject, EMPTY} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
@@ -16,12 +16,16 @@ test('@protoboard2/action/help-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const personaContext = createFakeContext({shadowRoot});
-    const action = helpAction(
-        of([
+    const action = helpAction({
+      config$: of({
+        actionTriggers: [
           {trigger: TRIGGER, actionName: 'test'},
-        ]),
-        personaContext,
-    ).action;
+        ],
+        trigger: {type: TriggerType.CLICK},
+      }),
+      context: personaContext,
+      objectId$: EMPTY,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));

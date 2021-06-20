@@ -1,9 +1,8 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, Subject} from 'rxjs';
+import {ReplaySubject, Subject, EMPTY} from 'rxjs';
 
 import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
@@ -12,8 +11,7 @@ import {TriggerEvent} from '../core/trigger-event';
 import {$setParent} from '../objects/content-map';
 import {ContentSpec} from '../payload/is-container';
 
-import {pickAction, pickActionConfigSpecs} from './pick-action';
-import {compileConfig} from './util/compile-config';
+import {pickAction} from './pick-action';
 
 
 test('@protoboard2/action/pick-action', init => {
@@ -21,7 +19,7 @@ test('@protoboard2/action/pick-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $stateService, withValue: stateService},
@@ -29,16 +27,16 @@ test('@protoboard2/action/pick-action', init => {
     });
 
     const objectId$ = new ReplaySubject<StateId<{}>>(1);
-    const action = pickAction(
-        compileConfig(host(pickActionConfigSpecs({}))._, personaContext),
-        objectId$,
-        personaContext,
-    ).action;
+    const action = pickAction({
+      config$: EMPTY,
+      objectId$,
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, objectId$, onTrigger$, personaContext, stateService};
+    return {action, el, objectId$, onTrigger$, personaContext: context, stateService};
   });
 
   test('onTrigger', () => {

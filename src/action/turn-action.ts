@@ -1,15 +1,13 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {attributeIn, integerParser, PersonaContext} from 'persona';
-import {Observable, of, pipe} from 'rxjs';
-import {map, switchMap, take, withLatestFrom} from 'rxjs/operators';
+import {attributeIn, integerParser} from 'persona';
+import {of, pipe} from 'rxjs';
+import {switchMap, take, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
-import {createTrigger} from './util/setup-trigger';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -18,14 +16,10 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'turn';
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    personaContext: PersonaContext,
-): Action {
-  const stateService = $stateService.get(personaContext.vine);
+export function turnAction({config$, objectId$, context}: ActionParams<Config, IsMultifaced>): Action {
+  const stateService = $stateService.get(context.vine);
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(context.vine)())),
       switchMap(([, config, obj]) => {
         if (!obj) {
           return of(null);
@@ -55,19 +49,5 @@ export function turnActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   return {
     count: attributeIn('pb-turn-count', integerParser(), defaultConfig.count),
     trigger: attributeIn('pb-turn-trigger', triggerSpecParser(), defaultConfig.trigger),
-  };
-}
-
-
-export function turnAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsMultifaced>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName: 'Turn',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

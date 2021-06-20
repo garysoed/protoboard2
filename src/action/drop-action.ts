@@ -1,16 +1,14 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
-import {attributeIn, enumParser, PersonaContext} from 'persona';
-import {combineLatest, Observable, of, pipe} from 'rxjs';
+import {attributeIn, enumParser} from 'persona';
+import {combineLatest, of, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
-import {createTrigger} from './util/setup-trigger';
 
 
 export enum PositioningType {
@@ -22,14 +20,12 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
-    personaContext: PersonaContext,
+export function dropAction(
+    {config$, objectId$, context}: ActionParams<Config, IsContainer<'indexed'>>,
 ): Action {
-  const vine = personaContext.vine;
+  const vine = context.vine;
   const moveObjectFn$ = combineLatest([
-    objectId$.pipe($resolveStateOp.get(personaContext.vine)()),
+    objectId$.pipe($resolveStateOp.get(context.vine)()),
     $activeSpec.get(vine),
   ])
       .pipe(
@@ -99,18 +95,5 @@ export function dropActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
         enumParser<PositioningType>(PositioningType),
         defaultConfig.positioning,
     ),
-  };
-}
-
-export function dropAction(
-    config$: Observable<Config>,
-    objectId$: Observable<StateId<IsContainer<'indexed'>>|undefined>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName: 'Drop',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

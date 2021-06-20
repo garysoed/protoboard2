@@ -83,11 +83,11 @@ export class D2 extends BaseComponent<D2Spec, typeof $> {
   @cache()
   protected get actions(): readonly ActionSpec[] {
     return [
-      rotateAction(compileConfig($.host._.rotateAction, this.context), this.objectId$, this.context),
-      flipAction(compileConfig($.host._.flipAction, this.context), this.objectId$, this.context),
-      turnAction(compileConfig($.host._.turnAction, this.context), this.objectId$, this.context),
-      rollAction(compileConfig($.host._.rollAction, this.context), this.objectId$, this.context),
-      pickAction(compileConfig($.host._.pickAction, this.context), this.objectId$, this.context),
+      this.createActionSpec(rotateAction, compileConfig($.host._.rotateAction, this.context), 'Rotate'),
+      this.createActionSpec(flipAction, compileConfig($.host._.flipAction, this.context), 'Flip'),
+      this.createActionSpec(turnAction, compileConfig($.host._.turnAction, this.context), 'Turn'),
+      this.createActionSpec(rollAction, compileConfig($.host._.rollAction, this.context), 'Roll'),
+      this.createActionSpec(pickAction, compileConfig($.host._.pickAction, this.context), 'Pick'),
     ];
   }
 

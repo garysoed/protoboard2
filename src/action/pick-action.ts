@@ -1,26 +1,21 @@
 import {$resolveState, $stateService} from 'grapevine';
 import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
-import {attributeIn, PersonaContext} from 'persona';
-import {combineLatest, Observable, of, pipe} from 'rxjs';
+import {attributeIn} from 'persona';
+import {combineLatest, of, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {$getParent} from '../objects/content-map';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 import {moveObject} from './util/move-object';
-import {createTrigger} from './util/setup-trigger';
 
 
 export type Config = TriggerConfig;
 
-function actionFactory(
-    objectId$: ObjectIdObs<{}>,
-    personaContext: PersonaContext,
-): Action {
-  const vine = personaContext.vine;
+export function pickAction({objectId$, context}: ActionParams<Config, {}>): Action {
+  const vine = context.vine;
   const fromObjectSpec$ = combineLatest([
     objectId$,
     $getParent.get(vine),
@@ -106,18 +101,5 @@ export function pickActionConfigSpecs(defaultOverride: Partial<Config>): Unresol
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     trigger: attributeIn('pb-pick-trigger', triggerSpecParser(), defaultConfig.trigger),
-  };
-}
-
-export function pickAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<{}>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(objectId$, context),
-    actionName: 'Pick',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

@@ -17,7 +17,7 @@ test('@protoboard2/action/rotate-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       overrides: [
         {override: $stateService, withValue: stateService},
       ],
@@ -27,11 +27,11 @@ test('@protoboard2/action/rotate-action', init => {
     const $rotationDeg = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$rotationDeg}));
     const config$ = new ReplaySubject<Config>(1);
-    const action = rotateAction(
-        config$,
-        of(objectId),
-        personaContext,
-    ).action;
+    const action = rotateAction({
+      config$,
+      objectId$: of(objectId),
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));

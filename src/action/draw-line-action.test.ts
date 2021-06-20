@@ -17,7 +17,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const el = document.createElement('div');
     const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const personaContext = createFakeContext({
+    const context = createFakeContext({
       shadowRoot,
       overrides: [
         {override: $stateService, withValue: stateService},
@@ -32,17 +32,16 @@ test('@protoboard2/src/action/draw-line-action', init => {
       halfLine: halfLineId,
     }));
 
-    const action = drawLineAction(
-        of({
-          x: 10,
-          y: 20,
-          configName: CONFIG_NAME,
-          trigger: {type: TriggerType.A},
-        }),
-        of(objectId),
-        'testAction',
-        personaContext,
-    ).action;
+    const action = drawLineAction({
+      config$: of({
+        x: 10,
+        y: 20,
+        configName: CONFIG_NAME,
+        trigger: {type: TriggerType.A},
+      }),
+      objectId$: of(objectId),
+      context,
+    });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));

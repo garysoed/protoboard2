@@ -1,29 +1,23 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {attributeIn, integerParser, listParser, PersonaContext} from 'persona';
-import {EMPTY, Observable, pipe} from 'rxjs';
+import {attributeIn, integerParser, listParser} from 'persona';
+import {EMPTY, pipe} from 'rxjs';
 import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
-import {createTrigger} from './util/setup-trigger';
+import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsRotatable>,
-    personaContext: PersonaContext,
-): Action {
-  const stateService = $stateService.get(personaContext.vine);
+export function rotateAction({config$, objectId$, context}: ActionParams<Config, IsRotatable>): Action {
+  const stateService = $stateService.get(context.vine);
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(personaContext.vine)())),
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(context.vine)())),
       switchMap(([, config, obj]) => {
         if (!obj) {
           return EMPTY;
@@ -65,19 +59,5 @@ export function rotateActionConfigSpecs(defaultOverride: Partial<Config>): Unres
   return {
     stops: attributeIn('pb-rotate-stops', listParser(integerParser()), defaultConfig.stops),
     trigger: attributeIn('pb-rotate-trigger', triggerSpecParser(), defaultConfig.trigger),
-  };
-}
-
-
-export function rotateAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<IsRotatable>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName: 'Rotate',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
   };
 }

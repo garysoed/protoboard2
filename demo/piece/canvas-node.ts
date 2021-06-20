@@ -133,49 +133,45 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
 
   protected get actions(): readonly ActionSpec[] {
     return [
-      drawIconAction(
+      this.createActionSpec(
+          drawIconAction,
           combineLatestObject({
             configName: this.iconConfigName$,
             x: this.x$,
             y: this.y$,
             trigger: this.iconTrigger$,
           }),
-          this.objectId$,
           'Draw icon',
-          this.context,
       ),
-      drawLineAction(
+      this.createActionSpec(
+          drawLineAction,
           combineLatestObject({
             configName: of(LineType.CYAN),
             x: this.lineX$,
             y: this.lineY$,
             trigger: of({type: TriggerType.A}),
           }),
-          this.objectId$,
           'Draw cyan line',
-          this.context,
       ),
-      drawLineAction(
+      this.createActionSpec(
+          drawLineAction,
           combineLatestObject({
             configName: of(LineType.MAGENTA),
             x: this.lineX$,
             y: this.lineY$,
             trigger: of({type: TriggerType.S}),
           }),
-          this.objectId$,
           'Draw magenta line',
-          this.context,
       ),
-      drawLineAction(
+      this.createActionSpec(
+          drawLineAction,
           combineLatestObject({
             configName: of(LineType.YELLOW),
             x: this.lineX$,
             y: this.lineY$,
             trigger: of({type: TriggerType.D}),
           }),
-          this.objectId$,
           'Draw yellow line',
-          this.context,
       ),
     ];
   }

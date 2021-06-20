@@ -1,17 +1,15 @@
-import {attributeIn, PersonaContext} from 'persona';
-import {NEVER, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {attributeIn} from 'persona';
+import {NEVER} from 'rxjs';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 
-import {Action, ActionSpec, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
-import {createTrigger} from './util/setup-trigger';
+import {Action, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 
 
 type Config = TriggerConfig;
 
 
-function actionFactory(): Action {
+export function shuffleAction(): Action {
   return () => NEVER;
 }
 
@@ -26,15 +24,3 @@ export function shuffleActionConfigSpecs(defaultOverride: Partial<Config>): Unre
   };
 }
 
-
-export function shuffleAction(
-    config$: Observable<Config>,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(),
-    actionName: 'Shuffle',
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
-  };
-}

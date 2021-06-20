@@ -1,14 +1,11 @@
 import {$resolveStateOp, $stateService} from 'grapevine';
 import {$asArray, $filter, $find, $pipe} from 'gs-tools/export/collect';
-import {PersonaContext} from 'persona';
-import {Observable, pipe} from 'rxjs';
-import {switchMap, tap, map, withLatestFrom} from 'rxjs/operators';
+import {pipe} from 'rxjs';
+import {switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {CanvasEntry} from '../face/canvas-entry';
 
-import {Action, ActionSpec, TriggerConfig} from './action-spec';
-import {ObjectIdObs} from './object-id-obs';
-import {createTrigger} from './util/setup-trigger';
+import {Action, ActionParams, TriggerConfig} from './action-spec';
 
 
 export interface Config extends TriggerConfig {
@@ -17,13 +14,9 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-function actionFactory(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<CanvasEntry>,
-    personaContext: PersonaContext,
-): Action {
-  const stateService = $stateService.get(personaContext.vine);
-  const entry$ = objectId$.pipe($resolveStateOp.get(personaContext.vine)());
+export function drawIconAction({config$, objectId$, context}: ActionParams<Config, CanvasEntry>): Action {
+  const stateService = $stateService.get(context.vine);
+  const entry$ = objectId$.pipe($resolveStateOp.get(context.vine)());
   const icons$ = entry$.pipe(
       switchMap(entry => {
         return stateService.resolve(entry?.icons);
@@ -60,18 +53,4 @@ function actionFactory(
         });
       }),
   );
-}
-
-export function drawIconAction(
-    config$: Observable<Config>,
-    objectId$: ObjectIdObs<CanvasEntry>,
-    actionName: string,
-    context: PersonaContext,
-): ActionSpec {
-  return {
-    action: actionFactory(config$, objectId$, context),
-    actionName,
-    triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-    trigger$: config$.pipe(createTrigger(context)),
-  };
 }
