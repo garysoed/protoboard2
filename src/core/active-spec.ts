@@ -1,6 +1,5 @@
 import {$resolveState, $stateService, source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
-import {Observable} from 'rxjs';
+import {Resolver, StateId} from 'gs-tools/export/state';
 
 import {activeSpec, ActiveSpec} from './active';
 
@@ -17,7 +16,7 @@ export const $$activeSpec = source<StateId<ActiveSpec>>(
     },
 );
 
-export const $activeSpec = source<Observable<ActiveSpec|undefined>>(
+export const $activeSpec = source<Resolver<ActiveSpec>>(
     'activeSpec',
     vine => $resolveState.get(vine)($$activeSpec.get(vine)),
 );

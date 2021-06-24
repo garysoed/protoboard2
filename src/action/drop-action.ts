@@ -1,7 +1,7 @@
-import {$resolveStateOp, $stateService} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {attributeIn, enumParser} from 'persona';
-import {combineLatest, of, pipe} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {combineLatest, pipe} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
@@ -24,53 +24,26 @@ export function dropAction(
     {config$, objectId$, context}: ActionParams<Config, IsContainer>,
 ): Action {
   const vine = context.vine;
-  const moveObjectFn$ = combineLatest([
-    objectId$.pipe($resolveStateOp.get(context.vine)()),
-    $activeSpec.get(vine),
+  const moveParams$ = combineLatest([
+    $activeSpec.get(vine).$('$contentSpecs'),
+    config$,
   ])
       .pipe(
-          switchMap(([toState, activeState]) => {
-            if (!toState || !activeState) {
-              return of(null);
-            }
-
-            return $stateService.get(vine).resolve(activeState.$contentSpecs).pipe(
-                switchMap(activeContents => {
-                  const normalizedActiveContents = activeContents ?? [];
-                  const movedObjectSpec = normalizedActiveContents[normalizedActiveContents.length - 1];
-                  if (!movedObjectSpec) {
-                    return of(null);
-                  }
-
-                  return moveObject(
-                      activeState,
-                      toState,
-                      vine,
-                  )
-                      .pipe(
-                          map(fn => {
-                            if (!fn) {
-                              return null;
-                            }
-
-                            return (config: Config) => {
-                              fn(movedObjectSpec, locate(config.positioning));
-                            };
-                          }),
-                      );
-                }),
-            );
+          map(([activeContents, config]) => {
+            const normalizedActiveContents = activeContents ?? [];
+            const id = normalizedActiveContents[normalizedActiveContents.length - 1];
+            const toIndex = locate(config.positioning);
+            return {id, toIndex};
           }),
       );
   return pipe(
-      withLatestFrom(config$, moveObjectFn$),
-      tap(([, config, moveObjectFn]) => {
-        if (!moveObjectFn) {
-          return;
-        }
-
-        moveObjectFn(config);
-      }),
+      withLatestFrom(moveParams$),
+      map(([, moveParams]) => moveParams),
+      moveObject(
+          $activeSpec.get(vine),
+          $stateService.get(vine).resolve(objectId$),
+          vine,
+      ),
   );
 }
 

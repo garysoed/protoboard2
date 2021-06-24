@@ -1,47 +1,51 @@
 import {$stateService, Vine} from 'grapevine';
 import {$asArray, $filter, $pipe} from 'gs-tools/export/collect';
-import {StateId} from 'gs-tools/export/state';
-import {combineLatest, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Resolver, StateId} from 'gs-tools/export/state';
+import {OperatorFunction, pipe} from 'rxjs';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
 import {IsContainer} from '../../payload/is-container';
 
 
-type MoveObjectFn = (movedObjectId: StateId<unknown>, toIndex: number) => void;
+interface Params {
+  readonly id: StateId<unknown>;
+  readonly toIndex: number;
+}
+
 export function moveObject(
-    fromContainer: IsContainer,
-    toContainer: IsContainer,
+    fromContainer: Resolver<IsContainer>,
+    toContainer: Resolver<IsContainer>,
     vine: Vine,
-): Observable<MoveObjectFn|null> {
+): OperatorFunction<Params, unknown> {
   const stateService = $stateService.get(vine);
-  return combineLatest([
-    stateService.resolve(fromContainer.$contentSpecs),
-    stateService.resolve(toContainer.$contentSpecs),
-  ])
-      .pipe(
-          map(([fromContentSpecs, toContentSpecs]) => {
-            if (!fromContentSpecs || !toContentSpecs) {
-              return null;
-            }
 
-            return (movedObjectId: StateId<unknown>, toIndex: number) => {
-              stateService.modify(x => {
-                x.set(
-                    fromContainer.$contentSpecs,
-                    $pipe(
-                        fromContentSpecs,
-                        $filter(spec => spec.id !== movedObjectId.id),
-                        $asArray(),
-                    ),
-                );
+  return pipe(
+      withLatestFrom(
+          fromContainer.$('$contentSpecs'),
+          toContainer.$('$contentSpecs'),
+          fromContainer._('$contentSpecs'),
+          toContainer._('$contentSpecs'),
+      ),
+      tap(([{id, toIndex}, fromContentSpecs, toContentSpecs, $fromContentSpecs, $toContentSpecs]) => {
+        if (!fromContentSpecs || !toContentSpecs || !$fromContentSpecs || !$toContentSpecs) {
+          return;
+        }
+        stateService.modify(x => {
+          x.set(
+              $fromContentSpecs,
+              $pipe(
+                  fromContentSpecs,
+                  $filter(spec => spec.id !== id.id),
+                  $asArray(),
+              ),
+          );
 
-                // Add the moved object to the destination.
-                const newToContentSpecs = [...toContentSpecs];
-                newToContentSpecs.splice(toIndex, 0, movedObjectId);
-                x.set(toContainer.$contentSpecs, newToContentSpecs);
-              });
-            };
-          }),
-      );
+          // Add the moved object to the destination.
+          const newToContentSpecs = [...toContentSpecs];
+          newToContentSpecs.splice(toIndex, 0, id);
+          x.set($toContentSpecs, newToContentSpecs);
+        });
+      }),
+  );
 }
 

@@ -1,7 +1,7 @@
-import {$resolveState, $stateService} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {attributeIn} from 'persona';
-import {combineLatest, of, pipe} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {combineLatest, EMPTY, of, pipe} from 'rxjs';
+import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
@@ -15,7 +15,8 @@ export type Config = TriggerConfig;
 
 export function pickAction({objectId$, context}: ActionParams<Config, {}>): Action {
   const vine = context.vine;
-  const fromObjectSpec$ = combineLatest([
+  const stateService = $stateService.get(vine);
+  const fromObjectId$ = combineLatest([
     objectId$,
     $getParent.get(vine),
   ])
@@ -26,63 +27,23 @@ export function pickAction({objectId$, context}: ActionParams<Config, {}>): Acti
             }
             return getParent(objectId);
           }),
-          switchMap(fromObjectId => {
-            if (!fromObjectId) {
-              return of(null);
-            }
-            return $resolveState.get(vine)(fromObjectId);
-          }),
-      );
-  const activeContents$ = $activeSpec.get(vine).pipe(
-      switchMap(activeSpec => {
-        if (!activeSpec) {
-          return of(undefined);
-        }
-        return $stateService.get(vine).resolve(activeSpec.$contentSpecs);
-      }),
-  );
-
-  const moveFn$ = combineLatest([
-    fromObjectSpec$,
-    $activeSpec.get(vine),
-    activeContents$,
-    objectId$,
-  ])
-      .pipe(
-          switchMap(([fromObjectSpec, activeState, activeContents, movedObjectId]) => {
-            if (!fromObjectSpec || !activeState || !movedObjectId) {
-              return of(null);
-            }
-
-            return moveObject(
-                fromObjectSpec,
-                activeState,
-                vine,
-            )
-                .pipe(
-                    map(fn => {
-                      if (!fn) {
-                        return null;
-                      }
-
-                      return () => {
-                        const destIndex = activeContents?.length ?? 0;
-                        fn(movedObjectId, destIndex);
-                      };
-                    }),
-                );
-          }),
       );
 
   return pipe(
-      withLatestFrom(moveFn$),
-      tap(([, moveFn]) => {
-        if (!moveFn) {
-          return;
+      withLatestFrom(
+          $activeSpec.get(vine).$('$contentSpecs'),
+          objectId$,
+      ),
+      switchMap(([, activeContents, movedObjectId]) => {
+        if (!movedObjectId) {
+          return EMPTY;
         }
 
-        moveFn();
+        const toIndex = activeContents?.length ?? 0;
+        return of({id: movedObjectId, toIndex}).pipe(
+        );
       }),
+      moveObject(stateService.resolve(fromObjectId$), $activeSpec.get(vine), vine),
   );
 }
 

@@ -1,7 +1,7 @@
 import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {take, tap} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 import {moveObject} from './move-object';
 
@@ -22,25 +22,27 @@ test('@protoboard2/action/util/move-object', () => {
     const toSpec1 = stateService.modify(x => x.add({}));
     const toSpec2 = stateService.modify(x => x.add({}));
 
-    const $fromContentSpecs = stateService.modify(x => x.add([fromSpec1, movedSpec, fromSpec2]));
-    const $toContentSpecs = stateService.modify(x => x.add([toSpec1, toSpec2]));
+    const $fromContainer = stateService.modify(x => x.add({
+      $contentSpecs: x.add([fromSpec1, movedSpec, fromSpec2]),
+    }));
+    const $toContainer = stateService.modify(x => x.add({
+      $contentSpecs: x.add([toSpec1, toSpec2]),
+    }));
 
     const fromContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-        stateService.resolve($fromContentSpecs),
+        stateService.resolve($fromContainer).$('$contentSpecs'),
     );
     const toContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-        stateService.resolve($toContentSpecs),
+        stateService.resolve($toContainer).$('$contentSpecs'),
     );
 
-    run(moveObject(
-        {$contentSpecs: $fromContentSpecs},
-        {$contentSpecs: $toContentSpecs},
-        vine,
-    )
-        .pipe(
-            take(1),
-            tap(fn => fn!(movedSpec, 2)),
-        ));
+    run(of({id: movedSpec, toIndex: 2}).pipe(
+        moveObject(
+            stateService.resolve($fromContainer),
+            stateService.resolve($toContainer),
+            vine,
+        ),
+    ));
 
     assert(fromContentIds$).to.emitWith(
         arrayThat<StateId<unknown>>().haveExactElements([fromSpec1, fromSpec2]),
