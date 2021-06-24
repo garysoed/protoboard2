@@ -1,16 +1,14 @@
 import {$stateService} from 'grapevine';
 import {assert, createSpySubject, run, should, test} from 'gs-testing';
 import {arrayFrom} from 'gs-tools/export/collect';
-import {fakeStateService} from 'gs-tools/export/state';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {host, multi, renderNode, setId} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {createIndexed} from '../coordinate/indexed';
 import {$getParent} from '../objects/content-map';
 import {$registerRenderObject} from '../objects/render-object-spec';
-import {ContentSpec} from '../payload/is-container';
 
 import {renderContents} from './render-contents';
 
@@ -33,7 +31,7 @@ test('@protoboard2/render/render-contents', init => {
     const $ = host({content: multi(slotName)});
 
     const [$contentSpecs, $parentSpec] = stateService.modify(x => {
-      const $contentSpecs = x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]);
+      const $contentSpecs = x.add<ReadonlyArray<StateId<unknown>>>([]);
       return [
         $contentSpecs,
         x.add({containerType: 'indexed', $contentSpecs} as const),
@@ -50,19 +48,19 @@ test('@protoboard2/render/render-contents', init => {
       const $object1Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object1))),
       );
-      const spec1 = {objectId: $object1, coordinate: createIndexed(0)};
+      const spec1 = $object1;
 
       const $object2 = _.stateService.modify(x => x.add({}));
       const $object2Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object2))),
       );
-      const spec2 = {objectId: $object2, coordinate: createIndexed(1)};
+      const spec2 = $object2;
 
       const $object3 = _.stateService.modify(x => x.add({}));
       const $object3Parent = createSpySubject(
           $getParent.get(_.context.vine).pipe(map(getFn => getFn($object3))),
       );
-      const spec3 = {objectId: $object3, coordinate: createIndexed(2)};
+      const spec3 = $object3;
 
       const el1 = setId(document.createElement('div1'), {});
       const el2 = setId(document.createElement('div2'), {});

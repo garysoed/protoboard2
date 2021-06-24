@@ -4,7 +4,7 @@ import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$registerRenderObject, $slot, D2, D2Spec, d2Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
+import {$registerRenderObject, $slot, D2, D2Spec, d2Spec, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
 import {DocumentationTemplate} from '../template/documentation-template';
 
@@ -30,11 +30,11 @@ const $$coin = source<StateId<D2Spec>>(
 
 const $state = source<State>('d2state', vine => $stateService.get(vine).modify(x => ({
   cardSlot: x.add(slotSpec(
-      {$contentSpecs: x.add(indexedContentSpecs([$$card.get(vine)]))},
+      {$contentSpecs: x.add([$$card.get(vine)])},
       x,
   )),
   coinSlot: x.add(slotSpec(
-      {$contentSpecs: x.add(indexedContentSpecs([$$coin.get(vine)]))},
+      {$contentSpecs: x.add([$$coin.get(vine)])},
       x,
   )),
 })));

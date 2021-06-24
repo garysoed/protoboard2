@@ -4,7 +4,7 @@ import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$registerRenderObject, $slot, D6, d6Spec, D6Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
+import {$registerRenderObject, $slot, D6, d6Spec, D6Spec, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
 import {DocumentationTemplate} from '../template/documentation-template';
 
@@ -22,7 +22,7 @@ const $$dice = source<StateId<D6Spec>>(
 );
 
 const $state = source<State>('d6state', vine => $stateService.get(vine).modify(x => ({
-  diceSlot: x.add(slotSpec({$contentSpecs: x.add(indexedContentSpecs([$$dice.get(vine)]))}, x)),
+  diceSlot: x.add(slotSpec({$contentSpecs: x.add([$$dice.get(vine)])}, x)),
 })));
 
 export const $d6Demo = {

@@ -10,7 +10,7 @@ import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {shuffleAction, shuffleActionConfigSpecs} from '../action/shuffle-action';
 import {compileConfig} from '../action/util/compile-config';
 import {BaseComponent} from '../core/base-component';
-import {ContentSpec, IsContainer} from '../payload/is-container';
+import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
 import template from './deck.html';
@@ -32,16 +32,16 @@ export const $ = {
   }),
 };
 
-export type DeckSpec = IsContainer<'indexed'>;
+export type DeckSpec = IsContainer;
 
 interface Input<P> {
   readonly type: string;
-  readonly $contentSpecs: StateId<ReadonlyArray<ContentSpec<'indexed'>>>;
+  readonly $contentSpecs: StateId<ReadonlyArray<StateId<unknown>>>;
   readonly payload: P;
 }
 
 export function deckSpec<P>(input: Input<P>): DeckSpec {
-  return {...input, containerType: 'indexed'};
+  return {...input};
 }
 
 @_p.customElement({

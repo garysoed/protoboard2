@@ -2,14 +2,12 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, Subject, EMPTY} from 'rxjs';
+import {EMPTY, ReplaySubject, Subject} from 'rxjs';
 
-import {createIndexed, Indexed} from '../coordinate/indexed';
 import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerEvent} from '../core/trigger-event';
 import {$setParent} from '../objects/content-map';
-import {ContentSpec} from '../payload/is-container';
 
 import {pickAction} from './pick-action';
 
@@ -41,24 +39,10 @@ test('@protoboard2/action/pick-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const movedId = _.stateService.modify(x => x.add({}));
-      const otherSpec1 = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(11),
-      };
-      const movedSpec = {
-        objectId: movedId,
-        coordinate: createIndexed(1),
-      };
-      const otherSpec2 = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(12),
-      };
-
-      const otherActiveSpec = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(10),
-      };
+      const otherSpec1 = _.stateService.modify(x => x.add({}));
+      const movedSpec = _.stateService.modify(x => x.add({}));
+      const otherSpec2 = _.stateService.modify(x => x.add({}));
+      const otherActiveSpec = _.stateService.modify(x => x.add({}));
 
       const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec]));
       const $targetContentSpecs = _.stateService.modify(x => x.add([otherSpec1, movedSpec, otherSpec2]));
@@ -74,33 +58,32 @@ test('@protoboard2/action/pick-action', init => {
           })));
 
       const setParent = $setParent.get(_.personaContext.vine);
-      setParent(otherActiveSpec.objectId, $$activeSpec.get(_.personaContext.vine));
-      setParent(otherSpec1.objectId, $container);
-      setParent(movedSpec.objectId, $container);
-      setParent(otherSpec2.objectId, $container);
+      setParent(otherActiveSpec, $$activeSpec.get(_.personaContext.vine));
+      setParent(otherSpec1, $container);
+      setParent(movedSpec, $container);
+      setParent(otherSpec2, $container);
 
-      _.objectId$.next(movedId);
+      _.objectId$.next(movedSpec);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+      const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($activeContentIds));
-      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+      const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentSpecs));
 
       _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
+        arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec]),
+        arrayThat<StateId<unknown>>().haveExactElements([
           otherActiveSpec,
-          objectThat<ContentSpec<'indexed'>>().haveProperties({
+          objectThat<StateId<unknown>>().haveProperties({
             ...movedSpec,
-            coordinate: objectThat<Indexed>().haveProperties(createIndexed(11)),
           }),
         ]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, otherSpec2]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, otherSpec2]),
       ]);
     });
   });

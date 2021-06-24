@@ -4,7 +4,7 @@ import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$registerRenderObject, $slot, D1, d1Spec, indexedContentSpecs, Lens, Slot, slotSpec, SlotSpec} from '../../export';
+import {$registerRenderObject, $slot, D1, d1Spec, Lens, Slot, slotSpec, SlotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
 import {DocumentationTemplate} from '../template/documentation-template';
 
@@ -29,11 +29,11 @@ const $$gem = source(
 
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
   meepleSlot: x.add(slotSpec(
-      {$contentSpecs: x.add(indexedContentSpecs([$$meeple.get(vine)]))},
+      {$contentSpecs: x.add([$$meeple.get(vine)])},
       x,
   )),
   gemSlot: x.add(slotSpec(
-      {$contentSpecs: x.add(indexedContentSpecs([$$gem.get(vine)]))},
+      {$contentSpecs: x.add([$$gem.get(vine)])},
       x,
   )),
 })));

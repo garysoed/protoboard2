@@ -9,7 +9,7 @@ import {ActionSpec} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
 import {compileConfig} from '../action/util/compile-config';
 import {BaseComponent} from '../core/base-component';
-import {ContentSpec, IsContainer} from '../payload/is-container';
+import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
 import template from './slot.html';
@@ -32,15 +32,14 @@ export const $ = {
   }),
 };
 
-export type SlotSpec = IsContainer<'indexed'>;
+export type SlotSpec = IsContainer;
 
 interface Input {
-  readonly $contentSpecs?: StateId<ReadonlyArray<ContentSpec<'indexed'>>>,
+  readonly $contentSpecs?: StateId<ReadonlyArray<StateId<unknown>>>,
 }
 
 export function slotSpec(input: Input, x: Modifier): SlotSpec {
   return {
-    containerType: 'indexed',
     $contentSpecs: input.$contentSpecs ?? x.add([]),
   };
 }

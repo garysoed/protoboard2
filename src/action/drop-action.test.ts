@@ -1,15 +1,14 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
+import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {host} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
 import {ReplaySubject, Subject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import {createIndexed, Indexed} from '../coordinate/indexed';
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerEvent} from '../core/trigger-event';
-import {ContentSpec, IsContainer} from '../payload/is-container';
+import {IsContainer} from '../payload/is-container';
 
 import {dropAction, dropActionConfigSpecs} from './drop-action';
 import {compileConfig} from './util/compile-config';
@@ -23,11 +22,12 @@ test('@protoboard2/action/drop-action', init => {
     const context = createFakeContext({
       shadowRoot,
       overrides: [
+
         {override: $stateService, withValue: stateService},
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<IsContainer<'indexed'>>>(1);
+    const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
     const action = dropAction({
       config$: compileConfig(host(dropActionConfigSpecs({}))._, context),
       objectId$,
@@ -42,23 +42,11 @@ test('@protoboard2/action/drop-action', init => {
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const otherSpec1 = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(0),
-      };
-      const otherSpec2 = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(1),
-      };
+      const otherSpec1 = _.stateService.modify(x => x.add({}));
+      const otherSpec2 = _.stateService.modify(x => x.add({}));
 
-      const otherActiveSpec = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(0),
-      };
-      const movedSpec = {
-        objectId: _.stateService.modify(x => x.add({})),
-        coordinate: createIndexed(1),
-      };
+      const otherActiveSpec = _.stateService.modify(x => x.add({}));
+      const movedSpec = _.stateService.modify(x => x.add({}));
 
       const $activeContentId$ = _.stateService
           .resolve($$activeSpec.get(_.personaContext.vine))
@@ -84,28 +72,21 @@ test('@protoboard2/action/drop-action', init => {
 
       _.objectId$.next($objectSpec);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+      const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           _.stateService.resolve($$activeSpec.get(_.personaContext.vine)).$('$contentSpecs'),
       );
-      const targetIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+      const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.personaContext.vine).resolve($targetContentIds));
 
       _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec, movedSpec]),
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherActiveSpec]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec, movedSpec]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([otherSpec1, otherSpec2]),
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
-          otherSpec1,
-          otherSpec2,
-          objectThat<ContentSpec<'indexed'>>().haveProperties({
-            ...movedSpec,
-            coordinate: objectThat<Indexed>().haveProperties(createIndexed(0)),
-          }),
-        ]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, otherSpec2]),
+        arrayThat<StateId<unknown>>().haveExactElements([movedSpec, otherSpec1, otherSpec2]),
       ]);
     });
   });

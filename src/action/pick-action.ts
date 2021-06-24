@@ -1,5 +1,4 @@
 import {$resolveState, $stateService} from 'grapevine';
-import {$asArray, $map, $max, $pipe, normal} from 'gs-tools/export/collect';
 import {attributeIn} from 'persona';
 import {combineLatest, of, pipe} from 'rxjs';
 import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
@@ -67,14 +66,8 @@ export function pickAction({objectId$, context}: ActionParams<Config, {}>): Acti
                       }
 
                       return () => {
-                        const destIndex = $pipe(
-                            activeContents ?? [],
-                            $map(content => content.coordinate.index),
-                            $asArray(),
-                            $max(normal()),
-                        );
-
-                        fn(movedObjectId, {index: (destIndex ?? 0) + 1});
+                        const destIndex = activeContents?.length ?? 0;
+                        fn(movedObjectId, destIndex);
                       };
                     }),
                 );

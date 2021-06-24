@@ -21,7 +21,7 @@ export interface Config extends TriggerConfig {
 }
 
 export function dropAction(
-    {config$, objectId$, context}: ActionParams<Config, IsContainer<'indexed'>>,
+    {config$, objectId$, context}: ActionParams<Config, IsContainer>,
 ): Action {
   const vine = context.vine;
   const moveObjectFn$ = combineLatest([
@@ -54,7 +54,7 @@ export function dropAction(
                             }
 
                             return (config: Config) => {
-                              fn(movedObjectSpec.objectId, {index: locate(config.positioning)});
+                              fn(movedObjectSpec, locate(config.positioning));
                             };
                           }),
                       );

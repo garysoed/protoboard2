@@ -16,7 +16,6 @@ export {Deck, $deck, DeckSpec} from '../src/region/deck';
 export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
-export {ContentSpec, indexedContentSpecs} from '../src/payload/is-container';
 export {$render, Render} from '../src/objects/render';
 export {$active, Active, activeSpec} from '../src/core/active';
 export {$$activeSpec} from '../src/core/active-spec';

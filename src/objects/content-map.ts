@@ -3,9 +3,9 @@ import {StateId} from 'gs-tools/export/state';
 import {Subject, ReplaySubject, Observable} from 'rxjs';
 import {map, scan, startWith} from 'rxjs/operators';
 
-import {CoordinateTypes, IsContainer} from '../payload/is-container';
+import {IsContainer} from '../payload/is-container';
 
-type ContainerStateId = StateId<IsContainer<CoordinateTypes>>;
+type ContainerStateId = StateId<IsContainer>;
 const $parentMapEntries$ = source<Subject<[string, ContainerStateId]>>(
     'parentMapEntries',
     () => new ReplaySubject(),
@@ -30,7 +30,7 @@ export const $getParent = source(
 
 export const $setParent = source(
     'setParent',
-    vine => (child: StateId<any>, parent: StateId<IsContainer<CoordinateTypes>>) => {
+    vine => (child: StateId<any>, parent: StateId<IsContainer>) => {
       $parentMapEntries$.get(vine).next([child.id, parent]);
     },
 );

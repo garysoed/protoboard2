@@ -1,15 +1,13 @@
 import {$stateService} from 'grapevine';
 import {assert, setThat, should, test} from 'gs-testing';
-import {fakeStateService} from 'gs-tools/export/state';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {renderNode, setId} from 'persona';
 import {PersonaTesterFactory} from 'persona/export/testing';
 import {of as observableOf} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {createIndexed} from '../coordinate/indexed';
 import {$registerRenderObject} from '../objects/render-object-spec';
-import {ContentSpec} from '../payload/is-container';
 
 import {$, Active, activeSpec} from './active';
 import {$$activeSpec} from './active-spec';
@@ -32,7 +30,7 @@ test('@protoboard2/core/active', init => {
       ],
     });
 
-    const $contentSpecs = stateService.modify(x => x.add<ReadonlyArray<ContentSpec<'indexed'>>>([]));
+    const $contentSpecs = stateService.modify(x => x.add<ReadonlyArray<StateId<unknown>>>([]));
 
     stateService.modify(x => x.set($$activeSpec.get(tester.vine), activeSpec({$contentSpecs})));
 
@@ -52,7 +50,7 @@ test('@protoboard2/core/active', init => {
 
     should('render the 1 item count correctly', () => {
       const objectId = _.stateService.modify(x => x.add({}));
-      _.stateService.modify(x => x.set(_.$contentSpecs, [{objectId, coordinate: createIndexed(0)}]));
+      _.stateService.modify(x => x.set(_.$contentSpecs, [objectId]));
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
@@ -61,26 +59,11 @@ test('@protoboard2/core/active', init => {
       _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(0),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(1),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(2),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(3),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(4),
-            },
+            x.add({}),
+            x.add({}),
+            x.add({}),
+            x.add({}),
+            x.add({}),
           ],
       ));
 
@@ -98,10 +81,7 @@ test('@protoboard2/core/active', init => {
       content.style.width = `${width}px`;
       const $objectSpec = _.stateService.modify(x => x.add({}));
       $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
-      const contentSpec = {
-        objectId: $objectSpec,
-        coordinate: createIndexed(0),
-      };
+      const contentSpec = $objectSpec;
       _.stateService.modify(x => {
         x.set(_.$contentSpecs, [contentSpec]);
       });
@@ -122,11 +102,7 @@ test('@protoboard2/core/active', init => {
     should('remove the multiple classname if there is 1 item', () => {
       _.stateService.modify(x => x.set(
           _.$contentSpecs,
-          [{
-            objectId:x.add({}),
-            coordinate: createIndexed(0),
-          },
-          ]),
+          [x.add({})]),
       );
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
@@ -136,22 +112,10 @@ test('@protoboard2/core/active', init => {
       _.stateService.modify(x => x.set(
           _.$contentSpecs,
           [
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(0),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(1),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(2),
-            },
-            {
-              objectId: x.add({}),
-              coordinate: createIndexed(3),
-            },
+            x.add({}),
+            x.add({}),
+            x.add({}),
+            x.add({}),
           ],
       ));
 
@@ -173,10 +137,7 @@ test('@protoboard2/core/active', init => {
       const $objectSpec = _.stateService.modify(x => x.add({}));
       $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
 
-      const contentSpec = {
-        objectId: $objectSpec,
-        coordinate: createIndexed(0),
-      };
+      const contentSpec = $objectSpec;
       _.stateService.modify(x => {
         x.set(_.$contentSpecs, [contentSpec]);
       });
@@ -204,22 +165,14 @@ test('@protoboard2/core/active', init => {
       content2.style.width = `${size}px`;
 
       const $objectSpec1 = _.stateService.modify(x => x.add({}));
-      const spec1 = {
-        objectId: $objectSpec1,
-        coordinate: createIndexed(0),
-      };
       const $objectSpec2 = _.stateService.modify(x => x.add({}));
-      const spec2 = {
-        objectId: $objectSpec2,
-        coordinate: createIndexed(1),
-      };
 
       const createSpecEntries$ = $registerRenderObject.get(_.tester.vine);
       createSpecEntries$($objectSpec1, () => observableOf(renderNode({node: content1, id: id1})));
       createSpecEntries$($objectSpec2, () => observableOf(renderNode({node: content2, id: id2})));
 
       _.stateService.modify(x => {
-        x.set(_.$contentSpecs, [spec1, spec2]);
+        x.set(_.$contentSpecs, [$objectSpec1, $objectSpec2]);
       });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));

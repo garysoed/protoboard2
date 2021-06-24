@@ -1,11 +1,7 @@
-import {Vine} from 'grapevine';
-import {$stateService} from 'grapevine';
+import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {fakeStateService} from 'gs-tools/export/state';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {take, tap} from 'rxjs/operators';
-
-import {createIndexed, Indexed} from '../../coordinate/indexed';
-import {ContentSpec} from '../../payload/is-container';
 
 import {moveObject} from './move-object';
 
@@ -20,57 +16,41 @@ test('@protoboard2/action/util/move-object', () => {
       ],
     });
 
-    const fromSpec1 = {
-      objectId: stateService.modify(x => x.add({})),
-      coordinate: createIndexed(0),
-    };
-    const movedSpec = {
-      objectId: stateService.modify(x => x.add({})),
-      coordinate: createIndexed(1),
-    };
-    const fromSpec2 = {
-      objectId: stateService.modify(x => x.add({})),
-      coordinate: createIndexed(2),
-    };
-    const toSpec1 = {
-      objectId: stateService.modify(x => x.add({})),
-      coordinate: createIndexed(0),
-    };
-    const toSpec2 = {
-      objectId: stateService.modify(x => x.add({})),
-      coordinate: createIndexed(1),
-    };
+    const fromSpec1 = stateService.modify(x => x.add({}));
+    const movedSpec = stateService.modify(x => x.add({}));
+    const fromSpec2 = stateService.modify(x => x.add({}));
+    const toSpec1 = stateService.modify(x => x.add({}));
+    const toSpec2 = stateService.modify(x => x.add({}));
 
     const $fromContentSpecs = stateService.modify(x => x.add([fromSpec1, movedSpec, fromSpec2]));
     const $toContentSpecs = stateService.modify(x => x.add([toSpec1, toSpec2]));
 
-    const fromContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+    const fromContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
         stateService.resolve($fromContentSpecs),
     );
-    const toContentIds$ = createSpySubject<ReadonlyArray<ContentSpec<'indexed'>>|undefined>(
+    const toContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
         stateService.resolve($toContentSpecs),
     );
 
     run(moveObject(
-        {containerType: 'indexed', $contentSpecs: $fromContentSpecs},
-        {containerType: 'indexed', $contentSpecs: $toContentSpecs},
+        {$contentSpecs: $fromContentSpecs},
+        {$contentSpecs: $toContentSpecs},
         vine,
     )
         .pipe(
             take(1),
-            tap(fn => fn!(movedSpec.objectId, {index: 2})),
+            tap(fn => fn!(movedSpec, 2)),
         ));
 
     assert(fromContentIds$).to.emitWith(
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([fromSpec1, fromSpec2]),
+        arrayThat<StateId<unknown>>().haveExactElements([fromSpec1, fromSpec2]),
     );
     assert(toContentIds$).to.emitWith(
-        arrayThat<ContentSpec<'indexed'>>().haveExactElements([
+        arrayThat<StateId<unknown>>().haveExactElements([
           toSpec1,
           toSpec2,
-          objectThat<ContentSpec<'indexed'>>().haveProperties({
+          objectThat<StateId<unknown>>().haveProperties({
             ...movedSpec,
-            coordinate: objectThat<Indexed>().haveProperties(createIndexed(2)),
           }),
         ]),
     );
