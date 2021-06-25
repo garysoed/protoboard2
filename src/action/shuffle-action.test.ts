@@ -1,45 +1,65 @@
-// import { arrayThat, assert, run, should, test } from 'gs-testing';
-// import { FakeSeed, fromSeed } from 'gs-tools/export/random';
-// import { _v } from 'mask';
-// import { createFakeContext } from 'persona/export/testing';
-// import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import {$stateService} from 'grapevine';
+import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing';
+import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {host} from 'persona';
+import {createFakeContext} from 'persona/export/testing';
+import {ReplaySubject, Subject} from 'rxjs';
 
-// import { ObjectSpec } from '../objects/object-spec';
+import {TriggerEvent} from '../core/trigger-event';
+import {IsContainer} from '../payload/is-container';
 
-// import { DroppablePayload } from './payload/droppable-payload';
-// import { ShuffleAction } from './shuffle-action';
-// import { createFakeActionContext } from './testing/fake-action-context';
-// import { $random } from './util/random';
+import {shuffleAction, shuffleActionConfigSpecs} from './shuffle-action';
+import {compileConfig} from './util/compile-config';
+import {$random} from './util/random';
 
 
-// test('@protoboard2/action/shuffle-action', () => {
-//   should(`shuffle the child elements correctly`, () => {
-//     const rootEl = document.createElement('div');
-//     const shadowRoot = rootEl.attachShadow({mode: 'open'});
-//     const personaContext = createFakeContext({shadowRoot});
-//     const state$ = new ReplaySubject<ObjectSpec<DroppablePayload>>(1);
+test('@protoboard2/action/shuffle-action', init => {
+  const _ = init(() => {
+    const el = document.createElement('div');
+    const shadowRoot = el.attachShadow({mode: 'open'});
+    const stateService = fakeStateService();
+    const seed = new FakeSeed();
+    const context = createFakeContext({
+      shadowRoot,
+      overrides: [
+        {override: $random, withValue: fromSeed(seed)},
+        {override: $stateService, withValue: stateService},
+      ],
+    });
 
-//     const action = new ShuffleAction(createFakeActionContext({
-//       personaContext,
-//       state$,
-//     }));
+    const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
+    const action = shuffleAction({
+      config$: compileConfig(host(shuffleActionConfigSpecs({}))._, context),
+      objectId$,
+      context,
+    });
 
-//     const id1 = 'id1';
-//     const id2 = 'id2';
-//     const id3 = 'id3';
-//     const contentIds$ = new BehaviorSubject<readonly string[]>([id1, id2, id3]);
-//     state$.next({
-//       id: 'id',
-//       type: 'test',
-//       payload: {contentIds: contentIds$},
-//     });
+    const onTrigger$ = new Subject<TriggerEvent>();
+    run(onTrigger$.pipe(action));
 
-//     const seed = new FakeSeed([1, 0, 0.5]);
-//     $random.set(personaContext.vine, () => fromSeed(seed));
-//     run(action.run());
+    return {action, el, objectId$, onTrigger$, context, seed, stateService};
+  });
 
-//     action.trigger();
+  should('shuffle the child elements correctly', () => {
+    const object1 = _.stateService.modify(x => x.add({}));
+    const object2 = _.stateService.modify(x => x.add({}));
+    const object3 = _.stateService.modify(x => x.add({}));
+    const object4 = _.stateService.modify(x => x.add({}));
 
-//     assert(contentIds$).to.emitWith(arrayThat<string>().haveExactElements([id2, id3, id1]));
-//   });
-// });
+    const containerId = _.stateService.modify(x => x.add({
+      $contentSpecs: x.add([object1, object2, object3, object4]),
+    }));
+    _.objectId$.next(containerId);
+
+    const contents$ = createSpySubject(_.stateService.resolve(_.objectId$).$('$contentSpecs'));
+
+    _.seed.values = [1, 0, 0.5, 2];
+
+    _.onTrigger$.next({mouseX: 0, mouseY: 0});
+
+    assert(contents$).to.emitWith(
+        arrayThat<StateId<unknown>>().haveExactElements([object2, object3, object1, object4]),
+    );
+  });
+});

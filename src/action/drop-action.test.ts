@@ -22,7 +22,6 @@ test('@protoboard2/action/drop-action', init => {
     const context = createFakeContext({
       shadowRoot,
       overrides: [
-
         {override: $stateService, withValue: stateService},
       ],
     });
@@ -37,7 +36,7 @@ test('@protoboard2/action/drop-action', init => {
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, objectId$, onTrigger$, personaContext: context, stateService};
+    return {action, el, objectId$, onTrigger$, context, stateService};
   });
 
   test('onTrigger', () => {
@@ -49,7 +48,7 @@ test('@protoboard2/action/drop-action', init => {
       const movedSpec = _.stateService.modify(x => x.add({}));
 
       const $activeContentId$ = _.stateService
-          .resolve($$activeSpec.get(_.personaContext.vine))
+          .resolve($$activeSpec.get(_.context.vine))
           ._('$contentSpecs');
       run($activeContentId$.pipe(
           tap(id => {
@@ -60,7 +59,7 @@ test('@protoboard2/action/drop-action', init => {
           }),
       ));
 
-      _.stateService.modify(x => x.set($$activeSpec.get(_.personaContext.vine), {
+      _.stateService.modify(x => x.set($$activeSpec.get(_.context.vine), {
         containerType: 'indexed',
         $contentSpecs: x.add([otherActiveSpec, movedSpec]),
       }));
@@ -73,10 +72,10 @@ test('@protoboard2/action/drop-action', init => {
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          _.stateService.resolve($$activeSpec.get(_.personaContext.vine)).$('$contentSpecs'),
+          _.stateService.resolve($$activeSpec.get(_.context.vine)).$('$contentSpecs'),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          $stateService.get(_.personaContext.vine).resolve($targetContentIds));
+          $stateService.get(_.context.vine).resolve($targetContentIds));
 
       _.onTrigger$.next({mouseX: 0, mouseY: 0});
 
