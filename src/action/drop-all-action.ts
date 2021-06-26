@@ -35,7 +35,7 @@ const DEFAULT_CONFIG = {
   trigger: {type: TriggerType.D, shift: true},
 };
 
-export function dropActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
+export function dropAllActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     trigger: attributeIn('pb-drop-all-trigger', triggerSpecParser(), defaultConfig.trigger),

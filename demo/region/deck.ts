@@ -1,8 +1,10 @@
+import {$stateService, source} from 'grapevine';
+import {StateId} from 'gs-tools/export/state';
 import {BaseThemedCtrl, _p} from 'mask';
-import {PersonaContext} from 'persona';
-import {Observable} from 'rxjs';
+import {element, PersonaContext} from 'persona';
+import {Observable, of} from 'rxjs';
 
-import {Deck} from '../../src/region/deck';
+import {$deck, Deck, deckSpec, DeckSpec} from '../../src/region/deck';
 
 import template from './deck.html';
 
@@ -11,7 +13,16 @@ export const $deckDemo = {
   api: {},
 };
 
-const $ = {};
+type State = DeckSpec;
+
+const $state = source<StateId<State>>(
+    'state',
+    vine => $stateService.get(vine).modify(x => x.add(deckSpec({}, x))),
+);
+
+const $ = {
+  deck: element('deck', $deck, {}),
+};
 
 @_p.customElement({
   ...$deckDemo,
@@ -26,6 +37,8 @@ export class DeckDemo extends BaseThemedCtrl<typeof $> {
   }
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    return [];
+    return [
+      this.renderers.deck.objectId(of($state.get(this.vine))),
+    ];
   }
 }

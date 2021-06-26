@@ -20,37 +20,26 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-export function dropAction(
-    {config$, objectId$, vine}: ActionParams<Config, IsContainer>,
-): Action {
+export function dropAction({objectId$, vine}: ActionParams<Config, IsContainer>): Action {
+  const container$ = $stateService.get(vine).resolve(objectId$);
   const moveParams$ = combineLatest([
     $activeSpec.get(vine).$('contentsId'),
-    config$,
+    container$.$('contentsId'),
   ])
       .pipe(
-          map(([activeContents, config]) => {
+          map(([activeContents, contents]) => {
             const normalizedActiveContents = activeContents ?? [];
             const id = normalizedActiveContents[normalizedActiveContents.length - 1];
-            const toIndex = locate(config.positioning);
+            const toIndex = contents?.length ?? 0;
             return {id, toIndex};
           }),
       );
+
   return pipe(
       withLatestFrom(moveParams$),
       map(([, moveParams]) => moveParams),
-      moveObject(
-          $activeSpec.get(vine),
-          $stateService.get(vine).resolve(objectId$),
-          vine,
-      ),
+      moveObject($activeSpec.get(vine), container$, vine),
   );
-}
-
-function locate(positioning: PositioningType): number {
-  switch (positioning) {
-    case PositioningType.DEFAULT:
-      return 0;
-  }
 }
 
 const DEFAULT_CONFIG = {

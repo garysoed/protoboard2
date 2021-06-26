@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {Modifier} from 'gs-tools/export/state';
 import {stateIdParser, _p} from 'mask';
 import {$div, attributeIn, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
@@ -7,6 +7,8 @@ import {switchMap} from 'rxjs/operators';
 
 import {ActionSpec} from '../action/action-spec';
 import {dropAction, dropActionConfigSpecs} from '../action/drop-action';
+import {dropAllAction, dropAllActionConfigSpecs} from '../action/drop-all-action';
+import {pickAllAction, pickAllActionConfigSpecs} from '../action/pick-all-action';
 import {shuffleAction, shuffleActionConfigSpecs} from '../action/shuffle-action';
 import {compileConfig} from '../action/util/compile-config';
 import {BaseComponent} from '../core/base-component';
@@ -21,6 +23,8 @@ export const $deck = {
   api: {
     objectId: attributeIn('object-id', stateIdParser<DeckSpec>()),
     dropAction: dropActionConfigSpecs({}),
+    dropAllAction: dropAllActionConfigSpecs({}),
+    pickAllAction: pickAllActionConfigSpecs({}),
     shuffleAction: shuffleActionConfigSpecs({}),
   },
 };
@@ -34,14 +38,10 @@ export const $ = {
 
 export type DeckSpec = IsContainer;
 
-interface Input<P> {
-  readonly type: string;
-  readonly contentsId: StateId<ReadonlyArray<StateId<unknown>>>;
-  readonly payload: P;
-}
-
-export function deckSpec<P>(input: Input<P>): DeckSpec {
-  return {...input};
+export function deckSpec(input: Partial<DeckSpec>, x: Modifier): DeckSpec {
+  return {
+    contentsId: input.contentsId ?? x.add([]),
+  };
 }
 
 @_p.customElement({
@@ -57,6 +57,8 @@ export class Deck extends BaseComponent<DeckSpec, typeof $> {
   protected get actions(): readonly ActionSpec[] {
     return [
       this.createActionSpec(dropAction, compileConfig($.host._.dropAction, this.context), 'Drop'),
+      this.createActionSpec(dropAllAction, compileConfig($.host._.dropAllAction, this.context), 'Drop all'),
+      this.createActionSpec(pickAllAction, compileConfig($.host._.pickAllAction, this.context), 'Pick all'),
       this.createActionSpec(shuffleAction, compileConfig($.host._.shuffleAction, this.context), 'Shuffle'),
     ];
   }

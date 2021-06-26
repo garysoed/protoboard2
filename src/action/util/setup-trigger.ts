@@ -53,7 +53,7 @@ function createTriggerKey(
             return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
           }),
           withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
-          filter(([event]) => event.key === triggerSpec.type),
+          filter(([event]) => event.key.toLowerCase() === triggerSpec.type),
           map(([keyboardEvent, mouseEvent]) => {
             return Object.assign(
                 keyboardEvent,

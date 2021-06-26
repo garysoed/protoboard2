@@ -84,7 +84,7 @@ test('@protoboard2/action/drop-action', init => {
       ]);
       assert(targetIds$).to.emitSequence([
         arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, otherSpec2]),
-        arrayThat<StateId<unknown>>().haveExactElements([movedSpec, otherSpec1, otherSpec2]),
+        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, otherSpec2, movedSpec]),
       ]);
     });
   });

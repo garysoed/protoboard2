@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier, StateId} from 'gs-tools/export/state';
+import {Modifier} from 'gs-tools/export/state';
 import {stateIdParser, _p} from 'mask';
 import {$div, attributeIn, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
@@ -34,11 +34,7 @@ export const $ = {
 
 export type SlotSpec = IsContainer;
 
-interface Input {
-  readonly contentsId?: StateId<ReadonlyArray<StateId<unknown>>>,
-}
-
-export function slotSpec(input: Input, x: Modifier): SlotSpec {
+export function slotSpec(input: Partial<SlotSpec>, x: Modifier): SlotSpec {
   return {
     contentsId: input.contentsId ?? x.add([]),
   };

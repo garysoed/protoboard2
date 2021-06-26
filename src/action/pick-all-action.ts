@@ -37,7 +37,7 @@ const DEFAULT_CONFIG: Config = {
   trigger: {type: TriggerType.CLICK, shift: true},
 };
 
-export function pickActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
+export function pickAllActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
     trigger: attributeIn('pb-pick-all-trigger', triggerSpecParser(), defaultConfig.trigger),

@@ -81,8 +81,8 @@ test('@protoboard2/src/action/drop-all-action', init => {
     assert(contents$).to.emitSequence([
       arrayThat<StateId<unknown>>().haveExactElements([]),
       arrayThat<StateId<unknown>>().haveExactElements([objectId3]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId2, objectId3]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId1, objectId2, objectId3]),
+      arrayThat<StateId<unknown>>().haveExactElements([objectId3, objectId2]),
+      arrayThat<StateId<unknown>>().haveExactElements([objectId3, objectId2, objectId1]),
     ]);
   });
 });
