@@ -1,7 +1,7 @@
-import {$stateService} from 'grapevine';
+import {$stateService, Vine} from 'grapevine';
 import {assert, createSpySubject, run, runEnvironment, should, test} from 'gs-testing';
 import {fakeStateService} from 'gs-tools/export/state';
-import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
+import {PersonaTesterEnvironment} from 'persona/export/testing';
 import {of, ReplaySubject, Subject} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
@@ -14,15 +14,7 @@ test('@protoboard2/action/turn-action', init => {
   const _ = init(() => {
     runEnvironment(new PersonaTesterEnvironment());
 
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const context = createFakeContext({
-      overrides: [
-        {override: $stateService, withValue: stateService},
-      ],
-      shadowRoot,
-    });
 
     const $faceIndex = stateService.modify(x => x.add(2));
     const objectId = stateService.modify(x => x.add({$currentFaceIndex: $faceIndex}));
@@ -30,13 +22,18 @@ test('@protoboard2/action/turn-action', init => {
     const action = turnAction({
       config$,
       objectId$: of(objectId),
-      context,
+      vine: new Vine({
+        appName: 'test',
+        overrides: [
+          {override: $stateService, withValue: stateService},
+        ],
+      }),
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {$faceIndex, action, config$, el, onTrigger$, personaContext: context, stateService};
+    return {$faceIndex, action, config$, onTrigger$, stateService};
   });
 
   test('handleTrigger', () => {

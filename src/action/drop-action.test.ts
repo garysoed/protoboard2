@@ -1,42 +1,41 @@
-import {$stateService} from 'grapevine';
+import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {host} from 'persona';
-import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, Subject} from 'rxjs';
+import {of, ReplaySubject, Subject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {$$activeSpec} from '../core/active-spec';
 import {TriggerEvent} from '../core/trigger-event';
+import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
-import {dropAction, dropActionConfigSpecs} from './drop-action';
-import {compileConfig} from './util/compile-config';
+import {dropAction, PositioningType} from './drop-action';
 
 
 test('@protoboard2/action/drop-action', init => {
   const _ = init(() => {
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const context = createFakeContext({
-      shadowRoot,
+
+    const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
+    const vine = new Vine({
+      appName: 'test',
       overrides: [
         {override: $stateService, withValue: stateService},
       ],
     });
-
-    const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
     const action = dropAction({
-      config$: compileConfig(host(dropActionConfigSpecs({}))._, context),
+      config$: of({
+        positioning: PositioningType.DEFAULT,
+        trigger: {type: TriggerType.CLICK},
+      }),
       objectId$,
-      context,
+      vine,
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, objectId$, onTrigger$, context, stateService};
+    return {action, objectId$, onTrigger$, stateService, vine};
   });
 
   test('onTrigger', () => {
@@ -48,7 +47,7 @@ test('@protoboard2/action/drop-action', init => {
       const movedSpec = _.stateService.modify(x => x.add({}));
 
       const $activeContentId$ = _.stateService
-          .resolve($$activeSpec.get(_.context.vine))
+          .resolve($$activeSpec.get(_.vine))
           ._('$contentSpecs');
       run($activeContentId$.pipe(
           tap(id => {
@@ -59,7 +58,7 @@ test('@protoboard2/action/drop-action', init => {
           }),
       ));
 
-      _.stateService.modify(x => x.set($$activeSpec.get(_.context.vine), {
+      _.stateService.modify(x => x.set($$activeSpec.get(_.vine), {
         containerType: 'indexed',
         $contentSpecs: x.add([otherActiveSpec, movedSpec]),
       }));
@@ -72,10 +71,10 @@ test('@protoboard2/action/drop-action', init => {
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          _.stateService.resolve($$activeSpec.get(_.context.vine)).$('$contentSpecs'),
+          _.stateService.resolve($$activeSpec.get(_.vine)).$('$contentSpecs'),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          $stateService.get(_.context.vine).resolve($targetContentIds));
+          $stateService.get(_.vine).resolve($targetContentIds));
 
       _.onTrigger$.next({mouseX: 0, mouseY: 0});
 

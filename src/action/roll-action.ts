@@ -14,10 +14,9 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-export function rollAction({config$, objectId$, context}: ActionParams<Config, IsMultifaced>): Action {
-  const vine = context.vine;
+export function rollAction({config$, objectId$, vine}: ActionParams<Config, IsMultifaced>): Action {
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(context.vine)())),
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(vine)())),
       tap(([, config, obj]) => {
         if (!obj) {
           return;

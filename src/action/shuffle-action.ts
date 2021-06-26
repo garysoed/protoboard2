@@ -15,11 +15,11 @@ import {$random} from './util/random';
 type Config = TriggerConfig;
 
 
-export function shuffleAction({context, objectId$}: ActionParams<Config, IsContainer>): Action {
-  const stateService = $stateService.get(context.vine);
+export function shuffleAction({vine, objectId$}: ActionParams<Config, IsContainer>): Action {
+  const stateService = $stateService.get(vine);
   const contents$ = stateService.resolve(objectId$).$('$contentSpecs');
   const contentsId$ = stateService.resolve(objectId$)._('$contentSpecs');
-  const random = $random.get(context.vine);
+  const random = $random.get(vine);
   return pipe(
       withLatestFrom(contentsId$, contents$),
       map(([, contentsId, contents]) => {

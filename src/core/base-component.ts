@@ -45,7 +45,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
       actionName: string,
   ): ActionSpec {
     return {
-      action: factory({config$, objectId$: this.objectId$, context: this.context}),
+      action: factory({config$, objectId$: this.objectId$, vine: this.vine}),
       actionName,
       triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
       trigger$: config$.pipe(createTrigger(this.context)),

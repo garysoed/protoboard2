@@ -12,11 +12,11 @@ export interface Config {
   readonly trigger: TriggerSpec;
 }
 
-export function helpAction({config$, context}: ActionParams<Config, {}>): Action {
+export function helpAction({config$, vine}: ActionParams<Config, {}>): Action {
   return pipe(
       withLatestFrom(config$),
       tap(([, config]) => {
-        $helpService.get(context.vine).show(config.actionTriggers);
+        $helpService.get(vine).show(config.actionTriggers);
       }),
   );
 }

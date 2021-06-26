@@ -21,9 +21,8 @@ export interface Config extends TriggerConfig {
 }
 
 export function dropAction(
-    {config$, objectId$, context}: ActionParams<Config, IsContainer>,
+    {config$, objectId$, vine}: ActionParams<Config, IsContainer>,
 ): Action {
-  const vine = context.vine;
   const moveParams$ = combineLatest([
     $activeSpec.get(vine).$('$contentSpecs'),
     config$,

@@ -1,44 +1,39 @@
-import {$stateService} from 'grapevine';
+import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {host} from 'persona';
-import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject, Subject} from 'rxjs';
+import {of, ReplaySubject, Subject} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
+import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
 
-import {shuffleAction, shuffleActionConfigSpecs} from './shuffle-action';
-import {compileConfig} from './util/compile-config';
+import {shuffleAction} from './shuffle-action';
 import {$random} from './util/random';
 
 
 test('@protoboard2/action/shuffle-action', init => {
   const _ = init(() => {
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
     const seed = new FakeSeed();
-    const context = createFakeContext({
-      shadowRoot,
-      overrides: [
-        {override: $random, withValue: fromSeed(seed)},
-        {override: $stateService, withValue: stateService},
-      ],
-    });
 
     const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
     const action = shuffleAction({
-      config$: compileConfig(host(shuffleActionConfigSpecs({}))._, context),
+      config$: of({trigger: {type: TriggerType.L}}),
       objectId$,
-      context,
+      vine: new Vine({
+        appName: 'test',
+        overrides: [
+          {override: $random, withValue: fromSeed(seed)},
+          {override: $stateService, withValue: stateService},
+        ],
+      }),
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, objectId$, onTrigger$, context, seed, stateService};
+    return {action, objectId$, onTrigger$, seed, stateService};
   });
 
   should('shuffle the child elements correctly', () => {

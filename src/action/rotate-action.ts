@@ -14,10 +14,10 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-export function rotateAction({config$, objectId$, context}: ActionParams<Config, IsRotatable>): Action {
-  const stateService = $stateService.get(context.vine);
+export function rotateAction({config$, objectId$, vine}: ActionParams<Config, IsRotatable>): Action {
+  const stateService = $stateService.get(vine);
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(context.vine)())),
+      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(vine)())),
       switchMap(([, config, obj]) => {
         if (!obj) {
           return EMPTY;

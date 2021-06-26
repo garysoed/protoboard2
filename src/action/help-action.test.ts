@@ -1,6 +1,6 @@
+import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {createFakeContext} from 'persona/export/testing';
-import {of, Subject, EMPTY} from 'rxjs';
+import {EMPTY, of, Subject} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
@@ -13,9 +13,9 @@ test('@protoboard2/action/help-action', init => {
   const TRIGGER = {type: TriggerType.T};
 
   const _ = init(() => {
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
-    const personaContext = createFakeContext({shadowRoot});
+    const vine = new Vine({
+      appName: 'test',
+    });
     const action = helpAction({
       config$: of({
         actionTriggers: [
@@ -23,14 +23,14 @@ test('@protoboard2/action/help-action', init => {
         ],
         trigger: {type: TriggerType.CLICK},
       }),
-      context: personaContext,
+      vine,
       objectId$: EMPTY,
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, el, onTrigger$, vine: personaContext.vine};
+    return {action, onTrigger$, vine};
   });
 
   test('onTrigger', () => {

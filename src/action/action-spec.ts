@@ -1,5 +1,5 @@
+import {Vine} from 'grapevine';
 import {StateId} from 'gs-tools/export/state';
-import {PersonaContext} from 'persona';
 import {UnresolvedAttributeInput} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 
@@ -19,8 +19,8 @@ export type Action = OperatorFunction<TriggerEvent, unknown>;
 
 export interface ActionParams<C, O> {
   readonly config$: Observable<C>;
-  readonly context: PersonaContext;
   readonly objectId$: Observable<StateId<O>|undefined>;
+  readonly vine: Vine;
 }
 
 export interface ActionSpec {

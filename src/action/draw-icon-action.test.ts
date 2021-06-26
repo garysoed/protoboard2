@@ -1,7 +1,6 @@
-import {$stateService} from 'grapevine';
+import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {createFakeContext} from 'persona/export/testing';
 import {of, Subject} from 'rxjs';
 
 import {TriggerEvent} from '../core/trigger-event';
@@ -14,15 +13,7 @@ import {drawIconAction} from './draw-icon-action';
 test('@protoboard2/src/action/draw-icon-action', init => {
   const CONFIG_NAME = 'CONFIG_NAME';
   const _ = init(() => {
-    const el = document.createElement('div');
-    const shadowRoot = el.attachShadow({mode: 'open'});
     const stateService = fakeStateService();
-    const context = createFakeContext({
-      shadowRoot,
-      overrides: [
-        {override: $stateService, withValue: stateService},
-      ],
-    });
 
     const iconsId: StateId<readonly CanvasIcon[]> = stateService.modify(x => x.add([]));
     const objectId: StateId<CanvasEntry> = stateService.modify(x => x.add({
@@ -39,7 +30,12 @@ test('@protoboard2/src/action/draw-icon-action', init => {
         trigger: {type: TriggerType.CLICK},
       }),
       objectId$: of(objectId),
-      context,
+      vine: new Vine({
+        appName: 'test',
+        overrides: [
+          {override: $stateService, withValue: stateService},
+        ],
+      }),
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();

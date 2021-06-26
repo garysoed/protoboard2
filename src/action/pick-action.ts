@@ -13,8 +13,7 @@ import {moveObject} from './util/move-object';
 
 export type Config = TriggerConfig;
 
-export function pickAction({objectId$, context}: ActionParams<Config, {}>): Action {
-  const vine = context.vine;
+export function pickAction({objectId$, vine}: ActionParams<Config, {}>): Action {
   const stateService = $stateService.get(vine);
   const fromObjectId$ = combineLatest([
     objectId$,

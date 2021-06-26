@@ -15,9 +15,9 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'flip';
 
-export function flipAction({config$, objectId$, context}: ActionParams<Config, IsMultifaced>): Action {
-  const stateService = $stateService.get(context.vine);
-  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(context.vine)()).pipe(
+export function flipAction({config$, objectId$, vine}: ActionParams<Config, IsMultifaced>): Action {
+  const stateService = $stateService.get(vine);
+  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(vine)()).pipe(
       map(obj => {
         return obj?.$currentFaceIndex;
       }),

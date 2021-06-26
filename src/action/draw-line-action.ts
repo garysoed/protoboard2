@@ -14,9 +14,9 @@ export interface Config extends TriggerConfig {
   readonly configName: string;
 }
 
-export function drawLineAction({config$, objectId$, context}: ActionParams<Config, CanvasEntry>): Action {
-  const stateService = $stateService.get(context.vine);
-  const entry$ = objectId$.pipe($resolveStateOp.get(context.vine)());
+export function drawLineAction({config$, objectId$, vine}: ActionParams<Config, CanvasEntry>): Action {
+  const stateService = $stateService.get(vine);
+  const entry$ = objectId$.pipe($resolveStateOp.get(vine)());
   const lines$ = entry$.pipe(
       switchMap(entry => {
         return stateService.resolve(entry?.lines);
