@@ -40,6 +40,6 @@ const DEFAULT_CONFIG: Config = {
 export function pickActionConfigSpecs(defaultOverride: Partial<Config>): UnresolvedConfigSpecs<Config> {
   const defaultConfig = {...DEFAULT_CONFIG, ...defaultOverride};
   return {
-    trigger: attributeIn('pb-pick-trigger', triggerSpecParser(), defaultConfig.trigger),
+    trigger: attributeIn('pb-pick-all-trigger', triggerSpecParser(), defaultConfig.trigger),
   };
 }
