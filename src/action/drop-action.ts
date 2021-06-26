@@ -24,7 +24,7 @@ export function dropAction(
     {config$, objectId$, vine}: ActionParams<Config, IsContainer>,
 ): Action {
   const moveParams$ = combineLatest([
-    $activeSpec.get(vine).$('$contentSpecs'),
+    $activeSpec.get(vine).$('contentsId'),
     config$,
   ])
       .pipe(

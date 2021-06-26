@@ -30,34 +30,34 @@ test('@protoboard2/core/active', init => {
       ],
     });
 
-    const $contentSpecs = stateService.modify(x => x.add<ReadonlyArray<StateId<unknown>>>([]));
+    const contentsId = stateService.modify(x => x.add<ReadonlyArray<StateId<unknown>>>([]));
 
-    stateService.modify(x => x.set($$activeSpec.get(tester.vine), activeSpec({$contentSpecs})));
+    stateService.modify(x => x.set($$activeSpec.get(tester.vine), activeSpec({contentsId})));
 
     // Need to add to body so the dimensions work.
     const el = tester.createElement(Active);
     document.body.appendChild(el.element);
 
-    return {$contentSpecs, el, stateService, tester};
+    return {contentsId, el, stateService, tester};
   });
 
   test('itemCount$', _, () => {
     should('render the 0 item count correctly', () => {
-      _.stateService.modify(x => x.set(_.$contentSpecs, []));
+      _.stateService.modify(x => x.set(_.contentsId, []));
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 1 item count correctly', () => {
       const objectId = _.stateService.modify(x => x.add({}));
-      _.stateService.modify(x => x.set(_.$contentSpecs, [objectId]));
+      _.stateService.modify(x => x.set(_.contentsId, [objectId]));
 
       assert(_.el.getTextContent($.count)).to.equal('');
     });
 
     should('render the 3 items count correctly', () => {
       _.stateService.modify(x => x.set(
-          _.$contentSpecs,
+          _.contentsId,
           [
             x.add({}),
             x.add({}),
@@ -83,7 +83,7 @@ test('@protoboard2/core/active', init => {
       $registerRenderObject.get(_.tester.vine)($objectSpec, () => observableOf(renderNode({node: content, id})));
       const contentSpec = $objectSpec;
       _.stateService.modify(x => {
-        x.set(_.$contentSpecs, [contentSpec]);
+        x.set(_.contentsId, [contentSpec]);
       });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
@@ -94,14 +94,14 @@ test('@protoboard2/core/active', init => {
 
   test('multipleItems$', _, () => {
     should('remove the multiple classname if there are 0 items', () => {
-      _.stateService.modify(x => x.set(_.$contentSpecs, []));
+      _.stateService.modify(x => x.set(_.contentsId, []));
 
       assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
     });
 
     should('remove the multiple classname if there is 1 item', () => {
       _.stateService.modify(x => x.set(
-          _.$contentSpecs,
+          _.contentsId,
           [x.add({})]),
       );
 
@@ -110,7 +110,7 @@ test('@protoboard2/core/active', init => {
 
     should('add the multiple classname if there are 3 items', () => {
       _.stateService.modify(x => x.set(
-          _.$contentSpecs,
+          _.contentsId,
           [
             x.add({}),
             x.add({}),
@@ -139,7 +139,7 @@ test('@protoboard2/core/active', init => {
 
       const contentSpec = $objectSpec;
       _.stateService.modify(x => {
-        x.set(_.$contentSpecs, [contentSpec]);
+        x.set(_.contentsId, [contentSpec]);
       });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
@@ -172,7 +172,7 @@ test('@protoboard2/core/active', init => {
       createSpecEntries$($objectSpec2, () => observableOf(renderNode({node: content2, id: id2})));
 
       _.stateService.modify(x => {
-        x.set(_.$contentSpecs, [$objectSpec1, $objectSpec2]);
+        x.set(_.contentsId, [$objectSpec1, $objectSpec2]);
       });
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));

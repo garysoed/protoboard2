@@ -45,13 +45,13 @@ test('@protoboard2/action/pick-action', init => {
       const $targetContentSpecs = _.stateService.modify(x => x.add([otherSpec1, movedSpec, otherSpec2]));
       const $container = _.stateService.modify(x => x.add({
         containerType: 'indexed' as const,
-        $contentSpecs: $targetContentSpecs,
+        contentsId: $targetContentSpecs,
       }));
 
       _.stateService.modify(x => x.set(
           $$activeSpec.get(_.vine),
           activeSpec({
-            $contentSpecs: $activeContentIds,
+            contentsId: $activeContentIds,
           })));
 
       const setParent = $setParent.get(_.vine);

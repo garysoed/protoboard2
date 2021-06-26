@@ -29,11 +29,11 @@ const $$gem = source(
 
 const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
   meepleSlot: x.add(slotSpec(
-      {$contentSpecs: x.add([$$meeple.get(vine)])},
+      {contentsId: x.add([$$meeple.get(vine)])},
       x,
   )),
   gemSlot: x.add(slotSpec(
-      {$contentSpecs: x.add([$$gem.get(vine)])},
+      {contentsId: x.add([$$gem.get(vine)])},
       x,
   )),
 })));

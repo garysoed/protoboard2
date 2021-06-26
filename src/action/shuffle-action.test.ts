@@ -43,11 +43,11 @@ test('@protoboard2/action/shuffle-action', init => {
     const object4 = _.stateService.modify(x => x.add({}));
 
     const containerId = _.stateService.modify(x => x.add({
-      $contentSpecs: x.add([object1, object2, object3, object4]),
+      contentsId: x.add([object1, object2, object3, object4]),
     }));
     _.objectId$.next(containerId);
 
-    const contents$ = createSpySubject(_.stateService.resolve(_.objectId$).$('$contentSpecs'));
+    const contents$ = createSpySubject(_.stateService.resolve(_.objectId$).$('contentsId'));
 
     _.seed.values = [1, 0, 0.5, 2];
 

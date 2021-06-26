@@ -30,16 +30,16 @@ test('@protoboard2/render/render-contents', init => {
     });
     const $ = host({content: multi(slotName)});
 
-    const [$contentSpecs, $parentSpec] = stateService.modify(x => {
-      const $contentSpecs = x.add<ReadonlyArray<StateId<unknown>>>([]);
+    const [contentsId, $parentSpec] = stateService.modify(x => {
+      const contentsId = x.add<ReadonlyArray<StateId<unknown>>>([]);
       return [
-        $contentSpecs,
-        x.add({containerType: 'indexed', $contentSpecs} as const),
+        contentsId,
+        x.add({containerType: 'indexed', contentsId} as const),
       ];
     });
     run(renderContents($parentSpec, context.vine).pipe($._.content.output(context)));
 
-    return {$contentSpecs, context, el, $parentSpec, stateService};
+    return {contentsId, context, el, $parentSpec, stateService};
   });
 
   test('contents$', () => {
@@ -70,44 +70,44 @@ test('@protoboard2/render/render-contents', init => {
       createSpecEntries$($object2, () => observableOf(renderNode({node: el2, id: el2})));
       createSpecEntries$($object3, () => observableOf(renderNode({node: el3, id: el3})));
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, []));
+      _.stateService.modify(x => x.set(_.contentsId, []));
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
       assert($object1Parent).to.emitWith(null);
       assert($object2Parent).to.emitWith(null);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, [spec1]));
+      _.stateService.modify(x => x.set(_.contentsId, [spec1]));
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(null);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, [spec1, spec2]));
+      _.stateService.modify(x => x.set(_.contentsId, [spec1, spec2]));
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el2]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(_.$parentSpec);
       assert($object3Parent).to.emitWith(null);
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, [spec1, spec2, spec3]));
+      _.stateService.modify(x => x.set(_.contentsId, [spec1, spec2, spec3]));
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el2, el3]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(_.$parentSpec);
       assert($object3Parent).to.emitWith(_.$parentSpec);
 
       // renderContent should not modify the parents if they are removed.
-      _.stateService.modify(x => x.set(_.$contentSpecs, [spec1, spec3]));
+      _.stateService.modify(x => x.set(_.contentsId, [spec1, spec3]));
       assert(arrayFrom(_.el.children)).to.haveExactElements([el1, el3]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(_.$parentSpec);
       assert($object3Parent).to.emitWith(_.$parentSpec);
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, [spec3]));
+      _.stateService.modify(x => x.set(_.contentsId, [spec3]));
       assert(arrayFrom(_.el.children)).to.haveExactElements([el3]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(_.$parentSpec);
       assert($object3Parent).to.emitWith(_.$parentSpec);
 
-      _.stateService.modify(x => x.set(_.$contentSpecs, []));
+      _.stateService.modify(x => x.set(_.contentsId, []));
       assert(arrayFrom(_.el.children)).to.haveExactElements([]);
       assert($object1Parent).to.emitWith(_.$parentSpec);
       assert($object2Parent).to.emitWith(_.$parentSpec);

@@ -48,12 +48,12 @@ export const $ = {
 export type ActiveSpec = IsContainer;
 
 interface Input {
-  readonly $contentSpecs: StateId<ReadonlyArray<StateId<unknown>>>,
+  readonly contentsId: StateId<ReadonlyArray<StateId<unknown>>>,
 }
 
 export function activeSpec(input: Input): ActiveSpec {
   return {
-    $contentSpecs: input.$contentSpecs,
+    contentsId: input.contentsId,
   };
 }
 
@@ -92,7 +92,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
 
   @cache()
   private get itemCount$(): Observable<number> {
-    return $stateService.get(this.vine).resolve($$activeSpec.get(this.vine)).$('$contentSpecs').pipe(
+    return $stateService.get(this.vine).resolve($$activeSpec.get(this.vine)).$('contentsId').pipe(
         map(ids => (ids?.length) ?? 0),
     );
   }

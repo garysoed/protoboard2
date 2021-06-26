@@ -10,7 +10,7 @@ export const $$activeSpec = source<StateId<ActiveSpec>>(
       const stateService = $stateService.get(vine);
       return stateService.modify(x => x.add(
           activeSpec({
-            $contentSpecs: x.add([]),
+            contentsId: x.add([]),
           }),
       ));
     },

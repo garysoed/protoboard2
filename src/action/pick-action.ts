@@ -30,7 +30,7 @@ export function pickAction({objectId$, vine}: ActionParams<Config, unknown>): Ac
 
   return pipe(
       withLatestFrom(
-          $activeSpec.get(vine).$('$contentSpecs'),
+          $activeSpec.get(vine).$('contentsId'),
           objectId$,
       ),
       switchMap(([, activeContents, movedObjectId]) => {

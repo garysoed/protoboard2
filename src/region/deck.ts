@@ -36,7 +36,7 @@ export type DeckSpec = IsContainer;
 
 interface Input<P> {
   readonly type: string;
-  readonly $contentSpecs: StateId<ReadonlyArray<StateId<unknown>>>;
+  readonly contentsId: StateId<ReadonlyArray<StateId<unknown>>>;
   readonly payload: P;
 }
 

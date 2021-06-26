@@ -17,7 +17,7 @@ export function renderContents(
   const stateService = $stateService.get(vine);
   const containerSpec$ = stateService.resolve(containerId);
 
-  return combineLatest([containerSpec$, containerSpec$.$('$contentSpecs')])
+  return combineLatest([containerSpec$, containerSpec$.$('contentsId')])
       .pipe(
           switchMap(([containerSpec, contentIds]) => {
             if (!containerSpec) {

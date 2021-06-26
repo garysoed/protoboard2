@@ -35,12 +35,12 @@ export const $ = {
 export type SlotSpec = IsContainer;
 
 interface Input {
-  readonly $contentSpecs?: StateId<ReadonlyArray<StateId<unknown>>>,
+  readonly contentsId?: StateId<ReadonlyArray<StateId<unknown>>>,
 }
 
 export function slotSpec(input: Input, x: Modifier): SlotSpec {
   return {
-    $contentSpecs: input.$contentSpecs ?? x.add([]),
+    contentsId: input.contentsId ?? x.add([]),
   };
 }
 

@@ -23,17 +23,17 @@ test('@protoboard2/action/util/move-object', () => {
     const toSpec2 = stateService.modify(x => x.add({}));
 
     const $fromContainer = stateService.modify(x => x.add({
-      $contentSpecs: x.add([fromSpec1, movedSpec, fromSpec2]),
+      contentsId: x.add([fromSpec1, movedSpec, fromSpec2]),
     }));
     const $toContainer = stateService.modify(x => x.add({
-      $contentSpecs: x.add([toSpec1, toSpec2]),
+      contentsId: x.add([toSpec1, toSpec2]),
     }));
 
     const fromContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-        stateService.resolve($fromContainer).$('$contentSpecs'),
+        stateService.resolve($fromContainer).$('contentsId'),
     );
     const toContentIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-        stateService.resolve($toContainer).$('$contentSpecs'),
+        stateService.resolve($toContainer).$('contentsId'),
     );
 
     run(of({id: movedSpec, toIndex: 2}).pipe(

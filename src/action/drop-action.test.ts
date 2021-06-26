@@ -48,7 +48,7 @@ test('@protoboard2/action/drop-action', init => {
 
       const $activeContentId$ = _.stateService
           .resolve($$activeSpec.get(_.vine))
-          ._('$contentSpecs');
+          ._('contentsId');
       run($activeContentId$.pipe(
           tap(id => {
             if (!id) {
@@ -60,18 +60,18 @@ test('@protoboard2/action/drop-action', init => {
 
       _.stateService.modify(x => x.set($$activeSpec.get(_.vine), {
         containerType: 'indexed',
-        $contentSpecs: x.add([otherActiveSpec, movedSpec]),
+        contentsId: x.add([otherActiveSpec, movedSpec]),
       }));
 
       const $targetContentIds = _.stateService.modify(x => x.add([otherSpec1, otherSpec2]));
       const $objectSpec = _.stateService.modify(x => x.add(
-          {containerType: 'indexed' as const, $contentSpecs: $targetContentIds},
+          {containerType: 'indexed' as const, contentsId: $targetContentIds},
       ));
 
       _.objectId$.next($objectSpec);
 
       const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          _.stateService.resolve($$activeSpec.get(_.vine)).$('$contentSpecs'),
+          _.stateService.resolve($$activeSpec.get(_.vine)).$('contentsId'),
       );
       const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.vine).resolve($targetContentIds));

@@ -42,7 +42,7 @@ test('@protoboard2/src/action/pick-all-action', init => {
     const objectId3 = _.stateService.modify(x => x.add({}));
 
     const containerId = _.stateService.modify(x => x.add({
-      $contentSpecs: x.add([objectId1, objectId2, objectId3]),
+      contentsId: x.add([objectId1, objectId2, objectId3]),
     }));
     _.objectId$.next(containerId);
 
@@ -52,12 +52,12 @@ test('@protoboard2/src/action/pick-all-action', init => {
     setParent(objectId3, containerId);
 
     const contents$ = createSpySubject(
-        _.stateService.resolve(_.objectId$).$('$contentSpecs').pipe(
+        _.stateService.resolve(_.objectId$).$('contentsId').pipe(
             map(contents => contents ?? []),
         ),
     );
     const activeContents$ = createSpySubject(
-        $activeSpec.get(_.vine).$('$contentSpecs').pipe(map(contents => contents ?? [])),
+        $activeSpec.get(_.vine).$('contentsId').pipe(map(contents => contents ?? [])),
     );
 
     _.onTrigger$.next({mouseX: 0, mouseY: 0});

@@ -17,8 +17,8 @@ type Config = TriggerConfig;
 
 export function shuffleAction({vine, objectId$}: ActionParams<Config, IsContainer>): Action {
   const stateService = $stateService.get(vine);
-  const contents$ = stateService.resolve(objectId$).$('$contentSpecs');
-  const contentsId$ = stateService.resolve(objectId$)._('$contentSpecs');
+  const contents$ = stateService.resolve(objectId$).$('contentsId');
+  const contentsId$ = stateService.resolve(objectId$)._('contentsId');
   const random = $random.get(vine);
   return pipe(
       withLatestFrom(contentsId$, contents$),

@@ -21,10 +21,10 @@ export function moveObject(
 
   return pipe(
       withLatestFrom(
-          fromContainer.$('$contentSpecs'),
-          toContainer.$('$contentSpecs'),
-          fromContainer._('$contentSpecs'),
-          toContainer._('$contentSpecs'),
+          fromContainer.$('contentsId'),
+          toContainer.$('contentsId'),
+          fromContainer._('contentsId'),
+          toContainer._('contentsId'),
       ),
       tap(([{id, toIndex}, fromContentSpecs, toContentSpecs, $fromContentSpecs, $toContentSpecs]) => {
         if (!fromContentSpecs || !toContentSpecs || !$fromContentSpecs || !$toContentSpecs) {

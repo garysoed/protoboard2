@@ -16,7 +16,7 @@ export type Config = TriggerConfig;
 export function pickAllAction(params: ActionParams<Config, IsContainer>): Action {
   const targetsId$ = $stateService.get(params.vine)
       .resolve(params.objectId$)
-      .$('$contentSpecs')
+      .$('contentsId')
       .pipe(map(contents => contents ?? []));
   return pipe(
       withLatestFrom(targetsId$),
