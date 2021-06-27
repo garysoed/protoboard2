@@ -40,7 +40,7 @@
 --mkThemeDisabledBG2H: rgba(255,240,192,1); }
 
 [mk-theme="dark"] { --mkThemePassiveFG1B: rgba(255,255,255,1);
---mkThemePassiveBG1B: rgba(64,71,77,1);
+--mkThemePassiveBG1B: rgba(38,43,46,1);
 --mkThemeActionFG1B: rgba(26,19,0,1);
 --mkThemeActionBG1B: rgba(255,193,1,1);
 --mkThemeFocusFG1B: rgba(63,113,16,1);
@@ -48,17 +48,17 @@
 --mkThemeHoverFG1B: rgba(13,23,3,1);
 --mkThemeHoverBG1B: rgba(126,225,32,1);
 --mkThemeDisabledFG1B: rgba(255,255,255,0.45);
---mkThemeDisabledBG1B: rgba(64,71,77,1);
+--mkThemeDisabledBG1B: rgba(38,43,46,1);
 --mkThemePassiveFG2B: rgba(255,255,255,0.75);
---mkThemePassiveBG2B: rgba(64,71,77,1);
+--mkThemePassiveBG2B: rgba(38,43,46,1);
 --mkThemeActionFG2B: rgba(255,240,192,1);
---mkThemeActionBG2B: rgba(64,71,77,1);
+--mkThemeActionBG2B: rgba(38,43,46,1);
 --mkThemeFocusFG2B: rgba(63,113,16,0.65);
 --mkThemeFocusBG2B: rgba(223,248,199,1);
 --mkThemeHoverFG2B: rgba(13,23,3,0.65);
 --mkThemeHoverBG2B: rgba(126,225,32,1);
 --mkThemeDisabledFG2B: rgba(255,255,255,0.45);
---mkThemeDisabledBG2B: rgba(64,71,77,1);
+--mkThemeDisabledBG2B: rgba(38,43,46,1);
 --mkThemePassiveFG1H: rgba(255,255,255,1);
 --mkThemePassiveBG1H: rgba(128,97,1,1);
 --mkThemeActionFG1H: rgba(26,19,0,1);
