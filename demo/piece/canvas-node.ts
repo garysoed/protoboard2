@@ -38,6 +38,8 @@ export const $canvasNode = {
     iconType: attributeIn('icon-type', enumParser<IconType>(IconType)),
     x: attributeIn('x', integerParser(), 0),
     y: attributeIn('y', integerParser(), 0),
+    width: attributeIn('x', integerParser(), 0),
+    height: attributeIn('y', integerParser(), 0),
   },
 };
 
@@ -63,30 +65,15 @@ const HEIGHT = 30;
     // Icon configs
     canvasConfigService.addConfig(
         IconType.CIRCLE,
-        {
-          type: 'icon',
-          svgName: IconType.CIRCLE,
-          height: HEIGHT,
-          width: WIDTH,
-        },
+        {type: 'icon', svgName: IconType.CIRCLE},
     );
     canvasConfigService.addConfig(
         IconType.SQUARE,
-        {
-          type: 'icon',
-          svgName: IconType.SQUARE,
-          height: HEIGHT,
-          width: WIDTH,
-        },
+        {type: 'icon', svgName: IconType.SQUARE},
     );
     canvasConfigService.addConfig(
         IconType.TRIANGLE,
-        {
-          type: 'icon',
-          svgName: IconType.TRIANGLE,
-          height: HEIGHT,
-          width: WIDTH,
-        },
+        {type: 'icon', svgName: IconType.TRIANGLE},
     );
 
     // Line configs
@@ -139,6 +126,8 @@ export class CanvasNode extends BaseComponent<State, typeof $> {
             configName: this.iconConfigName$,
             x: this.x$,
             y: this.y$,
+            width: of(WIDTH),
+            height: of(HEIGHT),
             trigger: this.iconTrigger$,
           }),
           'Draw icon',

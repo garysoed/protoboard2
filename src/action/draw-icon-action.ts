@@ -11,6 +11,8 @@ import {Action, ActionParams, TriggerConfig} from './action-spec';
 export interface Config extends TriggerConfig {
   readonly x: number;
   readonly y: number;
+  readonly height: number;
+  readonly width: number;
   readonly configName: string;
 }
 

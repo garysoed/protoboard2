@@ -17,6 +17,8 @@ export interface CanvasHalfLine {
 export interface CanvasIcon {
   readonly x: number;
   readonly y: number;
+  readonly width: number;
+  readonly height: number;
   readonly configName: string;
 }
 

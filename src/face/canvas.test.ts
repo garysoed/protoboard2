@@ -72,29 +72,19 @@ test('@protoboard2/src/face/canvas', init => {
     const iconConfigName1 = 'iconConfigName1';
     canvasConfigService.addConfig(
         iconConfigName1,
-        {
-          type: 'icon',
-          svgName: svgName1,
-          width: 20,
-          height: 20,
-        },
+        {type: 'icon', svgName: svgName1},
     );
 
     const iconConfigName2 = 'iconConfigName2';
     canvasConfigService.addConfig(
         iconConfigName2,
-        {
-          type: 'icon',
-          svgName: svgName2,
-          width: 30,
-          height: 30,
-        },
+        {type: 'icon', svgName: svgName2},
     );
 
     const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
       icons: x.add<readonly CanvasIcon[]>([
-        {x: 20, y: 80, configName: iconConfigName1},
-        {x: 80, y: 20, configName: iconConfigName2},
+        {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
+        {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
       lines: x.add<readonly CanvasLine[]>([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: lineConfigName1},
@@ -130,18 +120,13 @@ test('@protoboard2/src/face/canvas', init => {
     const iconConfigName = 'iconConfigName';
     canvasConfigService.addConfig(
         iconConfigName,
-        {
-          type: 'icon',
-          svgName,
-          width: 20,
-          height: 20,
-        },
+        {type: 'icon', svgName},
     );
 
     const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
       icons: x.add([
-        {x: 20, y: 80, configName: iconConfigName},
-        {x: 80, y: 20, configName: 'unknownIconConfig'},
+        {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName},
+        {x: 80, y: 20, width: 30, height: 30, configName: 'unknownIconConfig'},
       ]),
       lines: x.add<readonly CanvasLine[]>([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: 'unknownLineConfig'},
@@ -186,29 +171,19 @@ test('@protoboard2/src/face/canvas', init => {
     const iconConfigName1 = 'iconConfigName1';
     canvasConfigService.addConfig(
         iconConfigName1,
-        {
-          type: 'icon',
-          svgName: svgName1,
-          width: 20,
-          height: 20,
-        },
+        {type: 'icon', svgName: svgName1},
     );
 
     const iconConfigName2 = 'iconConfigName2';
     canvasConfigService.addConfig(
         iconConfigName2,
-        {
-          type: 'icon',
-          svgName: svgName2,
-          width: 30,
-          height: 30,
-        },
+        {type: 'icon', svgName: svgName2},
     );
 
     const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
       icons: x.add<readonly CanvasIcon[]>([
-        {x: 20, y: 80, configName: iconConfigName1},
-        {x: 80, y: 20, configName: iconConfigName2},
+        {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
+        {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
       lines: x.add<readonly CanvasLine[]>([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: lineConfigName1},
@@ -229,29 +204,19 @@ test('@protoboard2/src/face/canvas', init => {
     const iconConfigName1 = 'iconConfigName1';
     canvasConfigService.addConfig(
         iconConfigName1,
-        {
-          type: 'icon',
-          svgName,
-          width: 20,
-          height: 20,
-        },
+        {type: 'icon', svgName},
     );
 
     const iconConfigName2 = 'iconConfigName2';
     canvasConfigService.addConfig(
         iconConfigName2,
-        {
-          type: 'icon',
-          svgName: 'unknownSvg',
-          width: 30,
-          height: 30,
-        },
+        {type: 'icon', svgName: 'unknownSvg'},
     );
 
     const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
       icons: x.add<readonly CanvasIcon[]>([
-        {x: 20, y: 80, configName: iconConfigName1},
-        {x: 80, y: 20, configName: iconConfigName2},
+        {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
+        {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
       lines: x.add([]),
       halfLine: x.add(null),

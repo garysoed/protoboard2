@@ -26,6 +26,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
       config$: of({
         x: 10,
         y: 20,
+        width: 30,
+        height: 40,
         configName: CONFIG_NAME,
         trigger: {type: TriggerType.CLICK},
       }),
@@ -56,6 +58,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
         objectThat<CanvasIcon>().haveProperties({
           x: 10,
           y: 20,
+          width: 30,
+          height: 40,
           configName: CONFIG_NAME,
         }),
       ]),
@@ -67,6 +71,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
       x.set(_.iconsId, [{
         x: 10,
         y: 20,
+        width: 30,
+        height: 40,
         configName: CONFIG_NAME,
       }]);
     });
@@ -80,6 +86,8 @@ test('@protoboard2/src/action/draw-icon-action', init => {
         objectThat<CanvasIcon>().haveProperties({
           x: 10,
           y: 20,
+          width: 30,
+          height: 40,
           configName: CONFIG_NAME,
         }),
       ]),

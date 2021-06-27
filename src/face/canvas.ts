@@ -166,8 +166,8 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
             content: svgContent,
             x: `${icon.x}`,
             y: `${icon.y}`,
-            width: `${config.width}`,
-            height: `${config.height}`,
+            width: `${icon.width}`,
+            height: `${icon.height}`,
           });
         }),
     );
