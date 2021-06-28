@@ -93,8 +93,7 @@ test('@protoboard2/src/face/canvas', init => {
       halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: lineConfigName2}),
     }));
     _.el.setAttribute($.host._.objectId, objectId);
-    _.el.dispatchEvent(
-        $.root._.onMouseMove,
+    window.dispatchEvent(
         new MouseEvent('mousemove', {clientX: 90, clientY: 40}),
     );
 

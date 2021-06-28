@@ -4,14 +4,15 @@ import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {Modifier} from 'gs-tools/export/state';
 import {$svgService, BaseThemedCtrl, stateIdParser, _p} from 'mask';
-import {$svg, attributeIn, element, host, multi, onDom, PersonaContext, renderNode, RenderSpec, single} from 'persona';
-import {combineLatest, Observable, of} from 'rxjs';
+import {$svg, attributeIn, boundingRect, element, host, multi, PersonaContext, renderNode, RenderSpec, single} from 'persona';
+import {combineLatest, fromEvent, Observable, of} from 'rxjs';
 import {map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {IconConfig, LineConfig} from './canvas-config';
 import {$canvasConfigService} from './canvas-config-service';
 import {CanvasEntry, CanvasIcon, CanvasLine} from './canvas-entry';
 import template from './canvas.html';
+
 
 // TODO: Add warnings for missing configs.
 export const $canvas = {
@@ -32,9 +33,9 @@ export function canvasSpec(partial: Partial<CanvasEntry>, x: Modifier): CanvasEn
 export const $ = {
   host: host($canvas.api),
   root: element('root', $svg, {
+    boundingRect: boundingRect(),
     halfline: single('#halfline'),
     permanents: multi('#permanents'),
-    onMouseMove: onDom<MouseEvent>('mousemove'),
   }),
 };
 
@@ -70,13 +71,14 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
             return of(null);
           }
 
-          return this.inputs.root.onMouseMove.pipe(
-              switchMap(event => {
+          return fromEvent<MouseEvent>(window, 'mousemove').pipe(
+              withLatestFrom(this.inputs.root.boundingRect),
+              switchMap(([event, rect]) => {
                 const spec = this.renderLine(
                     {
                       ...halfLine,
-                      toX: event.offsetX,
-                      toY: event.offsetY,
+                      toX: event.clientX - rect.x,
+                      toY: event.clientY - rect.y,
                     },
                     lineConfigs,
                 );
