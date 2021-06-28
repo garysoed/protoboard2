@@ -13,7 +13,11 @@ export function triggerKey(targetEl: Element, triggerSpec: TriggerSpec): void {
   targetEl.dispatchEvent(new CustomEvent('mouseenter'));
   targetEl.dispatchEvent(Object.assign(
       new CustomEvent('mousemove'),
-      {offsetX: triggerSpec.mouseX ?? 12, offsetY: triggerSpec.mouseY ?? 34},
+      {
+        ...triggerSpec,
+        offsetX: triggerSpec.mouseX ?? 12,
+        offsetY: triggerSpec.mouseY ?? 34,
+      },
   ));
 
   // Press the key

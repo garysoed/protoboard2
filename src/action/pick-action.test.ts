@@ -5,6 +5,7 @@ import {EMPTY, ReplaySubject, Subject} from 'rxjs';
 
 import {activeSpec} from '../core/active';
 import {$$activeSpec} from '../core/active-spec';
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {$setParent} from '../objects/content-map';
 
@@ -67,7 +68,7 @@ test('@protoboard2/action/pick-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.vine).resolve($targetContentSpecs));
 
-      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec]),

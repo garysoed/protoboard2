@@ -20,15 +20,37 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
 
   test('createTriggerClick', () => {
     should('trigger click based actions', () => {
-      const onTrigger$ = createSpySubject(
-          of({trigger: {type: TriggerType.CLICK}}).pipe(createTrigger(_.context)),
+      const config = {
+        trigger: {type: TriggerType.CLICK, alt: true, meta: true},
+      };
+      const onTrigger$ = createSpySubject(of(config).pipe(createTrigger(_.context)));
+
+      const altKey = true;
+      const ctrlKey = false;
+      const metaKey = true;
+      const shiftKey = false;
+      const mouseX = 12;
+      const mouseY = 34;
+      triggerClick(
+          _.el,
+          {
+            altKey,
+            ctrlKey,
+            metaKey,
+            mouseX,
+            mouseY,
+            shiftKey,
+          },
       );
 
-      triggerClick(_.el);
-
       assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({
-        mouseX: 0,
-        mouseY: 0,
+        altKey,
+        ctrlKey,
+        metaKey,
+        mouseX,
+        mouseY,
+        shiftKey,
+        targetEl: _.el,
       }),
       );
     });
@@ -36,24 +58,38 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
 
   test('createTriggerKey', () => {
     should('emit when hovered and the correct key was pressed', () => {
-      const onTrigger$ = createSpySubject(
-          of({trigger: {type: TriggerType.T}}).pipe(createTrigger(_.context)),
-      );
+      const config = {
+        trigger: {type: TriggerType.T, alt: true, meta: true},
+      };
+      const onTrigger$ = createSpySubject(of(config).pipe(createTrigger(_.context)));
 
+      const altKey = true;
+      const ctrlKey = false;
+      const metaKey = true;
+      const shiftKey = false;
       const mouseX = 12;
       const mouseY = 34;
       triggerKey(
           _.el,
           {
             key: TriggerType.T,
+            altKey,
+            ctrlKey,
+            metaKey,
             mouseX,
             mouseY,
+            shiftKey,
           },
       );
 
       assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({
+        altKey,
+        ctrlKey,
+        metaKey,
         mouseX,
         mouseY,
+        shiftKey,
+        targetEl: _.el,
       }));
     });
 

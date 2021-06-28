@@ -4,6 +4,7 @@ import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {of, ReplaySubject, Subject} from 'rxjs';
 
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
@@ -51,7 +52,7 @@ test('@protoboard2/action/shuffle-action', init => {
 
     _.seed.values = [1, 0, 0.5, 2];
 
-    _.onTrigger$.next({mouseX: 0, mouseY: 0});
+    _.onTrigger$.next(fakeTriggerEvent({}));
 
     assert(contents$).to.emitWith(
         arrayThat<StateId<unknown>>().haveExactElements([object2, object3, object1, object4]),

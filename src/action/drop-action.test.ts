@@ -5,6 +5,7 @@ import {of, ReplaySubject, Subject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {$$activeSpec} from '../core/active-spec';
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {IsContainer} from '../payload/is-container';
@@ -76,7 +77,7 @@ test('@protoboard2/action/drop-action', init => {
       const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
           $stateService.get(_.vine).resolve($targetContentIds));
 
-      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(activeIds$).to.emitSequence([
         arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec, movedSpec]),

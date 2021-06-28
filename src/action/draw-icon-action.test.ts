@@ -3,6 +3,7 @@ import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {of, Subject} from 'rxjs';
 
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {CanvasEntry, CanvasIcon} from '../face/canvas-entry';
@@ -50,7 +51,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    _.onTrigger$.next({mouseX: 0, mouseY: 0});
+    _.onTrigger$.next(fakeTriggerEvent({}));
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([]),
@@ -79,7 +80,7 @@ test('@protoboard2/src/action/draw-icon-action', init => {
 
     const icons$ = createSpySubject(_.stateService.resolve(_.iconsId));
 
-    _.onTrigger$.next({mouseX: 0, mouseY: 0});
+    _.onTrigger$.next(fakeTriggerEvent({}));
 
     assert(icons$).to.emitSequence([
       arrayThat<CanvasIcon>().haveExactElements([

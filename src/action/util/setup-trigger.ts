@@ -13,19 +13,26 @@ export interface TriggerContext<C extends TriggerConfig> {
 }
 
 
-type RawTriggerEvent = (KeyboardEvent|MouseEvent)&TriggerEvent;
-
 function createTriggerClick(
     triggerSpec: TriggerSpec,
     context: PersonaContext,
-): Observable<MouseEvent&TriggerEvent> {
-  const targetEl = triggerSpec.targetEl ?? host({});
+): Observable<TriggerEvent> {
+  const targetElSelector = triggerSpec.targetEl ?? host({});
+  const targetEl = targetElSelector.getSelectable(context);
   return onDom<MouseEvent>('click')
-      .resolve(context => targetEl.getSelectable(context))
+      .resolve(context => targetElSelector.getSelectable(context))
       .getValue(context)
       .pipe(
           map(event => {
-            return Object.assign(event, {mouseX: event.offsetX, mouseY: event.offsetY});
+            return {
+              altKey: event.altKey,
+              ctrlKey: event.ctrlKey,
+              metaKey: event.metaKey,
+              shiftKey: event.shiftKey,
+              mouseX: event.offsetX,
+              mouseY: event.offsetY,
+              targetEl,
+            };
           }),
       );
 }
@@ -33,17 +40,18 @@ function createTriggerClick(
 function createTriggerKey(
     triggerSpec: TriggerSpec,
     context: PersonaContext,
-): Observable<KeyboardEvent&TriggerEvent> {
-  const targetEl = triggerSpec.targetEl ?? host({});
+): Observable<TriggerEvent> {
+  const targetElSelector = triggerSpec.targetEl ?? host({});
   const onMouseLeave$ = onDom('mouseleave')
-      .resolve(context => targetEl.getSelectable(context))
+      .resolve(context => targetElSelector.getSelectable(context))
       .getValue(context);
   const onMouseEnter$ = onDom('mouseenter')
-      .resolve(context => targetEl.getSelectable(context))
+      .resolve(context => targetElSelector.getSelectable(context))
       .getValue(context);
   const onMouseMove$ = onDom<MouseEvent>('mousemove')
-      .resolve(context => targetEl.getSelectable(context))
+      .resolve(context => targetElSelector.getSelectable(context))
       .getValue(context);
+  const targetEl = targetElSelector.getSelectable(context);
   return merge(
       onMouseLeave$.pipe(mapTo(false)),
       onMouseEnter$.pipe(mapTo(true)),
@@ -55,9 +63,15 @@ function createTriggerKey(
           withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
           filter(([event]) => event.key.toLowerCase() === triggerSpec.type),
           map(([keyboardEvent, mouseEvent]) => {
-            return Object.assign(
-                keyboardEvent,
-                {mouseX: mouseEvent.offsetX, mouseY: mouseEvent.offsetY});
+            return {
+              altKey: keyboardEvent.altKey,
+              ctrlKey: keyboardEvent.ctrlKey,
+              metaKey: keyboardEvent.metaKey,
+              shiftKey: keyboardEvent.shiftKey,
+              mouseX: mouseEvent.offsetX,
+              mouseY: mouseEvent.offsetY,
+              targetEl,
+            };
           }),
       );
 }
@@ -72,7 +86,7 @@ export function createTrigger<C extends TriggerConfig>(
         }
 
         const triggerSpec = config.trigger;
-        const trigger$: Observable<RawTriggerEvent> = isKeyTrigger(triggerSpec.type)
+        const trigger$: Observable<TriggerEvent> = isKeyTrigger(triggerSpec.type)
           ? createTriggerKey(triggerSpec, context)
           : createTriggerClick(triggerSpec, context);
         return trigger$.pipe(

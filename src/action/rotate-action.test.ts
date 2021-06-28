@@ -4,6 +4,7 @@ import {fakeStateService} from 'gs-tools/export/state';
 import {PersonaTesterEnvironment} from 'persona/export/testing';
 import {of, ReplaySubject, Subject} from 'rxjs';
 
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 
@@ -41,7 +42,7 @@ test('@protoboard2/action/rotate-action', init => {
       _.config$.next({stops: [11, 22, 33], trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$rotationDeg, 1));
 
-      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(22);
     });
@@ -50,7 +51,7 @@ test('@protoboard2/action/rotate-action', init => {
       _.config$.next({stops: [123, 456, 678], trigger: {type: TriggerType.CLICK}});
       _.stateService.modify(x => x.set(_.$rotationDeg, 910));
 
-      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(_.stateService.resolve(_.$rotationDeg)).to.emitWith(456);
     });

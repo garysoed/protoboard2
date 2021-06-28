@@ -5,6 +5,7 @@ import {of, ReplaySubject, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {$activeSpec} from '../core/active-spec';
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 import {$setParent} from '../objects/content-map';
@@ -60,7 +61,7 @@ test('@protoboard2/src/action/pick-all-action', init => {
         $activeSpec.get(_.vine).$('contentsId').pipe(map(contents => contents ?? [])),
     );
 
-    _.onTrigger$.next({mouseX: 0, mouseY: 0});
+    _.onTrigger$.next(fakeTriggerEvent({}));
 
     assert(contents$).to.emitSequence([
       arrayThat<StateId<unknown>>().haveExactElements([objectId1, objectId2, objectId3]),

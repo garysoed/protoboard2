@@ -2,6 +2,7 @@ import {Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
 import {EMPTY, of, Subject} from 'rxjs';
 
+import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
 
@@ -37,7 +38,7 @@ test('@protoboard2/action/help-action', init => {
     should('show the help correctly', () => {
       const actions$ = createSpySubject($helpService.get(_.vine).actions$);
 
-      _.onTrigger$.next({mouseX: 0, mouseY: 0});
+      _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(actions$).to.emitSequence([
         arrayThat<ActionTrigger>().haveExactElements([]),
