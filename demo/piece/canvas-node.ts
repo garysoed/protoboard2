@@ -115,7 +115,7 @@ const HEIGHT = 30;
 })
 export class CanvasNode extends BaseComponent<State, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
   }
 
   protected get actions(): readonly ActionSpec[] {

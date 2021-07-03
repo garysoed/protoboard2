@@ -73,7 +73,7 @@ export function d2Spec(partial: Partial<D2Spec>, x: Modifier): D2Spec {
 })
 export class D2 extends BaseComponent<D2Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(
         renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context),

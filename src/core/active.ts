@@ -71,7 +71,7 @@ export function activeSpec(input: Input): ActiveSpec {
 })
 export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
   }
 
   @cache()

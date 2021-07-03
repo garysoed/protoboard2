@@ -22,15 +22,12 @@ type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) =>
 
 const LOG = new Logger('pb.core.BaseComponent');
 
-interface HostSelector<O> {
-  readonly host: {readonly _: {readonly objectId: Input<StateId<O>|undefined>}}
-}
-
 @_p.baseCustomElement({})
-export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseThemedCtrl<S> {
+export abstract class BaseComponent<O, S> extends BaseThemedCtrl<S> {
   constructor(
       context: PersonaContext,
       spec: S,
+      private readonly objectIdInput: Input<StateId<O>|undefined>,
   ) {
     super(context, spec);
 
@@ -61,7 +58,7 @@ export abstract class BaseComponent<O, S extends HostSelector<O>> extends BaseTh
    */
   @cache()
   get objectId$(): Observable<StateId<O>> {
-    return this.inputs.host.objectId.pipe(
+    return this.objectIdInput.getValue(this.context).pipe(
         switchMap(objectId => {
           if (!objectId) {
             LOG.warning('No object-id found');

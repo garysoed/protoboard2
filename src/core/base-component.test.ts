@@ -44,7 +44,7 @@ class TestComponent extends BaseComponent<{}, typeof $> {
       private readonly triggerActions: readonly ActionSpec[],
       context: PersonaContext,
   ) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
   }
 
   @cache()

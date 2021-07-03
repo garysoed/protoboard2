@@ -46,10 +46,7 @@ export function slotSpec(input: Partial<SlotSpec>, x: Modifier): SlotSpec {
 })
 export class Slot extends BaseComponent<SlotSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(
-        context,
-        $,
-    );
+    super(context, $, $.host._.objectId);
   }
 
   @cache()

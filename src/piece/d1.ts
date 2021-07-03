@@ -64,7 +64,7 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
    * @internal
    */
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
 
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context));
   }

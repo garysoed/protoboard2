@@ -69,7 +69,7 @@ export function d6Spec(partial: Partial<D6Spec>, x: Modifier): D6Spec {
 })
 export class D6 extends BaseComponent<D6Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.face.slotted, context));
   }

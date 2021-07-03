@@ -50,7 +50,7 @@ export function deckSpec(input: Partial<DeckSpec>, x: Modifier): DeckSpec {
 })
 export class Deck extends BaseComponent<DeckSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $);
+    super(context, $, $.host._.objectId);
   }
 
   @cache()
