@@ -4,9 +4,9 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {fakeStateService} from 'gs-tools/export/state';
 import {registerSvg, _p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
-import {PersonaTesterFactory} from 'persona/export/testing';
+import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
 
-import {$, Canvas} from './canvas';
+import {Canvas} from './canvas';
 import {$canvasConfigService} from './canvas-config-service';
 import {CanvasEntry, CanvasHalfLine, CanvasIcon, CanvasLine} from './canvas-entry';
 import goldenDefault from './goldens/canvas__default.html';
@@ -36,8 +36,8 @@ test('@protoboard2/src/face/canvas', init => {
         {override: $stateService, withValue: stateService},
       ],
     });
-    const el = tester.createElement(Canvas);
-    return {el, stateService, vine: tester.vine};
+    const {element, harness} = tester.createHarness(Canvas);
+    return {element, harness, stateService, vine: tester.vine};
   });
 
   should('render the lines, icons, and half line with correct configs', () => {
@@ -92,12 +92,12 @@ test('@protoboard2/src/face/canvas', init => {
       ]),
       halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: lineConfigName2}),
     }));
-    _.el.setAttribute($.host._.objectId, objectId);
+    _.harness.host._.objectId(objectId);
     window.dispatchEvent(
         new MouseEvent('mousemove', {clientX: 90, clientY: 40}),
     );
 
-    assert(_.el.flattenContent()).to.matchSnapshot('default');
+    assert(flattenNode(_.element)).to.matchSnapshot('default');
   });
 
   should('skip lines, icons, and half lines with unknown config names', () => {
@@ -133,9 +133,9 @@ test('@protoboard2/src/face/canvas', init => {
       ]),
       halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: 'unknownLineConfig'}),
     }));
-    _.el.setAttribute($.host._.objectId, objectId);
+    _.harness.host._.objectId(objectId);
 
-    assert(_.el.flattenContent()).to.matchSnapshot('noConfig');
+    assert(flattenNode(_.element)).to.matchSnapshot('noConfig');
   });
 
   should('render lines and icons even without mouse events', () => {
@@ -190,9 +190,9 @@ test('@protoboard2/src/face/canvas', init => {
       ]),
       halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: lineConfigName2}),
     }));
-    _.el.setAttribute($.host._.objectId, objectId);
+    _.harness.host._.objectId(objectId);
 
-    assert(_.el.flattenContent()).to.matchSnapshot('noMouse');
+    assert(flattenNode(_.element)).to.matchSnapshot('noMouse');
   });
 
   should('render comments for icons with unknown icon name', () => {
@@ -220,8 +220,8 @@ test('@protoboard2/src/face/canvas', init => {
       lines: x.add([]),
       halfLine: x.add(null),
     }));
-    _.el.setAttribute($.host._.objectId, objectId);
+    _.harness.host._.objectId(objectId);
 
-    assert(_.el.flattenContent()).to.matchSnapshot('noIcon');
+    assert(flattenNode(_.element)).to.matchSnapshot('noIcon');
   });
 });
