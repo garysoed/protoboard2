@@ -2,7 +2,7 @@ import {arrayThat, assert, should, test} from 'gs-testing';
 import {_p} from 'mask';
 import {PersonaTesterFactory} from 'persona/export/testing';
 
-import {$, LensDisplay} from './lens-display';
+import {LensDisplay} from './lens-display';
 import {$lensService} from './lens-service';
 
 
@@ -11,9 +11,9 @@ const TESTER_FACTORY = new PersonaTesterFactory(_p);
 test('@protoboard2/util/lens-display', init => {
   const _ = init(() => {
     const tester = TESTER_FACTORY.build({rootCtrls: [LensDisplay], rootDoc: document});
-    const el = tester.createElement(LensDisplay);
+    const {harness} = tester.createHarness(LensDisplay);
 
-    return {el, tester};
+    return {harness, tester};
   });
 
   function getRenderedHtmls(rootEl: Element): readonly string[] {
@@ -31,7 +31,7 @@ test('@protoboard2/util/lens-display', init => {
 
   test('setupRenderContent', _, init => {
     const _ = init(_ => {
-      const rootEl = _.el.getElement($.root);
+      const rootEl = _.harness.root.selectable;
       return {..._, rootEl};
     });
 

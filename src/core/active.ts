@@ -2,7 +2,7 @@ import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {StateId} from 'gs-tools/export/state';
 import {stateIdParser, _p} from 'mask';
-import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style, textContent} from 'persona';
+import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, throttleTime} from 'rxjs/operators';
 
@@ -34,9 +34,7 @@ export const $active = {
 
 export const $ = {
   host: host($active.api),
-  count: element('count', $div, {
-    text: textContent(),
-  }),
+  count: element('count', $div, {}),
   root: element('root', $div, {
     classMultiple: classToggle('multiple'),
     content: multi('#content'),
@@ -82,7 +80,7 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.count.text(this.itemCountDisplay$),
+      this.renderers.count.textContent(this.itemCountDisplay$),
       this.renderers.root.classMultiple(this.multipleItems$),
       this.renderers.root.left(this.left$),
       this.renderers.root.top(this.top$),

@@ -2,14 +2,14 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {_p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
-import {PersonaTesterFactory} from 'persona/export/testing';
+import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
 import {map} from 'rxjs/operators';
 
 import {TriggerType} from '../core/trigger-spec';
 
 import render from './goldens/help-overlay__render.html';
 import renderEmpty from './goldens/help-overlay__render_empty.html';
-import {$, HelpOverlay} from './help-overlay';
+import {HelpOverlay} from './help-overlay';
 import {$helpService} from './help-service';
 
 
@@ -27,14 +27,14 @@ test('@protoboard2/action/help-overlay', init => {
       rootCtrls: [HelpOverlay],
       rootDoc: document,
     });
-    const el = tester.createElement(HelpOverlay);
+    const {element, harness} = tester.createHarness(HelpOverlay);
 
-    return {el, tester};
+    return {element, harness, tester};
   });
 
   test('renderIsVisible', () => {
     should('not add the isVisible class if there are no actions in the help service', () => {
-      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(false);
+      assert(_.harness.root._.isVisibleClass).to.emitWith(false);
     });
 
     should('add the isVisible class if there is an action in the help service', () => {
@@ -42,7 +42,7 @@ test('@protoboard2/action/help-overlay', init => {
           [{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}],
       );
 
-      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(true);
+      assert(_.harness.root._.isVisibleClass).to.emitWith(true);
     });
   });
 
@@ -55,7 +55,7 @@ test('@protoboard2/action/help-overlay', init => {
         },
       ]);
 
-      assert(_.el.flattenContent()).to.matchSnapshot('render');
+      assert(flattenNode(_.element)).to.matchSnapshot('render');
     });
 
     should('render deletion correctly', () => {
@@ -63,7 +63,7 @@ test('@protoboard2/action/help-overlay', init => {
       service.show([{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}]);
       service.show([]);
 
-      assert(_.el.flattenContent()).to.matchSnapshot('renderEmpty');
+      assert(flattenNode(_.element)).to.matchSnapshot('renderEmpty');
     });
   });
 
@@ -73,9 +73,9 @@ test('@protoboard2/action/help-overlay', init => {
         {trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME},
       ]);
 
-      _.el.dispatchEvent($.root._.click);
+      _.harness.root._.click();
 
-      assert(_.el.hasClass($.root._.isVisibleClass)).to.equal(false);
+      assert(_.harness.root._.isVisibleClass).to.emitWith(false);
 
       const actionsLength$ = $helpService.get(_.tester.vine).actions$.pipe(
           map(actions => actions.length),

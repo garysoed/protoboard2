@@ -2,7 +2,7 @@ import {assert, createSpyInstance, objectThat, should, test} from 'gs-testing';
 import {_p} from 'mask';
 import {PersonaTesterFactory} from 'persona/export/testing';
 
-import {$, Lens} from './lens';
+import {Lens} from './lens';
 import {$lensService, LensService} from './lens-service';
 
 
@@ -18,14 +18,14 @@ test('@protoboard2/util/lens', init => {
       rootCtrls: [Lens],
       rootDoc: document,
     });
-    const el = tester.createElement(Lens);
+    const {element, harness} = tester.createHarness(Lens);
 
-    return {el, mockLensService, tester};
+    return {element, harness, mockLensService, tester};
   });
 
   test('setupHandleMouseOut', () => {
     should('hide the elements', () => {
-      _.el.dispatchEvent($.host._.onMouseLeave);
+      _.harness.host._.onMouseLeave();
 
       assert(_.mockLensService.hide).to.haveBeenCalledWith(objectThat<Lens>().beAnInstanceOf(Lens));
     });
@@ -37,9 +37,9 @@ test('@protoboard2/util/lens', init => {
       const divEl = document.createElement('div');
       divEl.appendChild(spanEl);
       divEl.setAttribute('slot', 'details');
-      _.el.element.appendChild(divEl);
+      _.element.appendChild(divEl);
 
-      _.el.dispatchEvent($.host._.onMouseEnter);
+      _.harness.host._.onMouseEnter();
 
       const matcher = objectThat<DocumentFragment>().beAnInstanceOf(DocumentFragment);
 

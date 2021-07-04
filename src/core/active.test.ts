@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {assert, setThat, should, test} from 'gs-testing';
+import {assert, should, test} from 'gs-testing';
 import {fakeStateService, StateId} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {renderNode, setId} from 'persona';
@@ -9,7 +9,7 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {$registerRenderObject} from '../objects/render-object-spec';
 
-import {$, Active, activeSpec} from './active';
+import {Active, activeSpec} from './active';
 import {$$activeSpec} from './active-spec';
 
 
@@ -35,24 +35,24 @@ test('@protoboard2/core/active', init => {
     stateService.modify(x => x.set($$activeSpec.get(tester.vine), activeSpec({contentsId})));
 
     // Need to add to body so the dimensions work.
-    const el = tester.createElement(Active);
-    document.body.appendChild(el.element);
+    const {element, harness} = tester.createHarness(Active);
+    document.body.appendChild(element);
 
-    return {contentsId, el, stateService, tester};
+    return {contentsId, harness, stateService, tester};
   });
 
   test('itemCount$', _, () => {
     should('render the 0 item count correctly', () => {
       _.stateService.modify(x => x.set(_.contentsId, []));
 
-      assert(_.el.getTextContent($.count)).to.equal('');
+      assert(_.harness.count._.textContent).to.emitWith('');
     });
 
     should('render the 1 item count correctly', () => {
       const objectId = _.stateService.modify(x => x.add({}));
       _.stateService.modify(x => x.set(_.contentsId, [objectId]));
 
-      assert(_.el.getTextContent($.count)).to.equal('');
+      assert(_.harness.count._.textContent).to.emitWith('');
     });
 
     should('render the 3 items count correctly', () => {
@@ -67,7 +67,7 @@ test('@protoboard2/core/active', init => {
           ],
       ));
 
-      assert(_.el.getTextContent($.count)).to.equal('+2');
+      assert(_.harness.count._.textContent).to.emitWith('+2');
     });
   });
 
@@ -88,7 +88,7 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
 
-      assert(_.el.getStyle($.root._.left)).to.equal(`${left - width / 2}px`);
+      assert(_.harness.root._.left).to.emitWith(`${left - width / 2}px`);
     });
   });
 
@@ -96,7 +96,7 @@ test('@protoboard2/core/active', init => {
     should('remove the multiple classname if there are 0 items', () => {
       _.stateService.modify(x => x.set(_.contentsId, []));
 
-      assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
+      assert(_.harness.root._.classMultiple).to.emitWith(false);
     });
 
     should('remove the multiple classname if there is 1 item', () => {
@@ -105,7 +105,7 @@ test('@protoboard2/core/active', init => {
           [x.add({})]),
       );
 
-      assert(_.el.getClassList($.root)).to.equal(setThat<string>().beEmpty());
+      assert(_.harness.root._.classMultiple).to.emitWith(false);
     });
 
     should('add the multiple classname if there are 3 items', () => {
@@ -119,9 +119,7 @@ test('@protoboard2/core/active', init => {
           ],
       ));
 
-      assert(_.el.getClassList($.root)).to.equal(
-          setThat<string>().haveExactElements(new Set(['multiple'])),
-      );
+      assert(_.harness.root._.classMultiple).to.emitWith(true);
     });
   });
 
@@ -144,7 +142,7 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientY: top}));
 
-      assert(_.el.getStyle($.root._.top)).to.equal(`${top - height / 2}px`);
+      assert(_.harness.root._.top).to.emitWith(`${top - height / 2}px`);
     });
   });
 
@@ -177,8 +175,8 @@ test('@protoboard2/core/active', init => {
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: 0, clientY: 0}));
 
-      assert(_.el.getStyle($.root._.left)).to.equal(`${-size / 2}px`);
-      assert(_.el.getStyle($.root._.top)).to.equal(`${-size / 2}px`);
+      assert(_.harness.root._.left).to.emitWith(`${-size / 2}px`);
+      assert(_.harness.root._.top).to.emitWith(`${-size / 2}px`);
     });
   });
 });
