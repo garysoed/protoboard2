@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {fakeStateService} from 'gs-tools/export/state';
 import {_p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
-import {PersonaTesterFactory} from 'persona/export/testing';
+import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
 
 import {D2Demo} from './d2';
 import goldenDefault from './goldens/d2.html';
@@ -23,11 +23,11 @@ test('@protoboard2/demo/piece/d2', init => {
         {override: $stateService, withValue: fakeStateService()},
       ],
     });
-    const el = tester.createElement(D2Demo);
-    return {el};
+    const {element} = tester.createHarness(D2Demo);
+    return {element};
   });
 
   should('render correctly', () => {
-    assert(_.el.flattenContent()).to.matchSnapshot('default');
+    assert(flattenNode(_.element)).to.matchSnapshot('default');
   });
 });
