@@ -15,10 +15,7 @@ export const $deckDemo = {
 
 type State = DeckSpec;
 
-const $state = source<StateId<State>>(
-    'state',
-    vine => $stateService.get(vine).modify(x => x.add(deckSpec({}, x))),
-);
+const $state = source<StateId<State>>(vine => $stateService.get(vine).modify(x => x.add(deckSpec({}, x))));
 
 const $ = {
   deck: element('deck', $deck, {}),

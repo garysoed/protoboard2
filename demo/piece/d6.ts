@@ -16,12 +16,9 @@ interface State {
   readonly diceSlot: StateId<SlotSpec>;
 }
 
-const $$dice = source<StateId<D6Spec>>(
-    '$dice',
-    vine => $stateService.get(vine).modify(x => x.add(d6Spec({}, x))),
-);
+const $$dice = source<StateId<D6Spec>>(vine => $stateService.get(vine).modify(x => x.add(d6Spec({}, x))));
 
-const $state = source<State>('d6state', vine => $stateService.get(vine).modify(x => ({
+const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
   diceSlot: x.add(slotSpec({contentsId: x.add([$$dice.get(vine)])}, x)),
 })));
 

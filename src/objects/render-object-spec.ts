@@ -11,37 +11,28 @@ interface RenderObjectSpec {
 
 export type RenderObjectFn = () => Observable<RenderSpec>;
 
-const $renderObjectSpec = source<Subject<RenderObjectSpec>>(
-    'renderObjectSpec',
-    () => new ReplaySubject(),
-);
+const $renderObjectSpec = source<Subject<RenderObjectSpec>>(() => new ReplaySubject());
 
 const $renderObjectMap = source<Observable<ReadonlyMap<string, RenderObjectFn>>>(
-    'renderObjectMap',
     vine => $renderObjectSpec.get(vine).pipe(
         scan((specMap, entry) => new Map([...specMap, [entry.objectId.id, entry.renderFn]]), new Map()),
         startWith(new Map()),
     ));
 
 type RegisterRenderObjectFn = (objectId: StateId<unknown>, renderFn: RenderObjectFn) => void;
-export const $registerRenderObject = source<RegisterRenderObjectFn>(
-    'registerRenderObject',
-    vine =>
-      (objectId: StateId<unknown>, renderFn: RenderObjectFn) =>
-        $renderObjectSpec.get(vine).next({objectId, renderFn}),
+export const $registerRenderObject = source<RegisterRenderObjectFn>(vine =>
+  (objectId: StateId<unknown>, renderFn: RenderObjectFn) =>
+    $renderObjectSpec.get(vine).next({objectId, renderFn}),
 );
 
 type RenderFn = (objectId: StateId<unknown>) => Observable<RenderSpec|null>;
-export const $getRenderSpec = source<RenderFn>(
-    'render',
-    vine => (objectId: StateId<unknown>) => $renderObjectMap.get(vine).pipe(
-        switchMap(renderMap => {
-          const renderFn = renderMap.get(objectId.id);
-          if (!renderFn) {
-            return of(null);
-          }
+export const $getRenderSpec = source<RenderFn>(vine => (objectId: StateId<unknown>) => $renderObjectMap.get(vine).pipe(
+    switchMap(renderMap => {
+      const renderFn = renderMap.get(objectId.id);
+      if (!renderFn) {
+        return of(null);
+      }
 
-          return renderFn();
-        }),
-    ),
-);
+      return renderFn();
+    }),
+));

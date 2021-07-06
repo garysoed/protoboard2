@@ -7,7 +7,7 @@ import {scan, shareReplay, startWith} from 'rxjs/operators';
 import {CanvasConfig, IconConfig, LineConfig} from './canvas-config';
 
 
-export const $canvasConfigService = source('canvasConfigService', () => new CanvasConfigService());
+export const $canvasConfigService = source(() => new CanvasConfigService());
 
 export class CanvasConfigService {
   private readonly onIconConfigs$ = new ReplaySubject<[string, IconConfig]>();

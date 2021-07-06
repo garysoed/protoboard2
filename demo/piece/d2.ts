@@ -17,18 +17,12 @@ interface State {
   readonly coinSlot: StateId<SlotSpec>;
 }
 
-const $$card = source<StateId<D2Spec>>(
-    '$card',
-    vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))),
-);
+const $$card = source<StateId<D2Spec>>(vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))));
 
-const $$coin = source<StateId<D2Spec>>(
-    '$coin',
-    vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))),
-);
+const $$coin = source<StateId<D2Spec>>(vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))));
 
 
-const $state = source<State>('d2state', vine => $stateService.get(vine).modify(x => ({
+const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
   cardSlot: x.add(slotSpec(
       {contentsId: x.add([$$card.get(vine)])},
       x,

@@ -36,4 +36,4 @@ export class LensService {
 }
 
 
-export const $lensService = source('LensService', () => new LensService());
+export const $lensService = source(() => new LensService());

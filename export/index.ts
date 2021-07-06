@@ -12,7 +12,7 @@ export {Coordinate} from '../src/coordinate/coordinate';
 export {Indexed} from '../src/coordinate/indexed';
 
 // region
-export {Deck, $deck, DeckSpec} from '../src/region/deck';
+export {Deck, $deck, DeckSpec, deckSpec} from '../src/region/deck';
 export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 
 // core
@@ -27,7 +27,7 @@ export {$d6, D6, D6Spec, d6Spec} from '../src/piece/d6';
 
 // face
 export {$canvas, canvasSpec, Canvas} from '../src/face/canvas';
-export {CanvasEntry} from '../src/face/canvas-entry';
+export {CanvasEntry as CanvasSpec} from '../src/face/canvas-entry';
 export {$canvasConfigService} from '../src/face/canvas-config-service';
 
 // tiling

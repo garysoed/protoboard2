@@ -21,4 +21,4 @@ export class HelpService {
   }
 }
 
-export const $helpService = source('HelpService', () => new HelpService());
+export const $helpService = source(() => new HelpService());

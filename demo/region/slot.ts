@@ -17,10 +17,7 @@ export const $slotDemo = {
 
 type State = SlotSpec;
 
-const $state = source<StateId<State>>(
-    'state',
-    vine => $stateService.get(vine).modify(x => x.add(slotSpec({}, x))),
-);
+const $state = source<StateId<State>>(vine => $stateService.get(vine).modify(x => x.add(slotSpec({}, x))));
 
 const $ = {
   slot: element('slot', $slot, {}),

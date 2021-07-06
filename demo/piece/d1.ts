@@ -17,17 +17,11 @@ interface State {
   readonly gemSlot: StateId<SlotSpec>;
 }
 
-const $$meeple = source(
-    '$meeple',
-    vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))),
-);
+const $$meeple = source(vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))));
 
-const $$gem = source(
-    '$gem',
-    vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))),
-);
+const $$gem = source(vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))));
 
-const $state = source<State>('d1State', vine => $stateService.get(vine).modify(x => ({
+const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
   meepleSlot: x.add(slotSpec(
       {contentsId: x.add([$$meeple.get(vine)])},
       x,

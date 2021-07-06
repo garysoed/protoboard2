@@ -17,10 +17,7 @@ import template from './canvas.html';
 
 type State = CanvasEntry;
 
-const $stateId = source(
-    'stateId',
-    vine => $stateService.get(vine).modify(x => x.add(canvasSpec({}, x))),
-);
+const $stateId = source(vine => $stateService.get(vine).modify(x => x.add(canvasSpec({}, x))));
 
 export const $canvasDemo = {
   tag: 'pbd-canvas',
