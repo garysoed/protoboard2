@@ -21,7 +21,7 @@ import template from './deck.html';
 export const $deck = {
   tag: 'pb-deck',
   api: {
-    objectId: attributeIn('object-path', objectPathParser<DeckSpec>()),
+    objectPath: attributeIn('object-path', objectPathParser<DeckSpec>()),
     dropAction: dropActionConfigSpecs({}),
     dropAllAction: dropAllActionConfigSpecs({}),
     pickAllAction: pickAllActionConfigSpecs({}),
@@ -51,7 +51,7 @@ export function deckSpec(input: Partial<DeckSpec>): DeckSpec {
 })
 export class Deck extends BaseComponent<DeckSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectId);
+    super(context, $, $.host._.objectPath);
   }
 
   @cache()

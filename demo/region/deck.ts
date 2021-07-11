@@ -36,7 +36,7 @@ export class DeckDemo extends BaseThemedCtrl<typeof $> {
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.deck.objectId(of($statePath.get(this.vine))),
+      this.renderers.deck.objectPath(of($statePath.get(this.vine))),
     ];
   }
 }
