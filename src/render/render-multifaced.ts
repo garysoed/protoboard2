@@ -1,25 +1,18 @@
-import {$stateService} from 'grapevine';
+import {ImmutableResolver} from 'gs-tools/export/state';
 import {PersonaContext} from 'persona';
 import {AttributeOutput} from 'persona/export/internal';
-import {Observable, of as observableOf} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {IsMultifaced} from '../payload/is-multifaced';
 
 
 export function renderMultifaced(
-    isMultifaced$: Observable<IsMultifaced|undefined>,
+    isMultifaced: ImmutableResolver<IsMultifaced>,
     slotNameOutput: AttributeOutput<string|undefined>,
     context: PersonaContext,
 ): Observable<unknown> {
-  return isMultifaced$.pipe(
-      switchMap(isMultifaced => {
-        if (!isMultifaced) {
-          return observableOf(null);
-        }
-
-        return $stateService.get(context.vine).resolve(isMultifaced.$currentFaceIndex);
-      }),
+  return isMultifaced.$('currentFaceIndex').pipe(
       map(faceIndex => `face-${faceIndex ?? 0}`),
       slotNameOutput.output(context),
   );

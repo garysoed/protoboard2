@@ -13,25 +13,25 @@ import {moveObject} from './util/move-object';
 
 export type Config = TriggerConfig;
 
-export function pickAction({objectId$, vine}: ActionParams<Config, unknown>): Action {
+export function pickAction({objectPath$, vine}: ActionParams<Config, unknown>): Action {
   const stateService = $stateService.get(vine);
   const fromObjectId$ = combineLatest([
-    objectId$,
+    objectPath$,
     $getParent.get(vine),
   ])
       .pipe(
-          map(([objectId, getParent]) => {
-            if (!objectId) {
+          map(([objectPath, getParent]) => {
+            if (!objectPath) {
               return null;
             }
-            return getParent(objectId);
+            return getParent(objectPath);
           }),
       );
 
   return pipe(
       withLatestFrom(
           $activeSpec.get(vine).$('contentsId'),
-          objectId$,
+          objectPath$,
       ),
       switchMap(([, activeContents, movedObjectId]) => {
         if (!movedObjectId) {
@@ -42,7 +42,7 @@ export function pickAction({objectId$, vine}: ActionParams<Config, unknown>): Ac
         return of({id: movedObjectId, toIndex}).pipe(
         );
       }),
-      moveObject(stateService.resolve(fromObjectId$), $activeSpec.get(vine), vine),
+      moveObject(stateService._(fromObjectId$), $activeSpec.get(vine)),
   );
 }
 

@@ -1,5 +1,5 @@
-import {$stateService, source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
+import {mutableState} from 'gs-tools/export/state';
 import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
@@ -13,25 +13,23 @@ import {renderPiece} from './render-piece';
 
 
 interface State {
-  readonly cardSlot: StateId<SlotSpec>;
-  readonly coinSlot: StateId<SlotSpec>;
+  readonly cardSlot: SlotSpec;
+  readonly coinSlot: SlotSpec;
 }
 
-const $$card = source<StateId<D2Spec>>(vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))));
+const $cardId = rootStateIdSource<D2Spec>(() => d2Spec({}));
+const $cardPath = immutablePathSource($cardId);
+const $coinId = rootStateIdSource<D2Spec>(() => d2Spec({}));
+const $coinPath = immutablePathSource($coinId);
 
-const $$coin = source<StateId<D2Spec>>(vine => $stateService.get(vine).modify(x => x.add(d2Spec({}, x))));
+const $stateId = rootStateIdSource<State>(vine => ({
+  cardSlot: slotSpec({contentsId: mutableState([$cardPath.get(vine)])}),
+  coinSlot: slotSpec({contentsId: mutableState([$coinPath.get(vine)])}),
+}));
 
+const $cardSlotPath = immutablePathSource($stateId, state => state._('cardSlot'));
+const $coinSlotPath = immutablePathSource($stateId, state => state._('coinSlot'));
 
-const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
-  cardSlot: x.add(slotSpec(
-      {contentsId: x.add([$$card.get(vine)])},
-      x,
-  )),
-  coinSlot: x.add(slotSpec(
-      {contentsId: x.add([$$coin.get(vine)])},
-      x,
-  )),
-})));
 
 export const $d2Demo = {
   tag: 'pbd-d2',
@@ -46,17 +44,17 @@ const $ = {
 @_p.customElement({
   ...$d2Demo,
   configure: vine => {
-    const $card = $$card.get(vine);
-    const $coin = $$coin.get(vine);
+    const cardPath = $cardPath.get(vine);
+    const coinPath = $coinPath.get(vine);
     const registerRenderObject = $registerRenderObject.get(vine);
     registerRenderObject(
-        $card,
-        renderPiece([FaceType.CARD_BACK, FaceType.CARD_FRONT], $card),
+        cardPath,
+        renderPiece([FaceType.CARD_BACK, FaceType.CARD_FRONT], cardPath),
     );
 
     registerRenderObject(
-        $coin,
-        renderPiece([FaceType.COIN_FRONT, FaceType.COIN_BACK], $coin),
+        coinPath,
+        renderPiece([FaceType.COIN_FRONT, FaceType.COIN_BACK], coinPath),
     );
   },
   dependencies: [
@@ -75,10 +73,9 @@ export class D2Demo extends BaseThemedCtrl<typeof $> {
   }
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
-    const state = $state.get(this.context.vine);
     return [
-      this.renderers.cardSlot.objectId(of(state.cardSlot)),
-      this.renderers.coinSlot.objectId(of(state.coinSlot)),
+      this.renderers.cardSlot.objectPath(of($cardSlotPath.get(this.vine))),
+      this.renderers.coinSlot.objectPath(of($coinSlotPath.get(this.vine))),
     ];
   }
 }

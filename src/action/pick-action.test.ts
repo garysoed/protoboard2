@@ -1,10 +1,9 @@
 import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {fakeStateService, StateId} from 'gs-tools/export/state';
-import {EMPTY, ReplaySubject, Subject} from 'rxjs';
+import {fakeStateService, mutableState, ObjectPath} from 'gs-tools/export/state';
+import {EMPTY, of, ReplaySubject, Subject} from 'rxjs';
 
-import {activeSpec} from '../core/active';
-import {$$activeSpec} from '../core/active-spec';
+import {$activeSpecPath} from '../core/active-spec';
 import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {$setParent} from '../objects/content-map';
@@ -22,66 +21,63 @@ test('@protoboard2/action/pick-action', init => {
         {override: $stateService, withValue: stateService},
       ],
     });
-    const objectId$ = new ReplaySubject<StateId<{}>>(1);
+    const objectPath$ = new ReplaySubject<ObjectPath<{}>>(1);
     const action = pickAction({
       config$: EMPTY,
-      objectId$,
+      objectPath$,
       vine,
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, objectId$, onTrigger$, vine, stateService};
+    return {action, objectPath$, onTrigger$, vine, stateService};
   });
 
   test('onTrigger', () => {
     should('trigger correctly', () => {
-      const otherSpec1 = _.stateService.modify(x => x.add({}));
-      const movedSpec = _.stateService.modify(x => x.add({}));
-      const otherSpec2 = _.stateService.modify(x => x.add({}));
-      const otherActiveSpec = _.stateService.modify(x => x.add({}));
+      const otherSpec1Path = _.stateService.immutablePath(_.stateService.addRoot({}));
+      const movedSpecPath = _.stateService.immutablePath(_.stateService.addRoot({}));
+      const otherSpec2Path = _.stateService.immutablePath(_.stateService.addRoot({}));
+      const otherActiveSpecPath = _.stateService.immutablePath(_.stateService.addRoot({}));
 
-      const $activeContentIds = _.stateService.modify(x => x.add([otherActiveSpec]));
-      const $targetContentSpecs = _.stateService.modify(x => x.add([otherSpec1, movedSpec, otherSpec2]));
-      const $container = _.stateService.modify(x => x.add({
+      const containerIdPath = _.stateService.immutablePath(_.stateService.addRoot({
         containerType: 'indexed' as const,
-        contentsId: $targetContentSpecs,
+        contentsId: mutableState([otherSpec1Path, movedSpecPath, otherSpec2Path]),
       }));
 
-      _.stateService.modify(x => x.set(
-          $$activeSpec.get(_.vine),
-          activeSpec({
-            contentsId: $activeContentIds,
-          })));
+      run(
+          of([otherActiveSpecPath])
+              .pipe(_.stateService._($activeSpecPath.get(_.vine)).$('contentsId').set()),
+      );
 
       const setParent = $setParent.get(_.vine);
-      setParent(otherActiveSpec, $$activeSpec.get(_.vine));
-      setParent(otherSpec1, $container);
-      setParent(movedSpec, $container);
-      setParent(otherSpec2, $container);
+      setParent(otherActiveSpecPath, $activeSpecPath.get(_.vine));
+      setParent(otherSpec1Path, containerIdPath);
+      setParent(movedSpecPath, containerIdPath);
+      setParent(otherSpec2Path, containerIdPath);
 
-      _.objectId$.next(movedSpec);
+      _.objectPath$.next(movedSpecPath);
 
-      const activeIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          $stateService.get(_.vine).resolve($activeContentIds));
-      const targetIds$ = createSpySubject<ReadonlyArray<StateId<unknown>>|undefined>(
-          $stateService.get(_.vine).resolve($targetContentSpecs));
+      const activeIds$ = createSpySubject<ReadonlyArray<ObjectPath<unknown>>|undefined>(
+          $stateService.get(_.vine)._($activeSpecPath.get(_.vine)).$('contentsId'));
+      const targetIds$ = createSpySubject<ReadonlyArray<ObjectPath<unknown>>|undefined>(
+          $stateService.get(_.vine)._(containerIdPath).$('contentsId'));
 
       _.onTrigger$.next(fakeTriggerEvent({}));
 
       assert(activeIds$).to.emitSequence([
-        arrayThat<StateId<unknown>>().haveExactElements([otherActiveSpec]),
-        arrayThat<StateId<unknown>>().haveExactElements([
-          otherActiveSpec,
-          objectThat<StateId<unknown>>().haveProperties({
-            ...movedSpec,
+        arrayThat<ObjectPath<unknown>>().haveExactElements([otherActiveSpecPath]),
+        arrayThat<ObjectPath<unknown>>().haveExactElements([
+          otherActiveSpecPath,
+          objectThat<ObjectPath<unknown>>().haveProperties({
+            ...movedSpecPath,
           }),
         ]),
       ]);
       assert(targetIds$).to.emitSequence([
-        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, movedSpec, otherSpec2]),
-        arrayThat<StateId<unknown>>().haveExactElements([otherSpec1, otherSpec2]),
+        arrayThat<ObjectPath<unknown>>().haveExactElements([otherSpec1Path, movedSpecPath, otherSpec2Path]),
+        arrayThat<ObjectPath<unknown>>().haveExactElements([otherSpec1Path, otherSpec2Path]),
       ]);
     });
   });

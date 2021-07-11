@@ -1,4 +1,4 @@
-import {StateId} from 'gs-tools/export/state';
+import {MutableState} from 'gs-tools/export/state';
 
 export interface CanvasLine {
   readonly fromX: number;
@@ -23,8 +23,8 @@ export interface CanvasIcon {
 }
 
 
-export interface CanvasEntry {
-  readonly icons: StateId<readonly CanvasIcon[]>;
-  readonly lines: StateId<readonly CanvasLine[]>;
-  readonly halfLine: StateId<CanvasHalfLine|null>;
+export interface CanvasSpec {
+  readonly icons: MutableState<readonly CanvasIcon[]>;
+  readonly lines: MutableState<readonly CanvasLine[]>;
+  readonly halfLine: MutableState<CanvasHalfLine|null>;
 }

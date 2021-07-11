@@ -1,5 +1,5 @@
 import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
-import {StateId} from 'gs-tools/export/state';
+import {ObjectPath} from 'gs-tools/export/state';
 import {renderCustomElement} from 'persona';
 import {of} from 'rxjs';
 
@@ -13,7 +13,7 @@ import {$renderedFace, FaceType} from '../core/rendered-face';
 
 export function renderPiece(
     faceTypes: readonly FaceType[],
-    objectId: StateId<IsRotatable>,
+    objectPath: ObjectPath<IsRotatable>,
 ): RenderObjectFn {
   return () => {
     const faces = $pipe(
@@ -21,7 +21,7 @@ export function renderPiece(
         $zip(countableIterable()),
         $map(([faceType, index]) => renderCustomElement({
           spec: $renderedFace,
-          id: {id: objectId.id, face: index},
+          id: {id: objectPath.id, face: index},
           attrs: new Map([['slot', `face-${index}`]]),
           inputs: {
             faceType,
@@ -32,8 +32,8 @@ export function renderPiece(
 
     return of(renderCustomElement({
       spec: getSpec(faces.length),
-      inputs: {objectId},
-      id: objectId.id,
+      inputs: {objectPath},
+      id: objectPath.id,
       children: faces,
     }));
   };

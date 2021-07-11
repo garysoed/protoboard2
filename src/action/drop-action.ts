@@ -20,8 +20,8 @@ export interface Config extends TriggerConfig {
   readonly positioning: PositioningType;
 }
 
-export function dropAction({objectId$, vine}: ActionParams<Config, IsContainer>): Action {
-  const container$ = $stateService.get(vine).resolve(objectId$);
+export function dropAction({objectPath$, vine}: ActionParams<Config, IsContainer>): Action {
+  const container$ = $stateService.get(vine)._(objectPath$);
   const moveParams$ = combineLatest([
     $activeSpec.get(vine).$('contentsId'),
     container$.$('contentsId'),
@@ -38,7 +38,7 @@ export function dropAction({objectId$, vine}: ActionParams<Config, IsContainer>)
   return pipe(
       withLatestFrom(moveParams$),
       map(([, moveParams]) => moveParams),
-      moveObject($activeSpec.get(vine), container$, vine),
+      moveObject($activeSpec.get(vine), container$),
   );
 }
 

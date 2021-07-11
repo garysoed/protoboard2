@@ -1,4 +1,4 @@
-import {$stateService} from 'grapevine';
+import {ImmutableResolver} from 'gs-tools/export/state';
 import {PersonaContext, style} from 'persona';
 import {combineLatest, EMPTY, Observable, of as observableOf} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -7,18 +7,11 @@ import {IsRotatable} from '../payload/is-rotatable';
 
 
 export function renderRotatable(
-    isRotatable$: Observable<IsRotatable|undefined>,
+    isRotatable: ImmutableResolver<IsRotatable>,
     slottedNodes$: Observable<readonly Node[]>,
     context: PersonaContext,
 ): Observable<unknown> {
-  const rotation$ = isRotatable$.pipe(
-      switchMap(pieceSpec => {
-        if (!pieceSpec) {
-          return observableOf(undefined);
-        }
-
-        return $stateService.get(context.vine).resolve(pieceSpec.$rotationDeg);
-      }),
+  const rotation$ = isRotatable.$('rotationDeg').pipe(
       map(rotationDeg => `rotateZ(${rotationDeg ?? 0}deg)`),
   );
 

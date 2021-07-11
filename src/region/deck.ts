@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier} from 'gs-tools/export/state';
-import {stateIdParser, _p} from 'mask';
+import {mutableState} from 'gs-tools/export/state';
+import {objectPathParser, _p} from 'mask';
 import {$div, attributeIn, element, host, multi, PersonaContext} from 'persona';
 import {Observable} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
@@ -21,7 +21,7 @@ import template from './deck.html';
 export const $deck = {
   tag: 'pb-deck',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<DeckSpec>()),
+    objectId: attributeIn('object-path', objectPathParser<DeckSpec>()),
     dropAction: dropActionConfigSpecs({}),
     dropAllAction: dropAllActionConfigSpecs({}),
     pickAllAction: pickAllActionConfigSpecs({}),
@@ -38,9 +38,10 @@ export const $ = {
 
 export type DeckSpec = IsContainer;
 
-export function deckSpec(input: Partial<DeckSpec>, x: Modifier): DeckSpec {
+export function deckSpec(input: Partial<DeckSpec>): DeckSpec {
   return {
-    contentsId: input.contentsId ?? x.add([]),
+    contentsId: mutableState([]),
+    ...input,
   };
 }
 
@@ -67,7 +68,7 @@ export class Deck extends BaseComponent<DeckSpec, typeof $> {
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
       this.renderers.root.contents(
-          this.objectId$.pipe(
+          this.objectPath$.pipe(
               switchMap(objectId => renderContents(objectId, this.vine)),
           ),
       ),

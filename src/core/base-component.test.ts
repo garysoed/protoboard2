@@ -1,7 +1,7 @@
 import {arrayThat, assert, createSpyInstance, createSpySubject, objectThat, run, runEnvironment, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {StateService} from 'gs-tools/export/state';
-import {stateIdParser} from 'mask';
+import {objectPathParser} from 'mask';
 import {$div, attributeIn, element, host, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
 import {EMPTY, Observable, of} from 'rxjs';
@@ -32,7 +32,7 @@ function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec {
 }
 
 const $api = {
-  objectId: attributeIn('object-id', stateIdParser<{}>()),
+  objectId: attributeIn('object-path', objectPathParser<{}>()),
 };
 
 const $ = {
@@ -95,11 +95,12 @@ test('@protoboard2/core/base-component', init => {
   test('objectId$', () => {
     should('emit the object ID if exists', () => {
       const stateService = new StateService();
-      const objectId = stateService.modify(x => x.add({}));
-      _.el.setAttribute('object-id', $api.objectId.createAttributePair(objectId)[1]);
+      const objectId = stateService.addRoot({});
+      const objectPath = stateService.immutablePath(objectId);
+      _.el.setAttribute('object-path', $api.objectId.createAttributePair(objectPath)[1]);
 
-      const objectId$ = createSpySubject(_.component.objectId$);
-      assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectId.id]);
+      const objectId$ = createSpySubject(_.component.objectPath$);
+      assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectPath.id]);
     });
   });
 

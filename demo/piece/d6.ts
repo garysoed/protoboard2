@@ -1,5 +1,5 @@
-import {$stateService, source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
+import {mutableState} from 'gs-tools/export/state';
 import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
@@ -13,14 +13,16 @@ import {renderPiece} from './render-piece';
 
 
 interface State {
-  readonly diceSlot: StateId<SlotSpec>;
+  readonly diceSlot: SlotSpec;
 }
 
-const $$dice = source<StateId<D6Spec>>(vine => $stateService.get(vine).modify(x => x.add(d6Spec({}, x))));
+const $diceId = rootStateIdSource<D6Spec>(() => d6Spec({}));
+const $dicePath = immutablePathSource($diceId);
 
-const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
-  diceSlot: x.add(slotSpec({contentsId: x.add([$$dice.get(vine)])}, x)),
-})));
+const $stateId = rootStateIdSource<State>(vine => ({
+  diceSlot: slotSpec({contentsId: mutableState([$dicePath.get(vine)])}),
+}));
+const $diceSlotPath = immutablePathSource($stateId, state => state._('diceSlot'));
 
 export const $d6Demo = {
   tag: 'pbd-d6',
@@ -35,9 +37,9 @@ const $ = {
   ...$d6Demo,
   configure: vine => {
     const registerRenderObject = $registerRenderObject.get(vine);
-    const $dice = $$dice.get(vine);
+    const dicePath = $dicePath.get(vine);
     registerRenderObject(
-        $dice,
+        dicePath,
         renderPiece(
             [
               FaceType.DICE_PIP_1,
@@ -47,7 +49,7 @@ const $ = {
               FaceType.DICE_PIP_4,
               FaceType.DICE_PIP_5,
             ],
-            $dice,
+            dicePath,
         ),
     );
   },
@@ -68,7 +70,7 @@ export class D6Demo extends BaseThemedCtrl<typeof $> {
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.diceSlot.objectId(of($state.get(this.context.vine).diceSlot)),
+      this.renderers.diceSlot.objectPath(of($diceSlotPath.get(this.context.vine))),
     ];
   }
 }

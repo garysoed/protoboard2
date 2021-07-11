@@ -1,5 +1,5 @@
-import {StateId} from 'gs-tools/export/state';
+import {MutableState} from 'gs-tools/export/state';
 
 export interface IsRotatable {
-  readonly $rotationDeg: StateId<number>;
+  readonly rotationDeg: MutableState<number>;
 }

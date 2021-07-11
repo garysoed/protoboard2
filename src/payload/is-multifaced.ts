@@ -1,5 +1,5 @@
-import {StateId} from 'gs-tools/export/state';
+import {MutableState} from 'gs-tools/export/state';
 
 export interface IsMultifaced {
-  readonly $currentFaceIndex: StateId<number>;
+  readonly currentFaceIndex: MutableState<number>;
 }

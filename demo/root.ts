@@ -1,6 +1,5 @@
-import {$stateService, source} from 'grapevine';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
 import {elementWithTagType} from 'gs-types';
 import {$rootLayout, BaseThemedCtrl, Overlay, RootLayout, _p} from 'mask';
 import {api, element, PersonaContext} from 'persona';
@@ -10,7 +9,7 @@ import {map, tap} from 'rxjs/operators';
 import {$slot, LensDisplay, Slot, slotSpec, SlotSpec} from '../export';
 import {HelpOverlay} from '../src/action/help-overlay';
 import {$active, Active} from '../src/core/active';
-import {$$activeSpec} from '../src/core/active-spec';
+import {$activeSpecPath} from '../src/core/active-spec';
 
 import {Documentation} from './core/documentation';
 import {$drawer, Drawer} from './core/drawer';
@@ -31,22 +30,29 @@ const $ = {
 };
 
 interface State {
-  readonly $slot1: StateId<SlotSpec>;
-  readonly $slot2: StateId<SlotSpec>;
-  readonly $slot3: StateId<SlotSpec>;
-  readonly $slot4: StateId<SlotSpec>;
-  readonly $slot5: StateId<SlotSpec>;
-  readonly $slot6: StateId<SlotSpec>;
+  readonly slot1: SlotSpec;
+  readonly slot2: SlotSpec;
+  readonly slot3: SlotSpec;
+  readonly slot4: SlotSpec;
+  readonly slot5: SlotSpec;
+  readonly slot6: SlotSpec;
 }
 
-const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
-  $slot1: x.add(slotSpec({}, x)),
-  $slot2: x.add(slotSpec({}, x)),
-  $slot3: x.add(slotSpec({}, x)),
-  $slot4: x.add(slotSpec({}, x)),
-  $slot5: x.add(slotSpec({}, x)),
-  $slot6: x.add(slotSpec({}, x)),
-})));
+const $stateId = rootStateIdSource<State>(() => ({
+  slot1: slotSpec({}),
+  slot2: slotSpec({}),
+  slot3: slotSpec({}),
+  slot4: slotSpec({}),
+  slot5: slotSpec({}),
+  slot6: slotSpec({}),
+}));
+
+const $slot1Path = immutablePathSource($stateId, state => state._('slot1'));
+const $slot2Path = immutablePathSource($stateId, state => state._('slot2'));
+const $slot3Path = immutablePathSource($stateId, state => state._('slot3'));
+const $slot4Path = immutablePathSource($stateId, state => state._('slot4'));
+const $slot5Path = immutablePathSource($stateId, state => state._('slot5'));
+const $slot6Path = immutablePathSource($stateId, state => state._('slot6'));
 
 @_p.customElement({
   dependencies: [
@@ -64,7 +70,7 @@ const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
   api: {},
 })
 export class Root extends BaseThemedCtrl<typeof $> {
-  private readonly state = $state.get(this.context.vine);
+  private readonly state = $stateId.get(this.context.vine);
 
   constructor(context: PersonaContext) {
     super(context, $);
@@ -74,18 +80,18 @@ export class Root extends BaseThemedCtrl<typeof $> {
   @cache()
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.active.objectId(of($$activeSpec.get(this.vine))),
+      this.renderers.active.objectPath(of($activeSpecPath.get(this.vine))),
       this.renderers.drawer.drawerExpanded(
           this.inputs.root.drawerExpanded.pipe(
               map(expanded => expanded ?? false),
           ),
       ),
-      this.renderers.slot1.objectId(of(this.state.$slot1)),
-      this.renderers.slot2.objectId(of(this.state.$slot2)),
-      this.renderers.slot3.objectId(of(this.state.$slot3)),
-      this.renderers.slot4.objectId(of(this.state.$slot4)),
-      this.renderers.slot5.objectId(of(this.state.$slot5)),
-      this.renderers.slot6.objectId(of(this.state.$slot6)),
+      this.renderers.slot1.objectPath(of($slot1Path.get(this.vine))),
+      this.renderers.slot2.objectPath(of($slot2Path.get(this.vine))),
+      this.renderers.slot3.objectPath(of($slot3Path.get(this.vine))),
+      this.renderers.slot4.objectPath(of($slot4Path.get(this.vine))),
+      this.renderers.slot5.objectPath(of($slot5Path.get(this.vine))),
+      this.renderers.slot6.objectPath(of($slot6Path.get(this.vine))),
     ];
   }
 

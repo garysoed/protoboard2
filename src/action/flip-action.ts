@@ -1,7 +1,8 @@
-import {$resolveStateOp, $stateService} from 'grapevine';
+import {$stateService} from 'grapevine';
+import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, integerParser} from 'persona';
 import {pipe} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -15,32 +16,20 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'flip';
 
-export function flipAction({config$, objectId$, vine}: ActionParams<Config, IsMultifaced>): Action {
-  const stateService = $stateService.get(vine);
-  const faceIndexId$ = objectId$.pipe($resolveStateOp.get(vine)()).pipe(
-      map(obj => {
-        return obj?.$currentFaceIndex;
-      }),
-  );
-  const faceIndex$ = faceIndexId$.pipe(
-      switchMap(faceIndexId => {
-        return stateService.resolve(faceIndexId);
-      }),
-  );
-
+export function flipAction({config$, objectPath$, vine}: ActionParams<Config, IsMultifaced>): Action {
+  const faceIndex = $stateService.get(vine)._(objectPath$).$('currentFaceIndex');
   return pipe(
-      withLatestFrom(config$, faceIndex$, faceIndexId$),
-      tap(([, config, faceIndex, faceIndexId]) => {
-        if (faceIndex === undefined || faceIndexId === undefined) {
+      withLatestFrom(config$, faceIndex),
+      map(([, config, faceIndex]) => {
+        if (faceIndex === undefined) {
           return;
         }
 
         const faceCount = config.count;
-        stateService.modify(x => x.set(
-            faceIndexId,
-            ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount,
-        ));
+        return ((faceIndex ?? 0) + Math.floor(faceCount / 2)) % faceCount;
       }),
+      filterNonNullable(),
+      faceIndex.set(),
   );
 }
 

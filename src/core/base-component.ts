@@ -1,6 +1,6 @@
-import {$resolveState} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {ImmutableResolver, ObjectPath} from 'gs-tools/export/state';
 import {BaseThemedCtrl, _p} from 'mask';
 import {PersonaContext} from 'persona';
 import {Input} from 'persona/export/internal';
@@ -27,7 +27,7 @@ export abstract class BaseComponent<O, S> extends BaseThemedCtrl<S> {
   constructor(
       context: PersonaContext,
       spec: S,
-      private readonly objectIdInput: Input<StateId<O>|undefined>,
+      private readonly objectPathInput: Input<ObjectPath<O>|undefined>,
   ) {
     super(context, spec);
 
@@ -42,7 +42,7 @@ export abstract class BaseComponent<O, S> extends BaseThemedCtrl<S> {
       actionName: string,
   ): ActionSpec {
     return {
-      action: factory({config$, objectId$: this.objectId$, vine: this.vine}),
+      action: factory({config$, objectPath$: this.objectPath$, vine: this.vine}),
       actionName,
       triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
       trigger$: config$.pipe(createTrigger(this.context)),
@@ -57,23 +57,22 @@ export abstract class BaseComponent<O, S> extends BaseThemedCtrl<S> {
    * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
    */
   @cache()
-  get objectId$(): Observable<StateId<O>> {
-    return this.objectIdInput.getValue(this.context).pipe(
-        switchMap(objectId => {
-          if (!objectId) {
-            LOG.warning('No object-id found');
+  get objectPath$(): Observable<ObjectPath<O>> {
+    return this.objectPathInput.getValue(this.context).pipe(
+        switchMap(objectPath => {
+          if (!objectPath) {
+            LOG.warning('No object-path found');
             return EMPTY;
           }
 
-          return of(objectId as StateId<O>);
+          return of(objectPath);
         }),
     );
   }
 
   @cache()
-  get objectSpec$(): Observable<O|undefined> {
-    return this.objectId$
-        .pipe(switchMap(objectId => $resolveState.get(this.context.vine)(objectId)));
+  get objectSpec$(): ImmutableResolver<O> {
+    return $stateService.get(this.vine)._(this.objectPath$);
   }
 
   private setupActions(): void {

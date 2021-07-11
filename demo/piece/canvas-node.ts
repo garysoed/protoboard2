@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {combineLatestObject} from 'gs-tools/export/rxjs';
-import {registerSvg, stateIdParser, _p} from 'mask';
+import {objectPathParser, registerSvg, _p} from 'mask';
 import {attributeIn, enumParser, host, integerParser, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -11,7 +11,7 @@ import {drawLineAction} from '../../src/action/draw-line-action';
 import {BaseComponent} from '../../src/core/base-component';
 import {TriggerSpec, TriggerType} from '../../src/core/trigger-spec';
 import {$canvasConfigService} from '../../src/face/canvas-config-service';
-import {CanvasEntry} from '../../src/face/canvas-entry';
+import {CanvasSpec} from '../../src/face/canvas-entry';
 import canvasCircle from '../asset/canvas_circle.svg';
 import canvasSquare from '../asset/canvas_square.svg';
 import canvasTriangle from '../asset/canvas_triangle.svg';
@@ -34,7 +34,7 @@ enum LineType {
 export const $canvasNode = {
   tag: 'pbd-canvas-node',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<CanvasEntry>()),
+    objectId: attributeIn('object-path', objectPathParser<CanvasSpec>()),
     iconType: attributeIn('icon-type', enumParser<IconType>(IconType)),
     x: attributeIn('x', integerParser(), 0),
     y: attributeIn('y', integerParser(), 0),
@@ -43,7 +43,7 @@ export const $canvasNode = {
   },
 };
 
-type State = CanvasEntry;
+type State = CanvasSpec;
 
 const $ = {
   host: host({

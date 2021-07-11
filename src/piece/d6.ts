@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier} from 'gs-tools/export/state';
-import {stateIdParser, _p} from 'mask';
+import {mutableState} from 'gs-tools/export/state';
+import {objectPathParser, _p} from 'mask';
 import {$slot, attributeIn, attributeOut, element, host, PersonaContext, slotted, stringParser, style} from 'persona';
 import {Observable} from 'rxjs';
 
@@ -27,7 +27,7 @@ import template from './d6.html';
  */
 export const $d6 = {
   api: {
-    objectId: attributeIn('object-id', stateIdParser<D6Spec>()),
+    objectPath: attributeIn('object-path', objectPathParser<D6Spec>()),
     rotateAction: rotateActionConfigSpecs({}),
     flipAction: flipActionConfigSpecs({count: 6}),
     turnAction: turnActionConfigSpecs({count: 6}),
@@ -49,10 +49,11 @@ export const $ = {
 export type D6Spec = IsMultifaced&IsRotatable;
 
 
-export function d6Spec(partial: Partial<D6Spec>, x: Modifier): D6Spec {
+export function d6Spec(partial: Partial<D6Spec>): D6Spec {
   return {
-    $currentFaceIndex: partial.$currentFaceIndex ?? x.add(0),
-    $rotationDeg: partial.$rotationDeg ?? x.add(0),
+    currentFaceIndex: mutableState(0),
+    rotationDeg: mutableState(0),
+    ...partial,
   };
 }
 
@@ -69,7 +70,7 @@ export function d6Spec(partial: Partial<D6Spec>, x: Modifier): D6Spec {
 })
 export class D6 extends BaseComponent<D6Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectId);
+    super(context, $, $.host._.objectPath);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.face.slotted, context));
   }

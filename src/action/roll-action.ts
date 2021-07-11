@@ -1,7 +1,7 @@
-import {$resolveStateOp, $stateService} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {attributeIn, integerParser} from 'persona';
 import {pipe} from 'rxjs';
-import {tap, withLatestFrom} from 'rxjs/operators';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -14,21 +14,17 @@ export interface Config extends TriggerConfig {
   readonly count: number;
 }
 
-export function rollAction({config$, objectId$, vine}: ActionParams<Config, IsMultifaced>): Action {
+export function rollAction({config$, objectPath$, vine}: ActionParams<Config, IsMultifaced>): Action {
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(vine)())),
-      tap(([, config, obj]) => {
-        if (!obj) {
-          return;
-        }
-
+      withLatestFrom(config$),
+      map(([, config]) => {
         const randomValue = $random.get(vine).next();
         if (randomValue === null) {
           throw new Error('Random produced no values');
         }
-        const nextIndex = Math.floor(randomValue * config.count);
-        $stateService.get(vine).modify(x => x.set(obj.$currentFaceIndex, nextIndex));
+        return Math.floor(randomValue * config.count);
       }),
+      $stateService.get(vine)._(objectPath$).$('currentFaceIndex').set(),
   );
 }
 

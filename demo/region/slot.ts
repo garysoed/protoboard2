@@ -1,10 +1,9 @@
-import {$stateService, source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
 import {BaseThemedCtrl, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$slot, Slot, slotSpec, SlotSpec} from '../../export';
+import {$slot, Slot, slotSpec, SlotSpec} from '../../src/region/slot';
 import {DocumentationTemplate} from '../template/documentation-template';
 
 import template from './slot.html';
@@ -17,7 +16,8 @@ export const $slotDemo = {
 
 type State = SlotSpec;
 
-const $state = source<StateId<State>>(vine => $stateService.get(vine).modify(x => x.add(slotSpec({}, x))));
+const $state = rootStateIdSource<State>(() => slotSpec({}));
+const $statePath = immutablePathSource($state);
 
 const $ = {
   slot: element('slot', $slot, {}),
@@ -39,7 +39,7 @@ export class SlotDemo extends BaseThemedCtrl<typeof $> {
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.slot.objectId(of($state.get(this.context.vine))),
+      this.renderers.slot.objectPath(of($statePath.get(this.context.vine))),
     ];
   }
 }

@@ -1,8 +1,7 @@
-import {$resolveStateOp, $stateService} from 'grapevine';
-import {filterNonNullable} from 'gs-tools/export/rxjs';
+import {$stateService} from 'grapevine';
 import {attributeIn, integerParser} from 'persona';
-import {of, pipe} from 'rxjs';
-import {switchMap, take, withLatestFrom} from 'rxjs/operators';
+import {pipe} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsMultifaced} from '../payload/is-multifaced';
@@ -16,25 +15,15 @@ export interface Config extends TriggerConfig {
 
 export const KEY = 'turn';
 
-export function turnAction({config$, objectId$, vine}: ActionParams<Config, IsMultifaced>): Action {
-  const stateService = $stateService.get(vine);
+export function turnAction({config$, objectPath$, vine}: ActionParams<Config, IsMultifaced>): Action {
+  const currentFaceIndex = $stateService.get(vine)._(objectPath$).$('currentFaceIndex');
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(vine)())),
-      switchMap(([, config, obj]) => {
-        if (!obj) {
-          return of(null);
-        }
-
+      withLatestFrom(config$, currentFaceIndex),
+      map(([, config, faceIndex]) => {
         const faceCount = config.count;
-        const $faceIndex = obj.$currentFaceIndex;
-        return stateService.resolve($faceIndex).pipe(
-            take(1),
-            filterNonNullable(),
-            stateService.modifyOperator((x, faceIndex) => {
-              x.set($faceIndex, ((faceIndex ?? 0) + 1) % faceCount);
-            }),
-        );
+        return ((faceIndex ?? 0) + 1) % faceCount;
       }),
+      currentFaceIndex.set(),
   );
 }
 

@@ -15,7 +15,7 @@ export type Config = TriggerConfig;
 
 export function pickAllAction(params: ActionParams<Config, IsContainer>): Action {
   const targetsId$ = $stateService.get(params.vine)
-      .resolve(params.objectId$)
+      ._(params.objectPath$)
       .$('contentsId')
       .pipe(map(contents => contents ?? []));
   return pipe(
@@ -25,7 +25,7 @@ export function pickAllAction(params: ActionParams<Config, IsContainer>): Action
         return of(...specs).pipe(
             switchMap(targetId => {
               return of(event).pipe(
-                  pickAction({...params, objectId$: of(targetId)}),
+                  pickAction({...params, objectPath$: of(targetId)}),
               );
             }),
         );

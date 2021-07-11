@@ -1,7 +1,7 @@
 import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
-import {stateIdParser, _p} from 'mask';
+import {MutableState, ObjectPath} from 'gs-tools/export/state';
+import {objectPathParser, _p} from 'mask';
 import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style} from 'persona';
 import {fromEvent, Observable, of as observableOf} from 'rxjs';
 import {map, share, throttleTime} from 'rxjs/operators';
@@ -11,7 +11,7 @@ import {BaseComponent} from '../core/base-component';
 import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
-import {$$activeSpec} from './active-spec';
+import {$activeSpecPath} from './active-spec';
 import template from './active.html';
 
 
@@ -27,8 +27,8 @@ export const ACTIVE_TYPE = 'pb.active';
 export const $active = {
   tag: 'pb-active',
   api: {
-    // TODO: Should not require object-id
-    objectId: attributeIn('object-id', stateIdParser<ActiveSpec>()),
+    // TODO: Should not require object-path
+    objectPath: attributeIn('object-path', objectPathParser<ActiveSpec>()),
   },
 };
 
@@ -46,7 +46,7 @@ export const $ = {
 export type ActiveSpec = IsContainer;
 
 interface Input {
-  readonly contentsId: StateId<ReadonlyArray<StateId<unknown>>>,
+  readonly contentsId: MutableState<ReadonlyArray<ObjectPath<unknown>>>,
 }
 
 export function activeSpec(input: Input): ActiveSpec {
@@ -69,7 +69,7 @@ export function activeSpec(input: Input): ActiveSpec {
 })
 export class Active extends BaseComponent<ActiveSpec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectId);
+    super(context, $, $.host._.objectPath);
   }
 
   @cache()
@@ -84,13 +84,13 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
       this.renderers.root.classMultiple(this.multipleItems$),
       this.renderers.root.left(this.left$),
       this.renderers.root.top(this.top$),
-      this.renderers.root.content(renderContents($$activeSpec.get(this.vine), this.vine)),
+      this.renderers.root.content(renderContents($activeSpecPath.get(this.vine), this.vine)),
     ];
   }
 
   @cache()
   private get itemCount$(): Observable<number> {
-    return $stateService.get(this.vine).resolve($$activeSpec.get(this.vine)).$('contentsId').pipe(
+    return $stateService.get(this.vine)._($activeSpecPath.get(this.vine)).$('contentsId').pipe(
         map(ids => (ids?.length) ?? 0),
     );
   }
@@ -168,11 +168,11 @@ function computeRect(element: ElementWithRect): Rect {
 }
 
 export function renderActive(
-    objectId: StateId<ActiveSpec>,
+    objectId: ObjectPath<ActiveSpec>,
 ): Observable<RenderSpec> {
   return observableOf(renderCustomElement({
     spec: $active,
-    inputs: {objectId},
+    inputs: {objectPath: objectId},
     id: {},
   }));
 }

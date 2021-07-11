@@ -1,8 +1,8 @@
-import {$resolveStateOp, $stateService} from 'grapevine';
+import {$stateService} from 'grapevine';
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {attributeIn, integerParser, listParser} from 'persona';
-import {EMPTY, pipe} from 'rxjs';
-import {map, share, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {pipe} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
 import {IsRotatable} from '../payload/is-rotatable';
@@ -14,38 +14,28 @@ export interface Config extends TriggerConfig {
   readonly stops: readonly number[];
 }
 
-export function rotateAction({config$, objectId$, vine}: ActionParams<Config, IsRotatable>): Action {
+export function rotateAction({config$, objectPath$, vine}: ActionParams<Config, IsRotatable>): Action {
   const stateService = $stateService.get(vine);
+  const rotationDeg = stateService._(objectPath$).$('rotationDeg');
   return pipe(
-      withLatestFrom(config$, objectId$.pipe($resolveStateOp.get(vine)())),
-      switchMap(([, config, obj]) => {
-        if (!obj) {
-          return EMPTY;
-        }
-
-        const $rotationDeg = obj.$rotationDeg;
-        return stateService.resolve($rotationDeg).pipe(
-            take(1),
-            map(rotationDeg => rotationDeg ?? 0),
-            tap(rotationDeg => {
-              const stops = config.stops;
-              const rotationIndex = $pipe(
-                  stops,
-                  $zip(countableIterable()),
-                  $map(([stop, index]) => {
-                    const distance = Math.abs((stop % 360) - (rotationDeg % 360));
-                    return [distance, index] as [number, number];
-                  }),
-                  $asArray(),
-                  $sort(withMap(([value]) => value, normal())),
-              )[0][1];
-
-              const newIndex = (rotationIndex + 1) % stops.length;
-              stateService.modify(x => x.set($rotationDeg, stops[newIndex]));
+      withLatestFrom(config$, rotationDeg),
+      map(([, config, rotationDeg]) => {
+        const stops = config.stops;
+        const rotationIndex = $pipe(
+            stops,
+            $zip(countableIterable()),
+            $map(([stop, index]) => {
+              const distance = Math.abs((stop % 360) - ((rotationDeg ?? 0) % 360));
+              return [distance, index] as [number, number];
             }),
-            share(),
-        );
+            $asArray(),
+            $sort(withMap(([value]) => value, normal())),
+        )[0][1];
+
+        const newIndex = (rotationIndex + 1) % stops.length;
+        return stops[newIndex];
       }),
+      rotationDeg.set(),
   );
 }
 

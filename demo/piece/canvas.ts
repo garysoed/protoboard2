@@ -1,23 +1,25 @@
 import {renderSvg} from 'almagest';
-import {$stateService, source} from 'grapevine';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {StateId} from 'gs-tools/export/state';
+import {ObjectPath} from 'gs-tools/export/state';
 import {BaseThemedCtrl, _p} from 'mask';
 import {$div, element, PersonaContext, renderNode, RenderSpec, single} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {$canvas, Canvas, canvasSpec} from '../../src/face/canvas';
-import {CanvasEntry} from '../../src/face/canvas-entry';
+import {CanvasSpec} from '../../src/face/canvas-entry';
 import canvasBgSvg from '../asset/canvas_bg.svg';
 import {DocumentationTemplate} from '../template/documentation-template';
 
 import {$canvasNode, CanvasNode} from './canvas-node';
 import template from './canvas.html';
 
-type State = CanvasEntry;
 
-const $stateId = source(vine => $stateService.get(vine).modify(x => x.add(canvasSpec({}, x))));
+type State = CanvasSpec;
+
+const $stateId = rootStateIdSource(() => canvasSpec({}));
+const $statePath = immutablePathSource($stateId);
 
 export const $canvasDemo = {
   tag: 'pbd-canvas',
@@ -52,11 +54,11 @@ export class CanvasDemo extends BaseThemedCtrl<typeof $> {
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
       this.renderers.background.content(this.backgroundSvg$),
-      this.renderers.canvas.objectId(this.objectId$),
-      this.renderers.circleNode.objectId(this.objectId$),
-      this.renderers.noneNode.objectId(this.objectId$),
-      this.renderers.squareNode.objectId(this.objectId$),
-      this.renderers.triangleNode.objectId(this.objectId$),
+      this.renderers.canvas.objectPath(this.objectPath$),
+      this.renderers.circleNode.objectId(this.objectPath$),
+      this.renderers.noneNode.objectId(this.objectPath$),
+      this.renderers.squareNode.objectId(this.objectPath$),
+      this.renderers.triangleNode.objectId(this.objectPath$),
     ];
   }
 
@@ -75,7 +77,7 @@ export class CanvasDemo extends BaseThemedCtrl<typeof $> {
   }
 
   @cache()
-  private get objectId$(): Observable<StateId<State>> {
-    return of($stateId.get(this.vine));
+  private get objectPath$(): Observable<ObjectPath<State>> {
+    return of($statePath.get(this.vine));
   }
 }

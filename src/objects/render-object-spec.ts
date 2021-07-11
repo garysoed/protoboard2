@@ -1,11 +1,11 @@
 import {source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
+import {immutablePathOf, ObjectPath} from 'gs-tools/export/state';
 import {RenderSpec} from 'persona';
 import {Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {scan, startWith, switchMap} from 'rxjs/operators';
 
 interface RenderObjectSpec {
-  readonly objectId: StateId<unknown>;
+  readonly objectPath: ObjectPath<unknown>;
   readonly renderFn: RenderObjectFn;
 }
 
@@ -15,20 +15,20 @@ const $renderObjectSpec = source<Subject<RenderObjectSpec>>(() => new ReplaySubj
 
 const $renderObjectMap = source<Observable<ReadonlyMap<string, RenderObjectFn>>>(
     vine => $renderObjectSpec.get(vine).pipe(
-        scan((specMap, entry) => new Map([...specMap, [entry.objectId.id, entry.renderFn]]), new Map()),
+        scan((specMap, entry) => new Map([...specMap, [immutablePathOf(entry.objectPath).id, entry.renderFn]]), new Map()),
         startWith(new Map()),
     ));
 
-type RegisterRenderObjectFn = (objectId: StateId<unknown>, renderFn: RenderObjectFn) => void;
+type RegisterRenderObjectFn = (objectId: ObjectPath<unknown>, renderFn: RenderObjectFn) => void;
 export const $registerRenderObject = source<RegisterRenderObjectFn>(vine =>
-  (objectId: StateId<unknown>, renderFn: RenderObjectFn) =>
-    $renderObjectSpec.get(vine).next({objectId, renderFn}),
+  (objectId: ObjectPath<unknown>, renderFn: RenderObjectFn) =>
+    $renderObjectSpec.get(vine).next({objectPath: objectId, renderFn}),
 );
 
-type RenderFn = (objectId: StateId<unknown>) => Observable<RenderSpec|null>;
-export const $getRenderSpec = source<RenderFn>(vine => (objectId: StateId<unknown>) => $renderObjectMap.get(vine).pipe(
+type RenderFn = (objectId: ObjectPath<unknown>) => Observable<RenderSpec|null>;
+export const $getRenderSpec = source<RenderFn>(vine => (objectPath: ObjectPath<unknown>) => $renderObjectMap.get(vine).pipe(
     switchMap(renderMap => {
-      const renderFn = renderMap.get(objectId.id);
+      const renderFn = renderMap.get(immutablePathOf(objectPath).id);
       if (!renderFn) {
         return of(null);
       }

@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
-import {BaseThemedCtrl, stateIdParser, _p} from 'mask';
+import {BaseThemedCtrl, objectPathParser, _p} from 'mask';
 import {$div, attributeIn, element, host, PersonaContext, RenderSpec, single} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
@@ -12,7 +12,7 @@ import template from './render.html';
 export const $render = {
   tag: 'pb-render',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<unknown>()),
+    objectPath: attributeIn('object-path', objectPathParser<unknown>()),
   },
 };
 
@@ -40,7 +40,7 @@ export class Render extends BaseThemedCtrl<typeof $> {
   }
   @cache()
   private get object$(): Observable<RenderSpec|undefined> {
-    return this.inputs.host.objectId.pipe(
+    return this.inputs.host.objectPath.pipe(
         switchMap(objectId => {
           if (!objectId) {
             return observableOf(undefined);

@@ -1,12 +1,12 @@
 import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, objectThat, run, should, test} from 'gs-testing';
-import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {fakeStateService, mutableState} from 'gs-tools/export/state';
 import {of, Subject} from 'rxjs';
 
 import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';
-import {CanvasEntry, CanvasHalfLine, CanvasLine} from '../face/canvas-entry';
+import {CanvasHalfLine, CanvasLine} from '../face/canvas-entry';
 
 import {drawLineAction} from './draw-line-action';
 
@@ -16,13 +16,12 @@ test('@protoboard2/src/action/draw-line-action', init => {
   const _ = init(() => {
     const stateService = fakeStateService();
 
-    const halfLineId: StateId<CanvasHalfLine|null> = stateService.modify(x => x.add(null));
-    const linesId: StateId<readonly CanvasLine[]> = stateService.modify(x => x.add([]));
-    const objectId: StateId<CanvasEntry> = stateService.modify(x => x.add({
-      icons: x.add([]),
-      lines: linesId,
-      halfLine: halfLineId,
-    }));
+    const objectId = stateService.addRoot({
+      icons: mutableState([]),
+      lines: mutableState<readonly CanvasLine[]>([]),
+      halfLine: mutableState<CanvasHalfLine|null>(null),
+    });
+    const objectPath = stateService.immutablePath(objectId);
 
     const action = drawLineAction({
       config$: of({
@@ -31,7 +30,7 @@ test('@protoboard2/src/action/draw-line-action', init => {
         configName: CONFIG_NAME,
         trigger: {type: TriggerType.A},
       }),
-      objectId$: of(objectId),
+      objectPath$: of(objectPath),
       vine: new Vine({
         appName: 'test',
         overrides: [
@@ -43,14 +42,14 @@ test('@protoboard2/src/action/draw-line-action', init => {
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, halfLineId, linesId, onTrigger$, stateService};
+    return {action, objectPath, onTrigger$, stateService};
   });
 
   should('add the linehalf if one does not exist', () => {
-    _.stateService.modify(x => x.set(_.halfLineId, null));
+    run(of(null).pipe(_.stateService._(_.objectPath).$('halfLine').set()));
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 
@@ -69,13 +68,13 @@ test('@protoboard2/src/action/draw-line-action', init => {
   });
 
   should('add the line if there is a linehalf', () => {
-    _.stateService.modify(x => x.set(
-        _.halfLineId,
-        {fromX: -10, fromY: -20, configName: CONFIG_NAME},
-    ));
+    run(
+        of({fromX: -10, fromY: -20, configName: CONFIG_NAME})
+            .pipe(_.stateService._(_.objectPath).$('halfLine').set()),
+    );
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 
@@ -103,13 +102,13 @@ test('@protoboard2/src/action/draw-line-action', init => {
   });
 
   should('cancel making the line if the start and end are the same', () => {
-    _.stateService.modify(x => x.set(
-        _.halfLineId,
-        {fromX: 10, fromY: 20, configName: CONFIG_NAME},
-    ));
+    run(
+        of({fromX: 10, fromY: 20, configName: CONFIG_NAME})
+            .pipe(_.stateService._(_.objectPath).$('halfLine').set()),
+    );
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 
@@ -128,13 +127,13 @@ test('@protoboard2/src/action/draw-line-action', init => {
   });
 
   should('cancel if the start and end config names are different', () => {
-    _.stateService.modify(x => x.set(
-        _.halfLineId,
-        {fromX: -10, fromY: -20, configName: 'otherConfig'},
-    ));
+    run(
+        of({fromX: -10, fromY: -20, configName: 'otherConfig'})
+            .pipe(_.stateService._(_.objectPath).$('halfLine').set()),
+    );
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 
@@ -153,17 +152,17 @@ test('@protoboard2/src/action/draw-line-action', init => {
   });
 
   should('remove the line if the start and end already exist and not swapped', () => {
-    _.stateService.modify(x => x.set(
-        _.linesId,
-        [{fromX: -10, fromY: -20, toX: 10, toY: 20, configName: CONFIG_NAME}],
-    ));
-    _.stateService.modify(x => x.set(
-        _.halfLineId,
-        {fromX: -10, fromY: -20, configName: CONFIG_NAME},
-    ));
+    run(
+        of([{fromX: -10, fromY: -20, toX: 10, toY: 20, configName: CONFIG_NAME}])
+            .pipe(_.stateService._(_.objectPath).$('lines').set()),
+    );
+    run(
+        of({fromX: -10, fromY: -20, configName: CONFIG_NAME})
+            .pipe(_.stateService._(_.objectPath).$('halfLine').set()),
+    );
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 
@@ -191,17 +190,17 @@ test('@protoboard2/src/action/draw-line-action', init => {
   });
 
   should('remove the line if the start and end already exist and swapped', () => {
-    _.stateService.modify(x => x.set(
-        _.linesId,
-        [{fromX: 10, fromY: 20, toX: -10, toY: -20, configName: CONFIG_NAME}],
-    ));
-    _.stateService.modify(x => x.set(
-        _.halfLineId,
-        {fromX: -10, fromY: -20, configName: CONFIG_NAME},
-    ));
+    run(
+        of([{fromX: 10, fromY: 20, toX: -10, toY: -20, configName: CONFIG_NAME}])
+            .pipe(_.stateService._(_.objectPath).$('lines').set()),
+    );
+    run(
+        of({fromX: -10, fromY: -20, configName: CONFIG_NAME})
+            .pipe(_.stateService._(_.objectPath).$('halfLine').set()),
+    );
 
-    const halfLine$ = createSpySubject(_.stateService.resolve(_.halfLineId));
-    const lines$ = createSpySubject(_.stateService.resolve(_.linesId));
+    const halfLine$ = createSpySubject(_.stateService._(_.objectPath).$('halfLine'));
+    const lines$ = createSpySubject(_.stateService._(_.objectPath).$('lines'));
 
     _.onTrigger$.next(fakeTriggerEvent({}));
 

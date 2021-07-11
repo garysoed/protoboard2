@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier} from 'gs-tools/export/state';
-import {stateIdParser, _p} from 'mask';
+import {mutableState} from 'gs-tools/export/state';
+import {objectPathParser, _p} from 'mask';
 import {$slot, attributeIn, element, host, PersonaContext, slotted} from 'persona';
 import {Observable} from 'rxjs';
 
@@ -23,7 +23,7 @@ import template from './d1.html';
 export const $d1 = {
   tag: 'pb-d1',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<D1Spec>()),
+    objectPath: attributeIn('object-path', objectPathParser<D1Spec>()),
     pickAction: pickActionConfigSpecs({}),
     rotateAction: rotateActionConfigSpecs({}),
   },
@@ -31,9 +31,10 @@ export const $d1 = {
 
 export type D1Spec = IsRotatable;
 
-export function d1Spec(partial: Partial<D1Spec>, x: Modifier): D1Spec {
+export function d1Spec(partial: Partial<D1Spec>): D1Spec {
   return {
-    $rotationDeg: partial.$rotationDeg ?? x.add(0),
+    rotationDeg: mutableState(0),
+    ...partial,
   };
 }
 
@@ -64,7 +65,7 @@ export class D1 extends BaseComponent<D1Spec, typeof $> {
    * @internal
    */
   constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectId);
+    super(context, $, $.host._.objectPath);
 
     this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context));
   }

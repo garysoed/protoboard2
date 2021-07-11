@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {Modifier} from 'gs-tools/export/state';
-import {stateIdParser, _p} from 'mask';
+import {mutableState} from 'gs-tools/export/state';
+import {objectPathParser, _p} from 'mask';
 import {$slot, attributeIn, attributeOut, element, host, PersonaContext, slotted, stringParser} from 'persona';
 import {Observable} from 'rxjs';
 
@@ -27,7 +27,7 @@ import template from './d2.html';
  */
 export const $d2 = {
   api: {
-    objectId: attributeIn('object-id', stateIdParser<D2Spec>()),
+    objectPath: attributeIn('object-path', objectPathParser<D2Spec>()),
     rotateAction: rotateActionConfigSpecs({}),
     flipAction: flipActionConfigSpecs({count: 2}),
     turnAction: turnActionConfigSpecs({count: 2}),
@@ -49,10 +49,11 @@ export const $ = {
 
 export type D2Spec = IsMultifaced&IsRotatable;
 
-export function d2Spec(partial: Partial<D2Spec>, x: Modifier): D2Spec {
+export function d2Spec(partial: Partial<D2Spec>): D2Spec {
   return {
-    $currentFaceIndex: partial.$currentFaceIndex ?? x.add(0),
-    $rotationDeg: partial.$rotationDeg ?? x.add(0),
+    currentFaceIndex: mutableState(0),
+    rotationDeg: mutableState(0),
+    ...partial,
   };
 }
 
@@ -73,7 +74,7 @@ export function d2Spec(partial: Partial<D2Spec>, x: Modifier): D2Spec {
 })
 export class D2 extends BaseComponent<D2Spec, typeof $> {
   constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectId);
+    super(context, $, $.host._.objectPath);
     this.addSetup(renderMultifaced(this.objectSpec$, $.face._.name, context));
     this.addSetup(
         renderRotatable(this.objectSpec$, this.inputs.slot.slotted, context),

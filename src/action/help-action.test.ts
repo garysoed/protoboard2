@@ -25,7 +25,7 @@ test('@protoboard2/action/help-action', init => {
         trigger: {type: TriggerType.CLICK},
       }),
       vine,
-      objectId$: EMPTY,
+      objectPath$: EMPTY,
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();

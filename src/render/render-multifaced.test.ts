@@ -1,9 +1,9 @@
 import {$stateService} from 'grapevine';
 import {assert, run, should, test} from 'gs-testing';
-import {fakeStateService} from 'gs-tools/export/state';
+import {fakeStateService, mutableState} from 'gs-tools/export/state';
 import {attributeOut, host, stringParser} from 'persona';
 import {createFakeContext} from 'persona/export/testing';
-import {ReplaySubject} from 'rxjs';
+import {of} from 'rxjs';
 
 import {IsMultifaced} from '../payload/is-multifaced';
 
@@ -22,16 +22,17 @@ test('@protoboard2/render/render-multifaced', init => {
       shadowRoot,
     });
     const $ = host({slot: attributeOut('name', stringParser())});
-    const isMultifaced$ = new ReplaySubject<IsMultifaced>(1);
+    const isMultifaced = stateService.addRoot<IsMultifaced>({
+      currentFaceIndex: mutableState(0),
+    });
 
-    run(renderMultifaced(isMultifaced$, $._.slot, context));
+    run(renderMultifaced(stateService._(isMultifaced), $._.slot, context));
 
-    return {el, isMultifaced$, stateService};
+    return {el, isMultifaced, stateService};
   });
 
   should('render the face name correctly', () => {
-    const $currentFaceIndex = _.stateService.modify(x => x.add(2));
-    _.isMultifaced$.next({$currentFaceIndex});
+    run(of(2).pipe(_.stateService._(_.isMultifaced).$('currentFaceIndex').set()));
 
     assert(_.el.getAttribute('name')).to.equal('face-2');
   });

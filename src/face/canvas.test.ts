@@ -1,14 +1,14 @@
 import {$stateService} from 'grapevine';
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {fakeStateService} from 'gs-tools/export/state';
+import {fakeStateService, mutableState} from 'gs-tools/export/state';
 import {registerSvg, _p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
 import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
 
 import {Canvas} from './canvas';
 import {$canvasConfigService} from './canvas-config-service';
-import {CanvasEntry, CanvasHalfLine, CanvasIcon, CanvasLine} from './canvas-entry';
+import {CanvasSpec, CanvasHalfLine, CanvasIcon, CanvasLine} from './canvas-entry';
 import goldenDefault from './goldens/canvas__default.html';
 import goldenNoconfig from './goldens/canvas__noconfig.html';
 import goldenNoicon from './goldens/canvas__noicon.html';
@@ -81,18 +81,18 @@ test('@protoboard2/src/face/canvas', init => {
         {type: 'icon', svgName: svgName2},
     );
 
-    const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
-      icons: x.add<readonly CanvasIcon[]>([
+    const objectId = _.stateService.addRoot<CanvasSpec>({
+      icons: mutableState<readonly CanvasIcon[]>([
         {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
         {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
-      lines: x.add<readonly CanvasLine[]>([
+      lines: mutableState<readonly CanvasLine[]>([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: lineConfigName1},
         {fromX: 60, toX: 120, fromY: 50, toY: 30, configName: lineConfigName2},
       ]),
-      halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: lineConfigName2}),
-    }));
-    _.harness.host._.objectId(objectId);
+      halfLine: mutableState<CanvasHalfLine|null>({fromX: 30, fromY: 30, configName: lineConfigName2}),
+    });
+    _.harness.host._.objectPath(_.stateService.immutablePath(objectId));
     window.dispatchEvent(
         new MouseEvent('mousemove', {clientX: 90, clientY: 40}),
     );
@@ -122,18 +122,19 @@ test('@protoboard2/src/face/canvas', init => {
         {type: 'icon', svgName},
     );
 
-    const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
-      icons: x.add([
+    const objectId = _.stateService.addRoot({
+      icons: mutableState([
         {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName},
         {x: 80, y: 20, width: 30, height: 30, configName: 'unknownIconConfig'},
       ]),
-      lines: x.add<readonly CanvasLine[]>([
+      lines: mutableState([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: 'unknownLineConfig'},
         {fromX: 60, toX: 120, fromY: 50, toY: 30, configName: lineConfigName},
       ]),
-      halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: 'unknownLineConfig'}),
-    }));
-    _.harness.host._.objectId(objectId);
+      halfLine: mutableState({fromX: 30, fromY: 30, configName: 'unknownLineConfig'}),
+    });
+    const objectPath = _.stateService.immutablePath(objectId);
+    _.harness.host._.objectPath(objectPath);
 
     assert(flattenNode(_.element)).to.matchSnapshot('noConfig');
   });
@@ -179,18 +180,19 @@ test('@protoboard2/src/face/canvas', init => {
         {type: 'icon', svgName: svgName2},
     );
 
-    const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
-      icons: x.add<readonly CanvasIcon[]>([
+    const objectId = _.stateService.addRoot({
+      icons: mutableState([
         {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
         {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
-      lines: x.add<readonly CanvasLine[]>([
+      lines: mutableState([
         {fromX: 10, toX: 60, fromY: 20, toY: 50, configName: lineConfigName1},
         {fromX: 60, toX: 120, fromY: 50, toY: 30, configName: lineConfigName2},
       ]),
-      halfLine: x.add<CanvasHalfLine>({fromX: 30, fromY: 30, configName: lineConfigName2}),
-    }));
-    _.harness.host._.objectId(objectId);
+      halfLine: mutableState({fromX: 30, fromY: 30, configName: lineConfigName2}),
+    });
+    const objectPath = _.stateService.immutablePath(objectId);
+    _.harness.host._.objectPath(objectPath);
 
     assert(flattenNode(_.element)).to.matchSnapshot('noMouse');
   });
@@ -212,15 +214,16 @@ test('@protoboard2/src/face/canvas', init => {
         {type: 'icon', svgName: 'unknownSvg'},
     );
 
-    const objectId = _.stateService.modify(x => x.add<CanvasEntry>({
-      icons: x.add<readonly CanvasIcon[]>([
+    const objectId = _.stateService.addRoot({
+      icons: mutableState([
         {x: 20, y: 80, width: 20, height: 20, configName: iconConfigName1},
         {x: 80, y: 20, width: 30, height: 30, configName: iconConfigName2},
       ]),
-      lines: x.add([]),
-      halfLine: x.add(null),
-    }));
-    _.harness.host._.objectId(objectId);
+      lines: mutableState([]),
+      halfLine: mutableState(null),
+    });
+    const objectPath = _.stateService.immutablePath(objectId);
+    _.harness.host._.objectPath(objectPath);
 
     assert(flattenNode(_.element)).to.matchSnapshot('noIcon');
   });

@@ -1,6 +1,6 @@
 import {$stateService, Vine} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
-import {StateId} from 'gs-tools/export/state';
+import {ObjectPath} from 'gs-tools/export/state';
 import {Decorator, NodeWithId, RenderSpec} from 'persona';
 import {combineLatest, EMPTY, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -11,13 +11,15 @@ import {IsContainer} from '../payload/is-container';
 
 
 export function renderContents(
-    containerId: StateId<IsContainer>,
+    containerId: ObjectPath<IsContainer>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   const stateService = $stateService.get(vine);
-  const containerSpec$ = stateService.resolve(containerId);
-
-  return combineLatest([containerSpec$, containerSpec$.$('contentsId')])
+  const containerSpec = stateService._(containerId);
+  return combineLatest([
+    containerSpec,
+    containerSpec.$('contentsId'),
+  ])
       .pipe(
           switchMap(([containerSpec, contentIds]) => {
             if (!containerSpec) {

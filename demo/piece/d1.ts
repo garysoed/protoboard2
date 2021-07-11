@@ -1,10 +1,10 @@
-import {$stateService, source} from 'grapevine';
-import {StateId} from 'gs-tools/export/state';
+import {immutablePathSource, rootStateIdSource} from 'grapevine';
+import {mutableState} from 'gs-tools/export/state';
 import {BaseThemedCtrl, Icon, _p} from 'mask';
 import {element, PersonaContext} from 'persona';
 import {Observable, of} from 'rxjs';
 
-import {$registerRenderObject, $slot, D1, d1Spec, Lens, Slot, slotSpec, SlotSpec} from '../../export';
+import {$registerRenderObject, $slot, D1, d1Spec, Lens, Slot, slotSpec} from '../../export';
 import {FaceType, RenderedFace} from '../core/rendered-face';
 import {DocumentationTemplate} from '../template/documentation-template';
 
@@ -12,25 +12,21 @@ import template from './d1.html';
 import {renderPiece} from './render-piece';
 
 
-interface State {
-  readonly meepleSlot: StateId<SlotSpec>;
-  readonly gemSlot: StateId<SlotSpec>;
-}
+const $meepleId = rootStateIdSource(() => d1Spec({}));
+const $meeplePath = immutablePathSource($meepleId);
+const $gemId = rootStateIdSource(() => d1Spec({}));
+const $gemPath = immutablePathSource($gemId);
 
-const $$meeple = source(vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))));
-
-const $$gem = source(vine => $stateService.get(vine).modify(x => x.add(d1Spec({}, x))));
-
-const $state = source<State>(vine => $stateService.get(vine).modify(x => ({
-  meepleSlot: x.add(slotSpec(
-      {contentsId: x.add([$$meeple.get(vine)])},
-      x,
-  )),
-  gemSlot: x.add(slotSpec(
-      {contentsId: x.add([$$gem.get(vine)])},
-      x,
-  )),
-})));
+const $stateId = rootStateIdSource(vine => ({
+  meepleSlot: slotSpec(
+      {contentsId: mutableState([$meeplePath.get(vine)])},
+  ),
+  gemSlot: slotSpec(
+      {contentsId: mutableState([$gemPath.get(vine)])},
+  ),
+}));
+const $gemSlotPath = immutablePathSource($stateId, state => state._('gemSlot'));
+const $meepleSlotPath = immutablePathSource($stateId, state => state._('meepleSlot'));
 
 
 export const $d1Demo = {
@@ -47,8 +43,8 @@ const $ = {
   ...$d1Demo,
   configure: vine => {
     const registerRenderObject = $registerRenderObject.get(vine);
-    const $meeple = $$meeple.get(vine);
-    const $gem = $$gem.get(vine);
+    const $meeple = $meeplePath.get(vine);
+    const $gem = $gemPath.get(vine);
     registerRenderObject($meeple, renderPiece([FaceType.MEEPLE], $meeple));
     registerRenderObject($gem, renderPiece([FaceType.GEM], $gem));
   },
@@ -69,8 +65,8 @@ export class D1Demo extends BaseThemedCtrl<typeof $> {
 
   protected get renders(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.gemSlot.objectId(of($state.get(this.context.vine).gemSlot)),
-      this.renderers.meepleSlot.objectId(of($state.get(this.context.vine).meepleSlot)),
+      this.renderers.gemSlot.objectPath(of($gemSlotPath.get(this.context.vine))),
+      this.renderers.meepleSlot.objectPath(of($meepleSlotPath.get(this.context.vine))),
     ];
   }
 }

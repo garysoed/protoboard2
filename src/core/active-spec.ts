@@ -1,16 +1,18 @@
-import {$resolveState, $stateService, source} from 'grapevine';
-import {Resolver, StateId} from 'gs-tools/export/state';
+import {$stateService, immutablePathSource, source} from 'grapevine';
+import {ImmutableResolver, mutableState, RootStateId} from 'gs-tools/export/state';
 
 import {activeSpec, ActiveSpec} from './active';
 
 
-export const $$activeSpec = source<StateId<ActiveSpec>>(vine => {
+const $activeSpecId = source<RootStateId<ActiveSpec>>(vine => {
   const stateService = $stateService.get(vine);
-  return stateService.modify(x => x.add(
-      activeSpec({
-        contentsId: x.add([]),
-      }),
-  ));
+  return stateService.addRoot(activeSpec({
+    contentsId: mutableState([]),
+  }));
 });
 
-export const $activeSpec = source<Resolver<ActiveSpec>>(vine => $resolveState.get(vine)($$activeSpec.get(vine)));
+export const $activeSpecPath = immutablePathSource<ActiveSpec>($activeSpecId);
+
+export const $activeSpec = source<ImmutableResolver<ActiveSpec>>(vine =>
+  $stateService.get(vine)._($activeSpecId.get(vine)),
+);

@@ -1,6 +1,6 @@
 import {$stateService, Vine} from 'grapevine';
 import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing';
-import {fakeStateService, StateId} from 'gs-tools/export/state';
+import {fakeStateService, mutableState, ObjectPath} from 'gs-tools/export/state';
 import {of, ReplaySubject, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -24,36 +24,38 @@ test('@protoboard2/src/action/pick-all-action', init => {
       ],
     });
 
-    const objectId$ = new ReplaySubject<StateId<IsContainer>>(1);
+    const objectPath$ = new ReplaySubject<ObjectPath<IsContainer>>(1);
     const action = pickAllAction({
       config$: of({trigger: {type: TriggerType.CLICK}}),
-      objectId$,
+      objectPath$,
       vine,
     });
 
     const onTrigger$ = new Subject<TriggerEvent>();
     run(onTrigger$.pipe(action));
 
-    return {action, objectId$, onTrigger$, vine, stateService};
+    return {action, objectPath$, onTrigger$, vine, stateService};
   });
 
   should('trigger correctly', () => {
-    const objectId1 = _.stateService.modify(x => x.add({}));
-    const objectId2 = _.stateService.modify(x => x.add({}));
-    const objectId3 = _.stateService.modify(x => x.add({}));
+    const object1Path = _.stateService.immutablePath(_.stateService.addRoot({}));
+    const object2Path = _.stateService.immutablePath(_.stateService.addRoot({}));
+    const object3Path = _.stateService.immutablePath(_.stateService.addRoot({}));
 
-    const containerId = _.stateService.modify(x => x.add({
-      contentsId: x.add([objectId1, objectId2, objectId3]),
-    }));
-    _.objectId$.next(containerId);
+    const containerId = _.stateService.immutablePath(
+        _.stateService.addRoot({
+          contentsId: mutableState([object1Path, object2Path, object3Path]),
+        }),
+    );
+    _.objectPath$.next(containerId);
 
     const setParent = $setParent.get(_.vine);
-    setParent(objectId1, containerId);
-    setParent(objectId2, containerId);
-    setParent(objectId3, containerId);
+    setParent(object1Path, containerId);
+    setParent(object2Path, containerId);
+    setParent(object3Path, containerId);
 
     const contents$ = createSpySubject(
-        _.stateService.resolve(_.objectId$).$('contentsId').pipe(
+        _.stateService._(_.objectPath$).$('contentsId').pipe(
             map(contents => contents ?? []),
         ),
     );
@@ -64,17 +66,17 @@ test('@protoboard2/src/action/pick-all-action', init => {
     _.onTrigger$.next(fakeTriggerEvent({}));
 
     assert(contents$).to.emitSequence([
-      arrayThat<StateId<unknown>>().haveExactElements([objectId1, objectId2, objectId3]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId1, objectId2]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId1]),
-      arrayThat<StateId<unknown>>().haveExactElements([]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object1Path, object2Path, object3Path]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object1Path, object2Path]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object1Path]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([]),
     ]);
 
     assert(activeContents$).to.emitSequence([
-      arrayThat<StateId<unknown>>().haveExactElements([]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId3]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId3, objectId2]),
-      arrayThat<StateId<unknown>>().haveExactElements([objectId3, objectId2, objectId1]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object3Path]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object3Path, object2Path]),
+      arrayThat<ObjectPath<unknown>>().haveExactElements([object3Path, object2Path, object1Path]),
     ]);
   });
 });

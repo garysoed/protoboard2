@@ -18,7 +18,7 @@ export {Slot, $slot, SlotSpec, slotSpec} from '../src/region/slot';
 // core
 export {$render, Render} from '../src/objects/render';
 export {$active, Active, activeSpec} from '../src/core/active';
-export {$$activeSpec} from '../src/core/active-spec';
+export {$activeSpecPath} from '../src/core/active-spec';
 
 // piece
 export {$d1, D1, D1Spec, d1Spec} from '../src/piece/d1';
@@ -27,7 +27,7 @@ export {$d6, D6, D6Spec, d6Spec} from '../src/piece/d6';
 
 // face
 export {$canvas, canvasSpec, Canvas} from '../src/face/canvas';
-export {CanvasEntry as CanvasSpec} from '../src/face/canvas-entry';
+export {CanvasSpec} from '../src/face/canvas-entry';
 export {$canvasConfigService} from '../src/face/canvas-config-service';
 
 // tiling

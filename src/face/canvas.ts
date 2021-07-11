@@ -2,15 +2,15 @@ import {renderSvg} from 'almagest';
 import {$stateService} from 'grapevine';
 import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {Modifier} from 'gs-tools/export/state';
-import {$svgService, BaseThemedCtrl, stateIdParser, _p} from 'mask';
+import {mutableState} from 'gs-tools/export/state';
+import {$svgService, BaseThemedCtrl, objectPathParser, _p} from 'mask';
 import {$svg, attributeIn, boundingRect, element, host, multi, PersonaContext, renderNode, RenderSpec, single} from 'persona';
 import {combineLatest, fromEvent, Observable, of} from 'rxjs';
 import {map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {IconConfig, LineConfig} from './canvas-config';
 import {$canvasConfigService} from './canvas-config-service';
-import {CanvasEntry, CanvasIcon, CanvasLine} from './canvas-entry';
+import {CanvasSpec, CanvasIcon, CanvasLine} from './canvas-entry';
 import template from './canvas.html';
 
 
@@ -18,15 +18,15 @@ import template from './canvas.html';
 export const $canvas = {
   tag: 'pb-canvas',
   api: {
-    objectId: attributeIn('object-id', stateIdParser<CanvasEntry>()),
+    objectPath: attributeIn('object-path', objectPathParser<CanvasSpec>()),
   },
 };
 
-export function canvasSpec(partial: Partial<CanvasEntry>, x: Modifier): CanvasEntry {
+export function canvasSpec(partial: Partial<CanvasSpec>): CanvasSpec {
   return {
-    icons: partial.icons ?? x.add([]),
-    lines: partial.lines ?? x.add([]),
-    halfLine: partial.halfLine ?? x.add(null),
+    icons: partial.icons ?? mutableState([]),
+    lines: partial.lines ?? mutableState([]),
+    halfLine: partial.halfLine ?? mutableState(null),
   };
 }
 
@@ -44,6 +44,8 @@ export const $ = {
   template,
 })
 export class Canvas extends BaseThemedCtrl<typeof $> {
+  private readonly stateService = $stateService.get(this.vine);
+
   constructor(context: PersonaContext) {
     super(context, $);
   }
@@ -57,14 +59,7 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
 
   @cache()
   private get halfline$(): Observable<RenderSpec|null> {
-    return this.inputs.host.objectId.pipe(
-        switchMap(objectId => {
-          if (!objectId) {
-            return of(null);
-          }
-
-          return $stateService.get(this.vine).resolve(objectId).$('halfLine');
-        }),
+    return this.stateService._(this.inputs.host.objectPath).$('halfLine').pipe(
         withLatestFrom($canvasConfigService.get(this.vine).lineConfig$),
         switchMap(([halfLine, lineConfigs]) => {
           if (!halfLine) {
@@ -102,18 +97,10 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
   @cache()
   private get permanents$(): Observable<readonly RenderSpec[]> {
     const canvasConfigService = $canvasConfigService.get(this.vine);
-    return this.inputs.host.objectId.pipe(
-        switchMap(objectId => {
-          if (!objectId) {
-            return of([undefined, undefined]);
-          }
-
-          const object = $stateService.get(this.vine).resolve(objectId);
-          return combineLatest([
-            object.$('icons'),
-            object.$('lines'),
-          ]);
-        }),
+    return combineLatest([
+      this.stateService._(this.inputs.host.objectPath).$('icons'),
+      this.stateService._(this.inputs.host.objectPath).$('lines'),
+    ]).pipe(
         withLatestFrom(
             canvasConfigService.iconConfig$,
             canvasConfigService.lineConfig$,
