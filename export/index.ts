@@ -35,7 +35,7 @@ export {rectOrthogonal, RectOrthogonal, Direction as RectOrthogonalDirection, di
 export {vhex, VHex, Direction as VHexDirection, distance as vhexDistance} from '../src/tiling/vhex';
 export {Tile} from '../src/tiling/types';
 
-export {$registerRenderObject} from '../src/objects/render-object-spec';
+export {$registerRenderObject, RenderObjectFn} from '../src/objects/render-object-spec';
 
 export {BaseComponent} from '../src/core/base-component';
 export {ActionSpec, TriggerConfig} from '../src/action/action-spec';

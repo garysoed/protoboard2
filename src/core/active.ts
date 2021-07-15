@@ -2,8 +2,8 @@ import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
 import {MutableState, ObjectPath} from 'gs-tools/export/state';
 import {objectPathParser, _p} from 'mask';
-import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, renderCustomElement, RenderSpec, style} from 'persona';
-import {fromEvent, Observable, of as observableOf} from 'rxjs';
+import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, style} from 'persona';
+import {fromEvent, Observable} from 'rxjs';
 import {map, share, throttleTime} from 'rxjs/operators';
 
 import {ActionSpec} from '../action/action-spec';
@@ -167,12 +167,3 @@ function computeRect(element: ElementWithRect): Rect {
   return rect;
 }
 
-export function renderActive(
-    objectId: ObjectPath<ActiveSpec>,
-): Observable<RenderSpec> {
-  return observableOf(renderCustomElement({
-    spec: $active,
-    inputs: {objectPath: objectId},
-    id: {},
-  }));
-}

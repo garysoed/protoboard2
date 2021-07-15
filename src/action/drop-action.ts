@@ -1,4 +1,5 @@
 import {$stateService} from 'grapevine';
+import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {attributeIn, enumParser} from 'persona';
 import {combineLatest, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -30,6 +31,9 @@ export function dropAction({objectPath$, vine}: ActionParams<Config, IsContainer
           map(([activeContents, contents]) => {
             const normalizedActiveContents = activeContents ?? [];
             const id = normalizedActiveContents[normalizedActiveContents.length - 1];
+            if (!id) {
+              return null;
+            }
             const toIndex = contents?.length ?? 0;
             return {id, toIndex};
           }),
@@ -38,6 +42,7 @@ export function dropAction({objectPath$, vine}: ActionParams<Config, IsContainer
   return pipe(
       withLatestFrom(moveParams$),
       map(([, moveParams]) => moveParams),
+      filterNonNullable(),
       moveObject($activeSpec.get(vine), container$),
   );
 }
