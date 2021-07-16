@@ -10,7 +10,7 @@ interface TriggerSpec {
 
 export function triggerKey(targetEl: Element, triggerSpec: TriggerSpec): void {
   // Hover over the element.
-  targetEl.dispatchEvent(new CustomEvent('mouseenter'));
+  targetEl.dispatchEvent(new CustomEvent('mouseover'));
   targetEl.dispatchEvent(Object.assign(
       new CustomEvent('mousemove'),
       {

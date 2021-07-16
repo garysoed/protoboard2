@@ -126,6 +126,31 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
 
       assert(onTrigger$).toNot.emit();
     });
+
+    should('only emit on the inner component', () => {
+      const elParent = document.createElement('div');
+      const shadowRootParent = elParent.attachShadow({mode: 'open'});
+      const contextParent = createFakeContext({shadowRoot: shadowRootParent});
+
+      const config = {
+        trigger: {type: TriggerType.T},
+      };
+      const onTrigger$ = createSpySubject(of(config).pipe(createTrigger(_.context)));
+      const onTriggerParent$ = createSpySubject(of(config).pipe(createTrigger(contextParent)));
+
+      elParent.appendChild(_.el);
+
+      const mouseX = 12;
+      const mouseY = 34;
+      triggerKey(_.el, {key: TriggerType.T, mouseX, mouseY});
+
+      assert(onTrigger$).to.emitWith(objectThat<TriggerEvent>().haveProperties({
+        mouseX,
+        mouseY,
+        targetEl: _.el,
+      }));
+      assert(onTriggerParent$).toNot.emit();
+    });
   });
 
 

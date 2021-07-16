@@ -1,6 +1,6 @@
 import {host, onDom, PersonaContext} from 'persona';
 import {EMPTY, fromEvent, merge, Observable, OperatorFunction, pipe} from 'rxjs';
-import {filter, map, mapTo, switchMap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {TriggerEvent} from '../../core/trigger-event';
 import {isKeyTrigger, TriggerSpec} from '../../core/trigger-spec';
@@ -12,6 +12,11 @@ export interface TriggerContext<C extends TriggerConfig> {
   readonly config: C;
 }
 
+const __handled = Symbol('handled');
+
+interface MaybeHandledEvent extends Event {
+  [__handled]?: Element;
+}
 
 function createTriggerClick(
     triggerSpec: TriggerSpec,
@@ -42,16 +47,22 @@ function createTriggerKey(
     context: PersonaContext,
 ): Observable<TriggerEvent> {
   const targetElSelector = triggerSpec.targetEl ?? host({});
-  const onMouseLeave$ = onDom('mouseleave')
-      .resolve(context => targetElSelector.getSelectable(context))
-      .getValue(context);
-  const onMouseEnter$ = onDom('mouseenter')
-      .resolve(context => targetElSelector.getSelectable(context))
-      .getValue(context);
-  const onMouseMove$ = onDom<MouseEvent>('mousemove')
-      .resolve(context => targetElSelector.getSelectable(context))
-      .getValue(context);
   const targetEl = targetElSelector.getSelectable(context);
+  const onMouseLeave$ = onDom('mouseout')
+      .resolve(() => targetEl)
+      .getValue(context);
+  const onMouseEnter$ = onDom<MaybeHandledEvent>('mouseover')
+      .resolve(() => targetEl)
+      .getValue(context)
+      .pipe(
+          filter(event => !event[__handled] || event[__handled] === targetEl),
+          tap(event => {
+            event[__handled] = targetEl;
+          }),
+      );
+  const onMouseMove$ = onDom<MouseEvent>('mousemove')
+      .resolve(() => targetEl)
+      .getValue(context);
   return merge(
       onMouseLeave$.pipe(mapTo(false)),
       onMouseEnter$.pipe(mapTo(true)),
