@@ -152,6 +152,7 @@ export class Canvas extends BaseThemedCtrl<typeof $> {
 
           return renderSvg({
             type: 'template',
+            document: this.context.shadowRoot.ownerDocument,
             content: svgContent,
             x: `${icon.x}`,
             y: `${icon.y}`,

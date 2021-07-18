@@ -66,6 +66,7 @@ export class CanvasDemo extends BaseThemedCtrl<typeof $> {
   private get backgroundSvg$(): Observable<RenderSpec> {
     return renderSvg({
       type: 'template',
+      document: this.context.shadowRoot.ownerDocument,
       content: canvasBgSvg,
     })
         .pipe(
