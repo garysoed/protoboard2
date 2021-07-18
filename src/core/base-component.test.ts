@@ -4,11 +4,11 @@ import {StateService} from 'gs-tools/export/state';
 import {objectPathParser} from 'mask';
 import {$div, attributeIn, element, host, PersonaContext} from 'persona';
 import {createFakeContext, PersonaTesterEnvironment} from 'persona/export/testing';
-import {EMPTY, Observable, of} from 'rxjs';
+import {EMPTY, Observable, of, fromEvent} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionSpec} from '../action/action-spec';
-import {$helpService, ActionTrigger, HelpService} from '../action/help-service';
+import {$helpService, ActionTrigger, HelpContent, HelpService, ShowHelpEvent, SHOW_HELP_EVENT} from '../action/help-service';
 import {triggerKey} from '../action/testing/trigger-key';
 import {createTrigger} from '../action/util/setup-trigger';
 
@@ -106,6 +106,10 @@ test('@protoboard2/core/base-component', init => {
 
   test('setupAction', () => {
     should('set up the help action', () => {
+      const helpContent$ = createSpySubject(fromEvent<ShowHelpEvent>(_.el, SHOW_HELP_EVENT).pipe(
+          map(event => event.contents),
+      ));
+
       triggerKey(
           _.el,
           {
@@ -117,22 +121,27 @@ test('@protoboard2/core/base-component', init => {
           },
       );
 
-      assert(_.mockHelpService.show).to.haveBeenCalledWith(
-          arrayThat<ActionTrigger>().haveExactElements([
-            objectThat<ActionTrigger>().haveProperties({
-              trigger: objectThat<TriggerSpec>().haveProperties({
-                type: TriggerType.CLICK,
+      assert(helpContent$).to.emitSequence([
+        arrayThat<HelpContent>().haveExactElements([
+          objectThat<HelpContent>().haveProperties({
+            tag: 'DIV',
+            actions: arrayThat<ActionTrigger>().haveExactElements([
+              objectThat<ActionTrigger>().haveProperties({
+                trigger: objectThat<TriggerSpec>().haveProperties({
+                  type: TriggerType.CLICK,
+                }),
+                actionName: ACTION_NAME,
               }),
-              actionName: ACTION_NAME,
-            }),
-            objectThat<ActionTrigger>().haveProperties({
-              trigger: objectThat<TriggerSpec>().haveProperties({
-                type: KEY,
+              objectThat<ActionTrigger>().haveProperties({
+                trigger: objectThat<TriggerSpec>().haveProperties({
+                  type: KEY,
+                }),
+                actionName: ACTION_NAME,
               }),
-              actionName: ACTION_NAME,
-            }),
-          ]),
-      );
+            ]),
+          }),
+        ]),
+      ]);
     });
   });
 });

@@ -92,10 +92,17 @@ export abstract class BaseComponent<O, S> extends BaseThemedCtrl<S> {
       obs.push(this.setupTrigger(this.createActionSpec(
           helpAction,
           actionTriggers$.pipe(
-              map(actionTriggers => ({
-                actionTriggers,
-                trigger: {type: TriggerType.QUESTION, shift: true},
-              })),
+              map(actions => {
+                const hostEl = this.context.shadowRoot.host;
+                return {
+                  helpContent: {
+                    tag: hostEl.tagName,
+                    actions,
+                  },
+                  targetEl: hostEl,
+                  trigger: {type: TriggerType.QUESTION, shift: true},
+                };
+              }),
           ),
           'Help',
       )));

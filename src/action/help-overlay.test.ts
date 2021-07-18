@@ -1,6 +1,6 @@
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {_p} from 'mask';
+import {$window, _p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
 import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
 import {map} from 'rxjs/operators';
@@ -10,11 +10,19 @@ import {TriggerType} from '../core/trigger-spec';
 import render from './goldens/help-overlay__render.html';
 import renderEmpty from './goldens/help-overlay__render_empty.html';
 import {HelpOverlay} from './help-overlay';
-import {$helpService} from './help-service';
+import {$helpService, HelpContent, ShowHelpEvent} from './help-service';
 
 
 const testerFactory = new PersonaTesterFactory(_p);
 const ACTION_NAME = 'ACTION_NAME';
+
+function triggerHelp(contents: readonly HelpContent[]): void {
+  const event = new ShowHelpEvent();
+  for (const content of contents) {
+    event.add(content);
+  }
+  window.dispatchEvent(event);
+}
 
 test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
@@ -23,6 +31,7 @@ test('@protoboard2/action/help-overlay', init => {
     const tester = testerFactory.build({
       overrides: [
         THEME_LOADER_TEST_OVERRIDE,
+        {override: $window, withValue: window},
       ],
       rootCtrls: [HelpOverlay],
       rootDoc: document,
@@ -34,24 +43,36 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('renderIsVisible', () => {
     should('not add the isVisible class if there are no actions in the help service', () => {
+      triggerHelp([]);
       assert(_.harness.root._.isVisibleClass).to.emitWith(false);
     });
 
     should('add the isVisible class if there is an action in the help service', () => {
-      $helpService.get(_.tester.vine).show(
-          [{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}],
-      );
+      triggerHelp([
+        {
+          tag: 'tag',
+          actions: [{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}],
+        },
+      ]);
 
       assert(_.harness.root._.isVisibleClass).to.emitWith(true);
     });
   });
 
-  test('tableRows$', () => {
-    should('render rows correctly', () => {
-      $helpService.get(_.tester.vine).show([
+  test('tables$', () => {
+    should('render tables correctly', () => {
+      triggerHelp([
         {
-          trigger: {type: TriggerType.CLICK, meta: true, alt: true},
-          actionName: ACTION_NAME,
+          tag: 'tag-1',
+          actions: [
+            {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
+          ],
+        },
+        {
+          tag: 'tag-2',
+          actions: [
+            {trigger: {type: TriggerType.D, shift: true, ctrl: true}, actionName: ACTION_NAME},
+          ],
         },
       ]);
 
@@ -59,9 +80,15 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should('render deletion correctly', () => {
-      const service = $helpService.get(_.tester.vine);
-      service.show([{trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME}]);
-      service.show([]);
+      triggerHelp([
+        {
+          tag: 'tag',
+          actions: [
+            {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
+          ],
+        },
+      ]);
+      triggerHelp([]);
 
       assert(flattenNode(_.element)).to.matchSnapshot('renderEmpty');
     });
@@ -69,15 +96,20 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('setupHandleClick', () => {
     should('hide the help when clicked', () => {
-      $helpService.get(_.tester.vine).show([
-        {trigger: {type: TriggerType.CLICK}, actionName: ACTION_NAME},
+      triggerHelp([
+        {
+          tag: 'tag',
+          actions: [
+            {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
+          ],
+        },
       ]);
 
       _.harness.root._.click();
 
       assert(_.harness.root._.isVisibleClass).to.emitWith(false);
 
-      const actionsLength$ = $helpService.get(_.tester.vine).actions$.pipe(
+      const actionsLength$ = $helpService.get(_.tester.vine).contents$.pipe(
           map(actions => actions.length),
       );
       assert(actionsLength$).to.emitWith(0);

@@ -3,6 +3,7 @@
     background-color: var(--mkThemeBG);
     color: var(--mkThemeFG);
     display: none;
+    overflow: scroll;
   }
 
   #root.isVisible {
@@ -12,21 +13,13 @@
   #root td:first-child {
     font-family: var(--mkFontFamilyMono);
   }
+
+  #root > * {
+    width: 25%;
+  }
 </style>
 
-<template id="tableRow"></template>
-
 <div id="root" layout="column" fill-parent="" flex-justify="center" flex-align="center" class="">
-  <table mk-body-1="">
-    <thead>
-      <tr>
-        <th>Trigger</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="content">
-      <!-- #rows-->
-    </tbody>
-  </table>
+  <!-- #tables -->
 </div>
 <link rel="stylesheet" href="base/test.css"></pb-help-overlay>
