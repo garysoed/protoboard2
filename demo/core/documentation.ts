@@ -77,7 +77,7 @@ export class Documentation extends BaseThemedCtrl<typeof $> {
                   assertUnreachable(location.type);
               }
             }),
-            map(spec => renderCustomElement({spec, id: {}})),
+            map(spec => renderCustomElement({spec, inputs: {}, id: {}})),
         );
   }
 }

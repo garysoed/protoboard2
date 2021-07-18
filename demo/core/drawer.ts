@@ -86,6 +86,7 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
         children: [renderCustomElement({
           spec: $lineLayout,
           attrs: new Map([['path', path]]),
+          inputs: {},
           textContent: label,
           id: label,
         })],
