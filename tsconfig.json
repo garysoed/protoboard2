@@ -27,7 +27,7 @@
   },
   "include": [
     "demo/**/*.ts",
-    "src/**/*.ts",
+    "src-next/**/*.ts",
     "node_modules/devbase/ts/typings/*.d.ts",
     "export/index.ts",
   ],

@@ -1,3 +1,9 @@
+set_vars({
+  vars: {
+    goldens: [],
+  },
+});
+
 declare({
   name: 'link',
   as: shell({
