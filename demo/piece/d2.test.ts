@@ -28,6 +28,6 @@ test('@protoboard2/demo/piece/d2', init => {
   });
 
   should('render correctly', () => {
-    assert(flattenNode(_.element)).to.matchSnapshot('default');
+    assert(_.element).to.matchSnapshot('default');
   });
 });

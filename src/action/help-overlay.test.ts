@@ -76,7 +76,7 @@ test('@protoboard2/action/help-overlay', init => {
         },
       ]);
 
-      assert(flattenNode(_.element)).to.matchSnapshot('render');
+      assert(_.element).to.matchSnapshot('render');
     });
 
     should('render deletion correctly', () => {
@@ -90,7 +90,7 @@ test('@protoboard2/action/help-overlay', init => {
       ]);
       triggerHelp([]);
 
-      assert(flattenNode(_.element)).to.matchSnapshot('renderEmpty');
+      assert(_.element).to.matchSnapshot('renderEmpty');
     });
   });
 

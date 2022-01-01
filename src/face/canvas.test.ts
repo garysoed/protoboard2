@@ -97,7 +97,7 @@ test('@protoboard2/src/face/canvas', init => {
         new MouseEvent('mousemove', {clientX: 90, clientY: 40}),
     );
 
-    assert(flattenNode(_.element)).to.matchSnapshot('default');
+    assert(_.element).to.matchSnapshot('default');
   });
 
   should('skip lines, icons, and half lines with unknown config names', () => {
@@ -136,7 +136,7 @@ test('@protoboard2/src/face/canvas', init => {
     const objectPath = _.stateService.immutablePath(objectId);
     _.harness.host._.objectPath(objectPath);
 
-    assert(flattenNode(_.element)).to.matchSnapshot('noConfig');
+    assert(_.element).to.matchSnapshot('noConfig');
   });
 
   should('render lines and icons even without mouse events', () => {
@@ -194,7 +194,7 @@ test('@protoboard2/src/face/canvas', init => {
     const objectPath = _.stateService.immutablePath(objectId);
     _.harness.host._.objectPath(objectPath);
 
-    assert(flattenNode(_.element)).to.matchSnapshot('noMouse');
+    assert(_.element).to.matchSnapshot('noMouse');
   });
 
   should('render comments for icons with unknown icon name', () => {
@@ -225,6 +225,6 @@ test('@protoboard2/src/face/canvas', init => {
     const objectPath = _.stateService.immutablePath(objectId);
     _.harness.host._.objectPath(objectPath);
 
-    assert(flattenNode(_.element)).to.matchSnapshot('noIcon');
+    assert(_.element).to.matchSnapshot('noIcon');
   });
 });
