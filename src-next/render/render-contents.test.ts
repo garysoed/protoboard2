@@ -71,7 +71,7 @@ test('@protoboard2/src/render/render-contents', init => {
 
       of(['one', 'two', 'three']).pipe(
           $state.get(_.tester.vine).$('contentIds').set(),
-      ) .subscribe();
+      ).subscribe();
 
       assert(element).to.matchSnapshot('render-content.html');
     });

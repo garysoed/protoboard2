@@ -1,59 +1,33 @@
-import {$stateService} from 'grapevine';
 import {cache} from 'gs-tools/export/data';
-import {MutableState, ObjectPath} from 'gs-tools/export/state';
-import {objectPathParser, _p} from 'mask';
-import {$div, attributeIn, classToggle, element, host, multi, PersonaContext, style} from 'persona';
+import {renderTheme} from 'mask';
+import {Context, Ctrl, DIV, id, itarget, oclass, omulti, ostyle, otext, registerCustomElement} from 'persona';
 import {fromEvent, Observable} from 'rxjs';
-import {map, share, throttleTime} from 'rxjs/operators';
+import {map, share, throttleTime, withLatestFrom} from 'rxjs/operators';
 
-import {ActionSpec} from '../action/action-spec';
-import {BaseComponent} from '../core/base-component';
-import {IsContainer} from '../payload/is-container';
 import {renderContents} from '../render/render-contents';
 
-import {$activeSpecPath} from './active-spec';
+import {$activeState} from './active-spec';
 import template from './active.html';
 
 
 const COUNT_THRESHOLD = 3;
 
-export const ACTIVE_TYPE = 'pb.active';
 
-/**
- * The active object API.
- *
- * @thModule region
- */
 export const $active = {
-  tag: 'pb-active',
-  api: {
-    // TODO: Should not require object-path
-    objectPath: attributeIn('object-path', objectPathParser<ActiveSpec>()),
+  shadow: {
+    count: id('count', DIV, {
+      classMultiple: oclass('multiple'),
+      textContent: otext(),
+    }),
+    root: id('root', DIV, {
+      content: omulti('#content'),
+      element: itarget(),
+      left: ostyle('left'),
+      top: ostyle('top'),
+    }),
   },
 };
 
-export const $ = {
-  host: host($active.api),
-  count: element('count', $div, {}),
-  root: element('root', $div, {
-    classMultiple: classToggle('multiple'),
-    content: multi('#content'),
-    left: style('left'),
-    top: style('top'),
-  }),
-};
-
-export type ActiveSpec = IsContainer;
-
-interface Input {
-  readonly contentsId: MutableState<ReadonlyArray<ObjectPath<unknown>>>,
-}
-
-export function activeSpec(input: Input): ActiveSpec {
-  return {
-    contentsId: input.contentsId,
-  };
-}
 
 /**
  * Represents a region containing objects that are actively manipulated.
@@ -63,34 +37,27 @@ export function activeSpec(input: Input): ActiveSpec {
  *
  * @thModule region
  */
-@_p.customElement({
-  ...$active,
-  template,
-})
-export class Active extends BaseComponent<ActiveSpec, typeof $> {
-  constructor(context: PersonaContext) {
-    super(context, $, $.host._.objectPath);
-  }
+export class Active implements Ctrl {
+  constructor(private readonly $: Context<typeof $active>) { }
 
   @cache()
-  protected get actions(): readonly ActionSpec[] {
-    return [];
-  }
-
-  @cache()
-  protected get renders(): ReadonlyArray<Observable<unknown>> {
+  get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.count.textContent(this.itemCountDisplay$),
-      this.renderers.root.classMultiple(this.multipleItems$),
-      this.renderers.root.left(this.left$),
-      this.renderers.root.top(this.top$),
-      this.renderers.root.content(renderContents($activeSpecPath.get(this.vine), this.vine)),
+      renderTheme(this.$),
+      this.itemCountDisplay$.pipe(this.$.shadow.count.textContent()),
+      this.multipleItems$.pipe(this.$.shadow.count.classMultiple()),
+      this.left$.pipe(this.$.shadow.root.left()),
+      this.top$.pipe(this.$.shadow.root.top()),
+      renderContents($activeState.get(this.$.vine), this.$.vine).pipe(
+          map(specs => specs.slice(0, COUNT_THRESHOLD)),
+          this.$.shadow.root.content(),
+      ),
     ];
   }
 
   @cache()
   private get itemCount$(): Observable<number> {
-    return $stateService.get(this.vine)._($activeSpecPath.get(this.vine)).$('contentsId').pipe(
+    return $activeState.get(this.$.vine).$('contentIds').pipe(
         map(ids => (ids?.length) ?? 0),
     );
   }
@@ -112,9 +79,10 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
     return fromEvent<MouseEvent>(window, 'mousemove')
         .pipe(
             throttleTime(10),
-            map(event => ({
+            withLatestFrom(this.$.shadow.root.element),
+            map(([event, element]) => ({
               event,
-              rect: computeAllRects($.root.getSelectable(this.context)),
+              rect: computeAllRects(element),
             })),
             share(),
         );
@@ -130,6 +98,13 @@ export class Active extends BaseComponent<ActiveSpec, typeof $> {
     return this.mouseEvent$.pipe(map(({event, rect}) => `${event.y - rect.height / 2}px`));
   }
 }
+
+export const ACTIVE = registerCustomElement({
+  ctrl: Active,
+  spec: $active,
+  tag: 'pb-active',
+  template,
+});
 
 
 interface Rect {

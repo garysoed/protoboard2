@@ -5,17 +5,13 @@
     z-index: 9999;
   }
 
-  #root > :nth-child(n + 4) {
-    display: none;
-  }
-
-  #root.multiple > #count:nth-child(n + 4) {
-    display: block;
-  }
-
   #count {
     display: none;
     padding: .5rem;
+  }
+
+  #count.multiple {
+    display: block;
   }
 </style>
 
