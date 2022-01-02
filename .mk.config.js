@@ -1,6 +1,8 @@
 set_vars({
   vars: {
-    goldens: [],
+    goldens: [
+      'src-next/render/goldens',
+    ],
   },
 });
 

@@ -78,7 +78,8 @@ test('@protoboard2/src/core/base-component', init => {
   test('updateState', () => {
     should('update the given mutable state, if there is one', () => {
       const stateService = $stateService.get(_.tester.vine);
-      const $state = stateService.addRoot(mutableState({
+      const $state = stateService.addRoot(mutableState<TestState>({
+        id: 'test',
         value: mutableState(123),
       }));
 
