@@ -34,7 +34,7 @@ class Test implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderContents(
-          $stateService.get(this.$.vine)._($stateId.get(this.$.vine)),
+          $stateService.get(this.$.vine)._($stateId.get(this.$.vine)).$('contentIds'),
           this.$.vine,
       )
           .pipe(

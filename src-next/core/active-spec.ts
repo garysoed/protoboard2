@@ -1,10 +1,10 @@
 import {$stateService, source} from 'grapevine';
 import {ImmutableResolver, mutableState, RootStateId} from 'gs-tools/export/state';
 
-import {ContainerState} from '../types/container-state';
+import {RegionState} from '../types/region-state';
 
 
-export type ActiveState = ContainerState;
+export type ActiveState = RegionState;
 
 const $activeStateId = source<RootStateId<ActiveState>>(vine => {
   const stateService = $stateService.get(vine);

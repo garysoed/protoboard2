@@ -1,20 +1,17 @@
 import {Vine} from 'grapevine';
-import {ImmutableResolver} from 'gs-tools/export/state';
 import {RenderSpec} from 'persona';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-
-import {ContainerState} from '../types/container-state';
 
 import {$getRenderSpec$} from './render-component-spec';
 
 
 export function renderContents(
-    containerState$: ImmutableResolver<ContainerState>,
+    contentIds$: Observable<ReadonlyArray<{}>>,
     vine: Vine,
 ): Observable<readonly RenderSpec[]> {
   return combineLatest([
-    containerState$.$('contentIds'),
+    contentIds$,
     $getRenderSpec$.get(vine),
   ])
       .pipe(

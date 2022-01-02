@@ -1,7 +1,7 @@
 import {MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, ivalue} from 'persona';
+import {Context, Ctrl, ivalue} from 'persona';
 import {IValue, UnresolvedIO} from 'persona/export/internal';
 import {EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {switchMap, withLatestFrom} from 'rxjs/operators';
@@ -11,7 +11,7 @@ import {ComponentState} from '../types/component-state';
 
 // type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
 
-interface BaseComponentSpecType<S extends ComponentState> {
+export interface BaseComponentSpecType<S extends ComponentState> {
   host: {
     readonly state: UnresolvedIO<IValue<MutableResolver<S>|undefined, 'state'>>;
   };
@@ -28,7 +28,7 @@ export function create$baseComponent<S extends ComponentState>(): BaseComponentS
 
 // const LOG = new Logger('pb.core.BaseComponent');
 
-export abstract class BaseComponent<S extends ComponentState> {
+export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   constructor(
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
   ) {
