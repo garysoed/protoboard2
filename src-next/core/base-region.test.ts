@@ -44,7 +44,7 @@ const TEST = registerCustomElement({
   template: '<div id="container"><!-- #ref --></div>',
 });
 
-test('@protoboard2/src/core/render-contents', init => {
+test('@protoboard2/src/core/base-region', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
     const tester = setupTest({roots: [TEST]});

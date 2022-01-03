@@ -48,7 +48,8 @@ export class Active implements Ctrl {
       this.multipleItems$.pipe(this.$.shadow.count.classMultiple()),
       this.left$.pipe(this.$.shadow.root.left()),
       this.top$.pipe(this.$.shadow.root.top()),
-      renderContents($activeState.get(this.$.vine).$('contentIds'), this.$.vine).pipe(
+      $activeState.get(this.$.vine).$('contentIds').pipe(
+          renderContents(this.$.vine),
           map(specs => specs.slice(0, COUNT_THRESHOLD)),
           this.$.shadow.root.content(),
       ),

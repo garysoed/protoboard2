@@ -1,4 +1,4 @@
-import {MutableResolver} from 'gs-tools/export/state';
+import {ImmutableResolver, ImmutableResolverInternal, MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, ivalue} from 'persona';
@@ -13,14 +13,14 @@ import {ComponentState} from '../types/component-state';
 
 export interface BaseComponentSpecType<S extends ComponentState> {
   host: {
-    readonly state: UnresolvedIO<IValue<MutableResolver<S>|undefined, 'state'>>;
+    readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
 }
 
 export function create$baseComponent<S extends ComponentState>(): BaseComponentSpecType<S> {
   return {
     host: {
-      state: ivalue('state', instanceofType<MutableResolver<S>>(Object)),
+      state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
     },
   };
 }
@@ -33,6 +33,12 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
   ) {
     // this.setupActions();
+  }
+
+  protected get state(): ImmutableResolver<S> {
+    return new ImmutableResolverInternal(this.$baseComponent.host.state.pipe(
+        switchMap(state => state ? state : EMPTY),
+    ));
   }
 
   // protected abstract get actions(): readonly ActionSpec[];
@@ -81,7 +87,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   }
 
   updateState<T>(
-      mapFn: (resolverFrom: MutableResolver<S>) => MutableResolver<T>,
+      mapFn: (resolverFrom: ImmutableResolver<S>) => MutableResolver<T>,
   ): OperatorFunction<T, unknown> {
     return pipe(
         withLatestFrom(this.$baseComponent.host.state),

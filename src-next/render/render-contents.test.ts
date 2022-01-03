@@ -33,13 +33,10 @@ class Test implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      renderContents(
-          $stateService.get(this.$.vine)._($stateId.get(this.$.vine)).$('contentIds'),
-          this.$.vine,
-      )
-          .pipe(
-              this.$.shadow.container.content(),
-          ),
+      $stateService.get(this.$.vine)._($stateId.get(this.$.vine)).$('contentIds').pipe(
+          renderContents(this.$.vine),
+          this.$.shadow.container.content(),
+      ),
     ];
   }
 }
