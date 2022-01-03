@@ -2,6 +2,7 @@ set_vars({
   vars: {
     goldens: [
       'src-next/core/goldens',
+      'src-next/piece/goldens',
       'src-next/render/goldens',
     ],
   },
