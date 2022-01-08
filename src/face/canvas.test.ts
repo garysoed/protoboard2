@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {fakeStateService, mutableState} from 'gs-tools/export/state';
 import {registerSvg, _p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
-import {flattenNode, PersonaTesterFactory} from 'persona/export/testing';
+import {PersonaTesterFactory} from 'persona/export/testing';
 
 import {Canvas} from './canvas';
 import {$canvasConfigService} from './canvas-config-service';

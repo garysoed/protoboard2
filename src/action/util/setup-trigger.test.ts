@@ -153,7 +153,6 @@ test('@protoboard2/src/action/util/setup-trigger', init => {
     });
   });
 
-
   test('createTrigger', () => {
     should('trigger if modifiers match', () => {
       const onTrigger$ = createSpySubject(
