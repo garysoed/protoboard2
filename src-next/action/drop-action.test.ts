@@ -89,11 +89,10 @@ test('@protoboard2/src/action/drop-action', init => {
     of([id]).pipe(activeIds$.set()).subscribe();
 
     const stateService = $stateService.get(_.tester.vine);
-    const regionStateId = stateService.addRoot<RegionState>({
+    const regionState = stateService.addRoot<RegionState>({
       id: 'region',
       contentIds: mutableState([]),
-    });
-    const regionState = stateService._(regionStateId);
+    })._();
     const element = _.tester.createElement(TEST);
     element.state = regionState;
 
@@ -108,11 +107,10 @@ test('@protoboard2/src/action/drop-action', init => {
     const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
 
     const stateService = $stateService.get(_.tester.vine);
-    const regionStateId = stateService.addRoot<RegionState>({
+    const regionState = stateService.addRoot<RegionState>({
       id: 'region',
       contentIds: mutableState([]),
-    });
-    const regionState = stateService._(regionStateId);
+    })._();
     const element = _.tester.createElement(TEST);
     element.state = regionState;
 

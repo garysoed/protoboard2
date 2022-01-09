@@ -78,33 +78,33 @@ test('@protoboard2/src/core/base-component', init => {
   test('updateState', () => {
     should('update the given mutable state, if there is one', () => {
       const stateService = $stateService.get(_.tester.vine);
-      const $state = stateService.addRoot(mutableState<TestState>({
+      const state = stateService.addRoot(mutableState<TestState>({
         id: 'test',
         value: mutableState(123),
-      }));
+      })).$();
 
       const element = _.tester.createElement(TEST);
-      element.state = stateService.$($state);
+      element.state = state;
 
       const newValue = 345;
       $onUpdate$.get(_.tester.vine).next(newValue);
 
-      assert(stateService.$($state).$('value')).to.emitSequence([newValue]);
+      assert(state.$('value')).to.emitSequence([newValue]);
     });
 
     should('do nothing if there are no given mutable states', () => {
       const stateService = $stateService.get(_.tester.vine);
       const value = 123;
-      const $state = stateService.addRoot(mutableState({
+      const state = stateService.addRoot(mutableState({
         id: 'id',
         value: mutableState(value),
-      }));
+      })).$();
 
       _.tester.createElement(TEST);
 
       $onUpdate$.get(_.tester.vine).next(345);
 
-      assert(stateService.$($state).$('value')).to.emitSequence([value]);
+      assert(state.$('value')).to.emitSequence([value]);
     });
   });
 

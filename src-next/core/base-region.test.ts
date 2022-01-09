@@ -61,11 +61,10 @@ test('@protoboard2/src/core/base-region', init => {
       });
 
       const stateService = $stateService.get(_.tester.vine);
-      const $state = stateService.addRoot(mutableState<TestState>({
+      const state$ = stateService.addRoot(mutableState<TestState>({
         id: 'test',
         contentIds: mutableState([]),
-      }));
-      const state$ = stateService.$($state);
+      })).$();
       const element = _.tester.createElement(TEST);
       element.state = state$;
 

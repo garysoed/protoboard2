@@ -12,12 +12,10 @@ import {$getRenderSpec$} from './render-component-spec';
 import {renderContents} from './render-contents';
 
 
-const $stateId = source(vine => $stateService.get(vine).addRoot({
+const $state = source(vine => $stateService.get(vine).addRoot({
   id: {},
   contentIds: mutableState<readonly string[]>([]),
-}));
-
-const $state = source(vine => $stateService.get(vine)._($stateId.get(vine)));
+})._());
 
 const $test = {
   shadow: {
@@ -33,7 +31,7 @@ class Test implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      $stateService.get(this.$.vine)._($stateId.get(this.$.vine)).$('contentIds').pipe(
+      $state.get(this.$.vine).$('contentIds').pipe(
           renderContents(this.$.vine),
           this.$.shadow.container.content(),
       ),

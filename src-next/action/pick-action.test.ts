@@ -57,8 +57,7 @@ test('@protoboard2/src/action/pick-action', init => {
   should('add the ID to activeState\'s content IDs', () => {
     const id = {};
     const stateService = $stateService.get(_.tester.vine);
-    const stateId = stateService.addRoot<ComponentState>({id});
-    const state = stateService._(stateId);
+    const state = stateService.addRoot<ComponentState>({id})._();
     const element = _.tester.createElement(TEST);
     element.state = state;
 

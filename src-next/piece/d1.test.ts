@@ -42,8 +42,8 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const stateId = stateService.addRoot<D1State>({id});
-      _.element.state = stateService._(stateId);
+      const state = stateService.addRoot<D1State>({id})._();
+      _.element.state = state;
 
       const div = getHarness(_.element, 'container', ElementHarness);
       div.simulateClick();
@@ -55,8 +55,8 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const stateId = stateService.addRoot<D1State>({id});
-      _.element.state = stateService._(stateId);
+      const state = stateService.addRoot<D1State>({id})._();
+      _.element.state = state;
       _.element.pick(undefined);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to

@@ -36,11 +36,10 @@ test('@protoboard2/src/region/slot', init => {
 
   should('render the contents correctly', () => {
     const stateService = $stateService.get(_.tester.vine);
-    const stateId = stateService.addRoot<SlotState>({
+    const state$ = stateService.addRoot<SlotState>({
       id: {},
       contentIds: mutableState(['red', 'green', 'blue']),
-    });
-    const state$ = stateService._(stateId);
+    })._();
     const element = _.tester.createElement(SLOT);
     element.state = state$;
 
