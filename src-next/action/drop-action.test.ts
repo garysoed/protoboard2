@@ -9,8 +9,7 @@ import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
-import {create$baseComponent} from '../core/base-component';
-import {BaseRegion} from '../core/base-region';
+import {BaseRegion, create$baseRegion} from '../core/base-region';
 import {D1} from '../piece/d1';
 import {$getRenderSpec$} from '../render/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
@@ -24,7 +23,7 @@ import goldens from './goldens/goldens.json';
 
 const $test = {
   host: {
-    ...create$baseComponent<RegionState>().host,
+    ...create$baseRegion<RegionState>().host,
   },
   shadow: {
     div: id('div', DIV, {
@@ -52,6 +51,11 @@ class Test extends BaseRegion<RegionState> {
           dropAction(this.$),
       ),
     ];
+  }
+
+  @cache()
+  protected get target$(): Observable<HTMLElement> {
+    return this.$.shadow.div.target;
   }
 }
 

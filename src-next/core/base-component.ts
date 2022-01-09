@@ -11,7 +11,8 @@ import {ComponentState} from '../types/component-state';
 import {TriggerSpec} from '../types/trigger-spec';
 
 
-type ActionFn = (context: Context<BaseComponentSpecType<ComponentState>>) => OperatorFunction<unknown, unknown>;
+type ActionFn<S extends ComponentState> =
+    (context: Context<BaseComponentSpecType<S>>) => OperatorFunction<unknown, unknown>;
 // type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
 
 export interface BaseComponentSpecType<S extends ComponentState> {
@@ -39,7 +40,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   }
 
   protected installAction(
-      action: ActionFn,
+      action: ActionFn<S>,
       target$: Observable<HTMLElement>,
       triggerSpec$: Observable<TriggerSpec>,
       onCall$: Observable<unknown>,

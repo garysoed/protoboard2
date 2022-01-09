@@ -1,9 +1,9 @@
+import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, DIV, id, omulti, registerCustomElement, RenderSpec} from 'persona';
-import {OperatorFunction} from 'rxjs';
+import {Context, DIV, id, itarget, omulti, registerCustomElement, RenderSpec} from 'persona';
+import {OperatorFunction, Observable} from 'rxjs';
 
-import {create$baseComponent} from '../core/base-component';
-import {BaseRegion} from '../core/base-region';
+import {BaseRegion, create$baseRegion} from '../core/base-region';
 import {D1State} from '../piece/d1';
 import {RegionState} from '../types/region-state';
 
@@ -14,12 +14,12 @@ export interface SlotState extends RegionState {}
 
 const $slot = {
   host: {
-    ...create$baseComponent<SlotState>().host,
-    // dropAction: dropActionConfigSpecs({}),
+    ...create$baseRegion<SlotState>().host,
   },
   shadow: {
     root: id('root', DIV, {
       content: omulti('#content'),
+      target: itarget(),
     }),
   },
 };
@@ -48,6 +48,11 @@ export class Slot extends BaseRegion<SlotState> {
 
   renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
     return this.$.shadow.root.content();
+  }
+
+  @cache()
+  protected get target$(): Observable<HTMLElement> {
+    return this.$.shadow.root.target;
   }
 }
 

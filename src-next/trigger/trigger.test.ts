@@ -6,6 +6,7 @@ import {Context, Ctrl, DIV, id, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest, windowHarness} from 'persona/export/testing';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 
+import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
 import {onTrigger} from './trigger';
@@ -122,7 +123,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T, alt: true, meta: true});
 
       const element = _.tester.createElement(TEST);
-      const harness = getHarness(element, 'target', ElementHarness);
+      const harness = getHarness(element, 'target', TriggerElementHarness);
       const altKey = true;
       const ctrlKey = false;
       const metaKey = true;
@@ -130,13 +131,9 @@ test('@protoboard2/src/trigger/trigger', init => {
       const mouseX = 12;
       const mouseY = 34;
 
-      harness.simulateMouseOver();
-      harness.simulateMouseMove({
+      harness.simulateTrigger(TriggerType.T, {
         clientX: mouseX,
         clientY: mouseY,
-      });
-
-      windowHarness.simulateKeydown(TriggerType.T, {
         altKey,
         ctrlKey,
         metaKey,

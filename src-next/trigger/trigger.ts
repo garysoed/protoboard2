@@ -71,6 +71,7 @@ function createOnKey(element: HTMLElement, key: TriggerType): Observable<Trigger
           switchMap(hovered => {
             return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
           }),
+          filter(event => event.key.toLowerCase() === key),
           withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
           filter(([event]) => event.key.toLowerCase() === key),
           map(([keyboardEvent, mouseEvent]) => {
