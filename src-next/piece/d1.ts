@@ -1,7 +1,13 @@
-import {Context, registerCustomElement} from 'persona';
+import {cache} from 'gs-tools/export/data';
+import {undefinedType} from 'gs-types';
+import {Context, icall, id, itarget, ivalue, registerCustomElement, SLOT} from 'persona';
+import {merge, Observable} from 'rxjs';
 
+import {pickAction} from '../action/pick-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
+import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import template from './d1.html';
 
@@ -16,10 +22,14 @@ export interface D1State extends ComponentState {}
 const $d1 = {
   host: {
     ...create$baseComponent<D1State>().host,
-    // pickAction: pickActionConfigSpecs({}),
+    pick: icall('pick', undefinedType),
+    pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK}),
     // rotateAction: rotateActionConfigSpecs({}),
   },
   shadow: {
+    container: id('container', SLOT, {
+      target: itarget(),
+    }),
     // slot: id('slot', SLOT, {
     // slotted: islotted(),
     // }),
@@ -42,6 +52,20 @@ class D1Ctrl extends BaseComponent<D1State> {
     super($);
 
     // this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, $));
+  }
+
+  @cache()
+  get runs(): ReadonlyArray<Observable<unknown>> {
+    return [
+      ...super.runs,
+      merge(
+          this.$.shadow.container.target.pipe(onTrigger(this.$.host.pickConfig)),
+          this.$.host.pick,
+      )
+          .pipe(
+              pickAction(this.$, this.state._('id')),
+          ),
+    ];
   }
 
   // @cache()

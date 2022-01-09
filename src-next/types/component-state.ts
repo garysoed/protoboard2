@@ -1,3 +1,3 @@
 export interface ComponentState {
-  readonly id: unknown;
+  readonly id: {};
 }

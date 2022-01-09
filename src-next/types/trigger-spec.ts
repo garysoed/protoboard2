@@ -1,3 +1,5 @@
+import {booleanType, enumType, hasPropertiesType, undefinedType, unionType} from 'gs-types';
+
 export enum TriggerType {
   A = 'a',
   B = 'b',
@@ -46,6 +48,14 @@ export interface TriggerSpec {
   readonly meta?: boolean|undefined;
   readonly shift?: boolean|undefined;
 }
+
+export const TRIGGER_SPEC_TYPE = hasPropertiesType<TriggerSpec>({
+  type: enumType<TriggerType>(TriggerType),
+  alt: unionType([undefinedType, booleanType]),
+  ctrl: unionType([undefinedType, booleanType]),
+  meta: unionType([undefinedType, booleanType]),
+  shift: unionType([undefinedType, booleanType]),
+});
 
 export function isKeyTrigger(triggerType: TriggerType): boolean {
   return triggerType !== TriggerType.CLICK;
