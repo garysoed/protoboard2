@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderHtml} from 'persona';
+import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
 import {map, withLatestFrom, tap} from 'rxjs/operators';
 
@@ -59,3 +59,14 @@ export const TEST_FACE = registerCustomElement({
   tag: 'pbt-face',
   template,
 });
+
+export function renderTestFace(id: string, shade: string): RenderSpec {
+  return renderCustomElement({
+    registration: TEST_FACE,
+    id: shade,
+    attrs: new Map([
+      ['shade', shade],
+      ['slot', 'face-0'],
+    ]),
+  });
+}

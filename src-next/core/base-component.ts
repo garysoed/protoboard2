@@ -52,24 +52,6 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
     return flattenResolver(this.$baseComponent.host.state);
   }
 
-  // protected abstract get actions(): readonly ActionSpec[];
-
-  // protected createActionSpec<C extends TriggerConfig>(
-  //     factory: ActionFactory<C, O>,
-  //     config$: Observable<C>,
-  //     actionName: string,
-  // ): ActionSpec {
-  //   return {
-  //     action: factory({config$, objectPath$: this.objectPath$, vine: this.vine}),
-  //     actionName,
-  //     triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-  //     trigger$: config$.pipe(createTrigger(this.context)),
-  //   };
-  // }
-
-  // protected createTrigger(): OperatorFunction<TriggerConfig, TriggerEvent> {
-  //   return pipe(createTrigger(this.context));
-  // }
 
   // /**
   //  * Emits the current object ID of the host element, if any. If not, this doesn't emit any.

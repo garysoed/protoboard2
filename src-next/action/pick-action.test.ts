@@ -1,12 +1,12 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {Context, Ctrl, DIV, id, itarget, registerCustomElement} from 'persona';
+import {Context, DIV, id, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
-import {create$baseComponent} from '../core/base-component';
+import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -25,8 +25,10 @@ const $test = {
   },
 };
 
-class Test implements Ctrl {
-  constructor(private readonly $: Context<typeof $test>) { }
+class Test extends BaseComponent<ComponentState> {
+  constructor(private readonly $: Context<typeof $test>) {
+    super($);
+  }
 
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {

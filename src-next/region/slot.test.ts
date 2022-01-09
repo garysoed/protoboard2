@@ -8,7 +8,7 @@ import {setupTest} from 'persona/export/testing';
 
 import {D1} from '../piece/d1';
 import {$getRenderSpec$} from '../render/render-component-spec';
-import {TEST_FACE} from '../testing/test-face';
+import {renderTestFace, TEST_FACE} from '../testing/test-face';
 
 import goldens from './goldens/goldens.json';
 import {SLOT, SlotState} from './slot';
@@ -27,16 +27,7 @@ test('@protoboard2/src/region/slot', init => {
       return renderCustomElement({
         registration: D1,
         id,
-        children: [
-          renderCustomElement({
-            registration: TEST_FACE,
-            id,
-            attrs: new Map([
-              ['shade', id],
-              ['slot', 'face-0'],
-            ]),
-          }),
-        ],
+        children: [renderTestFace(id, id)],
       });
     });
 

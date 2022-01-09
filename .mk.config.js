@@ -1,6 +1,7 @@
 set_vars({
   vars: {
     goldens: [
+      'src-next/action/goldens',
       'src-next/core/goldens',
       'src-next/piece/goldens',
       'src-next/region/goldens',
