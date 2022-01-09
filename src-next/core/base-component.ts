@@ -2,13 +2,16 @@ import {ImmutableResolver, ImmutableResolverInternal, MutableResolver} from 'gs-
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, ivalue} from 'persona';
-import {IValue, UnresolvedIO} from 'persona/export/internal';
-import {EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {IValue, Spec, UnresolvedIO} from 'persona/export/internal';
+import {EMPTY, Observable, of, OperatorFunction, pipe, merge} from 'rxjs';
 import {switchMap, withLatestFrom} from 'rxjs/operators';
 
+import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
+import {TriggerSpec} from '../types/trigger-spec';
 
 
+type ActionFn = (context: Context<Spec>, id$: Observable<{}>) => OperatorFunction<unknown, unknown>;
 // type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
 
 export interface BaseComponentSpecType<S extends ComponentState> {
@@ -33,6 +36,19 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
   ) {
     // this.setupActions();
+  }
+
+  protected installAction(
+      action: ActionFn,
+      target$: Observable<HTMLElement>,
+      triggerSpec$: Observable<TriggerSpec>,
+      onCall$: Observable<unknown>,
+  ): Observable<unknown> {
+    return merge(
+        target$.pipe(onTrigger(triggerSpec$)),
+        onCall$,
+    )
+        .pipe(action(this.$baseComponent, this.state._('id')));
   }
 
   protected get state(): ImmutableResolver<S> {

@@ -1,11 +1,10 @@
 import {cache} from 'gs-tools/export/data';
 import {undefinedType} from 'gs-types';
 import {Context, icall, id, itarget, ivalue, registerCustomElement, SLOT} from 'persona';
-import {merge, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 
 import {pickAction} from '../action/pick-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -58,13 +57,12 @@ class D1Ctrl extends BaseComponent<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      merge(
-          this.$.shadow.container.target.pipe(onTrigger(this.$.host.pickConfig)),
+      this.installAction(
+          pickAction,
+          this.$.shadow.container.target,
+          this.$.host.pickConfig,
           this.$.host.pick,
-      )
-          .pipe(
-              pickAction(this.$, this.state._('id')),
-          ),
+      ),
     ];
   }
 
