@@ -3,7 +3,7 @@ import {arrayThat, assert, createSpySubject, run, should, test} from 'gs-testing
 import {fakeStateService, mutableState, ObjectPath} from 'gs-tools/export/state';
 import {of, ReplaySubject, Subject} from 'rxjs';
 
-import {$activeSpecPath} from '../core/active-spec';
+import {$activeSpecPath} from '../../src-next/core/active-spec';
 import {fakeTriggerEvent} from '../core/testing/fake-trigger-event';
 import {TriggerEvent} from '../core/trigger-event';
 import {TriggerType} from '../core/trigger-spec';

@@ -1,12 +1,14 @@
+import {$stateService} from 'grapevine';
 import {arrayThat, assert, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
-import {Context, Ctrl, DIV, id, itarget, ivalue, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, id, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
+import {create$baseComponent} from '../core/base-component';
 import {onTrigger} from '../trigger/trigger';
+import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {pickAction} from './pick-action';
@@ -14,7 +16,7 @@ import {pickAction} from './pick-action';
 
 const $test = {
   host: {
-    id: ivalue('stateId', instanceofType(Object), {}),
+    ...create$baseComponent().host,
   },
   shadow: {
     div: id('div', DIV, {
@@ -31,7 +33,7 @@ class Test implements Ctrl {
     return [
       this.$.shadow.div.target.pipe(
           onTrigger(of({type: TriggerType.CLICK})),
-          pickAction(this.$, this.$.host.id),
+          pickAction(this.$),
       ),
     ];
   }
@@ -52,8 +54,11 @@ test('@protoboard2/src/action/pick-action', init => {
 
   should('add the ID to activeState\'s content IDs', () => {
     const id = {};
+    const stateService = $stateService.get(_.tester.vine);
+    const stateId = stateService.addRoot<ComponentState>({id});
+    const state = stateService._(stateId);
     const element = _.tester.createElement(TEST);
-    element.stateId = id;
+    element.state = state;
 
     const harness = getHarness(element, 'div', ElementHarness);
     harness.simulateClick();

@@ -1,9 +1,9 @@
-import {ImmutableResolver, ImmutableResolverInternal, MutableResolver} from 'gs-tools/export/state';
+import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, ivalue} from 'persona';
-import {IValue, Spec, UnresolvedIO} from 'persona/export/internal';
-import {EMPTY, Observable, of, OperatorFunction, pipe, merge} from 'rxjs';
+import {IValue, UnresolvedIO} from 'persona/export/internal';
+import {EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {onTrigger} from '../trigger/trigger';
@@ -11,7 +11,7 @@ import {ComponentState} from '../types/component-state';
 import {TriggerSpec} from '../types/trigger-spec';
 
 
-type ActionFn = (context: Context<Spec>, id$: Observable<{}>) => OperatorFunction<unknown, unknown>;
+type ActionFn = (context: Context<BaseComponentSpecType<ComponentState>>) => OperatorFunction<unknown, unknown>;
 // type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
 
 export interface BaseComponentSpecType<S extends ComponentState> {
@@ -44,17 +44,12 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       triggerSpec$: Observable<TriggerSpec>,
       onCall$: Observable<unknown>,
   ): Observable<unknown> {
-    return merge(
-        target$.pipe(onTrigger(triggerSpec$)),
-        onCall$,
-    )
-        .pipe(action(this.$baseComponent, this.state._('id')));
+    return merge(target$.pipe(onTrigger(triggerSpec$)), onCall$)
+        .pipe(action(this.$baseComponent));
   }
 
   protected get state(): ImmutableResolver<S> {
-    return new ImmutableResolverInternal(this.$baseComponent.host.state.pipe(
-        switchMap(state => state ? state : EMPTY),
-    ));
+    return flattenResolver(this.$baseComponent.host.state);
   }
 
   // protected abstract get actions(): readonly ActionSpec[];
