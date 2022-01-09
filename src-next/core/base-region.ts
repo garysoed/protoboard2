@@ -1,11 +1,12 @@
 import {ImmutableResolver} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
 import {Context, icall, ivalue, RenderSpec} from 'persona';
-import {ICall, IValue, UnresolvedIO} from 'persona/export/internal';
+import {ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {dropAction} from '../action/drop-action';
 import {renderContents} from '../render/render-contents';
+import {TriggerEvent} from '../trigger/trigger-event';
 import {RegionState} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -14,6 +15,7 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
+    readonly onTrigger: UnresolvedIO<OEvent<TriggerEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
     readonly drop: UnresolvedIO<ICall<undefined, 'drop'>>;
     readonly dropConfig: UnresolvedIO<IValue<TriggerSpec, 'dropConfig'>>;

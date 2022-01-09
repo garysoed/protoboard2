@@ -1,22 +1,21 @@
 import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, ivalue} from 'persona';
-import {IValue, UnresolvedIO} from 'persona/export/internal';
+import {Context, Ctrl, ivalue, oevent} from 'persona';
+import {IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
-import {switchMap, withLatestFrom} from 'rxjs/operators';
+import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
+import {Action} from '../action/action';
 import {onTrigger} from '../trigger/trigger';
+import {TriggerEvent, TRIGGER_EVENT} from '../trigger/trigger-event';
 import {ComponentState} from '../types/component-state';
 import {TriggerSpec} from '../types/trigger-spec';
 
 
-type ActionFn<S extends ComponentState> =
-    (context: Context<BaseComponentSpecType<S>>) => OperatorFunction<unknown, unknown>;
-// type ActionFactory<C extends TriggerConfig, O> = (params: ActionParams<C, O>) => Action;
-
 export interface BaseComponentSpecType<S extends ComponentState> {
   host: {
+    readonly onTrigger: UnresolvedIO<OEvent<TriggerEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
 }
@@ -24,6 +23,7 @@ export interface BaseComponentSpecType<S extends ComponentState> {
 export function create$baseComponent<S extends ComponentState>(): BaseComponentSpecType<S> {
   return {
     host: {
+      onTrigger: oevent(TRIGGER_EVENT, TriggerEvent),
       state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
     },
   };
@@ -35,46 +35,25 @@ export function create$baseComponent<S extends ComponentState>(): BaseComponentS
 export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   constructor(
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
-  ) {
-    // this.setupActions();
-  }
+  ) { }
 
   protected installAction(
-      action: ActionFn<S>,
+      action: Action<S>,
       target$: Observable<HTMLElement>,
       triggerSpec$: Observable<TriggerSpec>,
       onCall$: Observable<unknown>,
   ): Observable<unknown> {
     return merge(target$.pipe(onTrigger(triggerSpec$)), onCall$)
-        .pipe(action(this.$baseComponent));
+        .pipe(
+            action(this.$baseComponent),
+            map(() => new TriggerEvent(action)),
+            this.$baseComponent.host.onTrigger(),
+        );
   }
 
   protected get state(): ImmutableResolver<S> {
     return flattenResolver(this.$baseComponent.host.state);
   }
-
-
-  // /**
-  //  * Emits the current object ID of the host element, if any. If not, this doesn't emit any.
-  //  */
-  // @cache()
-  // get objectPath$(): Observable<ObjectPath<O>> {
-  //   return this.objectPathInput.getValue(this.context).pipe(
-  //       switchMap(objectPath => {
-  //         if (!objectPath) {
-  //           LOG.warning('No object-path found');
-  //           return EMPTY;
-  //         }
-
-  //         return of(objectPath);
-  //       }),
-  //   );
-  // }
-
-  // @cache()
-  // get objectSpec$(): ImmutableResolver<O> {
-  //   return $stateService.get(this.vine)._(this.objectPath$);
-  // }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [renderTheme(this.$baseComponent)];
@@ -129,13 +108,5 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
 
   //     return merge(...obs);
   //   }));
-  // }
-
-  // private setupTrigger(
-  //     actionSpec: ActionSpec,
-  // ): Observable<unknown> {
-  //   return actionSpec.trigger$.pipe(
-  //       actionSpec.action,
-  //   );
   // }
 }

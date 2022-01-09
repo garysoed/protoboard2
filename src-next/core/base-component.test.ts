@@ -1,30 +1,20 @@
 import {$stateService, source} from 'grapevine';
-import {assert, should, test} from 'gs-testing';
+import {assert, createSpySubject, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {mutableState, MutableState} from 'gs-tools/export/state';
-import {Context, registerCustomElement} from 'persona';
+import {undefinedType} from 'gs-types';
+import {Context, DIV, icall, id, itarget, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, of, fromEvent} from 'rxjs';
+import {map} from 'rxjs/operators';
 
+import {pickAction} from '../action/pick-action';
+import {TriggerEvent, TRIGGER_EVENT} from '../trigger/trigger-event';
 import {ComponentState} from '../types/component-state';
+import {TriggerType} from '../types/trigger-spec';
 
 import {BaseComponent, create$baseComponent} from './base-component';
 
-
-// const ACTION_NAME = 'test';
-
-// function testAction(trigger: TriggerSpec, context: PersonaContext): ActionSpec {
-//   const config$ = of({
-//     value: 0,
-//     trigger,
-//   });
-//   return {
-//     action: () => EMPTY,
-//     actionName: ACTION_NAME,
-//     triggerSpec$: config$.pipe(map(({trigger}) => trigger)),
-//     trigger$: config$.pipe(createTrigger(context)),
-//   };
-// }
 
 interface TestState extends ComponentState {
   readonly value: MutableState<number>;
@@ -35,6 +25,12 @@ const $onUpdate$ = source(() => new Subject<number>());
 const $test = {
   host: {
     ...create$baseComponent<TestState>().host,
+    trigger: icall('trigger', undefinedType),
+  },
+  shadow: {
+    div: id('div', DIV, {
+      target: itarget(),
+    }),
   },
 };
 
@@ -50,6 +46,12 @@ class TestComponent extends BaseComponent<TestState> {
     return [
       ...super.runs,
       $onUpdate$.get(this.$.vine).pipe(this.updateState(resolver => resolver.$('value'))),
+      this.installAction(
+          pickAction,
+          this.$.shadow.div.target,
+          of({type: TriggerType.CLICK}),
+          this.$.host.trigger,
+      ),
     ];
   }
 
@@ -63,7 +65,7 @@ const TEST = registerCustomElement({
   ctrl: TestComponent,
   spec: $test,
   tag: 'pbt-test',
-  template: '',
+  template: '<div id="div"></div>',
 });
 
 // const KEY = TriggerType.T;
@@ -108,56 +110,21 @@ test('@protoboard2/src/core/base-component', init => {
     });
   });
 
-  // test('objectId$', () => {
-  //   should('emit the object ID if exists', () => {
-  //     const stateService = new StateService();
-  //     const objectId = stateService.addRoot({});
-  //     const objectPath = stateService.immutablePath(objectId);
-  //     _.el.setAttribute('object-path', $api.objectId.createAttributePair(objectPath)[1]);
+  test('installAction', () => {
+    should('trigger the action and dispatch the event', () => {
+      const stateService = $stateService.get(_.tester.vine);
+      const state = stateService.addRoot(mutableState<TestState>({
+        id: 'test',
+        value: mutableState(123),
+      })).$();
 
-  //     const objectId$ = createSpySubject(_.component.objectPath$);
-  //     assert(objectId$.pipe(map(({id}) => id))).to.emitSequence([objectPath.id]);
-  //   });
-  // });
+      const element = _.tester.createElement(TEST);
+      element.state = state;
 
-  // test('setupAction', () => {
-  //   should('set up the help action', () => {
-  //     const helpContent$ = createSpySubject(fromEvent<ShowHelpEvent>(_.el, SHOW_HELP_EVENT).pipe(
-  //         map(event => event.contents),
-  //     ));
+      const event$ = createSpySubject(fromEvent<TriggerEvent>(element, TRIGGER_EVENT));
+      element.trigger(undefined);
 
-  //     triggerKey(
-  //         _.el,
-  //         {
-  //           key: TriggerType.QUESTION,
-  //           altKey: false,
-  //           ctrlKey: false,
-  //           metaKey: false,
-  //           shiftKey: true,
-  //         },
-  //     );
-
-  //     assert(helpContent$).to.emitSequence([
-  //       arrayThat<HelpContent>().haveExactElements([
-  //         objectThat<HelpContent>().haveProperties({
-  //           tag: 'DIV',
-  //           actions: arrayThat<ActionTrigger>().haveExactElements([
-  //             objectThat<ActionTrigger>().haveProperties({
-  //               trigger: objectThat<TriggerSpec>().haveProperties({
-  //                 type: TriggerType.CLICK,
-  //               }),
-  //               actionName: ACTION_NAME,
-  //             }),
-  //             objectThat<ActionTrigger>().haveProperties({
-  //               trigger: objectThat<TriggerSpec>().haveProperties({
-  //                 type: KEY,
-  //               }),
-  //               actionName: ACTION_NAME,
-  //             }),
-  //           ]),
-  //         }),
-  //       ]),
-  //     ]);
-  //   });
-  // });
+      assert(event$.pipe(map(event => event.action))).to.emitSequence([pickAction]);
+    });
+  });
 });
