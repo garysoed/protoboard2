@@ -46,7 +46,8 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
     return merge(target$.pipe(onTrigger(triggerSpec$)), onCall$)
         .pipe(
             action(this.$baseComponent),
-            map(() => new TriggerEvent(action)),
+            withLatestFrom(this.state._('id')),
+            map(([, id]) => new TriggerEvent(action, id)),
             this.$baseComponent.host.onTrigger(),
         );
   }
@@ -73,40 +74,4 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
         }),
     );
   }
-
-  // private setupActions(): void {
-  //   this.addSetup(defer(() => {
-  //     const obs: Array<Observable<unknown>> = [];
-  //     const actionDescriptions: Array<Observable<ActionTrigger>> = [];
-  //     for (const actionSpec of this.actions as readonly ActionSpec[]) {
-  //       actionDescriptions.push(
-  //           actionSpec.triggerSpec$.pipe(
-  //               map(trigger => ({actionName: actionSpec.actionName, trigger})),
-  //           ),
-  //       );
-  //       obs.push(this.setupTrigger(actionSpec));
-  //     }
-
-  //     const actionTriggers$ = actionDescriptions.length <= 0 ? of([]) : combineLatest(actionDescriptions);
-  //     obs.push(this.setupTrigger(this.createActionSpec(
-  //         helpAction,
-  //         actionTriggers$.pipe(
-  //             map(actions => {
-  //               const hostEl = this.context.shadowRoot.host;
-  //               return {
-  //                 helpContent: {
-  //                   tag: hostEl.tagName,
-  //                   actions,
-  //                 },
-  //                 targetEl: hostEl,
-  //                 trigger: {type: TriggerType.QUESTION, shift: true},
-  //               };
-  //             }),
-  //         ),
-  //         'Help',
-  //     )));
-
-  //     return merge(...obs);
-  //   }));
-  // }
 }

@@ -1,16 +1,18 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {mutableState} from 'gs-tools/export/state';
+import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {Context, DIV, id, itarget, omulti, registerCustomElement, renderCustomElement, RenderSpec, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {D1} from '../piece/d1';
+import {D1Harness} from '../piece/testing/d1-harness';
 import {$getRenderSpec$} from '../render/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
+import {ComponentState} from '../types/component-state';
 import {RegionState} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
 
@@ -58,6 +60,7 @@ test('@protoboard2/src/core/base-region', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST, TEST_FACE]});
+    const states = new Map<string, ImmutableResolver<ComponentState>>();
 
     $getRenderSpec$.get(tester.vine).next(id => {
       if (!stringType.check(id)) {
@@ -66,10 +69,13 @@ test('@protoboard2/src/core/base-region', init => {
       return renderCustomElement({
         registration: D1,
         id,
+        inputs: {
+          state: of(states.get(id)),
+        },
         children: [renderTestFace(id, id)],
       });
     });
-    return {tester};
+    return {states, tester};
   });
 
   test('contents$', () => {
@@ -133,6 +139,27 @@ test('@protoboard2/src/core/base-region', init => {
 
       assert(element).to.matchSnapshot('base-region__drop.html');
       assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
+    });
+  });
+
+  test('setupHandlePick', () => {
+    should('remove picked elements', () => {
+      const id = 'steelblue';
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot({id})._());
+
+      const stateService = $stateService.get(_.tester.vine);
+      const regionState = stateService.addRoot<RegionState>({
+        id: 'region',
+        contentIds: mutableState([id]),
+      })._();
+      const element = _.tester.createElement(TEST);
+      element.state = regionState;
+
+      const d1 = getHarness(element, 'pb-d1', D1Harness);
+      d1.simulateTrigger(TriggerType.CLICK);
+
+      assert(element).to.matchSnapshot('base-region__pick.html');
+      assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().beEmpty()]);
     });
   });
 });

@@ -54,11 +54,6 @@ class TestComponent extends BaseComponent<TestState> {
       ),
     ];
   }
-
-  // @cache()
-  // protected get actions(): readonly ActionSpec[] {
-  //   return this.triggerActions;
-  // }
 }
 
 const TEST = registerCustomElement({
@@ -113,8 +108,9 @@ test('@protoboard2/src/core/base-component', init => {
   test('installAction', () => {
     should('trigger the action and dispatch the event', () => {
       const stateService = $stateService.get(_.tester.vine);
+      const id = {};
       const state = stateService.addRoot(mutableState<TestState>({
-        id: 'test',
+        id,
         value: mutableState(123),
       })).$();
 
@@ -125,6 +121,7 @@ test('@protoboard2/src/core/base-component', init => {
       element.trigger(undefined);
 
       assert(event$.pipe(map(event => event.action))).to.emitSequence([pickAction]);
+      assert(event$.pipe(map(event => event.id))).to.emitSequence([id]);
     });
   });
 });
