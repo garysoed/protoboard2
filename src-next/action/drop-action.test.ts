@@ -100,7 +100,7 @@ test('@protoboard2/src/action/drop-action', init => {
     const element = _.tester.createElement(TEST);
     element.state = regionState;
 
-    const harness = getHarness(element, 'div', ElementHarness);
+    const harness = getHarness(element, '#div', ElementHarness);
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__trigger.html');
@@ -118,7 +118,7 @@ test('@protoboard2/src/action/drop-action', init => {
     const element = _.tester.createElement(TEST);
     element.state = regionState;
 
-    const harness = getHarness(element, 'div', ElementHarness);
+    const harness = getHarness(element, '#div', ElementHarness);
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__empty.html');

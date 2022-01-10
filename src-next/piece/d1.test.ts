@@ -45,7 +45,7 @@ test('@protoboard2/src/piece/d1', init => {
       const state = stateService.addRoot<D1State>({id})._();
       _.element.state = state;
 
-      const div = getHarness(_.element, 'container', ElementHarness);
+      const div = getHarness(_.element, '#container', ElementHarness);
       div.simulateClick();
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to

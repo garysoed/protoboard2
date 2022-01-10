@@ -109,7 +109,7 @@ test('@protoboard2/src/core/base-region', init => {
       const element = _.tester.createElement(TEST);
       element.state = regionState;
 
-      const harness = getHarness(element, 'container', TriggerElementHarness);
+      const harness = getHarness(element, '#container', TriggerElementHarness);
       harness.simulateTrigger(TriggerType.D);
 
       assert(element).to.matchSnapshot('base-region__drop.html');

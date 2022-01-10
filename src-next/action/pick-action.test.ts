@@ -61,7 +61,7 @@ test('@protoboard2/src/action/pick-action', init => {
     const element = _.tester.createElement(TEST);
     element.state = state;
 
-    const harness = getHarness(element, 'div', ElementHarness);
+    const harness = getHarness(element, '#div', ElementHarness);
     harness.simulateClick();
 
     assert($activeState.get(_.tester.vine).$('contentIds')).to.emitSequence([
