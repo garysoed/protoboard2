@@ -156,7 +156,7 @@ test('@protoboard2/src/core/base-region', init => {
       element.state = regionState;
 
       const d1 = getHarness(element, 'pb-d1', D1Harness);
-      d1.simulateTrigger(TriggerType.CLICK);
+      d1.simulatePick();
 
       assert(element).to.matchSnapshot('base-region__pick.html');
       assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().beEmpty()]);
