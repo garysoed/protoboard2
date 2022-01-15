@@ -1,7 +1,6 @@
-import {MutableState} from 'gs-tools/export/state';
-
 import {ComponentState} from './component-state';
+import {IsContainer} from './is-container';
 
-export interface RegionState extends ComponentState {
-  readonly contentIds: MutableState<ReadonlyArray<{}>>;
+
+export interface RegionState extends ComponentState, IsContainer {
 }
