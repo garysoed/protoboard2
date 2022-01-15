@@ -13,7 +13,7 @@ import {ComponentState} from '../types/component-state';
 import {TriggerSpec} from '../types/trigger-spec';
 
 
-export interface BaseComponentSpecType<S extends ComponentState> {
+export interface BaseComponentSpecType<S> {
   host: {
     readonly onTrigger: UnresolvedIO<OEvent<TriggerEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;

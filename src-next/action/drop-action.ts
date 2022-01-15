@@ -6,10 +6,10 @@ import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
 import {BaseComponentSpecType} from '../core/base-component';
-import {RegionState} from '../types/region-state';
+import {IsContainer} from '../types/is-container';
 
 
-export function dropAction($: Context<BaseComponentSpecType<RegionState>>): OperatorFunction<unknown, unknown> {
+export function dropAction($: Context<BaseComponentSpecType<IsContainer>>): OperatorFunction<unknown, unknown> {
   const activeState = $activeState.get($.vine);
   const activeContentIds = activeState.$('contentIds');
   const regionContentIds = flattenResolver($.host.state).$('contentIds');

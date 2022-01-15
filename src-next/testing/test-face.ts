@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {$svgService, registerSvg} from 'mask';
 import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
-import {map, withLatestFrom, tap} from 'rxjs/operators';
+import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
 
@@ -43,7 +43,7 @@ class TestFace implements Ctrl {
       this.$.host.shade.pipe(
           withLatestFrom(this.$.shadow.root.element),
           tap(([shade, target]) => {
-            target.style.setProperty('--pbtShade', shade);
+            target.style.setProperty('--pbtShade', shade ?? 'steelblue');
           }),
       ),
     ];

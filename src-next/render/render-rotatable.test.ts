@@ -7,6 +7,8 @@ import {Context, Ctrl, DIV, id, ostyle, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
+import {TEST_FACE} from '../testing/test-face';
+
 import goldens from './goldens/goldens.json';
 import {renderRotatable} from './render-rotatable';
 
@@ -40,9 +42,10 @@ class Test implements Ctrl {
 
 const TEST = registerCustomElement({
   ctrl: Test,
+  deps: [TEST_FACE],
   spec: $test,
   tag: 'pbt-test',
-  template: '<div id="container" style="height: 50px; width: 50px;">PB</div>',
+  template: '<div id="container" style="position: absolute"><pbt-face></pbt-face></div>',
 });
 
 test('@protoboard2/src/render/render-rotatable', init => {
