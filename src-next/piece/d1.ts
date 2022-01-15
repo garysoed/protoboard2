@@ -1,17 +1,20 @@
 import {cache} from 'gs-tools/export/data';
+import {mutableState} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
-import {Context, icall, id, itarget, ivalue, registerCustomElement, SLOT} from 'persona';
+import {Context, icall, id, itarget, ivalue, ostyle, registerCustomElement, SLOT} from 'persona';
 import {Observable} from 'rxjs';
 
 import {pickAction} from '../action/pick-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
+import {IsRotatable} from '../types/is-rotatable';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import template from './d1.html';
 
 
-export interface D1State extends ComponentState {}
+export interface D1State extends ComponentState, IsRotatable {}
 
 /**
  * The D1's API.
@@ -28,6 +31,7 @@ const $d1 = {
   shadow: {
     container: id('container', SLOT, {
       target: itarget(),
+      transform: ostyle('transform'),
     }),
     // slot: id('slot', SLOT, {
     // slotted: islotted(),
@@ -35,10 +39,10 @@ const $d1 = {
   },
 };
 
-export function d1State(id: {}, partial: Partial<D1State>): D1State {
+export function d1State(id: {}, partial: Partial<D1State> = {}): D1State {
   return {
     id,
-    // rotationDeg: mutableState(0),
+    rotationDeg: mutableState(0),
     ...partial,
   };
 }
@@ -49,8 +53,6 @@ class D1Ctrl extends BaseComponent<D1State> {
    */
   constructor(private readonly $: Context<typeof $d1>) {
     super($);
-
-    // this.addSetup(renderRotatable(this.objectSpec$, this.inputs.slot.slotted, $));
   }
 
   @cache()
@@ -63,6 +65,10 @@ class D1Ctrl extends BaseComponent<D1State> {
           this.$.host.pickConfig,
           this.$.host.pick,
       ),
+      this.state.$('rotationDeg').pipe(
+          renderRotatable(),
+          this.$.shadow.container.transform(),
+      ),
     ];
   }
 
@@ -73,11 +79,6 @@ class D1Ctrl extends BaseComponent<D1State> {
   //     rotateAction,
   //     compileConfig($.host._.rotateAction, this.context),
   //     'Rotate',
-  // ),
-  // this.createActionSpec(
-  //     pickAction,
-  //     compileConfig($.host._.pickAction, this.context),
-  //     'Pick',
   // ),
   // ];
   // }

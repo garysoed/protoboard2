@@ -28,25 +28,3 @@ export function renderContents(
         );
   };
 }
-
-
-// return nodes$.pipe(
-//   map(renderSpecs => $pipe(
-//       renderSpecs,
-//       $filterNonNull(),
-//       $map(({id, spec}) => {
-//         const decorator: Decorator<NodeWithId<Node>> = () => {
-//           $setParent.get(vine)(id, containerId);
-//           return EMPTY;
-//         };
-
-//         const decorators: Array<Decorator<NodeWithId<any>>> = [decorator];
-//         if (spec.decorators) {
-//           decorators.push(...spec.decorators);
-//         }
-
-//         return {...spec, decorators};
-//       }),
-//       $asArray(),
-//   )),
-// );

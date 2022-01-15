@@ -1,3 +1,4 @@
 {
-  "render-content.html": "<pbt-test><gst-fake-shadow><div id=\"container\"><!-- #ref -->onetwothree</div></gst-fake-shadow></pbt-test>"
+  "render-contents.html": "<pbt-test><gst-fake-shadow><div id=\"container\"><!-- #ref -->onetwothree</div></gst-fake-shadow></pbt-test>",
+  "render-rotatable.html": "<pbt-test><gst-fake-shadow><div id=\"container\" style=\"height: 50px; width: 50px; transform: rotateZ(123deg);\">PB</div></gst-fake-shadow></pbt-test>"
 }

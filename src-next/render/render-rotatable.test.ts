@@ -3,24 +3,23 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, Ctrl, DIV, id, omulti, registerCustomElement, renderTextNode} from 'persona';
+import {Context, Ctrl, DIV, id, ostyle, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
 import goldens from './goldens/goldens.json';
-import {$getRenderSpec$} from './render-component-spec';
-import {renderContents} from './render-contents';
+import {renderRotatable} from './render-rotatable';
 
 
 const $state = source(vine => $stateService.get(vine).addRoot({
   id: {},
-  contentIds: mutableState<readonly string[]>([]),
+  rotationDeg: mutableState<number>(0),
 })._());
 
 const $test = {
   shadow: {
     container: id('container', DIV, {
-      content: omulti('#ref'),
+      transform: ostyle('transform'),
     }),
   },
 };
@@ -31,9 +30,9 @@ class Test implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      $state.get(this.$.vine).$('contentIds').pipe(
-          renderContents(this.$.vine),
-          this.$.shadow.container.content(),
+      $state.get(this.$.vine).$('rotationDeg').pipe(
+          renderRotatable(),
+          this.$.shadow.container.transform(),
       ),
     ];
   }
@@ -43,32 +42,22 @@ const TEST = registerCustomElement({
   ctrl: Test,
   spec: $test,
   tag: 'pbt-test',
-  template: '<div id="container"><!-- #ref --></div>',
+  template: '<div id="container" style="height: 50px; width: 50px;">PB</div>',
 });
 
-test('@protoboard2/src/render/render-contents', init => {
+test('@protoboard2/src/render/render-rotatable', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/render/goldens', goldens));
     const tester = setupTest({roots: [TEST]});
     return {tester};
   });
 
-  test('contents$', () => {
-    should('render the contents correctly', () => {
-      $getRenderSpec$.get(_.tester.vine).next(id => {
-        return renderTextNode({
-          textContent: id as string,
-          id,
-        });
-      });
+  should('output the correct transform style', () => {
+    const rotationDeg = 123;
+    of(rotationDeg).pipe($state.get(_.tester.vine).$('rotationDeg').set()).subscribe();
 
-      const element = _.tester.createElement(TEST);
+    const element = _.tester.createElement(TEST);
 
-      of(['one', 'two', 'three']).pipe(
-          $state.get(_.tester.vine).$('contentIds').set(),
-      ).subscribe();
-
-      assert(element).to.matchSnapshot('render-contents.html');
-    });
+    assert(element).to.matchSnapshot('render-rotatable.html');
   });
 });

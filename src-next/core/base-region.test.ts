@@ -7,12 +7,11 @@ import {Context, DIV, id, itarget, omulti, registerCustomElement, renderCustomEl
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
-import {D1} from '../piece/d1';
+import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {$getRenderSpec$} from '../render/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
-import {ComponentState} from '../types/component-state';
 import {RegionState} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
 
@@ -60,7 +59,7 @@ test('@protoboard2/src/core/base-region', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST, TEST_FACE]});
-    const states = new Map<string, ImmutableResolver<ComponentState>>();
+    const states = new Map<string, ImmutableResolver<D1State>>();
 
     $getRenderSpec$.get(tester.vine).next(id => {
       if (!stringType.check(id)) {
@@ -145,7 +144,7 @@ test('@protoboard2/src/core/base-region', init => {
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
       const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot({id})._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({

@@ -6,7 +6,7 @@ import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {$activeState} from '../core/active-spec';
 import {TEST_FACE} from '../testing/test-face';
 
-import {D1, D1State} from './d1';
+import {D1, d1State, D1State} from './d1';
 import goldens from './goldens/goldens.json';
 
 
@@ -42,7 +42,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>({id})._();
+      const state = stateService.addRoot<D1State>(d1State(id))._();
       _.element.state = state;
 
       const div = getHarness(_.element, '#container', ElementHarness);
@@ -55,7 +55,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>({id})._();
+      const state = stateService.addRoot<D1State>(d1State(id))._();
       _.element.state = state;
       _.element.pick(undefined);
 
