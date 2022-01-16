@@ -48,6 +48,7 @@ class TestComponent extends BaseComponent<TestState> {
       $onUpdate$.get(this.$.vine).pipe(this.updateState(resolver => resolver.$('value'))),
       this.installAction(
           pickAction,
+          undefined,
           this.$.shadow.div.target,
           of({type: TriggerType.CLICK}),
           this.$.host.trigger,

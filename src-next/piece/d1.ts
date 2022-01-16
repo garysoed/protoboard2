@@ -61,6 +61,7 @@ class D1Ctrl extends BaseComponent<D1State> {
       ...super.runs,
       this.installAction(
           pickAction,
+          undefined,
           this.$.shadow.container.target,
           this.$.host.pickConfig,
           this.$.host.pick,

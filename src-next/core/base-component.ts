@@ -37,15 +37,16 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
   ) { }
 
-  protected installAction(
-      action: Action<S>,
+  protected installAction<C>(
+      action: Action<S, C>,
+      config$: C,
       target$: Observable<HTMLElement>,
       triggerSpec$: Observable<TriggerSpec>,
       onCall$: Observable<unknown>,
   ): Observable<unknown> {
     return merge(target$.pipe(onTrigger(triggerSpec$)), onCall$)
         .pipe(
-            action(this.$baseComponent),
+            action(this.$baseComponent, config$),
             withLatestFrom(this.state._('id')),
             map(([, id]) => new TriggerEvent(action, id)),
             this.$baseComponent.host.onTrigger(),
