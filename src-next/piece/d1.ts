@@ -1,10 +1,12 @@
 import {cache} from 'gs-tools/export/data';
+import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
-import {undefinedType} from 'gs-types';
-import {Context, icall, id, itarget, ivalue, ostyle, registerCustomElement, SLOT} from 'persona';
+import {intersectType, undefinedType} from 'gs-types';
+import {Context, iattr, icall, id, itarget, ivalue, ostyle, registerCustomElement, SLOT} from 'persona';
 import {Observable} from 'rxjs';
 
 import {pickAction} from '../action/pick-action';
+import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
@@ -24,18 +26,24 @@ export interface D1State extends ComponentState, IsRotatable {}
 const $d1 = {
   host: {
     ...create$baseComponent<D1State>().host,
+    height: iattr('height'),
     pick: icall('pick', undefinedType),
     pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK}),
-    // rotateAction: rotateActionConfigSpecs({}),
+    rotate: icall('rotate', undefinedType),
+    rotateConfig: ivalue(
+        'rotateConfig',
+        intersectType([TRIGGER_SPEC_TYPE, ROTATE_CONFIG_TYPE]),
+        {...DEFAULT_ROTATE_CONFIG, type: TriggerType.R},
+    ),
+    width: iattr('width'),
   },
   shadow: {
     container: id('container', SLOT, {
+      height: ostyle('height'),
       target: itarget(),
       transform: ostyle('transform'),
+      width: ostyle('width'),
     }),
-    // slot: id('slot', SLOT, {
-    // slotted: islotted(),
-    // }),
   },
 };
 
@@ -59,12 +67,19 @@ class D1Ctrl extends BaseComponent<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
+      this.$.host.height.pipe(mapNullableTo(''), this.$.shadow.container.height()),
+      this.$.host.width.pipe(mapNullableTo(''), this.$.shadow.container.width()),
       this.installAction(
           pickAction,
-          undefined,
           this.$.shadow.container.target,
           this.$.host.pickConfig,
           this.$.host.pick,
+      ),
+      this.installAction(
+          rotateAction,
+          this.$.shadow.container.target,
+          this.$.host.rotateConfig,
+          this.$.host.rotate,
       ),
       this.state.$('rotationDeg').pipe(
           renderRotatable(),
@@ -72,17 +87,6 @@ class D1Ctrl extends BaseComponent<D1State> {
       ),
     ];
   }
-
-  // @cache()
-  // protected get actions(): readonly ActionSpec[] {
-  //   return [
-  // this.createActionSpec(
-  //     rotateAction,
-  //     compileConfig($.host._.rotateAction, this.context),
-  //     'Rotate',
-  // ),
-  // ];
-  // }
 }
 
 export const D1 = registerCustomElement({

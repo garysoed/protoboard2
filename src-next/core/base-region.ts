@@ -48,7 +48,6 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
       this.setupHandlePick(),
       this.installAction(
           dropAction,
-          undefined,
           this.target$,
           this.$baseRegion.host.dropConfig,
           this.$baseRegion.host.drop,

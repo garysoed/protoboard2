@@ -1,5 +1,5 @@
 import {Context} from 'persona';
-import {OperatorFunction} from 'rxjs';
+import {OperatorFunction, Observable} from 'rxjs';
 
 import {BaseComponentSpecType} from '../core/base-component';
 import {ComponentState} from '../types/component-state';
@@ -7,5 +7,5 @@ import {ComponentState} from '../types/component-state';
 
 export type Action<S extends ComponentState, C> = (
     context: Context<BaseComponentSpecType<S>>,
-    config: C,
+    config: Observable<C>,
 ) => OperatorFunction<unknown, unknown>;

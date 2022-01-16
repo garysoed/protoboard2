@@ -1,5 +1,6 @@
 import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {flattenResolver} from 'gs-tools/export/state';
+import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
 import {Observable, OperatorFunction, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -11,6 +12,14 @@ import {IsRotatable} from '../types/is-rotatable';
 export interface RotateConfig {
   readonly stops: readonly number[];
 }
+
+export const DEFAULT_ROTATE_CONFIG: RotateConfig = {
+  stops: [0, 90, 180, 270],
+};
+
+export const ROTATE_CONFIG_TYPE = hasPropertiesType({
+  stops: arrayOfType(numberType),
+});
 
 export function rotateAction(
     $: Context<BaseComponentSpecType<IsRotatable>>,
