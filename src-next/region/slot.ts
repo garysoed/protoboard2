@@ -25,7 +25,7 @@ const $slot = {
 };
 
 
-export function slotState(id: {}, input: Partial<D1State>): SlotState {
+export function slotState(id: {}, input: Partial<D1State> = {}): SlotState {
   return {
     id,
     contentIds: mutableState([]),

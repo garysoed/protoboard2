@@ -17,7 +17,7 @@ export function renderContents(
         .pipe(
             map(([contentIds, getRenderSpec]) => {
               if (!getRenderSpec) {
-                throw new Error('getRenderSpec is not initialized');
+                return [];
               }
 
               if (!contentIds) {
