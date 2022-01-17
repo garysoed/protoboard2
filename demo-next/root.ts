@@ -2,18 +2,21 @@ import {cache} from 'gs-tools/export/data';
 import {OVERLAY, renderTheme, ROOT_LAYOUT} from 'mask';
 import {Context, Ctrl, id, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
 
 import {ACTIVE} from '../src-next/core/active';
 import {SLOT} from '../src-next/region/slot';
 
+import {DRAWER} from './core/drawer';
+import {$locationService, Views} from './core/location-service';
 import {$state$} from './demo-state';
 import template from './root.html';
 
 
 const $root = {
   shadow: {
-    active: id('active', ACTIVE, {}),
-    // drawer: id('drawer', DRAWER, {}),
+    active: id('active', ACTIVE),
+    drawer: id('drawer', DRAWER),
     root: id('root', ROOT_LAYOUT),
     slot1: id('slot1', SLOT),
     slot2: id('slot2', SLOT),
@@ -25,16 +28,6 @@ const $root = {
 };
 
 
-// const $stateId = rootStateIdSource<State>(() => ({
-//   slot1: slotSpec({}),
-//   slot2: slotSpec({}),
-//   slot3: slotSpec({}),
-//   slot4: slotSpec({}),
-//   slot5: slotSpec({}),
-//   slot6: slotSpec({}),
-// }));
-
-
 export class Root implements Ctrl {
   private readonly state$ = $state$.get(this.$.vine);
 
@@ -44,12 +37,16 @@ export class Root implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      // this.renderers.drawer.drawerExpanded(
-      //     this.inputs.root.drawerExpanded.pipe(
-      //         map(expanded => expanded ?? false),
-      //     ),
-      // ),
       renderTheme(this.$),
+      this.$.shadow.root.drawerExpanded.pipe(
+          map(expanded => expanded ?? false),
+          this.$.shadow.drawer.drawerExpanded(),
+      ),
+      this.$.shadow.root.onTitleClick.pipe(
+          tap(() => {
+            $locationService.get(this.$.vine).goToPath(Views.INSTRUCTION, {});
+          }),
+      ),
       of(this.state$._('slot1')).pipe(this.$.shadow.slot1.state()),
       of(this.state$._('slot2')).pipe(this.$.shadow.slot2.state()),
       of(this.state$._('slot3')).pipe(this.$.shadow.slot3.state()),
@@ -58,27 +55,17 @@ export class Root implements Ctrl {
       of(this.state$._('slot6')).pipe(this.$.shadow.slot6.state()),
     ];
   }
-
-  // @cache()
-  // private get handleOnRootActive$(): Observable<unknown> {
-  //   return this.inputs.root.onTitleClick
-  //       .pipe(
-  //           tap(() => {
-  //             $locationService.get(this.vine).goToPath(Views.INSTRUCTION, {});
-  //           }),
-  //       );
-  // }
 }
 
 export const ROOT = registerCustomElement({
   ctrl: Root,
   deps: [
     ACTIVE,
+    DRAWER,
+    OVERLAY,
     ROOT_LAYOUT,
     SLOT,
-    OVERLAY,
     // Documentation,
-    // Drawer,
     // HelpOverlay,
     // LensDisplay,
   ],

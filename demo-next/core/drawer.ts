@@ -1,7 +1,7 @@
 import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
-import {$button, $lineLayout, BaseThemedCtrl, Icon, LineLayout, registerSvg, _p} from 'mask';
-import {$div, attributeIn, booleanParser, element, host, multi, onDom, PersonaContext, renderCustomElement, RenderSpec} from 'persona';
+import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
+import {Context, Ctrl, DIV, id, ievent, iflag, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of as observableOf} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -12,22 +12,19 @@ import {$locationService, Views} from './location-service';
 
 
 export const $drawer = {
-  tag: 'pbd-drawer',
-  api: {
-    drawerExpanded: attributeIn('drawer-expanded', booleanParser(), false),
+  host: {
+    drawerExpanded: iflag('drawer-expanded'),
+  },
+  shadow: {
+    root: id('root', DIV, {
+      containers: omulti('#containers'),
+      layouts: omulti('#layouts'),
+      onClick: ievent('click', Event),
+      pieces: omulti('#pieces'),
+    }),
   },
 };
 
-
-const $ = {
-  host: host($drawer.api),
-  root: element('root', $div, {
-    containers: multi('#containers'),
-    layouts: multi('#layouts'),
-    onClick: onDom('click'),
-    pieces: multi('#pieces'),
-  }),
-};
 
 interface LinkConfig {
   label: string;
@@ -51,29 +48,16 @@ const PIECE_LINK_CONFIGS: LinkConfig[] = [
   {label: 'D6', path: Views.D6},
 ];
 
-@_p.customElement({
-  ...$drawer,
-  configure: vine => {
-    registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
-  },
-  dependencies: [
-    Icon,
-    LineLayout,
-  ],
-  template,
-})
-export class Drawer extends BaseThemedCtrl<typeof $> {
-  constructor(context: PersonaContext) {
-    super(context, $);
+export class Drawer implements Ctrl {
+  constructor(private readonly $: Context<typeof $drawer>) { }
 
-    this.addSetup(this.setupRootOnClick());
-  }
-
-  protected get renders(): ReadonlyArray<Observable<unknown>> {
+  get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.root.layouts(this.createNodes(LAYOUT_LINK_CONFIGS)),
-      this.renderers.root.pieces(this.createNodes(PIECE_LINK_CONFIGS)),
-      this.renderers.root.containers(this.createNodes(CONTAINER_LINK_CONFIGS)),
+      renderTheme(this.$),
+      this.setupRootOnClick(),
+      this.createNodes(LAYOUT_LINK_CONFIGS).pipe(this.$.shadow.root.layouts()),
+      this.createNodes(PIECE_LINK_CONFIGS).pipe(this.$.shadow.root.pieces()),
+      this.createNodes(CONTAINER_LINK_CONFIGS).pipe(this.$.shadow.root.containers()),
     ];
   }
 
@@ -82,9 +66,9 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
   ): Observable<readonly RenderSpec[]> {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement({
-        spec: $button,
+        registration: BUTTON,
         children: [renderCustomElement({
-          spec: $lineLayout,
+          registration: LINE_LAYOUT,
           attrs: new Map([['path', path]]),
           inputs: {},
           textContent: label,
@@ -99,7 +83,7 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
   }
 
   private setupRootOnClick(): Observable<unknown> {
-    return this.inputs.root.onClick
+    return this.$.shadow.root.onClick
         .pipe(
             map(event => {
               if (!(event.target instanceof HTMLElement)) {
@@ -111,8 +95,22 @@ export class Drawer extends BaseThemedCtrl<typeof $> {
             filterNonNullable(),
             assertByType(enumType<Views>(Views)),
             tap(path => {
-              $locationService.get(this.vine).goToPath(path, {});
+              $locationService.get(this.$.vine).goToPath(path, {});
             }),
         );
   }
 }
+
+export const DRAWER = registerCustomElement({
+  ctrl: Drawer,
+  configure: vine => {
+    registerSvg(vine, 'chevron_down', {type: 'embed', content: chevronDownSvg});
+  },
+  deps: [
+    ICON,
+    LINE_LAYOUT,
+  ],
+  spec: $drawer,
+  tag: 'pbd-drawer',
+  template,
+});
