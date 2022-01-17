@@ -7,6 +7,7 @@ import {map, tap} from 'rxjs/operators';
 import {ACTIVE} from '../src-next/core/active';
 import {SLOT} from '../src-next/region/slot';
 
+import {DOCUMENTATION} from './core/documentation';
 import {DRAWER} from './core/drawer';
 import {$locationService, Views} from './core/location-service';
 import {$state$} from './demo-state';
@@ -61,11 +62,11 @@ export const ROOT = registerCustomElement({
   ctrl: Root,
   deps: [
     ACTIVE,
+    DOCUMENTATION,
     DRAWER,
     OVERLAY,
     ROOT_LAYOUT,
     SLOT,
-    // Documentation,
     // HelpOverlay,
     // LensDisplay,
   ],

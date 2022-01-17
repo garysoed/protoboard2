@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import template from './documentation.html';
+import {INSTRUCTION} from './instruction';
 import {$locationService} from './location-service';
 import {getPageSpec} from './page-spec';
 
@@ -52,10 +53,10 @@ export const DOCUMENTATION = registerCustomElement({
     // D2Demo,
     // D6Demo,
     // DeckDemo,
-    // Instruction,
+    INSTRUCTION,
     // SlotDemo,
   ],
   spec: $documentation,
-  tag: 'pbd-demo',
+  tag: 'pbd-documentation',
   template,
 });

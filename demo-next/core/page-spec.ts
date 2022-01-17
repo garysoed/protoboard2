@@ -1,5 +1,6 @@
 import {Registration} from 'persona';
 
+import {INSTRUCTION} from './instruction';
 import {Views} from './location-service';
 
 export interface PageSpec {
@@ -29,7 +30,7 @@ const ALL_SPECS: readonly PageSpec[] = [
   ...CONTAINER_LINK_CONFIGS,
   ...LAYOUT_LINK_CONFIGS,
   ...PIECE_LINK_CONFIGS,
-  // {label: 'Instruction', path: Views.INSTRUCTION, registration: INSTRUCTION},
+  {label: 'Instruction', path: Views.INSTRUCTION, registration: INSTRUCTION},
 ];
 
 export function getPageSpec(view: Views): PageSpec|null {
