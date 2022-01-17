@@ -9,6 +9,7 @@ import chevronDownSvg from '../asset/chevron_down.svg';
 
 import template from './drawer.html';
 import {$locationService, Views} from './location-service';
+import {CONTAINER_LINK_CONFIGS, LAYOUT_LINK_CONFIGS, PageSpec, PIECE_LINK_CONFIGS} from './page-spec';
 
 
 export const $drawer = {
@@ -25,29 +26,6 @@ export const $drawer = {
   },
 };
 
-
-interface LinkConfig {
-  label: string;
-  path: Views;
-}
-
-const CONTAINER_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Deck', path: Views.DECK},
-  {label: 'Slot', path: Views.SLOT},
-];
-
-const LAYOUT_LINK_CONFIGS: LinkConfig[] = [
-  // {label: 'Free', path: Views.FREE_LAYOUT},
-  // {label: 'Grid', path: Views.GRID_LAYOUT},
-];
-
-const PIECE_LINK_CONFIGS: LinkConfig[] = [
-  {label: 'Canvas', path: Views.CANVAS},
-  {label: 'D1', path: Views.D1},
-  {label: 'D2', path: Views.D2},
-  {label: 'D6', path: Views.D6},
-];
-
 export class Drawer implements Ctrl {
   constructor(private readonly $: Context<typeof $drawer>) { }
 
@@ -62,7 +40,7 @@ export class Drawer implements Ctrl {
   }
 
   private createNodes(
-      linkConfig: readonly LinkConfig[],
+      linkConfig: readonly PageSpec[],
   ): Observable<readonly RenderSpec[]> {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement({

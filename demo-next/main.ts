@@ -5,6 +5,7 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 import {$getRenderSpec$} from '../src-next/render/render-component-spec';
 
 import protoboardSvg from './asset/icon.svg';
+import {$locationService} from './core/location-service';
 import {ROOT} from './root';
 
 
@@ -31,6 +32,6 @@ window.addEventListener('load', () => {
 
   $getRenderSpec$.get(vine).next(() => renderTextNode({id: {}, textContent: 'TODO'}));
 
-  // $locationService.get(vine).run().subscribe();
+  $locationService.get(vine).run().subscribe();
 });
 
