@@ -8,8 +8,8 @@ import {setupTest} from 'persona/export/testing';
 import {Observable, Subject, of, fromEvent} from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {pickAction} from '../action/pick-action';
-import {TriggerEvent, TRIGGER_EVENT} from '../trigger/trigger-event';
 import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
 
@@ -117,7 +117,7 @@ test('@protoboard2/src/core/base-component', init => {
       const element = _.tester.createElement(TEST);
       element.state = state;
 
-      const event$ = createSpySubject(fromEvent<TriggerEvent>(element, TRIGGER_EVENT));
+      const event$ = createSpySubject(fromEvent<ActionEvent>(element, ACTION_EVENT));
       element.trigger(undefined);
 
       assert(event$.pipe(map(event => event.action))).to.emitSequence([pickAction]);

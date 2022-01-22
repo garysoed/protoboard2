@@ -1,88 +1,124 @@
-import {ievent} from 'persona';
-import {combineLatest, EMPTY, fromEvent, merge, Observable, OperatorFunction} from 'rxjs';
-import {filter, map, mapTo, switchMap, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
+import {ievent, oevent} from 'persona';
+import {EMPTY, fromEvent, merge, Observable, OperatorFunction, pipe} from 'rxjs';
+import {filter, map, mapTo, switchMap, switchMapTo, tap, throttleTime, withLatestFrom} from 'rxjs/operators';
 
-import {isKeyTrigger, TriggerSpec, TriggerType} from '../types/trigger-spec';
+import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
-import {TriggerDetails} from './trigger-details';
+import {TriggerEvent, TRIGGER_EVENT} from './trigger-event';
 
 
 export function onTrigger(
     triggerSpec$: Observable<TriggerSpec>,
-): OperatorFunction<HTMLElement, TriggerDetails> {
+): OperatorFunction<HTMLElement, TriggerEvent> {
   return element$ => {
-    return combineLatest([element$, triggerSpec$]).pipe(
-        switchMap(([element, spec]) => {
-          const onTrigger$ = isKeyTrigger(spec.type)
-            ? createOnKey(element, spec.type)
-            : createOnClick(element);
-          return onTrigger$.pipe(
-              filter(event => {
-                return (spec.alt === undefined || event.altKey === spec.alt)
-                && (spec.ctrl === undefined || event.ctrlKey === spec.ctrl)
-                && (spec.meta === undefined || event.metaKey === spec.meta)
-                && (spec.shift === undefined || event.shiftKey === spec.shift);
-              }),
-          );
-        }),
-    );
+    const dispatchTrigger$ = element$.pipe(dispatchTrigger(), switchMapTo(EMPTY));
+    const onTrigger$ = element$.pipe(onInternalTriggerEvent(triggerSpec$));
+    return merge(dispatchTrigger$, onTrigger$);
   };
 }
 
-function createOnClick(element: HTMLElement): Observable<TriggerDetails> {
+function onInternalTriggerEvent(triggerSpec$: Observable<TriggerSpec>): OperatorFunction<HTMLElement, TriggerEvent> {
+  return pipe(
+      switchMap(element => {
+        return ievent(TRIGGER_EVENT, TriggerEvent).resolve(element).value$;
+      }),
+      withLatestFrom(triggerSpec$),
+      filter(([event, triggerSpec]) => {
+        if (triggerSpec.type === TriggerType.CLICK) {
+          return event.details.eventType === 'click';
+        }
+
+        return event.details.eventType === 'key'
+            && event.details.key === triggerSpec.type;
+      }),
+      filter(([event, triggerSpec]) => {
+        return (triggerSpec.alt === undefined || event.details.altKey === triggerSpec.alt)
+        && (triggerSpec.ctrl === undefined || event.details.ctrlKey === triggerSpec.ctrl)
+        && (triggerSpec.meta === undefined || event.details.metaKey === triggerSpec.meta)
+        && (triggerSpec.shift === undefined || event.details.shiftKey === triggerSpec.shift);
+      }),
+      tap(([event]) => event.stopImmediatePropagation()),
+      map(([event]) => event),
+  );
+}
+
+const __convertedToTrigger = Symbol('convertedToTrigger');
+
+interface MaybeHandledEvent extends MouseEvent {
+  [__convertedToTrigger]?: boolean;
+}
+
+function dispatchTrigger(): OperatorFunction<HTMLElement, unknown> {
+  return switchMap(element => {
+
+    const onClick$ = createOnClick(element);
+    const onKey$ = createOnKey(element);
+    return merge(onClick$, onKey$).pipe(
+        oevent(TRIGGER_EVENT, TriggerEvent).resolve(element).update(),
+    );
+  });
+}
+
+function createOnClick(element: HTMLElement): Observable<TriggerEvent> {
   return ievent('click', MouseEvent).resolve(element).value$
       .pipe(
+          filterUnhandled(),
+          setHandled(),
           map(event => {
-            return {
+            return new TriggerEvent({
               altKey: event.altKey,
               ctrlKey: event.ctrlKey,
               metaKey: event.metaKey,
               shiftKey: event.shiftKey,
               mouseX: event.offsetX,
               mouseY: event.offsetY,
-            };
+              eventType: 'click',
+              key: null,
+            });
           }),
       );
 }
 
-const __handled = Symbol('handled');
-
-interface MaybeHandledEvent extends MouseEvent {
-  [__handled]?: Element;
-}
-
-function createOnKey(element: HTMLElement, key: TriggerType): Observable<TriggerDetails> {
-  const onMouseLeave$ = ievent('mouseout', MouseEvent).resolve(element).value$;
-  const onMouseEnter$ = ievent<MaybeHandledEvent>('mouseover', MouseEvent)
+function createOnKey(element: HTMLElement): Observable<TriggerEvent> {
+  const onMouseOut$ = ievent('mouseout', MouseEvent).resolve(element).value$;
+  const onMouseOver$ = ievent<MaybeHandledEvent>('mouseover', MouseEvent)
       .resolve(element)
       .value$
       .pipe(
-          filter(event => !event[__handled] || event[__handled] === element),
-          tap(event => {
-            event[__handled] = element;
-          }),
+          filterUnhandled(),
+          setHandled(),
       );
   const onMouseMove$ = ievent('mousemove', MouseEvent).resolve(element).value$;
   return merge(
-      onMouseLeave$.pipe(mapTo(false)),
-      onMouseEnter$.pipe(mapTo(true)),
+      onMouseOut$.pipe(mapTo(false)),
+      onMouseOver$.pipe(mapTo(true)),
   )
       .pipe(
           switchMap(hovered => {
             return hovered ? fromEvent<KeyboardEvent>(window, 'keydown') : EMPTY;
           }),
-          filter(event => event.key.toLowerCase() === key),
           withLatestFrom(onMouseMove$.pipe(throttleTime(10))),
-          filter(([event]) => event.key.toLowerCase() === key),
           map(([keyboardEvent, mouseEvent]) => {
-            return {
+            return new TriggerEvent({
               altKey: keyboardEvent.altKey,
               ctrlKey: keyboardEvent.ctrlKey,
               metaKey: keyboardEvent.metaKey,
               shiftKey: keyboardEvent.shiftKey,
               mouseX: mouseEvent.offsetX,
               mouseY: mouseEvent.offsetY,
-            };
+              eventType: 'key',
+              key: keyboardEvent.key.toLowerCase(),
+            });
           }),
       );
+}
+
+function filterUnhandled(): OperatorFunction<MaybeHandledEvent, MaybeHandledEvent> {
+  return filter(event => !event[__convertedToTrigger]);
+}
+
+function setHandled(): OperatorFunction<MaybeHandledEvent, MaybeHandledEvent> {
+  return tap(event => {
+    event[__convertedToTrigger] = true;
+  });
 }

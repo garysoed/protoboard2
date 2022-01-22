@@ -7,15 +7,15 @@ import {EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {Action} from '../action/action';
+import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {onTrigger} from '../trigger/trigger';
-import {TriggerEvent, TRIGGER_EVENT} from '../trigger/trigger-event';
 import {ComponentState} from '../types/component-state';
 import {TriggerSpec} from '../types/trigger-spec';
 
 
 export interface BaseComponentSpecType<S> {
   host: {
-    readonly onTrigger: UnresolvedIO<OEvent<TriggerEvent>>;
+    readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
 }
@@ -23,7 +23,7 @@ export interface BaseComponentSpecType<S> {
 export function create$baseComponent<S extends ComponentState>(): BaseComponentSpecType<S> {
   return {
     host: {
-      onTrigger: oevent(TRIGGER_EVENT, TriggerEvent),
+      onTrigger: oevent(ACTION_EVENT, ActionEvent),
       state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
     },
   };
@@ -47,7 +47,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
         .pipe(
             action(this.$baseComponent, config$),
             withLatestFrom(this.state._('id')),
-            map(([, id]) => new TriggerEvent(action, id)),
+            map(([, id]) => new ActionEvent(action, id)),
             this.$baseComponent.host.onTrigger(),
         );
   }

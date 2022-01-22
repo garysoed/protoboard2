@@ -6,9 +6,9 @@ import {ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
+import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {dropAction} from '../action/drop-action';
 import {renderContents} from '../render/render-contents';
-import {TriggerEvent, TRIGGER_EVENT} from '../trigger/trigger-event';
 import {RegionState} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -17,7 +17,7 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
-    readonly onTrigger: UnresolvedIO<OEvent<TriggerEvent>>;
+    readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
     readonly drop: UnresolvedIO<ICall<undefined, 'drop'>>;
     readonly dropConfig: UnresolvedIO<IValue<TriggerSpec, 'dropConfig'>>;
@@ -62,7 +62,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
   private setupHandlePick(): Observable<unknown> {
     const contentIds = this.state.$('contentIds') as unknown as MutableResolver<ReadonlyArray<{}>>;
     return this.target$.pipe(
-        switchMap(target => ievent(TRIGGER_EVENT, TriggerEvent).resolve(target).value$),
+        switchMap(target => ievent(ACTION_EVENT, ActionEvent).resolve(target).value$),
         withLatestFrom(contentIds),
         map(([event, contentIds]) => {
           if (contentIds.indexOf(event.id) < 0) {
