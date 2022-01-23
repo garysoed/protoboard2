@@ -1,15 +1,15 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
+import {getHarness, setupTest} from 'persona/export/testing';
 
 import {$activeState} from '../core/active-spec';
 import {TEST_FACE} from '../testing/test-face';
-import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {TriggerType} from '../types/trigger-spec';
 
 import {D1, d1State, D1State} from './d1';
 import goldens from './goldens/goldens.json';
+import {D1Harness} from './testing/d1-harness';
 
 
 test('@protoboard2/src/piece/d1', init => {
@@ -47,8 +47,8 @@ test('@protoboard2/src/piece/d1', init => {
       const state = stateService.addRoot<D1State>(d1State(id))._();
       _.element.state = state;
 
-      const div = getHarness(_.element, '#container', ElementHarness);
-      div.simulateClick();
+      const harness = getHarness(_.element, D1Harness);
+      harness.simulateTrigger(TriggerType.CLICK);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to
           .emitSequence([arrayThat<{}>().haveExactElements([id])]);
@@ -84,8 +84,8 @@ test('@protoboard2/src/piece/d1', init => {
       const state = stateService.addRoot<D1State>(d1State(id))._();
       _.element.state = state;
 
-      const div = getHarness(_.element, '#container', TriggerElementHarness);
-      div.simulateTrigger(TriggerType.R);
+      const harness = getHarness(_.element, D1Harness);
+      harness.simulateTrigger(TriggerType.R);
 
       assert(_.element).to.matchSnapshot('d1__rotate-click.html');
     });
