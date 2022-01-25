@@ -1,8 +1,11 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {getHarness, setupTest} from 'persona/export/testing';
+import {fromEvent} from 'rxjs';
+import {map} from 'rxjs/operators';
 
+import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
 import {TEST_FACE} from '../testing/test-face';
 import {TriggerType} from '../types/trigger-spec';
@@ -98,6 +101,26 @@ test('@protoboard2/src/piece/d1', init => {
       _.element.rotate(undefined);
 
       assert(_.element).to.matchSnapshot('d1__rotate-call.html');
+    });
+  });
+
+  test('help action', () => {
+    should('display the correct help contents', () => {
+      const element = _.tester.createElement(D1);
+      const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
+      const harness = getHarness(element, D1Harness);
+      harness.simulateHelp();
+
+      assert(event$.pipe(map(event => event.contents))).to.emitSequence([
+        createSmartMatcher([
+          {
+            actions: [
+              {actionName: 'TODO', trigger: {type: TriggerType.CLICK}},
+              {actionName: 'TODO', trigger: {type: TriggerType.R}},
+            ],
+          },
+        ]),
+      ]);
     });
   });
 });

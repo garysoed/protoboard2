@@ -11,6 +11,10 @@ export class D1Harness extends CustomElementHarness<typeof D1> {
 
   private readonly harness = getHarness(this.target, '#container', TriggerElementHarness);
 
+  simulateHelp(): void {
+    this.simulateTrigger(TriggerType.QUESTION);
+  }
+
   simulatePick(): void {
     this.target.pick(undefined);
   }

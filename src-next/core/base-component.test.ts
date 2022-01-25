@@ -1,15 +1,17 @@
 import {$stateService, source} from 'grapevine';
-import {assert, createSpySubject, should, test} from 'gs-testing';
+import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {mutableState, MutableState} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
 import {Context, DIV, icall, id, itarget, registerCustomElement} from 'persona';
-import {setupTest} from 'persona/export/testing';
-import {Observable, Subject, of, fromEvent} from 'rxjs';
+import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
+import {EMPTY, fromEvent, Observable, of, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {pickAction} from '../action/pick-action';
+import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
+import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
 
@@ -22,12 +24,53 @@ interface TestState extends ComponentState {
 
 const $onUpdate$ = source(() => new Subject<number>());
 
+const $child = {
+  host: {
+    ...create$baseComponent().host,
+    trigger: icall('trigger', undefinedType),
+  },
+  shadow: {
+    div: id('div', DIV, {
+      target: itarget(),
+    }),
+  },
+};
+
+class ChildComponent extends BaseComponent<ComponentState> {
+  constructor(private readonly $: Context<typeof $child>) {
+    super($);
+  }
+
+  @cache()
+  get runs(): ReadonlyArray<Observable<unknown>> {
+    return [
+      ...super.runs,
+      this.installAction(
+          pickAction,
+          this.$.shadow.div.target,
+          of({type: TriggerType.L}),
+          EMPTY,
+      ),
+    ];
+  }
+}
+
+const CHILD = registerCustomElement({
+  ctrl: ChildComponent,
+  spec: $child,
+  tag: 'pbt-child',
+  template: '<div id="div"></div>',
+});
+
 const $test = {
   host: {
     ...create$baseComponent<TestState>().host,
     trigger: icall('trigger', undefinedType),
   },
   shadow: {
+    container: id('container', DIV, {
+      target: itarget(),
+    }),
     div: id('div', DIV, {
       target: itarget(),
     }),
@@ -52,24 +95,108 @@ class TestComponent extends BaseComponent<TestState> {
           of({type: TriggerType.CLICK}),
           this.$.host.trigger,
       ),
+      this.installAction(
+          pickAction,
+          this.$.shadow.container.target,
+          of({type: TriggerType.C}),
+          EMPTY,
+      ),
     ];
   }
 }
 
 const TEST = registerCustomElement({
   ctrl: TestComponent,
+  deps: [CHILD],
   spec: $test,
   tag: 'pbt-test',
-  template: '<div id="div"></div>',
+  template: `
+      <div id="div"></div>
+      <div id="container">
+        <pbt-child id="child"></pbt-child>
+      </div>`,
 });
-
-// const KEY = TriggerType.T;
 
 test('@protoboard2/src/core/base-component', init => {
   const _ = init(() => {
     const tester = setupTest({roots: [TEST]});
 
     return {tester};
+  });
+
+  test('installAction', () => {
+    should('trigger the action and dispatch the event', () => {
+      const stateService = $stateService.get(_.tester.vine);
+      const id = {};
+      const state = stateService.addRoot(mutableState<TestState>({
+        id,
+        value: mutableState(123),
+      })).$();
+
+      const element = _.tester.createElement(TEST);
+      element.state = state;
+
+      const event$ = createSpySubject(fromEvent<ActionEvent>(element, ACTION_EVENT));
+      element.trigger(undefined);
+
+      assert(event$.pipe(map(event => event.action))).to.emitSequence([pickAction]);
+      assert(event$.pipe(map(event => event.id))).to.emitSequence([id]);
+    });
+  });
+
+  test('setupHelpAction', _, init => {
+    const _ = init(_ => {
+      const stateService = $stateService.get(_.tester.vine);
+      const id = {};
+      const state = stateService.addRoot(mutableState<TestState>({
+        id,
+        value: mutableState(123),
+      })).$();
+
+      const element = _.tester.createElement(TEST);
+      element.state = state;
+
+      const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
+
+      return {..._, element, event$};
+    });
+
+    should('show all the installed actions for separate DOMs', () => {
+      const target = getHarness(_.element, '#div', TriggerElementHarness);
+      target.simulateTrigger(TriggerType.QUESTION);
+
+      assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
+        createSmartMatcher([
+          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.CLICK}}]},
+        ]),
+      ]);
+      target.simulateMouseOut();
+
+      const container = getHarness(_.element, '#container', TriggerElementHarness);
+      container.simulateTrigger(TriggerType.QUESTION);
+
+      assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
+        createSmartMatcher([
+          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.CLICK}}]},
+        ]),
+        createSmartMatcher([
+          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.C}}]},
+        ]),
+      ]);
+    });
+
+    should('show installed actions for sub component and the parent target', () => {
+      const child = getHarness(_.element, '#child', ElementHarness);
+      const harness = getHarness(child.target, '#div', TriggerElementHarness);
+      harness.simulateTrigger(TriggerType.QUESTION);
+
+      assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
+        createSmartMatcher([
+          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.L}}]},
+          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.C}}]},
+        ]),
+      ]);
+    });
   });
 
   test('updateState', () => {
@@ -102,26 +229,6 @@ test('@protoboard2/src/core/base-component', init => {
       $onUpdate$.get(_.tester.vine).next(345);
 
       assert(state.$('value')).to.emitSequence([value]);
-    });
-  });
-
-  test('installAction', () => {
-    should('trigger the action and dispatch the event', () => {
-      const stateService = $stateService.get(_.tester.vine);
-      const id = {};
-      const state = stateService.addRoot(mutableState<TestState>({
-        id,
-        value: mutableState(123),
-      })).$();
-
-      const element = _.tester.createElement(TEST);
-      element.state = state;
-
-      const event$ = createSpySubject(fromEvent<ActionEvent>(element, ACTION_EVENT));
-      element.trigger(undefined);
-
-      assert(event$.pipe(map(event => event.action))).to.emitSequence([pickAction]);
-      assert(event$.pipe(map(event => event.id))).to.emitSequence([id]);
     });
   });
 });

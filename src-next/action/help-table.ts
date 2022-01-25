@@ -1,60 +1,57 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {$keyboard, BaseThemedCtrl, Keyboard, SpecialKeys, _p} from 'mask';
-import {$h3, $tbody, attributeIn, element, host, integerParser, multi, PersonaContext, renderCustomElement, renderElement, RenderSpec} from 'persona';
+import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
+import {Context, Ctrl, H3, iattr, id, omulti, otext, registerCustomElement, renderCustomElement, renderElement, RenderSpec, TBODY} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {TriggerSpec, TriggerType} from '../core/trigger-spec';
+import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
-import {$helpService, HelpContent} from './help-service';
+import {$helpService} from './help-service';
 import template from './help-table.html';
+import {HelpContent} from './show-help-event';
 
 
-export const $helpTable = {
-  tag: 'pb-help-table',
-  api: {
-    index: attributeIn('index', integerParser()),
+const $helpTable = {
+  host: {
+    index: iattr('index'),
+  },
+  shadow: {
+    title: id('title', H3, {
+      text: otext(),
+    }),
+    content: id('content', TBODY, {
+      rows: omulti('#rows'),
+    }),
   },
 };
 
-const $ = {
-  host: host($helpTable.api),
-  title: element('title', $h3, {}),
-  content: element('content', $tbody, {
-    rows: multi('#rows'),
-  }),
-};
-
-@_p.customElement({
-  ...$helpTable,
-  template,
-  dependencies: [Keyboard],
-})
-export class HelpTable extends BaseThemedCtrl<typeof $> {
-  constructor(context: PersonaContext) {
-    super(context, $);
+export class HelpTable implements Ctrl {
+  constructor(private readonly $: Context<typeof $helpTable>) {
   }
 
-  protected get renders(): ReadonlyArray<Observable<unknown>> {
+  @cache()
+  get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.title.textContent(this.title$),
-      this.renderers.content.rows(this.rows$),
+      renderTheme(this.$),
+      this.title$.pipe(this.$.shadow.title.text()),
+      this.rows$.pipe(this.$.shadow.content.rows()),
     ];
   }
 
   @cache()
   private get content$(): Observable<HelpContent|null> {
     return combineLatest([
-      $helpService.get(this.vine).contents$,
-      this.inputs.host.index,
+      $helpService.get(this.$.vine).contents$,
+      this.$.host.index,
     ])
         .pipe(
-            map(([contents, index]) => {
-              if (index === undefined) {
+            map(([contents, indexStr]) => {
+              if (!indexStr) {
                 return null;
               }
 
+              const index = Number.parseInt(indexStr);
               return contents[index] ?? null;
             }),
         );
@@ -73,7 +70,7 @@ export class HelpTable extends BaseThemedCtrl<typeof $> {
                   content.actions,
                   $map(({actionName, trigger}) => {
                     const keyboardEl$ = renderCustomElement({
-                      spec: $keyboard,
+                      registration: KEYBOARD,
                       attrs: new Map([['a', of('test')]]),
                       inputs: {text: of(triggerKeySpecToString(trigger))},
                       id: {},
@@ -109,7 +106,7 @@ export class HelpTable extends BaseThemedCtrl<typeof $> {
 
   @cache()
   private get title$(): Observable<string> {
-    return this.content$.pipe(map(content => content?.tag?.toLocaleLowerCase() ?? ''));
+    return this.content$.pipe(map(() => 'TODO'));
   }
 }
 
@@ -147,3 +144,11 @@ function triggerTypeToString(triggerType: TriggerType): string {
 
   return triggerType;
 }
+
+export const HELP_TABLE = registerCustomElement({
+  ctrl: HelpTable,
+  deps: [KEYBOARD],
+  spec: $helpTable,
+  tag: 'pb-help-table',
+  template,
+});
