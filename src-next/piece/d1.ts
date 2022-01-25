@@ -71,12 +71,14 @@ class D1Ctrl extends BaseComponent<D1State> {
       this.$.host.width.pipe(mapNullableTo(''), this.$.shadow.container.width()),
       this.installAction(
           pickAction,
+          'Pick',
           this.$.shadow.container.target,
           this.$.host.pickConfig,
           this.$.host.pick,
       ),
       this.installAction(
           rotateAction,
+          'Rotate',
           this.$.shadow.container.target,
           this.$.host.rotateConfig,
           this.$.host.rotate,

@@ -115,8 +115,8 @@ test('@protoboard2/src/piece/d1', init => {
         createSmartMatcher([
           {
             actions: [
-              {actionName: 'TODO', trigger: {type: TriggerType.CLICK}},
-              {actionName: 'TODO', trigger: {type: TriggerType.R}},
+              {actionName: 'Pick', trigger: {type: TriggerType.CLICK}},
+              {actionName: 'Rotate', trigger: {type: TriggerType.R}},
             ],
           },
         ]),

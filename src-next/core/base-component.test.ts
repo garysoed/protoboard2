@@ -18,6 +18,10 @@ import {TriggerType} from '../types/trigger-spec';
 import {BaseComponent, create$baseComponent} from './base-component';
 
 
+const CHILD_ACTION = 'Child action';
+const ACTION_1 = 'Action 1';
+const ACTION_2 = 'Action 2';
+
 interface TestState extends ComponentState {
   readonly value: MutableState<number>;
 }
@@ -47,6 +51,7 @@ class ChildComponent extends BaseComponent<ComponentState> {
       ...super.runs,
       this.installAction(
           pickAction,
+          CHILD_ACTION,
           this.$.shadow.div.target,
           of({type: TriggerType.L}),
           EMPTY,
@@ -91,12 +96,14 @@ class TestComponent extends BaseComponent<TestState> {
       $onUpdate$.get(this.$.vine).pipe(this.updateState(resolver => resolver.$('value'))),
       this.installAction(
           pickAction,
+          ACTION_1,
           this.$.shadow.div.target,
           of({type: TriggerType.CLICK}),
           this.$.host.trigger,
       ),
       this.installAction(
           pickAction,
+          ACTION_2,
           this.$.shadow.container.target,
           of({type: TriggerType.C}),
           EMPTY,
@@ -167,7 +174,7 @@ test('@protoboard2/src/core/base-component', init => {
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.CLICK}}]},
+          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}]},
         ]),
       ]);
       target.simulateMouseOut();
@@ -177,10 +184,10 @@ test('@protoboard2/src/core/base-component', init => {
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.CLICK}}]},
+          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}]},
         ]),
         createSmartMatcher([
-          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.C}}]},
+          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}]},
         ]),
       ]);
     });
@@ -192,8 +199,8 @@ test('@protoboard2/src/core/base-component', init => {
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.L}}]},
-          {actions: [{actionName: 'TODO', trigger: {type: TriggerType.C}}]},
+          {actions: [{actionName: CHILD_ACTION, trigger: {type: TriggerType.L}}]},
+          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}]},
         ]),
       ]);
     });

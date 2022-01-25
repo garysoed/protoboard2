@@ -49,6 +49,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
 
   protected installAction<C>(
       action: Action<S, C>,
+      actionName: string,
       target$: Observable<HTMLElement>,
       config$: Observable<TriggerSpec&C>,
       onCall$: Observable<unknown>,
@@ -57,7 +58,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       ...this.installedActionsArray$.getValue(),
       {
         target$,
-        actionName: 'TODO',
+        actionName,
         trigger$: config$,
       },
     ]);
