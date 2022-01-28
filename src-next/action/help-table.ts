@@ -106,7 +106,7 @@ export class HelpTable implements Ctrl {
 
   @cache()
   private get title$(): Observable<string> {
-    return this.content$.pipe(map(() => 'TODO'));
+    return this.content$.pipe(map(content => content?.componentName ?? '(Unknown)'));
   }
 }
 

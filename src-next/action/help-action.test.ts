@@ -15,8 +15,8 @@ import {forwardHelpEvent, helpAction, HelpActionConfig} from './help-action';
 import {HelpContent, ShowHelpEvent, SHOW_HELP_EVENT} from './show-help-event';
 
 
-const $helpConfig$ = source(() => new BehaviorSubject<HelpActionConfig>({helpContent: {actions: []}}));
-const $parentConfig$ = source(() => new BehaviorSubject<HelpActionConfig>({helpContent: {actions: []}}));
+const $helpConfig$ = source(() => new BehaviorSubject<HelpActionConfig>({helpContent: {actions: [], componentName: ''}}));
+const $parentConfig$ = source(() => new BehaviorSubject<HelpActionConfig>({helpContent: {actions: [], componentName: ''}}));
 
 const $test = {
   host: {
@@ -94,6 +94,7 @@ test('@protoboard2/src/action/help-action', init => {
         {actionName: 'action1', trigger: {type: TriggerType.A}},
         {actionName: 'action2', trigger: {type: TriggerType.B}},
       ],
+      componentName: 'Component',
     };
     $helpConfig$.get(_.tester.vine).next({
       helpContent,
@@ -115,6 +116,7 @@ test('@protoboard2/src/action/help-action', init => {
         {actionName: 'action1', trigger: {type: TriggerType.A}},
         {actionName: 'action2', trigger: {type: TriggerType.B}},
       ],
+      componentName: 'Component',
     };
     $helpConfig$.get(_.tester.vine).next({helpContent: childHelpContent});
     const parentHelpContent = {
@@ -122,6 +124,7 @@ test('@protoboard2/src/action/help-action', init => {
         {actionName: 'action1', trigger: {type: TriggerType.A}},
         {actionName: 'action3', trigger: {type: TriggerType.C}},
       ],
+      componentName: 'Component',
     };
     $parentConfig$.get(_.tester.vine).next({helpContent: parentHelpContent});
     const element = _.tester.createElement(PARENT);

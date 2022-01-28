@@ -21,6 +21,7 @@ import {BaseComponent, create$baseComponent} from './base-component';
 const CHILD_ACTION = 'Child action';
 const ACTION_1 = 'Action 1';
 const ACTION_2 = 'Action 2';
+const COMPONENT_NAME = 'Component Name';
 
 interface TestState extends ComponentState {
   readonly value: MutableState<number>;
@@ -42,7 +43,7 @@ const $child = {
 
 class ChildComponent extends BaseComponent<ComponentState> {
   constructor(private readonly $: Context<typeof $child>) {
-    super($);
+    super($, COMPONENT_NAME);
   }
 
   @cache()
@@ -86,7 +87,7 @@ class TestComponent extends BaseComponent<TestState> {
   constructor(
       private readonly $: Context<typeof $test>,
   ) {
-    super($);
+    super($, COMPONENT_NAME);
   }
 
   @cache()
@@ -169,12 +170,15 @@ test('@protoboard2/src/core/base-component', init => {
     });
 
     should('show all the installed actions for separate DOMs', () => {
+      const label = 'label';
+      _.element.setAttribute('label', label);
+
       const target = getHarness(_.element, '#div', TriggerElementHarness);
       target.simulateTrigger(TriggerType.QUESTION);
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}]},
+          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}], componentName: label},
         ]),
       ]);
       target.simulateMouseOut();
@@ -184,10 +188,10 @@ test('@protoboard2/src/core/base-component', init => {
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}]},
+          {actions: [{actionName: ACTION_1, trigger: {type: TriggerType.CLICK}}], componentName: label},
         ]),
         createSmartMatcher([
-          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}]},
+          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}], componentName: label},
         ]),
       ]);
     });
@@ -199,8 +203,8 @@ test('@protoboard2/src/core/base-component', init => {
 
       assert(_.event$.pipe(map(event => event.contents))).to.emitSequence([
         createSmartMatcher([
-          {actions: [{actionName: CHILD_ACTION, trigger: {type: TriggerType.L}}]},
-          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}]},
+          {actions: [{actionName: CHILD_ACTION, trigger: {type: TriggerType.L}}], componentName: COMPONENT_NAME},
+          {actions: [{actionName: ACTION_2, trigger: {type: TriggerType.C}}], componentName: COMPONENT_NAME},
         ]),
       ]);
     });

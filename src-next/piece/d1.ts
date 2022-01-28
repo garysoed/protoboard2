@@ -60,7 +60,7 @@ class D1Ctrl extends BaseComponent<D1State> {
    * @internal
    */
   constructor(private readonly $: Context<typeof $d1>) {
-    super($);
+    super($, 'D1');
   }
 
   @cache()

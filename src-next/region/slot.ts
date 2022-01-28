@@ -36,15 +36,8 @@ export function slotState(id: {}, input: Partial<D1State> = {}): SlotState {
 
 export class Slot extends BaseRegion<SlotState> {
   constructor(private readonly $: Context<typeof $slot>) {
-    super($);
+    super($, 'Slot');
   }
-
-  // @cache()
-  // protected get actions(): readonly ActionSpec[] {
-  //   return [
-  //     this.createActionSpec(dropAction, compileConfig($.host._.dropAction, this.context), 'Drop'),
-  //   ];
-  // }
 
   renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
     return this.$.shadow.root.content();

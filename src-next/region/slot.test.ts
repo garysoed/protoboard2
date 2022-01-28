@@ -45,4 +45,6 @@ test('@protoboard2/src/region/slot', init => {
 
     assert(element).to.matchSnapshot('slot__render.html');
   });
+
+  // TODO: Test drop
 });

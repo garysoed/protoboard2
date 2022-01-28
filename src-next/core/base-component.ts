@@ -2,8 +2,8 @@ import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, ivalue, oevent} from 'persona';
-import {IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
+import {Context, Ctrl, iattr, ivalue, oevent} from 'persona';
+import {IAttr, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {BehaviorSubject, combineLatest, EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -25,6 +25,7 @@ interface ActionInstalledPayload {
 
 export interface BaseComponentSpecType<S> {
   host: {
+    readonly label: UnresolvedIO<IAttr>;
     readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
@@ -33,6 +34,7 @@ export interface BaseComponentSpecType<S> {
 export function create$baseComponent<S extends ComponentState>(): BaseComponentSpecType<S> {
   return {
     host: {
+      label: iattr('label'),
       onTrigger: oevent(ACTION_EVENT, ActionEvent),
       state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
     },
@@ -45,6 +47,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
 
   constructor(
       private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
+      private readonly defaultComponentName: string,
   ) { }
 
   protected installAction<C>(
@@ -83,7 +86,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   }
 
   private setupHelpAction(): Observable<unknown> {
-    return this.installedActionsArray$.pipe(
+    const targetActionsMap$ = this.installedActionsArray$.pipe(
         switchMap(actions => {
           if (actions.length === 0) {
             return of([]);
@@ -108,11 +111,19 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
           return targetActionMap;
         }),
         startWith(new Map()),
-        switchMap(targetActionMap => {
+    );
+
+    return combineLatest([
+      targetActionsMap$,
+      this.$baseComponent.host.label,
+    ]).pipe(
+        switchMap(([targetActionMap, componentName]) => {
           const install$list = $pipe(
               targetActionMap,
               $map(([target, actions]) => {
-                const config$ = of({helpContent: {actions}});
+                const config$ = of({
+                  helpContent: {actions, componentName: componentName ?? this.defaultComponentName},
+                });
                 const target$ = of(target);
 
                 const triggerHelp$ = target$.pipe(

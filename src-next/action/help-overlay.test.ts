@@ -41,11 +41,13 @@ test('@protoboard2/action/help-overlay', init => {
           actions: [
             {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
           ],
+          componentName: 'Component 1',
         },
         {
           actions: [
             {trigger: {type: TriggerType.D, shift: true, ctrl: true}, actionName: ACTION_NAME},
           ],
+          componentName: 'Component 2',
         },
       ]);
 
@@ -59,6 +61,7 @@ test('@protoboard2/action/help-overlay', init => {
           actions: [
             {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
           ],
+          componentName: 'Component',
         },
       ]);
       triggerHelp([]);
@@ -75,6 +78,7 @@ test('@protoboard2/action/help-overlay', init => {
           actions: [
             {trigger: {type: TriggerType.CLICK, meta: true, alt: true}, actionName: ACTION_NAME},
           ],
+          componentName: 'Component',
         },
       ]);
 

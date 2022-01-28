@@ -2,7 +2,7 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
-import {ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
+import {IAttr, ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -17,6 +17,7 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
+    readonly label: UnresolvedIO<IAttr>;
     readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
     readonly drop: UnresolvedIO<ICall<undefined, 'drop'>>;
@@ -37,8 +38,9 @@ export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S
 export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S> {
   constructor(
       private readonly $baseRegion: Context<BaseRegionSpecType<S>>,
+      defaultComponentName: string,
   ) {
-    super($baseRegion);
+    super($baseRegion, defaultComponentName);
   }
 
   get runs(): ReadonlyArray<Observable<unknown>> {

@@ -118,6 +118,7 @@ test('@protoboard2/src/piece/d1', init => {
               {actionName: 'Pick', trigger: {type: TriggerType.CLICK}},
               {actionName: 'Rotate', trigger: {type: TriggerType.R}},
             ],
+            componentName: 'D1',
           },
         ]),
       ]);

@@ -27,7 +27,7 @@ const $test = {
 
 class Test extends BaseComponent<ComponentState> {
   constructor(private readonly $: Context<typeof $test>) {
-    super($);
+    super($, 'Test component');
   }
 
   @cache()

@@ -36,7 +36,7 @@ const $test = {
 
 class Test extends BaseRegion<TestState> {
   constructor(private readonly $: Context<typeof $test>) {
-    super($);
+    super($, 'Test region');
   }
 
   get target$(): Observable<HTMLElement> {

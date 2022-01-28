@@ -8,6 +8,7 @@ export interface ActionTrigger {
 
 export interface HelpContent {
   readonly actions: readonly ActionTrigger[];
+  readonly componentName: string;
 }
 
 export const SHOW_HELP_EVENT = 'pb-show-help';

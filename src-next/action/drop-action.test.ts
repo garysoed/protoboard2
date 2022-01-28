@@ -35,7 +35,7 @@ const $test = {
 
 class Test extends BaseRegion<RegionState> {
   constructor(private readonly $: Context<typeof $test>) {
-    super($);
+    super($, 'Test region');
   }
 
   renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
