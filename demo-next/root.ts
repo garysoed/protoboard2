@@ -4,6 +4,7 @@ import {Context, Ctrl, id, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
+import {HELP_OVERLAY} from '../src-next/action/help-overlay';
 import {ACTIVE} from '../src-next/core/active';
 import {D1} from '../src-next/piece/d1';
 import {SLOT} from '../src-next/region/slot';
@@ -52,11 +53,11 @@ export const ROOT = registerCustomElement({
     D1,
     DOCUMENTATION,
     DRAWER,
+    HELP_OVERLAY,
     OVERLAY,
     RENDERED_FACE,
     ROOT_LAYOUT,
     SLOT,
-    // HelpOverlay,
     // LensDisplay,
   ],
   spec: $root,
