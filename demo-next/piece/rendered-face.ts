@@ -1,10 +1,9 @@
 import {cache} from 'gs-tools/export/data';
-import {$icon, BaseThemedCtrl, Icon, registerSvg, _p} from 'mask';
-import {$h3, $p, attributeIn, element, enumParser, host, PersonaContext} from 'persona';
+import {ICON, registerSvg, renderTheme} from 'mask';
+import {Context, Ctrl, H3, iattr, id, otext, P, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {Lens} from '../../src/face/lens';
 import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';
@@ -18,8 +17,8 @@ import dicePip6Svg from '../asset/dice_pip_6.svg';
 import gemSvg from '../asset/gem.svg';
 import meepleSvg from '../asset/meeple.svg';
 
-
 import template from './rendered-face.html';
+
 
 export enum FaceType {
   CARD_BACK = 'cardback',
@@ -36,67 +35,40 @@ export enum FaceType {
   MEEPLE = 'meeple',
 }
 
-export const $renderedFace = {
-  tag: 'pbd-rendered-face',
-  api: {
-    faceType: attributeIn('face-type', enumParser<FaceType>(FaceType)),
+const $renderedFace = {
+  host: {
+    faceType: iattr('face-type'),
+  },
+  shadow: {
+    icon: id('icon', ICON),
+    name: id('name', H3, {
+      text: otext(),
+    }),
+    details: id('details', P),
   },
 };
 
-const $ = {
-  host: host($renderedFace.api),
-  icon: element('icon', $icon, {}),
-  name: element('name', $h3, {}),
-  details: element('details', $p, {}),
-};
 
-@_p.customElement({
-  ...$renderedFace,
-  configure: vine => {
-    registerSvg(vine, FaceType.CARD_BACK, {type: 'embed', content: cardBackSvg});
-    registerSvg(vine, FaceType.CARD_FRONT, {type: 'embed', content: cardFrontSvg});
-    registerSvg(vine, FaceType.COIN_BACK, {type: 'embed', content: coinBackSvg});
-    registerSvg(vine, FaceType.COIN_FRONT, {type: 'embed', content: coinFrontSvg});
-    registerSvg(vine, FaceType.GEM, {type: 'embed', content: gemSvg});
-    registerSvg(vine, FaceType.MEEPLE, {type: 'embed', content: meepleSvg});
-    registerSvg(vine, FaceType.DICE_PIP_1, {type: 'embed', content: dicePip1Svg});
-    registerSvg(vine, FaceType.DICE_PIP_2, {type: 'embed', content: dicePip2Svg});
-    registerSvg(vine, FaceType.DICE_PIP_3, {type: 'embed', content: dicePip3Svg});
-    registerSvg(vine, FaceType.DICE_PIP_4, {type: 'embed', content: dicePip4Svg});
-    registerSvg(vine, FaceType.DICE_PIP_5, {type: 'embed', content: dicePip5Svg});
-    registerSvg(vine, FaceType.DICE_PIP_6, {type: 'embed', content: dicePip6Svg});
-  },
-  dependencies: [
-    Icon,
-    Lens,
-  ],
-  template,
-})
-export class RenderedFace extends BaseThemedCtrl<typeof $> {
-  constructor(context: PersonaContext) {
-    super(context, $);
-  }
+class RenderedFace implements Ctrl {
+  constructor(private readonly $: Context<typeof $renderedFace>) { }
 
-  protected get renders(): ReadonlyArray<Observable<unknown>> {
+  get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      this.renderers.icon.icon(this.icon$),
-      this.renderers.name.textContent(this.faceName$),
+      renderTheme(this.$),
+      this.icon$.pipe(this.$.shadow.icon.icon()),
+      this.faceName$.pipe(this.$.shadow.name.text()),
     ];
   }
 
   @cache()
   private get icon$(): Observable<string> {
-    return this.inputs.host.faceType.pipe(map(faceType => faceType ?? ''));
+    return this.$.host.faceType.pipe(map(faceType => faceType ?? ''));
   }
 
   @cache()
   private get faceName$(): Observable<string> {
-    return this.inputs.host.faceType.pipe(
+    return this.$.host.faceType.pipe(
         map(faceType => {
-          if (!faceType) {
-            return '';
-          }
-
           switch (faceType) {
             case FaceType.CARD_BACK:
               return 'Card Back';
@@ -122,8 +94,34 @@ export class RenderedFace extends BaseThemedCtrl<typeof $> {
               return 'Gem';
             case FaceType.MEEPLE:
               return 'Meeple';
+            default:
+              return '';
           }
         }),
     );
   }
 }
+
+export const RENDERED_FACE = registerCustomElement({
+  configure: vine => {
+    registerSvg(vine, FaceType.CARD_BACK, {type: 'embed', content: cardBackSvg});
+    registerSvg(vine, FaceType.CARD_FRONT, {type: 'embed', content: cardFrontSvg});
+    registerSvg(vine, FaceType.COIN_BACK, {type: 'embed', content: coinBackSvg});
+    registerSvg(vine, FaceType.COIN_FRONT, {type: 'embed', content: coinFrontSvg});
+    registerSvg(vine, FaceType.GEM, {type: 'embed', content: gemSvg});
+    registerSvg(vine, FaceType.MEEPLE, {type: 'embed', content: meepleSvg});
+    registerSvg(vine, FaceType.DICE_PIP_1, {type: 'embed', content: dicePip1Svg});
+    registerSvg(vine, FaceType.DICE_PIP_2, {type: 'embed', content: dicePip2Svg});
+    registerSvg(vine, FaceType.DICE_PIP_3, {type: 'embed', content: dicePip3Svg});
+    registerSvg(vine, FaceType.DICE_PIP_4, {type: 'embed', content: dicePip4Svg});
+    registerSvg(vine, FaceType.DICE_PIP_5, {type: 'embed', content: dicePip5Svg});
+    registerSvg(vine, FaceType.DICE_PIP_6, {type: 'embed', content: dicePip6Svg});
+  },
+  ctrl: RenderedFace,
+  deps: [
+    ICON,
+  ],
+  spec: $renderedFace,
+  tag: 'pbd-rendered-face',
+  template,
+});

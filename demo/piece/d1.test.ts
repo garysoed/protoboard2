@@ -6,7 +6,8 @@ import {_p} from 'mask';
 import {THEME_LOADER_TEST_OVERRIDE} from 'mask/export/testing';
 import {PersonaTesterFactory} from 'persona/export/testing';
 
-import {D1Demo} from './d1';
+import {D1Demo} from '../../demo-next/piece/d1';
+
 import goldenDefault from './goldens/d1.html';
 
 

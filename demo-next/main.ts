@@ -1,11 +1,11 @@
 import {registerSvg, start, UrlThemeLoader} from 'mask';
-import {renderTextNode} from 'persona';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {$getRenderSpec$} from '../src-next/render/render-component-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
+import {renderComponent} from './demo-state';
 import {ROOT} from './root';
 
 
@@ -30,8 +30,7 @@ window.addEventListener('load', () => {
     registerSvg(vine, key, {type: 'embed', content});
   }
 
-  $getRenderSpec$.get(vine).next(() => renderTextNode({id: {}, textContent: 'TODO'}));
-
+  $getRenderSpec$.get(vine).next(id => renderComponent(id, vine));
   $locationService.get(vine).run().subscribe();
 });
 

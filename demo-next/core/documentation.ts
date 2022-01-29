@@ -4,6 +4,8 @@ import {Context, Ctrl, DIV, id, osingle, registerCustomElement, renderCustomElem
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import {D1_DEMO} from '../piece/d1';
+
 import template from './documentation.html';
 import {INSTRUCTION} from './instruction';
 import {$locationService} from './location-service';
@@ -49,7 +51,7 @@ export const DOCUMENTATION = registerCustomElement({
   ctrl: Documentation,
   deps: [
     // CanvasDemo,
-    // D1Demo,
+    D1_DEMO,
     // D2Demo,
     // D6Demo,
     // DeckDemo,

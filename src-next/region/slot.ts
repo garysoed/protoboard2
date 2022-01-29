@@ -1,10 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, id, itarget, omulti, registerCustomElement, RenderSpec} from 'persona';
-import {OperatorFunction, Observable} from 'rxjs';
+import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion} from '../core/base-region';
-import {D1State} from '../piece/d1';
 import {RegionState} from '../types/region-state';
 
 import template from './slot.html';
@@ -25,7 +24,7 @@ const $slot = {
 };
 
 
-export function slotState(id: {}, input: Partial<D1State> = {}): SlotState {
+export function slotState(id: {}, input: Partial<SlotState> = {}): SlotState {
   return {
     id,
     contentIds: mutableState([]),

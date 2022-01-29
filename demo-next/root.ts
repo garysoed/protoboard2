@@ -5,11 +5,13 @@ import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
 import {ACTIVE} from '../src-next/core/active';
+import {D1} from '../src-next/piece/d1';
 import {SLOT} from '../src-next/region/slot';
 
 import {DOCUMENTATION} from './core/documentation';
 import {DRAWER} from './core/drawer';
 import {$locationService, Views} from './core/location-service';
+import {RENDERED_FACE} from './piece/rendered-face';
 import template from './root.html';
 
 
@@ -47,9 +49,11 @@ export const ROOT = registerCustomElement({
   ctrl: Root,
   deps: [
     ACTIVE,
+    D1,
     DOCUMENTATION,
     DRAWER,
     OVERLAY,
+    RENDERED_FACE,
     ROOT_LAYOUT,
     SLOT,
     // HelpOverlay,
