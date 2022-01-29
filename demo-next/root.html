@@ -3,23 +3,8 @@
     position: relative;
   }
 
-  #lensContainer {
-    height: 36rem;
-    position: relative;
-  }
-
   #sidebar {
     width: 25%;
-  }
-
-  #slots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-  }
-
-  .slotContainer {
-    position: relative;
   }
 </style>
 
@@ -32,29 +17,7 @@
   <div layout="row" slot="main">
     <pbd-documentation flex></pbd-documentation>
     <div id="sidebar" layout="column">
-      <div id="lensContainer">
-        <pb-lens-display></pb-lens-display>
-      </div>
-      <div id="slots" flex>
-        <div class="slotContainer">
-          <pb-slot id="slot1"></pb-slot>
-        </div>
-        <div class="slotContainer">
-          <pb-slot id="slot2"></pb-slot>
-        </div>
-        <div class="slotContainer">
-          <pb-slot id="slot3"></pb-slot>
-        </div>
-        <div class="slotContainer">
-          <pb-slot id="slot4"></pb-slot>
-        </div>
-        <div class="slotContainer">
-          <pb-slot id="slot5"></pb-slot>
-        </div>
-        <div class="slotContainer">
-          <pb-slot id="slot6"></pb-slot>
-        </div>
-      </div>
+      <pb-lens-display></pb-lens-display>
     </div>
   </div>
   <pbd-drawer id="drawer" slot="drawer"></pbd-drawer>
