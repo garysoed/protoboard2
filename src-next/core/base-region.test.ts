@@ -71,7 +71,7 @@ test('@protoboard2/src/core/base-region', init => {
         inputs: {
           state: of(states.get(id)),
         },
-        children: [renderTestFace(id, id)],
+        children: of([renderTestFace(id, id)]),
       });
     });
     return {states, tester};
@@ -81,7 +81,7 @@ test('@protoboard2/src/core/base-region', init => {
     should('render the contents correctly', () => {
       $getRenderSpec$.get(_.tester.vine).next(id => {
         return renderTextNode({
-          textContent: id as string,
+          textContent: of(id as string),
           id,
         });
       });

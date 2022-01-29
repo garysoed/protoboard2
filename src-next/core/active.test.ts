@@ -23,7 +23,7 @@ test('@protoboard2/src/core/active', init => {
     const tester = setupTest({roots: [ACTIVE]});
     $getRenderSpec$.get(tester.vine).next(id => {
       return renderTextNode({
-        textContent: id as string,
+        textContent: of(id as string),
         id,
       });
     });
@@ -66,7 +66,7 @@ test('@protoboard2/src/core/active', init => {
       const left = 123;
       $getRenderSpec$.get(_.tester.vine).next(id => {
         return renderHtml({
-          raw: '<div>content</div>',
+          raw: of('<div>content</div>'),
           id,
           parseType: 'text/xml',
         });

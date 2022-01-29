@@ -81,7 +81,7 @@ test('@protoboard2/src/action/drop-action', init => {
       return renderCustomElement({
         registration: D1,
         id,
-        children: [renderTestFace(id, id)],
+        children: of([renderTestFace(id, id)]),
       });
     });
     return {tester};

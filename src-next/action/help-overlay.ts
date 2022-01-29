@@ -2,7 +2,7 @@ import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/co
 import {cache} from 'gs-tools/export/data';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, DIV, id, ievent, oclass, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
 import template from './help-overlay.html';
@@ -47,7 +47,7 @@ export class HelpOverlay implements Ctrl {
             $zip(countableIterable()),
             $map(([, index]) => renderCustomElement({
               registration: HELP_TABLE,
-              inputs: {index: `${index}`},
+              inputs: {index: of(`${index}`)},
               id: index,
             })),
             $asArray(),

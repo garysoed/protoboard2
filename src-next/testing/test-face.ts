@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {$svgService, registerSvg} from 'mask';
 import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, tap, withLatestFrom} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
@@ -33,7 +33,7 @@ class TestFace implements Ctrl {
               return null;
             }
             return renderHtml({
-              raw,
+              raw: of(raw),
               parseType: 'image/svg+xml',
               id: raw,
             });
@@ -65,8 +65,8 @@ export function renderTestFace(id: string, shade: string): RenderSpec {
     registration: TEST_FACE,
     id: shade,
     attrs: new Map([
-      ['shade', shade],
-      ['slot', 'face-0'],
+      ['shade', of(shade)],
+      ['slot', of('face-0')],
     ]),
   });
 }

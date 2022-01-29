@@ -2,7 +2,7 @@ import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
 import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
 import {Context, Ctrl, DIV, id, ievent, iflag, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
-import {Observable, of as observableOf} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -45,19 +45,21 @@ export class Drawer implements Ctrl {
     const node$list = linkConfig.map(({label, path}) => {
       return renderCustomElement({
         registration: BUTTON,
-        children: [renderCustomElement({
-          registration: LINE_LAYOUT,
-          attrs: new Map([['path', path]]),
-          inputs: {},
-          textContent: label,
-          id: label,
-        })],
-        inputs: {isSecondary: true},
+        children: of([
+          renderCustomElement({
+            registration: LINE_LAYOUT,
+            attrs: new Map([['path', of(path)]]),
+            inputs: {},
+            textContent: of(label),
+            id: label,
+          }),
+        ]),
+        inputs: {isSecondary: of(true)},
         id: label,
       });
     });
 
-    return observableOf(node$list);
+    return of(node$list);
   }
 
   private setupRootOnClick(): Observable<unknown> {

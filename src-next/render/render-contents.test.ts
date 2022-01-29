@@ -57,7 +57,7 @@ test('@protoboard2/src/render/render-contents', init => {
     should('render the contents correctly', () => {
       $getRenderSpec$.get(_.tester.vine).next(id => {
         return renderTextNode({
-          textContent: id as string,
+          textContent: of(id as string),
           id,
         });
       });

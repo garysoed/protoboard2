@@ -64,9 +64,9 @@ function renderPiece(
       $map(([faceType, index]) => renderCustomElement({
         registration: RENDERED_FACE,
         id: {id, index},
-        attrs: new Map([['slot', `face-${index}`]]),
+        attrs: new Map([['slot', of(`face-${index}`)]]),
         inputs: {
-          faceType,
+          faceType: of(faceType),
         },
       })),
       $asArray(),
@@ -76,7 +76,7 @@ function renderPiece(
     registration: getRegistration(faces.length),
     inputs: {state: of(state$)},
     id,
-    children: faces,
+    children: of(faces),
   });
 }
 

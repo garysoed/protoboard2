@@ -69,26 +69,26 @@ export class HelpTable implements Ctrl {
               const rows$list = $pipe(
                   content.actions,
                   $map(({actionName, trigger}) => {
-                    const keyboardEl$ = renderCustomElement({
+                    const keyboardEl = renderCustomElement({
                       registration: KEYBOARD,
                       attrs: new Map([['a', of('test')]]),
                       inputs: {text: of(triggerKeySpecToString(trigger))},
                       id: {},
                     });
-                    const triggerEl$ = renderElement({
+                    const triggerEl = renderElement({
                       tag: 'td',
-                      children: [keyboardEl$],
+                      children: of([keyboardEl]),
                       id: {},
                     });
 
-                    const actionEl$ = renderElement({
+                    const actionEl = renderElement({
                       tag: 'td',
-                      textContent: actionName,
+                      textContent: of(actionName),
                       id: {},
                     });
                     return renderElement({
                       tag: 'tr',
-                      children: [triggerEl$, actionEl$],
+                      children: of([triggerEl, actionEl]),
                       id: {},
                     });
                   }),

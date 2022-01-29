@@ -5,6 +5,7 @@ import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {renderCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
+import {of} from 'rxjs';
 
 import {D1} from '../piece/d1';
 import {$getRenderSpec$} from '../render/render-component-spec';
@@ -27,7 +28,7 @@ test('@protoboard2/src/region/slot', init => {
       return renderCustomElement({
         registration: D1,
         id,
-        children: [renderTestFace(id, id)],
+        children: of([renderTestFace(id, id)]),
       });
     });
 
