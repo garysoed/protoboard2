@@ -2,6 +2,7 @@ import {$stateService, source, Vine} from 'grapevine';
 import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {renderCustomElement, RenderSpec} from 'persona';
+import {of} from 'rxjs';
 
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {slotState, SlotState} from '../src-next/region/slot';
@@ -46,7 +47,7 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
     case GEM_ID:
       return renderPiece(id, [FaceType.GEM], state$._('pieces')._('gem'));
     case MEEPLE_ID:
-      return renderPiece(id, [FaceType.MEEPLE], state$._('pieces')._('gem'));
+      return renderPiece(id, [FaceType.MEEPLE], state$._('pieces')._('meeple'));
     default:
       throw new Error(`Unhandled render component ID: ${id}`);
   }
@@ -73,7 +74,7 @@ function renderPiece(
 
   return renderCustomElement({
     registration: getRegistration(faces.length),
-    inputs: {state: state$},
+    inputs: {state: of(state$)},
     id,
     children: faces,
   });

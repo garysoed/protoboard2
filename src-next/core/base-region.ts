@@ -18,7 +18,7 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
     readonly label: UnresolvedIO<IAttr>;
-    readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
+    readonly onAction: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
     readonly drop: UnresolvedIO<ICall<undefined, 'drop'>>;
     readonly dropConfig: UnresolvedIO<IValue<TriggerSpec, 'dropConfig'>>;

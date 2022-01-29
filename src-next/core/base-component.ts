@@ -26,7 +26,7 @@ interface ActionInstalledPayload {
 export interface BaseComponentSpecType<S> {
   host: {
     readonly label: UnresolvedIO<IAttr>;
-    readonly onTrigger: UnresolvedIO<OEvent<ActionEvent>>;
+    readonly onAction: UnresolvedIO<OEvent<ActionEvent>>;
     readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
 }
@@ -35,7 +35,7 @@ export function create$baseComponent<S extends ComponentState>(): BaseComponentS
   return {
     host: {
       label: iattr('label'),
-      onTrigger: oevent(ACTION_EVENT, ActionEvent),
+      onAction: oevent(ACTION_EVENT, ActionEvent),
       state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
     },
   };
@@ -70,7 +70,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
             action(this.$baseComponent, config$),
             withLatestFrom(this.state._('id')),
             map(([, id]) => new ActionEvent(action, id)),
-            this.$baseComponent.host.onTrigger(),
+            this.$baseComponent.host.onAction(),
         );
   }
 

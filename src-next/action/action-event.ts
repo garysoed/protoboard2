@@ -7,6 +7,6 @@ export class ActionEvent extends Event {
       readonly action: Action<any, any>,
       readonly id: {},
   ) {
-    super(ACTION_EVENT, {bubbles: true});
+    super(ACTION_EVENT, {bubbles: true, composed: true});
   }
 }
