@@ -10,8 +10,9 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion} from '../core/base-region';
-import {D1} from '../piece/d1';
-import {$getRenderSpec$} from '../render/render-component-spec';
+import {D1, d1State} from '../piece/d1';
+import {$getComponentRenderSpec$} from '../render/render-component-spec';
+import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {onTrigger} from '../trigger/trigger';
 import {RegionState} from '../types/region-state';
@@ -74,14 +75,17 @@ test('@protoboard2/src/action/drop-action', init => {
       roots: [D1, TEST, TEST_FACE],
     });
 
-    $getRenderSpec$.get(tester.vine).next(id => {
+    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
+    $getComponentRenderSpec$.get(tester.vine).next(id => {
       if (!stringType.check(id)) {
         throw new Error(`Invalid ID ${id}`);
       }
       return renderCustomElement({
         registration: D1,
         id,
-        children: of([renderTestFace(id, id)]),
+        inputs: {
+          state: of($stateService.get(tester.vine).addRoot(d1State(id, [id]))._()),
+        },
       });
     });
     return {tester};

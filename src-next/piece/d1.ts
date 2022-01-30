@@ -2,12 +2,14 @@ import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
 import {intersectType, undefinedType} from 'gs-types';
-import {Context, iattr, icall, id, itarget, ivalue, ostyle, registerCustomElement, SLOT} from 'persona';
+import {Context, iattr, icall, id, itarget, ivalue, osingle, ostyle, registerCustomElement, SLOT} from 'persona';
 import {Observable} from 'rxjs';
+import {map, withLatestFrom} from 'rxjs/operators';
 
 import {pickAction} from '../action/pick-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
 import {IsRotatable} from '../types/is-rotatable';
@@ -16,7 +18,9 @@ import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 import template from './d1.html';
 
 
-export interface D1State extends ComponentState, IsRotatable {}
+export interface D1State extends ComponentState, IsRotatable {
+  readonly faces: [{}];
+}
 
 /**
  * The D1's API.
@@ -40,6 +44,7 @@ const $d1 = {
   shadow: {
     container: id('container', SLOT, {
       height: ostyle('height'),
+      face: osingle(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -47,9 +52,10 @@ const $d1 = {
   },
 };
 
-export function d1State(id: {}, partial: Partial<D1State> = {}): D1State {
+export function d1State(id: {}, faces: [{}], partial: Partial<D1State> = {}): D1State {
   return {
     id,
+    faces,
     rotationDeg: mutableState(0),
     ...partial,
   };
@@ -67,6 +73,12 @@ class D1Ctrl extends BaseComponent<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
+      this.state._('faces').pipe(
+          map(([face]) => face),
+          withLatestFrom($getFaceRenderSpec$.get(this.$.vine)),
+          map(([face, getFaceRenderSpec]) => getFaceRenderSpec(face)),
+          this.$.shadow.container.face(),
+      ),
       this.$.host.height.pipe(mapNullableTo(''), this.$.shadow.container.height()),
       this.$.host.width.pipe(mapNullableTo(''), this.$.shadow.container.width()),
       this.installAction(

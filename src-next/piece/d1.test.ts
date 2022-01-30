@@ -7,28 +7,31 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
-import {TEST_FACE} from '../testing/test-face';
+import {$getFaceRenderSpec$} from '../render/render-face-spec';
+import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {TriggerType} from '../types/trigger-spec';
 
 import {D1, d1State, D1State} from './d1';
 import goldens from './goldens/goldens.json';
 import {D1Harness} from './testing/d1-harness';
 
+const FACE_ID = 'steelblue';
+
 
 test('@protoboard2/src/piece/d1', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/piece/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST_FACE]});
+
+    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
     return {tester};
   });
 
   should('render the face correctly', () => {
-    const face = _.tester.createElement(TEST_FACE);
-    face.setAttribute('shade', 'red');
-    face.setAttribute('slot', 'face-0');
+    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State({}, [FACE_ID]))._();
 
     const element = _.tester.createElement(D1);
-    element.appendChild(face);
+    element.state = state;
 
     assert(element).to.matchSnapshot('d1__render.html');
   });
@@ -47,7 +50,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id))._();
+      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -60,7 +63,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id))._();
+      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -71,20 +74,16 @@ test('@protoboard2/src/piece/d1', init => {
 
   test('rotate action', _, init => {
     const _ = init(_ => {
-      const face = _.tester.createElement(TEST_FACE);
-      face.setAttribute('slot', 'face-0');
-
       const element = _.tester.createElement(D1);
-      element.appendChild(face);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');
       return {..._, element};
     });
 
     should('trigger on click', () => {
-      const id = {};
+      const id = '';
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id))._();
+      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -96,7 +95,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id))._();
+      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
       _.element.state = state;
       _.element.rotate(undefined);
 

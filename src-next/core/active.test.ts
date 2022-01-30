@@ -5,7 +5,7 @@ import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {$getRenderSpec$} from '../render/render-component-spec';
+import {$getComponentRenderSpec$} from '../render/render-component-spec';
 
 import {ACTIVE} from './active';
 import {$activeState} from './active-spec';
@@ -21,7 +21,7 @@ test('@protoboard2/src/core/active', init => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
 
     const tester = setupTest({roots: [ACTIVE]});
-    $getRenderSpec$.get(tester.vine).next(id => {
+    $getComponentRenderSpec$.get(tester.vine).next(id => {
       return renderTextNode({
         textContent: of(id as string),
         id,
@@ -64,7 +64,7 @@ test('@protoboard2/src/core/active', init => {
   test('position', () => {
     should('render left correctly', () => {
       const left = 123;
-      $getRenderSpec$.get(_.tester.vine).next(id => {
+      $getComponentRenderSpec$.get(_.tester.vine).next(id => {
         return renderHtml({
           raw: of('<div>content</div>'),
           id,

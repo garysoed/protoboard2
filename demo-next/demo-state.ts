@@ -1,6 +1,6 @@
 import {$stateService, source, Vine} from 'grapevine';
-import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
+import {enumType} from 'gs-types';
 import {renderCustomElement, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
@@ -36,8 +36,8 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
     ),
   },
   pieces: {
-    gem: d1State(GEM_ID),
-    meeple: d1State(MEEPLE_ID),
+    gem: d1State(GEM_ID, [FaceType.GEM]),
+    meeple: d1State(MEEPLE_ID, [FaceType.MEEPLE]),
   },
 })._());
 
@@ -45,50 +45,36 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
   const state$ = $state$.get(vine);
   switch (id) {
     case GEM_ID:
-      return renderPiece(id, [FaceType.GEM], state$._('pieces')._('gem'));
+      return renderPiece(id, D1, state$._('pieces')._('gem'));
     case MEEPLE_ID:
-      return renderPiece(id, [FaceType.MEEPLE], state$._('pieces')._('meeple'));
+      return renderPiece(id, D1, state$._('pieces')._('meeple'));
     default:
       throw new Error(`Unhandled render component ID: ${id}`);
   }
 }
 
-function renderPiece(
-    id: {},
-    faceTypes: readonly FaceType[],
-    state$: ImmutableResolver<D1State>,
-): RenderSpec {
-  const faces = $pipe(
-      faceTypes,
-      $zip(countableIterable()),
-      $map(([faceType, index]) => renderCustomElement({
-        registration: RENDERED_FACE,
-        id: {id, index},
-        attrs: new Map([['slot', of(`face-${index}`)]]),
-        inputs: {
-          faceType: of(faceType),
-        },
-      })),
-      $asArray(),
-  );
+export function renderFace(id: unknown): RenderSpec {
+  if (!enumType<FaceType>(FaceType).check(id)) {
+    throw new Error(`ID ${id} is not a FaceType`);
+  }
 
   return renderCustomElement({
-    registration: getRegistration(faces.length),
-    inputs: {state: of(state$)},
-    id,
-    children: of(faces),
+    registration: RENDERED_FACE,
+    id: {id},
+    inputs: {
+      faceType: of(id),
+    },
   });
 }
 
-function getRegistration(faceCount: number): typeof D1 {
-  switch (faceCount) {
-    case 1:
-      return D1;
-    // case 2:
-    //   return $d2;
-    // case 6:
-    //   return $d6;
-    default:
-      throw new Error(`Unhandled number of faces: ${faceCount}`);
-  }
+function renderPiece(
+    id: {},
+    registration: typeof D1,
+    state$: ImmutableResolver<D1State>,
+): RenderSpec {
+  return renderCustomElement({
+    registration,
+    inputs: {state: of(state$)},
+    id,
+  });
 }

@@ -1,4 +1,5 @@
 import {cache} from 'gs-tools/export/data';
+import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
 import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
@@ -60,12 +61,15 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: string, shade: string): RenderSpec {
+export function renderTestFace(id: unknown): RenderSpec {
+  if (!stringType.check(id)) {
+    throw new Error(`Invalid ID ${id}`);
+  }
   return renderCustomElement({
     registration: TEST_FACE,
-    id: shade,
+    id,
     attrs: new Map([
-      ['shade', of(shade)],
+      ['shade', of(id)],
       ['slot', of('face-0')],
     ]),
   });

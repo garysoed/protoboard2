@@ -9,7 +9,8 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
-import {$getRenderSpec$} from '../render/render-component-spec';
+import {$getComponentRenderSpec$} from '../render/render-component-spec';
+import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {RegionState} from '../types/region-state';
@@ -61,7 +62,8 @@ test('@protoboard2/src/core/base-region', init => {
     const tester = setupTest({roots: [D1, TEST, TEST_FACE]});
     const states = new Map<string, ImmutableResolver<D1State>>();
 
-    $getRenderSpec$.get(tester.vine).next(id => {
+    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
+    $getComponentRenderSpec$.get(tester.vine).next(id => {
       if (!stringType.check(id)) {
         throw new Error(`Invalid ID ${id}`);
       }
@@ -71,7 +73,6 @@ test('@protoboard2/src/core/base-region', init => {
         inputs: {
           state: of(states.get(id)),
         },
-        children: of([renderTestFace(id, id)]),
       });
     });
     return {states, tester};
@@ -79,7 +80,7 @@ test('@protoboard2/src/core/base-region', init => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      $getRenderSpec$.get(_.tester.vine).next(id => {
+      $getComponentRenderSpec$.get(_.tester.vine).next(id => {
         return renderTextNode({
           textContent: of(id as string),
           id,
@@ -107,6 +108,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
+      _.states.set(id, stateService.addRoot(d1State(id, [id]))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -127,6 +129,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
+      _.states.set(id, stateService.addRoot(d1State(id, [id]))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -136,7 +139,7 @@ test('@protoboard2/src/core/base-region', init => {
 
       element.drop(undefined);
 
-      assert(element).to.matchSnapshot('base-region__drop.html');
+      assert(element).to.matchSnapshot('base-region__drop-fn.html');
       assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
     });
   });
@@ -144,7 +147,7 @@ test('@protoboard2/src/core/base-region', init => {
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
       const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, [id]))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({

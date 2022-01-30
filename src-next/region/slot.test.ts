@@ -7,8 +7,9 @@ import {renderCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
-import {D1} from '../piece/d1';
-import {$getRenderSpec$} from '../render/render-component-spec';
+import {D1, d1State} from '../piece/d1';
+import {$getComponentRenderSpec$} from '../render/render-component-spec';
+import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 
 import goldens from './goldens/goldens.json';
@@ -21,14 +22,17 @@ test('@protoboard2/src/region/slot', init => {
 
     const tester = setupTest({roots: [SLOT, D1, TEST_FACE]});
 
-    $getRenderSpec$.get(tester.vine).next(id => {
+    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
+    $getComponentRenderSpec$.get(tester.vine).next(id => {
       if (!stringType.check(id)) {
         throw new Error(`Invalid ID ${id}`);
       }
       return renderCustomElement({
         registration: D1,
         id,
-        children: of([renderTestFace(id, id)]),
+        inputs: {
+          state: of($stateService.get(tester.vine).addRoot(d1State(id, [id]))._()),
+        },
       });
     });
 
