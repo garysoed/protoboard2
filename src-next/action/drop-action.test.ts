@@ -14,6 +14,7 @@ import {D1, d1State} from '../piece/d1';
 import {$getComponentRenderSpec$} from '../render/render-component-spec';
 import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {onTrigger} from '../trigger/trigger';
 import {RegionState} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -73,6 +74,7 @@ test('@protoboard2/src/action/drop-action', init => {
 
     const tester = setupTest({
       roots: [D1, TEST, TEST_FACE],
+      overrides: [THEME_LOADER_TEST_OVERRIDE],
     });
 
     $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);

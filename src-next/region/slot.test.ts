@@ -11,6 +11,7 @@ import {D1, d1State} from '../piece/d1';
 import {$getComponentRenderSpec$} from '../render/render-component-spec';
 import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
 import goldens from './goldens/goldens.json';
 import {SLOT, SlotState} from './slot';
@@ -20,7 +21,7 @@ test('@protoboard2/src/region/slot', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/region/goldens', goldens));
 
-    const tester = setupTest({roots: [SLOT, D1, TEST_FACE]});
+    const tester = setupTest({roots: [SLOT, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
     $getComponentRenderSpec$.get(tester.vine).next(id => {

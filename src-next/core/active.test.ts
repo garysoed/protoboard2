@@ -6,6 +6,7 @@ import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {$getComponentRenderSpec$} from '../render/render-component-spec';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
 import {ACTIVE} from './active';
 import {$activeState} from './active-spec';
@@ -20,7 +21,7 @@ test('@protoboard2/src/core/active', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
 
-    const tester = setupTest({roots: [ACTIVE]});
+    const tester = setupTest({roots: [ACTIVE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     $getComponentRenderSpec$.get(tester.vine).next(id => {
       return renderTextNode({
         textContent: of(id as string),

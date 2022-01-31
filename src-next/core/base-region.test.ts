@@ -12,6 +12,7 @@ import {D1Harness} from '../piece/testing/d1-harness';
 import {$getComponentRenderSpec$} from '../render/render-component-spec';
 import {$getFaceRenderSpec$} from '../render/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {RegionState} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -59,7 +60,7 @@ const TEST = registerCustomElement({
 test('@protoboard2/src/core/base-region', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
-    const tester = setupTest({roots: [D1, TEST, TEST_FACE]});
+    const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     const states = new Map<string, ImmutableResolver<D1State>>();
 
     $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);

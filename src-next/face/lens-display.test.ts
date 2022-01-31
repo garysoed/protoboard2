@@ -4,6 +4,8 @@ import {renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
+
 import goldens from './goldens/goldens.json';
 import {LENS_DISPLAY} from './lens-display';
 import {$getLensRenderSpec$, $lensService} from './lens-service';
@@ -14,7 +16,7 @@ const ID = {};
 test('@protoboard2/src/face/lens-display', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/face/goldens', goldens));
-    const tester = setupTest({roots: [LENS_DISPLAY]});
+    const tester = setupTest({roots: [LENS_DISPLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     $getLensRenderSpec$.get(tester.vine).next(id => {
       if (id !== ID) {

@@ -11,6 +11,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {renderRotatable} from '../render/render-rotatable';
 import {TEST_FACE} from '../testing/test-face';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {ComponentState} from '../types/component-state';
 import {IsRotatable} from '../types/is-rotatable';
 
@@ -67,7 +68,7 @@ test('@protoboard2/src/action/rotate-action', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/action/goldens', goldens));
 
-    const tester = setupTest({roots: [TEST]});
+    const tester = setupTest({roots: [TEST], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     return {tester};
   });

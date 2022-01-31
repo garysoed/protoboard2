@@ -2,6 +2,7 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {getHarness, setupTest} from 'persona/export/testing';
 
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
@@ -21,7 +22,7 @@ test('@protoboard2/action/help-overlay', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/action/goldens', goldens));
 
-    const tester = setupTest({roots: [HELP_OVERLAY]});
+    const tester = setupTest({roots: [HELP_OVERLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     return {tester};
   });
