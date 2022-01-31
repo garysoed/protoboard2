@@ -4,11 +4,12 @@ import {renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
+import {registerLensRenderSpec} from '../renderspec/render-lens-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
 import goldens from './goldens/goldens.json';
 import {LENS_DISPLAY} from './lens-display';
-import {$getLensRenderSpec$, $lensService} from './lens-service';
+import {$lensService} from './lens-service';
 
 
 const ID = {};
@@ -18,9 +19,9 @@ test('@protoboard2/src/face/lens-display', init => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/face/goldens', goldens));
     const tester = setupTest({roots: [LENS_DISPLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
-    $getLensRenderSpec$.get(tester.vine).next(id => {
+    registerLensRenderSpec(tester.vine, id => {
       if (id !== ID) {
-        throw new Error(`Unhandled ID ${id}`);
+        return null;
       }
 
       return renderTextNode({id, textContent: of('Rendered details')});

@@ -9,8 +9,8 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
-import {$getComponentRenderSpec$} from '../render/render-component-spec';
-import {$getFaceRenderSpec$} from '../render/render-face-spec';
+import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
+import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
@@ -63,10 +63,10 @@ test('@protoboard2/src/core/base-region', init => {
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     const states = new Map<string, ImmutableResolver<D1State>>();
 
-    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
-    $getComponentRenderSpec$.get(tester.vine).next(id => {
+    registerFaceRenderSpec(tester.vine, renderTestFace);
+    registerComponentRenderSpec(tester.vine, id => {
       if (!stringType.check(id)) {
-        throw new Error(`Invalid ID ${id}`);
+        return null;
       }
       return renderCustomElement({
         registration: D1,
@@ -81,7 +81,7 @@ test('@protoboard2/src/core/base-region', init => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      $getComponentRenderSpec$.get(_.tester.vine).next(id => {
+      registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
           textContent: of(id as string),
           id,

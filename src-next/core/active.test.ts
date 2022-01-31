@@ -5,7 +5,7 @@ import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {$getComponentRenderSpec$} from '../render/render-component-spec';
+import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
 import {ACTIVE} from './active';
@@ -22,7 +22,7 @@ test('@protoboard2/src/core/active', init => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
 
     const tester = setupTest({roots: [ACTIVE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
-    $getComponentRenderSpec$.get(tester.vine).next(id => {
+    registerComponentRenderSpec(tester.vine, id => {
       return renderTextNode({
         textContent: of(id as string),
         id,
@@ -65,7 +65,7 @@ test('@protoboard2/src/core/active', init => {
   test('position', () => {
     should('render left correctly', () => {
       const left = 123;
-      $getComponentRenderSpec$.get(_.tester.vine).next(id => {
+      registerComponentRenderSpec(_.tester.vine, id => {
         return renderHtml({
           raw: of('<div>content</div>'),
           id,

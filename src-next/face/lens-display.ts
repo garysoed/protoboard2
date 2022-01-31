@@ -4,7 +4,9 @@ import {Context, Ctrl, osingle, registerCustomElement, RenderSpec, root} from 'p
 import {Observable} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
-import {$getLensRenderSpec$, $lensService} from './lens-service';
+import {$getLensRenderSpec$} from '../renderspec/render-lens-spec';
+
+import {$lensService} from './lens-service';
 
 
 export const $lensDisplay = {

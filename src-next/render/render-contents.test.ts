@@ -7,8 +7,9 @@ import {Context, Ctrl, DIV, id, omulti, registerCustomElement, renderTextNode} f
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
+import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
+
 import goldens from './goldens/goldens.json';
-import {$getComponentRenderSpec$} from './render-component-spec';
 import {renderContents} from './render-contents';
 
 
@@ -55,7 +56,7 @@ test('@protoboard2/src/render/render-contents', init => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      $getComponentRenderSpec$.get(_.tester.vine).next(id => {
+      registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
           textContent: of(id as string),
           id,

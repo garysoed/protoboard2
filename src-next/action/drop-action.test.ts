@@ -11,8 +11,8 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion} from '../core/base-region';
 import {D1, d1State} from '../piece/d1';
-import {$getComponentRenderSpec$} from '../render/render-component-spec';
-import {$getFaceRenderSpec$} from '../render/render-face-spec';
+import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
+import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {onTrigger} from '../trigger/trigger';
@@ -77,8 +77,8 @@ test('@protoboard2/src/action/drop-action', init => {
       overrides: [THEME_LOADER_TEST_OVERRIDE],
     });
 
-    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
-    $getComponentRenderSpec$.get(tester.vine).next(id => {
+    registerFaceRenderSpec(tester.vine, renderTestFace);
+    registerComponentRenderSpec(tester.vine, id => {
       if (!stringType.check(id)) {
         throw new Error(`Invalid ID ${id}`);
       }

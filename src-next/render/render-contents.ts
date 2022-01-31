@@ -3,7 +3,7 @@ import {RenderSpec} from 'persona';
 import {combineLatest, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {$getComponentRenderSpec$} from './render-component-spec';
+import {$getComponentRenderSpec$} from '../renderspec/render-component-spec';
 
 
 export function renderContents(

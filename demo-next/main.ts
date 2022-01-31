@@ -1,8 +1,8 @@
 import {registerSvg, start, UrlThemeLoader} from 'mask';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {$getComponentRenderSpec$} from '../src-next/render/render-component-spec';
-import {$getFaceRenderSpec$} from '../src-next/render/render-face-spec';
+import {registerComponentRenderSpec} from '../src-next/renderspec/render-component-spec';
+import {registerFaceRenderSpec} from '../src-next/renderspec/render-face-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
@@ -31,8 +31,8 @@ window.addEventListener('load', () => {
     registerSvg(vine, key, {type: 'embed', content});
   }
 
-  $getFaceRenderSpec$.get(vine).next(id => renderFace(id));
-  $getComponentRenderSpec$.get(vine).next(id => renderComponent(id, vine));
+  registerFaceRenderSpec(vine, id => renderFace(id));
+  registerComponentRenderSpec(vine, id => renderComponent(id, vine));
   $locationService.get(vine).run().subscribe();
 });
 

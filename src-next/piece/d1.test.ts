@@ -7,7 +7,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
-import {$getFaceRenderSpec$} from '../render/render-face-spec';
+import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
@@ -15,6 +15,7 @@ import {TriggerType} from '../types/trigger-spec';
 import {D1, d1State, D1State} from './d1';
 import goldens from './goldens/goldens.json';
 import {D1Harness} from './testing/d1-harness';
+
 
 const FACE_ID = 'steelblue';
 
@@ -24,7 +25,7 @@ test('@protoboard2/src/piece/d1', init => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/piece/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
-    $getFaceRenderSpec$.get(tester.vine).next(renderTestFace);
+    registerFaceRenderSpec(tester.vine, renderTestFace);
     return {tester};
   });
 
