@@ -4,9 +4,10 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {renderCustomElement} from 'persona';
-import {setupTest} from 'persona/export/testing';
+import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
+import {$activeState} from '../core/active-spec';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
@@ -15,6 +16,7 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 
 import goldens from './goldens/goldens.json';
 import {SLOT, SlotState} from './slot';
+import {SlotHarness} from './testing/slot-harness';
 
 
 test('@protoboard2/src/region/slot', init => {
@@ -52,5 +54,22 @@ test('@protoboard2/src/region/slot', init => {
     assert(element).to.matchSnapshot('slot__render.html');
   });
 
-  // TODO: Test drop
+  test('drop action', () => {
+    should('add the piece from active state', () => {
+      of(['steelblue']).pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+
+      const stateService = $stateService.get(_.tester.vine);
+      const state$ = stateService.addRoot<SlotState>({
+        id: {},
+        contentIds: mutableState(['red', 'green', 'blue']),
+      })._();
+      const element = _.tester.createElement(SLOT);
+      element.state = state$;
+
+      const harness = getHarness(element, SlotHarness);
+      harness.simulateDrop();
+
+      assert;
+    });
+  });
 });
