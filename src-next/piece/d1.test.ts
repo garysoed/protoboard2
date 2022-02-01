@@ -30,7 +30,7 @@ test('@protoboard2/src/piece/d1', init => {
   });
 
   should('render the face correctly', () => {
-    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State({}, [FACE_ID]))._();
+    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State({}, FACE_ID))._();
 
     const element = _.tester.createElement(D1);
     element.state = state;
@@ -52,7 +52,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
+      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -65,7 +65,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
+      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -85,7 +85,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = '';
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
+      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -97,7 +97,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, [FACE_ID]))._();
+      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
       _.element.state = state;
       _.element.rotate(undefined);
 

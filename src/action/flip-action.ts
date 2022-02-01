@@ -4,8 +4,8 @@ import {attributeIn, integerParser} from 'persona';
 import {pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
+import {IsMultifaced} from '../../src-next/types/is-multifaced';
 import {triggerSpecParser, TriggerType} from '../core/trigger-spec';
-import {IsMultifaced} from '../payload/is-multifaced';
 
 import {Action, ActionParams, TriggerConfig, UnresolvedConfigSpecs} from './action-spec';
 

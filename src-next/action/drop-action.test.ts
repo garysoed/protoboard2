@@ -86,7 +86,7 @@ test('@protoboard2/src/action/drop-action', init => {
         registration: D1,
         id,
         inputs: {
-          state: of($stateService.get(tester.vine).addRoot(d1State(id, [id]))._()),
+          state: of($stateService.get(tester.vine).addRoot(d1State(id, id))._()),
         },
       });
     });

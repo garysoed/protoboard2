@@ -109,7 +109,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, [id]))._());
+      _.states.set(id, stateService.addRoot(d1State(id, id))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -130,7 +130,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, [id]))._());
+      _.states.set(id, stateService.addRoot(d1State(id, id))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -148,7 +148,7 @@ test('@protoboard2/src/core/base-region', init => {
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
       const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, [id]))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, id))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({

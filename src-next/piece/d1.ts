@@ -19,7 +19,7 @@ import template from './d1.html';
 
 
 export interface D1State extends ComponentState, IsRotatable {
-  readonly faces: [{}];
+  readonly face: unknown;
 }
 
 /**
@@ -52,10 +52,10 @@ const $d1 = {
   },
 };
 
-export function d1State(id: {}, faces: [{}], partial: Partial<D1State> = {}): D1State {
+export function d1State(id: {}, face: unknown, partial: Partial<D1State> = {}): D1State {
   return {
     id,
-    faces,
+    face,
     rotationDeg: mutableState(0),
     ...partial,
   };
@@ -73,8 +73,7 @@ class D1Ctrl extends BaseComponent<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      this.state._('faces').pipe(
-          map(([face]) => face),
+      this.state._('face').pipe(
           withLatestFrom($getFaceRenderSpec$.get(this.$.vine)),
           map(([face, getFaceRenderSpec]) => getFaceRenderSpec(face)),
           this.$.shadow.container.face(),
