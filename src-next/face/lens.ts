@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
+import {unknownType} from 'gs-types';
 import {Context, Ctrl, ievent, ivalue, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
@@ -10,7 +10,7 @@ import template from './lens.html';
 
 const $lens = {
   host: {
-    faceId: ivalue('faceId', instanceofType(Object)),
+    faceId: ivalue('faceId', unknownType),
     onMouseEnter: ievent('mouseenter', Event),
     onMouseLeave: ievent('mouseleave', Event),
   },

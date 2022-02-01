@@ -1,7 +1,7 @@
 import {$stateService, source, Vine} from 'grapevine';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {enumType} from 'gs-types';
-import {renderCustomElement, RenderSpec} from 'persona';
+import {renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
 import {D1, D1State, d1State} from '../src-next/piece/d1';
@@ -67,6 +67,22 @@ export function renderFace(id: unknown): RenderSpec {
   });
 }
 
+export function renderLens(id: unknown): RenderSpec|null {
+  if (!enumType<FaceType>(FaceType).check(id)) {
+    return null;
+  }
+
+  return renderHtml({
+    id,
+    raw: of(`
+    <div slot="details">
+      <h3 id="name">${getFaceName(id)}</h3>
+      <p mk-body-1>More detailed information on the piece goes here.</p>
+    </div>`),
+    parseType: 'text/html',
+  });
+}
+
 function renderPiece(
     id: {},
     registration: typeof D1,
@@ -77,4 +93,35 @@ function renderPiece(
     inputs: {state: of(state$)},
     id,
   });
+}
+
+function getFaceName(faceType: FaceType): string {
+  switch (faceType) {
+    case FaceType.CARD_BACK:
+      return 'Card Back';
+    case FaceType.CARD_FRONT:
+      return 'Card Front';
+    case FaceType.COIN_BACK:
+      return 'Coin Back';
+    case FaceType.COIN_FRONT:
+      return 'Coin Front';
+    case FaceType.DICE_PIP_1:
+      return 'Dice 1 (pip)';
+    case FaceType.DICE_PIP_2:
+      return 'Dice 2 (pip)';
+    case FaceType.DICE_PIP_3:
+      return 'Dice 3 (pip)';
+    case FaceType.DICE_PIP_4:
+      return 'Dice 4 (pip)';
+    case FaceType.DICE_PIP_5:
+      return 'Dice 5 (pip)';
+    case FaceType.DICE_PIP_6:
+      return 'Dice 6 (pip)';
+    case FaceType.GEM:
+      return 'Gem';
+    case FaceType.MEEPLE:
+      return 'Meeple';
+    default:
+      return '';
+  }
 }

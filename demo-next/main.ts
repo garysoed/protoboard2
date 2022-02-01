@@ -3,10 +3,11 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {registerComponentRenderSpec} from '../src-next/renderspec/render-component-spec';
 import {registerFaceRenderSpec} from '../src-next/renderspec/render-face-spec';
+import {registerLensRenderSpec} from '../src-next/renderspec/render-lens-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
-import {renderComponent, renderFace} from './demo-state';
+import {renderComponent, renderFace, renderLens} from './demo-state';
 import {ROOT} from './root';
 
 
@@ -33,6 +34,7 @@ window.addEventListener('load', () => {
 
   registerFaceRenderSpec(vine, id => renderFace(id));
   registerComponentRenderSpec(vine, id => renderComponent(id, vine));
+  registerLensRenderSpec(vine, id => renderLens(id));
   $locationService.get(vine).run().subscribe();
 });
 

@@ -6,6 +6,8 @@ import {map, tap} from 'rxjs/operators';
 
 import {HELP_OVERLAY} from '../src-next/action/help-overlay';
 import {ACTIVE} from '../src-next/core/active';
+import {LENS} from '../src-next/face/lens';
+import {LENS_DISPLAY} from '../src-next/face/lens-display';
 import {D1} from '../src-next/piece/d1';
 import {SLOT} from '../src-next/region/slot';
 
@@ -54,11 +56,12 @@ export const ROOT = registerCustomElement({
     DOCUMENTATION,
     DRAWER,
     HELP_OVERLAY,
+    LENS,
+    LENS_DISPLAY,
     OVERLAY,
     RENDERED_FACE,
     ROOT_LAYOUT,
     SLOT,
-    // LensDisplay,
   ],
   spec: $root,
   tag: 'pbd-root',

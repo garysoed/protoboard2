@@ -1,9 +1,10 @@
 import {cache} from 'gs-tools/export/data';
 import {ICON, registerSvg, renderTheme} from 'mask';
-import {Context, Ctrl, H3, iattr, id, otext, P, registerCustomElement} from 'persona';
+import {Context, Ctrl, iattr, id, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import {LENS} from '../../src-next/face/lens';
 import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';
@@ -41,10 +42,7 @@ const $renderedFace = {
   },
   shadow: {
     icon: id('icon', ICON),
-    name: id('name', H3, {
-      text: otext(),
-    }),
-    details: id('details', P),
+    lens: id('lens', LENS),
   },
 };
 
@@ -56,49 +54,13 @@ class RenderedFace implements Ctrl {
     return [
       renderTheme(this.$),
       this.icon$.pipe(this.$.shadow.icon.icon()),
-      this.faceName$.pipe(this.$.shadow.name.text()),
+      this.$.host.faceType.pipe(this.$.shadow.lens.faceId()),
     ];
   }
 
   @cache()
   private get icon$(): Observable<string> {
     return this.$.host.faceType.pipe(map(faceType => faceType ?? ''));
-  }
-
-  @cache()
-  private get faceName$(): Observable<string> {
-    return this.$.host.faceType.pipe(
-        map(faceType => {
-          switch (faceType) {
-            case FaceType.CARD_BACK:
-              return 'Card Back';
-            case FaceType.CARD_FRONT:
-              return 'Card Front';
-            case FaceType.COIN_BACK:
-              return 'Coin Back';
-            case FaceType.COIN_FRONT:
-              return 'Coin Front';
-            case FaceType.DICE_PIP_1:
-              return 'Dice 1 (pip)';
-            case FaceType.DICE_PIP_2:
-              return 'Dice 2 (pip)';
-            case FaceType.DICE_PIP_3:
-              return 'Dice 3 (pip)';
-            case FaceType.DICE_PIP_4:
-              return 'Dice 4 (pip)';
-            case FaceType.DICE_PIP_5:
-              return 'Dice 5 (pip)';
-            case FaceType.DICE_PIP_6:
-              return 'Dice 6 (pip)';
-            case FaceType.GEM:
-              return 'Gem';
-            case FaceType.MEEPLE:
-              return 'Meeple';
-            default:
-              return '';
-          }
-        }),
-    );
   }
 }
 

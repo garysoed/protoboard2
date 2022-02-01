@@ -3,9 +3,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 
 
 export class LensService {
-  private readonly faceId$_ = new BehaviorSubject<{}|null>(null);
+  private readonly faceId$_ = new BehaviorSubject<unknown>(null);
 
-  get faceId$(): Observable<{}|null> {
+  get faceId$(): Observable<unknown> {
     return this.faceId$_;
   }
 
@@ -13,8 +13,7 @@ export class LensService {
     this.faceId$_.next(null);
   }
 
-  // TODO: Use IDs for the render specs
-  show(key: {}): void {
+  show(key: unknown): void {
     this.faceId$_.next(key);
   }
 }
