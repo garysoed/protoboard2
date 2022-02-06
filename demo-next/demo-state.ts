@@ -6,6 +6,7 @@ import {of} from 'rxjs';
 
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
+import {D6, d6State, D6State} from '../src-next/piece/d6';
 import {slotState, SlotState} from '../src-next/region/slot';
 
 import {FaceType, RENDERED_FACE} from './piece/rendered-face';
@@ -19,10 +20,14 @@ export interface DemoState {
   d2: {
     cardSlot: SlotState;
     coinSlot: SlotState;
-  }
+  },
+  d6: {
+    diceSlot: SlotState;
+  },
   pieces: {
     card: D2State,
     coin: D2State,
+    dice: D6State,
     gem: D1State,
     meeple: D1State,
   },
@@ -31,6 +36,7 @@ export interface DemoState {
 enum ComponentType {
   CARD = 'card',
   COIN = 'coin',
+  DICE = 'dice',
   GEM = 'gem',
   MEEPLE = 'meeple',
 }
@@ -44,15 +50,32 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
     cardSlot: slotState({}, {contentIds: mutableState([ComponentType.CARD])}),
     coinSlot: slotState({}, {contentIds: mutableState([ComponentType.COIN])}),
   },
+  d6: {
+    diceSlot: slotState({}, {contentIds: mutableState([ComponentType.DICE])}),
+  },
   pieces: {
     card: d2State(ComponentType.CARD, [FaceType.CARD_BACK, FaceType.CARD_FRONT]),
     coin: d2State(ComponentType.COIN, [FaceType.COIN_BACK, FaceType.CARD_FRONT]),
+    dice: d6State(
+        ComponentType.DICE,
+        [
+          FaceType.DICE_PIP_1,
+          FaceType.DICE_PIP_2,
+          FaceType.DICE_PIP_3,
+          FaceType.DICE_PIP_4,
+          FaceType.DICE_PIP_5,
+          FaceType.DICE_PIP_6,
+        ],
+    ),
     gem: d1State(ComponentType.GEM, [FaceType.GEM]),
     meeple: d1State(ComponentType.MEEPLE, [FaceType.MEEPLE]),
   },
 })._());
 
 export function renderComponent(id: unknown, vine: Vine): RenderSpec {
+  if (!enumType<ComponentType>(ComponentType).check(id)) {
+    throw new Error('ID is not ComponentType');
+  }
   const state$ = $state$.get(vine);
   switch (id) {
     case ComponentType.CARD:
@@ -67,6 +90,12 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
         inputs: {state: of(state$._('pieces')._('coin'))},
         id,
       });
+    case ComponentType.DICE:
+      return renderCustomElement({
+        registration: D6,
+        inputs: {state: of(state$._('pieces')._('dice'))},
+        id,
+      });
     case ComponentType.GEM:
       return renderCustomElement({
         registration: D1,
@@ -79,8 +108,6 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
         inputs: {state: of(state$._('pieces')._('meeple'))},
         id,
       });
-    default:
-      throw new Error(`Unhandled render component ID: ${id}`);
   }
 }
 

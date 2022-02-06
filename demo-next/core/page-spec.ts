@@ -2,6 +2,7 @@ import {Registration} from 'persona';
 
 import {D1_DEMO} from '../piece/d1';
 import {D2_DEMO} from '../piece/d2';
+import {D6_DEMO} from '../piece/d6';
 
 import {INSTRUCTION} from './instruction';
 import {Views} from './location-service';
@@ -26,7 +27,7 @@ export const PIECE_LINK_CONFIGS: readonly PageSpec[] = [
   // {label: 'Canvas', path: Views.CANVAS},
   {label: 'D1', path: Views.D1, registration: D1_DEMO},
   {label: 'D2', path: Views.D2, registration: D2_DEMO},
-  // {label: 'D6', path: Views.D6},
+  {label: 'D6', path: Views.D6, registration: D6_DEMO},
 ];
 
 const ALL_SPECS: readonly PageSpec[] = [

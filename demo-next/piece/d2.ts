@@ -12,8 +12,8 @@ import template from './d2.html';
 
 const $d2Demo = {
   shadow: {
-    cardSlot: id('cardSlot', SLOT, {}),
-    coinSlot: id('coinSlot', SLOT, {}),
+    cardSlot: id('cardSlot', SLOT),
+    coinSlot: id('coinSlot', SLOT),
   },
 };
 
