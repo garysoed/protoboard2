@@ -1,6 +1,7 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
+import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {fromEvent} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -11,6 +12,7 @@ import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
+import {$random} from '../util/random';
 
 import {D2, d2State, D2State} from './d2';
 import goldens from './goldens/goldens.json';
@@ -24,10 +26,18 @@ const FACE_2_ID = 'steelblue';
 test('@protoboard2/src/piece/d2', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/piece/goldens', goldens));
-    const tester = setupTest({roots: [D2, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
+
+    const seed = new FakeSeed();
+    const tester = setupTest({
+      roots: [D2, TEST_FACE],
+      overrides: [
+        {override: $random, withValue: fromSeed(seed)},
+        THEME_LOADER_TEST_OVERRIDE,
+      ],
+    });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    return {tester};
+    return {seed, tester};
   });
 
   should('render the face correctly', () => {
@@ -111,6 +121,40 @@ test('@protoboard2/src/piece/d2', init => {
     });
   });
 
+  test('roll action', _, init => {
+    const _ = init(_ => {
+      _.seed.values = [0.7];
+      const element = _.tester.createElement(D2);
+      return {..._, element};
+    });
+
+    should('trigger on keydown', () => {
+      const id = {};
+      const stateService = $stateService.get(_.tester.vine);
+      const state = stateService.addRoot<D2State>(
+          d2State(id, [FACE_1_ID, FACE_2_ID]),
+      )._();
+      _.element.state = state;
+
+      const harness = getHarness(_.element, D2Harness);
+      harness.simulateTrigger(TriggerType.L);
+
+      assert(_.element).to.matchSnapshot('d2__roll-keydown.html');
+    });
+
+    should('trigger on function call', () => {
+      const id = {};
+      const stateService = $stateService.get(_.tester.vine);
+      const state = stateService.addRoot<D2State>(
+          d2State(id, [FACE_1_ID, FACE_2_ID]),
+      )._();
+      _.element.state = state;
+      _.element.roll(undefined);
+
+      assert(_.element).to.matchSnapshot('d2__roll-call.html');
+    });
+  });
+
   test('rotate action', _, init => {
     const _ = init(_ => {
       const element = _.tester.createElement(D2);
@@ -159,6 +203,7 @@ test('@protoboard2/src/piece/d2', init => {
             actions: [
               {actionName: 'Flip', trigger: {type: TriggerType.F}},
               {actionName: 'Pick', trigger: {type: TriggerType.CLICK}},
+              {actionName: 'Roll', trigger: {type: TriggerType.L}},
               {actionName: 'Rotate', trigger: {type: TriggerType.R}},
             ],
             componentName: 'D2',

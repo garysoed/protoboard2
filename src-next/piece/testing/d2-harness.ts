@@ -23,6 +23,10 @@ export class D2Harness extends CustomElementHarness<typeof D2> {
     this.target.pick(undefined);
   }
 
+  simulateRoll(): void {
+    this.target.roll(undefined);
+  }
+
   simulateTrigger(triggerType: TriggerType, options?: MouseEventInit & KeyboardEventInit): void {
     return this.harness.simulateTrigger(triggerType, options);
   }

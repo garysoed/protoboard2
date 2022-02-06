@@ -7,6 +7,7 @@ import {Observable, combineLatest} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
 import {pickAction} from '../action/pick-action';
+import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
@@ -35,6 +36,8 @@ const $d2 = {
     flipConfig: ivalue('flipConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.F}),
     pick: icall('pick', undefinedType),
     pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK}),
+    roll: icall('roll', undefinedType),
+    rollConfig: ivalue('rollConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.L}),
     rotate: icall('rotate', undefinedType),
     rotateConfig: ivalue(
         'rotateConfig',
@@ -91,6 +94,13 @@ class D2Ctrl extends BaseComponent<D2State> {
           this.$.shadow.container.target,
           this.$.host.pickConfig,
           this.$.host.pick,
+      ),
+      this.installAction(
+          rollAction,
+          'Roll',
+          this.$.shadow.container.target,
+          this.$.host.rollConfig,
+          this.$.host.roll,
       ),
       this.installAction(
           rotateAction,
