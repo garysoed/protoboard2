@@ -21,8 +21,7 @@ const $d1Demo = {
 class D1Demo implements Ctrl {
   private readonly state$ = $state$.get(this.$.vine)._('d1');
 
-  constructor(private readonly $: Context<typeof $d1Demo>) {
-  }
+  constructor(private readonly $: Context<typeof $d1Demo>) { }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [

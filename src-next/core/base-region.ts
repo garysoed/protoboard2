@@ -4,10 +4,11 @@ import {undefinedType} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
 import {IAttr, ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
-import {map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {dropAction} from '../action/drop-action';
+import {pickAction} from '../action/pick-action';
 import {renderContents} from '../render/render-contents';
 import {RegionState} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
@@ -66,6 +67,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
     const contentIds = this.state.$('contentIds') as unknown as MutableResolver<ReadonlyArray<{}>>;
     return this.target$.pipe(
         switchMap(target => ievent(ACTION_EVENT, ActionEvent).resolve(target).value$),
+        filter(event => event.action === pickAction),
         withLatestFrom(contentIds),
         map(([event, contentIds]) => {
           if (contentIds.indexOf(event.id) < 0) {

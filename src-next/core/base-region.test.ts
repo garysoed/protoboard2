@@ -164,5 +164,24 @@ test('@protoboard2/src/core/base-region', init => {
       assert(element).to.matchSnapshot('base-region__pick.html');
       assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().beEmpty()]);
     });
+
+    should('not removed element if action is not pick', () => {
+      const id = 'steelblue';
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, id))._());
+
+      const stateService = $stateService.get(_.tester.vine);
+      const regionState = stateService.addRoot<RegionState>({
+        id: 'region',
+        contentIds: mutableState([id]),
+      })._();
+      const element = _.tester.createElement(TEST);
+      element.state = regionState;
+
+      const d1 = getHarness(element, 'pb-d1', D1Harness);
+      d1.simulateRotate();
+
+      assert(element).to.matchSnapshot('base-region__pick-noop.html');
+      assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().haveExactElements([id])]);
+    });
   });
 });

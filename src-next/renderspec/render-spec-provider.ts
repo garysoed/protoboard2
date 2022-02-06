@@ -4,9 +4,7 @@ import {map} from 'rxjs/operators';
 
 export type RenderSpecProvider = (id: unknown) => RenderSpec|null;
 
-export function combineProviders(
-    missingMsgFn: (id: unknown) => string,
-): OperatorFunction<readonly RenderSpecProvider[], (id: unknown) => RenderSpec> {
+export function combineProviders(): OperatorFunction<readonly RenderSpecProvider[], (id: unknown) => RenderSpec|null> {
   return map(providersArray => (id: unknown) => {
     for (const provider of [...providersArray].reverse()) {
       const spec = provider(id);
@@ -15,6 +13,6 @@ export function combineProviders(
       }
     }
 
-    throw new Error(missingMsgFn(id));
+    return null;
   });
 }

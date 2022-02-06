@@ -1,53 +1,84 @@
 import {$stateService, source, Vine} from 'grapevine';
-import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
+import {mutableState} from 'gs-tools/export/state';
 import {enumType} from 'gs-types';
 import {renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
 import {D1, D1State, d1State} from '../src-next/piece/d1';
+import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {slotState, SlotState} from '../src-next/region/slot';
 
 import {FaceType, RENDERED_FACE} from './piece/rendered-face';
 
 
 export interface DemoState {
-  pieces: {
-    gem: D1State,
-    meeple: D1State,
-  },
   d1: {
     gemSlot: SlotState;
     meepleSlot: SlotState;
   };
+  d2: {
+    cardSlot: SlotState;
+    coinSlot: SlotState;
+  }
+  pieces: {
+    card: D2State,
+    coin: D2State,
+    gem: D1State,
+    meeple: D1State,
+  },
 }
 
-const GEM_ID = Symbol('gem');
-const MEEPLE_ID = Symbol('meeple');
+enum ComponentType {
+  CARD = 'card',
+  COIN = 'coin',
+  GEM = 'gem',
+  MEEPLE = 'meeple',
+}
 
 export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>({
   d1: {
-    gemSlot: slotState(
-        {},
-        {contentIds: mutableState([GEM_ID])},
-    ),
-    meepleSlot: slotState(
-        {},
-        {contentIds: mutableState([MEEPLE_ID])},
-    ),
+    gemSlot: slotState({}, {contentIds: mutableState([ComponentType.GEM])}),
+    meepleSlot: slotState({}, {contentIds: mutableState([ComponentType.MEEPLE])}),
+  },
+  d2: {
+    cardSlot: slotState({}, {contentIds: mutableState([ComponentType.CARD])}),
+    coinSlot: slotState({}, {contentIds: mutableState([ComponentType.COIN])}),
   },
   pieces: {
-    gem: d1State(GEM_ID, [FaceType.GEM]),
-    meeple: d1State(MEEPLE_ID, [FaceType.MEEPLE]),
+    card: d2State(ComponentType.CARD, [FaceType.CARD_BACK, FaceType.CARD_FRONT]),
+    coin: d2State(ComponentType.COIN, [FaceType.COIN_BACK, FaceType.CARD_FRONT]),
+    gem: d1State(ComponentType.GEM, [FaceType.GEM]),
+    meeple: d1State(ComponentType.MEEPLE, [FaceType.MEEPLE]),
   },
 })._());
 
 export function renderComponent(id: unknown, vine: Vine): RenderSpec {
   const state$ = $state$.get(vine);
   switch (id) {
-    case GEM_ID:
-      return renderPiece(id, D1, state$._('pieces')._('gem'));
-    case MEEPLE_ID:
-      return renderPiece(id, D1, state$._('pieces')._('meeple'));
+    case ComponentType.CARD:
+      return renderCustomElement({
+        registration: D2,
+        inputs: {state: of(state$._('pieces')._('card'))},
+        id,
+      });
+    case ComponentType.COIN:
+      return renderCustomElement({
+        registration: D2,
+        inputs: {state: of(state$._('pieces')._('coin'))},
+        id,
+      });
+    case ComponentType.GEM:
+      return renderCustomElement({
+        registration: D1,
+        inputs: {state: of(state$._('pieces')._('gem'))},
+        id,
+      });
+    case ComponentType.MEEPLE:
+      return renderCustomElement({
+        registration: D1,
+        inputs: {state: of(state$._('pieces')._('meeple'))},
+        id,
+      });
     default:
       throw new Error(`Unhandled render component ID: ${id}`);
   }
@@ -80,18 +111,6 @@ export function renderLens(id: unknown): RenderSpec|null {
       <p mk-body-1>More detailed information on the piece goes here.</p>
     </div>`),
     parseType: 'text/html',
-  });
-}
-
-function renderPiece(
-    id: {},
-    registration: typeof D1,
-    state$: ImmutableResolver<D1State>,
-): RenderSpec {
-  return renderCustomElement({
-    registration,
-    inputs: {state: of(state$)},
-    id,
   });
 }
 

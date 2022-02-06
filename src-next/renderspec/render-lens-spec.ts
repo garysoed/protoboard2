@@ -6,9 +6,7 @@ import {combineProviders, RenderSpecProvider} from './render-spec-provider';
 const $lensRenderSpecMap$ = source(() => new ArraySubject<RenderSpecProvider>());
 
 export const $getLensRenderSpec$ = source(vine => {
-  return $lensRenderSpecMap$.get(vine).pipe(
-      combineProviders(id => `Lens render spec for ${id} is not available`),
-  );
+  return $lensRenderSpecMap$.get(vine).pipe(combineProviders());
 });
 export function registerLensRenderSpec(
     vine: Vine,

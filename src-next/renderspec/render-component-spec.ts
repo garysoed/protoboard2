@@ -7,9 +7,7 @@ import {combineProviders, RenderSpecProvider} from './render-spec-provider';
 const $componentRenderSpecMap$ = source(() => new ArraySubject<RenderSpecProvider>());
 
 export const $getComponentRenderSpec$ = source(vine => {
-  return $componentRenderSpecMap$.get(vine).pipe(
-      combineProviders(id => `Component render spec for ${id} is not available`),
-  );
+  return $componentRenderSpecMap$.get(vine).pipe(combineProviders());
 });
 export function registerComponentRenderSpec(
     vine: Vine,

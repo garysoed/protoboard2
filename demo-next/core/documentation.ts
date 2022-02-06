@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {D1_DEMO} from '../piece/d1';
+import {D2_DEMO} from '../piece/d2';
 
 import template from './documentation.html';
 import {INSTRUCTION} from './instruction';
@@ -52,7 +53,7 @@ export const DOCUMENTATION = registerCustomElement({
   deps: [
     // CanvasDemo,
     D1_DEMO,
-    // D2Demo,
+    D2_DEMO,
     // D6Demo,
     // DeckDemo,
     INSTRUCTION,

@@ -1,4 +1,5 @@
 import {Vine} from 'grapevine';
+import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
 import {RenderSpec} from 'persona';
 import {combineLatest, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -19,7 +20,7 @@ export function renderContents(
               if (!contentIds) {
                 return [];
               }
-              return contentIds.map(getRenderSpec);
+              return $pipe(contentIds, $map(getRenderSpec), $filterNonNull(), $asArray());
             }),
         );
   };
