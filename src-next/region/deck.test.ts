@@ -16,16 +16,17 @@ import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
 
+import {DECK} from './deck';
 import goldens from './goldens/goldens.json';
-import {SLOT, SlotState} from './slot';
-import {SlotHarness} from './testing/slot-harness';
+import {SlotState} from './slot';
+import {DeckHarness} from './testing/deck-harness';
 
 
-test('@protoboard2/src/region/slot', init => {
+test('@protoboard2/src/region/deck', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/region/goldens', goldens));
 
-    const tester = setupTest({roots: [SLOT, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
+    const tester = setupTest({roots: [DECK, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
     registerComponentRenderSpec(tester.vine, id => {
@@ -50,10 +51,10 @@ test('@protoboard2/src/region/slot', init => {
       id: {},
       contentIds: mutableState(['red', 'green', 'blue']),
     })._();
-    const element = _.tester.createElement(SLOT);
+    const element = _.tester.createElement(DECK);
     element.state = state$;
 
-    assert(element).to.matchSnapshot('slot__render.html');
+    assert(element).to.matchSnapshot('deck__render.html');
   });
 
   test('drop action', _, init => {
@@ -66,25 +67,25 @@ test('@protoboard2/src/region/slot', init => {
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
-      const element = _.tester.createElement(SLOT);
+      const element = _.tester.createElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
     });
 
     should('trigger on keydown', () => {
-      const harness = getHarness(_.element, SlotHarness);
+      const harness = getHarness(_.element, DeckHarness);
       harness.simulateTrigger(TriggerType.D);
 
-      assert(_.element).to.matchSnapshot('slot__drop-keydown.html');
+      assert(_.element).to.matchSnapshot('deck__drop-keydown.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
     });
 
     should('trigger on function call', () => {
-      const harness = getHarness(_.element, SlotHarness);
-      harness.simulateDrop();
+      const harness = getHarness(_.element, DeckHarness);
+      harness.simulateTrigger(TriggerType.D);
 
-      assert(_.element).to.matchSnapshot('slot__drop-call.html');
+      assert(_.element).to.matchSnapshot('deck__drop-call.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
     });
   });
@@ -99,30 +100,32 @@ test('@protoboard2/src/region/slot', init => {
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
-      const element = _.tester.createElement(SLOT);
+      const element = _.tester.createElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
     });
 
     should('trigger on keydown', () => {
-      const harness = getHarness(_.element, SlotHarness);
-      const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
+      const harness = getHarness(_.element, DeckHarness);
+      const d1Harness = harness.getContent(D1Harness);
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
-      assert(_.element).to.matchSnapshot('slot__pick-keydown.html');
+      assert(_.element).to.matchSnapshot('deck__pick-keydown.html');
       assert(_.activeContents$).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'green']),
+          arrayThat<{}>().haveExactElements(['steelblue', 'blue']),
       );
     });
 
     should('trigger on function call', () => {
-      const harness = getHarness(_.element, SlotHarness);
-      const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
+      const harness = getHarness(_.element, DeckHarness);
+      const d1Harness = harness.getContent(D1Harness);
       d1Harness.simulatePick();
 
-      assert(_.element).to.matchSnapshot('slot__pick-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().haveExactElements(['steelblue', 'green']));
+      assert(_.element).to.matchSnapshot('deck__pick-call.html');
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<{}>().haveExactElements(['steelblue', 'blue']),
+      );
     });
   });
 });

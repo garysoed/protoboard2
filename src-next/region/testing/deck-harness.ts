@@ -3,19 +3,16 @@ import {CustomElementHarness, getHarness, Harness, HarnessCtor} from 'persona/ex
 
 import {TriggerElementHarness} from '../../testing/trigger-element-harness';
 import {TriggerType} from '../../types/trigger-spec';
-import {SLOT} from '../slot';
+import {DECK} from '../deck';
 
 
-export class SlotHarness extends CustomElementHarness<typeof SLOT> {
-  static readonly validType = customElementType(SLOT);
+export class DeckHarness extends CustomElementHarness<typeof DECK> {
+  static readonly validType = customElementType(DECK);
 
   private readonly harness = getHarness(this.target, '#root', TriggerElementHarness);
 
-  getContent< E extends Element, H extends Harness<E>>(
-      childSelector: string,
-      harness: HarnessCtor<E, H>,
-  ): H {
-    return getHarness(this.target, `#root ${childSelector}`, harness);
+  getContent<E extends Element, H extends Harness<E>>(harness: HarnessCtor<E, H>): H {
+    return getHarness(this.target, '#root :nth-child(1)', harness);
   }
 
   simulateDrop(): void {
