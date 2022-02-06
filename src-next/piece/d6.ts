@@ -3,7 +3,7 @@ import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
 import {intersectType, undefinedType} from 'gs-types';
 import {Context, DIV, iattr, icall, id, itarget, ivalue, osingle, ostyle, registerCustomElement} from 'persona';
-import {combineLatest, Observable} from 'rxjs';
+import {Observable, combineLatest} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
 import {pickAction} from '../action/pick-action';
@@ -18,13 +18,14 @@ import {IsMultifaced} from '../types/is-multifaced';
 import {IsRotatable} from '../types/is-rotatable';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
-import template from './d1.html';
+import template from './d6.html';
 
 
-export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
+export interface D6State extends ComponentState, IsRotatable, IsMultifaced { }
 
+type Faces = readonly [unknown, unknown, unknown, unknown, unknown, unknown];
 
-export function d2State(id: {}, faces: readonly [unknown, unknown], partial: Partial<D2State> = {}): D2State {
+export function d6State(id: {}, faces: Faces, partial: Partial<D6State> = {}): D6State {
   return {
     id,
     currentFaceIndex: mutableState(0),
@@ -34,9 +35,9 @@ export function d2State(id: {}, faces: readonly [unknown, unknown], partial: Par
   };
 }
 
-const $d2 = {
+const $d6 = {
   host: {
-    ...create$baseComponent<D2State>().host,
+    ...create$baseComponent<D6State>().host,
     height: iattr('height'),
     flip: icall('flip', undefinedType),
     flipConfig: ivalue('flipConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.F}),
@@ -50,6 +51,8 @@ const $d2 = {
         intersectType([TRIGGER_SPEC_TYPE, ROTATE_CONFIG_TYPE]),
         {...DEFAULT_ROTATE_CONFIG, type: TriggerType.R},
     ),
+    turn: icall('turn', undefinedType),
+    turnConfig: ivalue('turnConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.T}),
     width: iattr('width'),
   },
   shadow: {
@@ -63,12 +66,9 @@ const $d2 = {
   },
 };
 
-class D2Ctrl extends BaseComponent<D2State> {
-  /**
-   * @internal
-   */
-  constructor(private readonly $: Context<typeof $d2>) {
-    super($, 'D2');
+class D6Ctrl extends BaseComponent<D6State> {
+  constructor(private readonly $: Context<typeof $d6>) {
+    super($, 'D6');
   }
 
   @cache()
@@ -81,7 +81,7 @@ class D2Ctrl extends BaseComponent<D2State> {
           turnAction,
           'Flip',
           this.$.shadow.container.target,
-          this.$.host.flipConfig.pipe(map(triggerConfig => ({...triggerConfig, step: 1}))),
+          this.$.host.flipConfig.pipe(map(triggerConfig => ({...triggerConfig, step: 3}))),
           this.$.host.flip,
       ),
       this.installAction(
@@ -105,6 +105,13 @@ class D2Ctrl extends BaseComponent<D2State> {
           this.$.host.rotateConfig,
           this.$.host.rotate,
       ),
+      this.installAction(
+          turnAction,
+          'Turn',
+          this.$.shadow.container.target,
+          this.$.host.turnConfig.pipe(map(triggerConfig => ({...triggerConfig, step: 1}))),
+          this.$.host.turn,
+      ),
       this.state.$('rotationDeg').pipe(
           renderRotatable(),
           this.$.shadow.container.transform(),
@@ -124,9 +131,9 @@ class D2Ctrl extends BaseComponent<D2State> {
   }
 }
 
-export const D2 = registerCustomElement({
-  ctrl: D2Ctrl,
-  spec: $d2,
-  tag: 'pb-d2',
+export const D6 = registerCustomElement({
+  ctrl: D6Ctrl,
+  spec: $d6,
+  tag: 'pb-d6',
   template,
 });

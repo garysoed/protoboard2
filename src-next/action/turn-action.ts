@@ -16,7 +16,7 @@ export const DEFAULT_TURN_CONFIG: TurnConfig = {
   step: 1,
 };
 
-export const ROTATE_CONFIG_TYPE = hasPropertiesType({
+export const TURN_CONFIG_TYPE = hasPropertiesType({
   step: numberType,
 });
 
