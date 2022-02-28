@@ -1,10 +1,11 @@
 import {cache} from 'gs-tools/export/data';
+import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, itarget, oclass, omulti, ostyle, otext, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, id, itarget, oclass, oforeach, ostyle, otext, registerCustomElement} from 'persona';
 import {fromEvent, Observable} from 'rxjs';
 import {map, share, throttleTime, withLatestFrom} from 'rxjs/operators';
 
-import {renderContents} from '../render/render-contents';
+import {renderComponent} from '../render/render-component';
 
 import {$activeState} from './active-spec';
 import template from './active.html';
@@ -20,7 +21,7 @@ export const $active = {
       textContent: otext(),
     }),
     root: id('root', DIV, {
-      content: omulti('#content'),
+      content: oforeach('#content', instanceofType(Object)),
       element: itarget(),
       left: ostyle('left'),
       top: ostyle('top'),
@@ -49,9 +50,8 @@ export class Active implements Ctrl {
       this.left$.pipe(this.$.shadow.root.left()),
       this.top$.pipe(this.$.shadow.root.top()),
       $activeState.get(this.$.vine).$('contentIds').pipe(
-          renderContents(this.$.vine),
           map(specs => specs.slice(0, COUNT_THRESHOLD)),
-          this.$.shadow.root.content(),
+          this.$.shadow.root.content(componentId => renderComponent(this.$.vine, componentId)),
       ),
     ];
   }

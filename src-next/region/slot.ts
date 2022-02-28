@@ -1,9 +1,10 @@
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, DIV, id, itarget, omulti, registerCustomElement, RenderSpec} from 'persona';
+import {instanceofType} from 'gs-types';
+import {Context, DIV, id, itarget, oforeach, registerCustomElement} from 'persona';
 import {Observable, OperatorFunction} from 'rxjs';
 
-import {BaseRegion, create$baseRegion} from '../core/base-region';
+import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
 
 import template from './slot.html';
@@ -17,7 +18,7 @@ const $slot = {
   },
   shadow: {
     root: id('root', DIV, {
-      content: omulti('#content'),
+      content: oforeach('#content', instanceofType(Object)),
       target: itarget(),
     }),
   },
@@ -38,8 +39,8 @@ export class Slot extends BaseRegion<SlotState> {
     super($, 'Slot');
   }
 
-  renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
-    return this.$.shadow.root.content();
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+    return this.$.shadow.root.content(id => renderContentFn(id));
   }
 
   @cache()

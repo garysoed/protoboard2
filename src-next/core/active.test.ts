@@ -25,7 +25,6 @@ test('@protoboard2/src/core/active', init => {
     registerComponentRenderSpec(tester.vine, id => {
       return renderTextNode({
         textContent: of(id as string),
-        id,
       });
     });
 
@@ -65,10 +64,9 @@ test('@protoboard2/src/core/active', init => {
   test('position', () => {
     should('render left correctly', () => {
       const left = 123;
-      registerComponentRenderSpec(_.tester.vine, id => {
+      registerComponentRenderSpec(_.tester.vine, () => {
         return renderHtml({
           raw: of('<div>content</div>'),
-          id,
           parseType: 'text/xml',
         });
       });

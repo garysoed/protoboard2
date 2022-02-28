@@ -1,10 +1,17 @@
-import {TriggerSpec} from '../types/trigger-spec';
+import {hasPropertiesType, nullableType, stringType} from 'gs-types';
+
+import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 
 export interface ActionTrigger {
   readonly actionName: string;
   readonly trigger: TriggerSpec|null;
 }
+
+export const ACTION_TRIGGER_TYPE = hasPropertiesType({
+  actionName: stringType,
+  trigger: nullableType(TRIGGER_SPEC_TYPE),
+});
 
 export interface HelpContent {
   readonly actions: readonly ActionTrigger[];

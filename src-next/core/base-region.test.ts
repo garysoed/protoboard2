@@ -2,8 +2,8 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
-import {stringType} from 'gs-types';
-import {Context, DIV, id, itarget, omulti, registerCustomElement, renderCustomElement, RenderSpec, renderTextNode} from 'persona';
+import {instanceofType, stringType} from 'gs-types';
+import {Context, DIV, id, itarget, oforeach, registerCustomElement, renderCustomElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -18,7 +18,7 @@ import {RegionState} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {$activeState} from './active-spec';
-import {BaseRegion, create$baseRegion} from './base-region';
+import {BaseRegion, create$baseRegion, RenderContentFn} from './base-region';
 import goldens from './goldens/goldens.json';
 
 
@@ -30,7 +30,7 @@ const $test = {
   },
   shadow: {
     container: id('container', DIV, {
-      content: omulti('#ref'),
+      content: oforeach('#ref', instanceofType(Object)),
       target: itarget(),
     }),
   },
@@ -45,8 +45,8 @@ class Test extends BaseRegion<TestState> {
     return this.$.shadow.container.target;
   }
 
-  renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
-    return this.$.shadow.container.content();
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+    return this.$.shadow.container.content(id => renderContentFn(id));
   }
 }
 
@@ -70,7 +70,6 @@ test('@protoboard2/src/core/base-region', init => {
       }
       return renderCustomElement({
         registration: D1,
-        id,
         inputs: {
           state: of(states.get(id)),
         },
@@ -84,7 +83,6 @@ test('@protoboard2/src/core/base-region', init => {
       registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
           textContent: of(id as string),
-          id,
         });
       });
 

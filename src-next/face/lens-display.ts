@@ -1,8 +1,9 @@
 import {cache} from 'gs-tools/export/data';
-import {renderTheme} from 'mask';
-import {Context, Ctrl, osingle, registerCustomElement, RenderSpec, root} from 'persona';
-import {Observable} from 'rxjs';
-import {map, withLatestFrom} from 'rxjs/operators';
+import {unknownType} from 'gs-types';
+import {renderTheme, THEME_LOADER_TYPE} from 'mask';
+import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
+import {Observable, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {$getLensRenderSpec$} from '../renderspec/render-lens-spec';
 
@@ -12,7 +13,8 @@ import {$lensService} from './lens-service';
 export const $lensDisplay = {
   shadow: {
     root: root({
-      content: osingle(),
+      content: ocase('#content', unknownType),
+      theme: ocase('#theme', THEME_LOADER_TYPE),
     }),
   },
 };
@@ -23,22 +25,19 @@ export class LensDisplay implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      renderTheme(this.$),
-      this.contentSpec$.pipe(this.$.shadow.root.content()),
+      renderTheme(this.$, this.$.shadow.root.theme),
+      $lensService.get(this.$.vine).faceId$.pipe(
+          this.$.shadow.root.content(contentId => {
+            if (!contentId) {
+              return of(null);
+            }
+
+            return $getLensRenderSpec$.get(this.$.vine).pipe(
+                map(getLensRenderSpec => getLensRenderSpec(contentId)),
+            );
+          }),
+      ),
     ];
-  }
-
-  private get contentSpec$(): Observable<RenderSpec|null> {
-    return $lensService.get(this.$.vine).faceId$.pipe(
-        withLatestFrom($getLensRenderSpec$.get(this.$.vine)),
-        map(([faceId, getLensRenderSpec]) => {
-          if (!faceId) {
-            return null;
-          }
-
-          return getLensRenderSpec(faceId);
-        }),
-    );
   }
 }
 
@@ -46,5 +45,5 @@ export const LENS_DISPLAY = registerCustomElement({
   ctrl: LensDisplay,
   spec: $lensDisplay,
   tag: 'pb-lens-display',
-  template: '',
+  template: '<!-- #content --><!-- #theme -->',
 });

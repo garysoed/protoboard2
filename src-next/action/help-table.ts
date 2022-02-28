@@ -1,7 +1,6 @@
-import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
-import {Context, Ctrl, H3, iattr, id, omulti, otext, registerCustomElement, renderCustomElement, renderElement, RenderSpec, TBODY} from 'persona';
+import {Context, Ctrl, H3, iattr, id, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -9,7 +8,7 @@ import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
 import {$helpService} from './help-service';
 import template from './help-table.html';
-import {HelpContent} from './show-help-event';
+import {ActionTrigger, ACTION_TRIGGER_TYPE, HelpContent} from './show-help-event';
 
 
 const $helpTable = {
@@ -17,11 +16,14 @@ const $helpTable = {
     index: iattr('index'),
   },
   shadow: {
+    _row: id('_row', TEMPLATE, {
+      target: itarget(),
+    }),
     title: id('title', H3, {
       text: otext(),
     }),
     content: id('content', TBODY, {
-      rows: omulti('#rows'),
+      rows: oforeach('#rows', ACTION_TRIGGER_TYPE),
     }),
   },
 };
@@ -35,7 +37,7 @@ export class HelpTable implements Ctrl {
     return [
       renderTheme(this.$),
       this.title$.pipe(this.$.shadow.title.text()),
-      this.rows$.pipe(this.$.shadow.content.rows()),
+      this.rows$.pipe(this.$.shadow.content.rows(trigger => this.renderActionTrigger(trigger))),
     ];
   }
 
@@ -57,51 +59,25 @@ export class HelpTable implements Ctrl {
         );
   }
 
+  private renderActionTrigger({actionName, trigger}: ActionTrigger): Observable<RenderSpec|null> {
+    return of(renderTemplate({
+      template$: this.$.shadow._row.target as Observable<HTMLTemplateElement>,
+      spec: {
+        keyboard: query('mk-keyboard', KEYBOARD),
+        action: query('td:nth-child(2)', TD, {
+          text: otext(),
+        }),
+      },
+      runs: $ => [
+        of(triggerKeySpecToString(trigger)).pipe($.keyboard.text()),
+        of(actionName).pipe($.action.text()),
+      ],
+    }));
+  }
+
   @cache()
-  private get rows$(): Observable<readonly RenderSpec[]> {
-    return this.content$
-        .pipe(
-            map(content => {
-              if (!content) {
-                return [];
-              }
-
-              const rows$list = $pipe(
-                  content.actions,
-                  $map(({actionName, trigger}) => {
-                    const keyboardEl = renderCustomElement({
-                      registration: KEYBOARD,
-                      attrs: new Map([['a', of('test')]]),
-                      inputs: {text: of(triggerKeySpecToString(trigger))},
-                      id: {},
-                    });
-                    const triggerEl = renderElement({
-                      tag: 'td',
-                      children: of([keyboardEl]),
-                      id: {},
-                    });
-
-                    const actionEl = renderElement({
-                      tag: 'td',
-                      textContent: of(actionName),
-                      id: {},
-                    });
-                    return renderElement({
-                      tag: 'tr',
-                      children: of([triggerEl, actionEl]),
-                      id: {},
-                    });
-                  }),
-                  $asArray(),
-              );
-
-              if (rows$list.length <= 0) {
-                return [];
-              }
-
-              return rows$list;
-            }),
-        );
+  private get rows$(): Observable<readonly ActionTrigger[]> {
+    return this.content$.pipe(map(content => content?.actions ?? []));
   }
 
   @cache()

@@ -1,4 +1,4 @@
 {
-  "lens-display__hide.html": "<pb-lens-display><gst-fake-shadow><link rel=\"stylesheet\" href=\"base/test.css\"></gst-fake-shadow></pb-lens-display>",
-  "lens-display__show.html": "<pb-lens-display><gst-fake-shadow><link rel=\"stylesheet\" href=\"base/test.css\">Rendered details</gst-fake-shadow></pb-lens-display>"
+  "lens-display__hide.html": "<pb-lens-display><gst-fake-shadow><!-- #content --><!-- #theme --><link rel=\"stylesheet\" href=\"base/test.css\"></gst-fake-shadow></pb-lens-display>",
+  "lens-display__show.html": "<pb-lens-display><gst-fake-shadow><!-- #content -->Rendered details<!-- #theme --><link rel=\"stylesheet\" href=\"base/test.css\"></gst-fake-shadow></pb-lens-display>"
 }

@@ -1,3 +1,4 @@
+import {enumType, hasPropertiesType, instanceofType, stringType} from 'gs-types';
 import {Registration} from 'persona';
 
 import {D1_DEMO} from '../piece/d1';
@@ -12,6 +13,12 @@ export interface PageSpec {
   readonly path: Views;
   readonly registration: Registration<HTMLElement, any>;
 }
+
+export const PAGE_SPEC_TYPE = hasPropertiesType({
+  label: stringType,
+  path: enumType<Views>(Views),
+  registration: instanceofType<Registration<HTMLElement, any>>(HTMLElement),
+});
 
 export const CONTAINER_LINK_CONFIGS: readonly PageSpec[] = [
   // {label: 'Deck', path: Views.DECK},

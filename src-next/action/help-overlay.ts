@@ -1,7 +1,7 @@
-import {$asArray, $map, $pipe, $zip, countableIterable} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
+import {unknownType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, ievent, oclass, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, id, ievent, oclass, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ export const $helpOverlay = {
     root: id('root', DIV, {
       click: ievent('click', Event),
       isVisibleClass: oclass('isVisible'),
-      tables: omulti('#tables'),
+      tables: oforeach('#tables', unknownType),
     }),
   },
 };
@@ -28,7 +28,9 @@ export class HelpOverlay implements Ctrl {
     return [
       renderTheme(this.$),
       this.isVisible$.pipe(this.$.shadow.root.isVisibleClass()),
-      this.tables$.pipe(this.$.shadow.root.tables()),
+      $helpService.get(this.$.vine).contents$.pipe(this.$.shadow.root.tables(
+          (_, index) => this.renderHelpTable(index),
+      )),
       this.$.shadow.root.click.pipe(tap(() => $helpService.get(this.$.vine).hide())),
     ];
   }
@@ -39,20 +41,11 @@ export class HelpOverlay implements Ctrl {
     );
   }
 
-  @cache()
-  private get tables$(): Observable<readonly RenderSpec[]> {
-    return $helpService.get(this.$.vine).contents$.pipe(
-        map(contents => $pipe(
-            contents,
-            $zip(countableIterable()),
-            $map(([, index]) => renderCustomElement({
-              registration: HELP_TABLE,
-              inputs: {index: of(`${index}`)},
-              id: index,
-            })),
-            $asArray(),
-        )),
-    );
+  private renderHelpTable(index: number): Observable<RenderSpec> {
+    return of(renderCustomElement({
+      registration: HELP_TABLE,
+      inputs: {index: of(`${index}`)},
+    }));
   }
 }
 

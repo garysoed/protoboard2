@@ -1,7 +1,8 @@
 import {cache} from 'gs-tools/export/data';
+import {nullableType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, osingle, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
-import {Observable} from 'rxjs';
+import {Context, Ctrl, DIV, id, ocase, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {D1_DEMO} from '../piece/d1';
@@ -11,13 +12,13 @@ import {D6_DEMO} from '../piece/d6';
 import template from './documentation.html';
 import {INSTRUCTION} from './instruction';
 import {$locationService} from './location-service';
-import {getPageSpec} from './page-spec';
+import {getPageSpec, PageSpec, PAGE_SPEC_TYPE} from './page-spec';
 
 
 const $documentation = {
   shadow: {
     root: id('root', DIV, {
-      content: osingle('#content'),
+      content: ocase('#content', nullableType(PAGE_SPEC_TYPE)),
     }),
   },
 };
@@ -29,23 +30,19 @@ export class Documentation implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      this.content$.pipe(this.$.shadow.root.content()),
+      $locationService.get(this.$.vine).location$.pipe(map(location => getPageSpec(location.type))).pipe(
+          this.$.shadow.root.content(spec => this.renderContent(spec)),
+      ),
     ];
   }
 
   @cache()
-  private get content$(): Observable<RenderSpec|null> {
-    return $locationService.get(this.$.vine).location$
-        .pipe(
-            map(location => {
-              const spec = getPageSpec(location.type);
-              if (!spec) {
-                return null;
-              }
+  private renderContent(spec: PageSpec|null): Observable<RenderSpec|null> {
+    if (!spec) {
+      return of(null);
+    }
 
-              return renderCustomElement({registration: spec.registration, inputs: {}, id: {}});
-            }),
-        );
+    return of (renderCustomElement({registration: spec.registration, inputs: {}}));
   }
 }
 

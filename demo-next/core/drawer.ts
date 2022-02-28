@@ -1,7 +1,7 @@
 import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
 import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, ievent, iflag, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, id, ievent, iflag, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -9,7 +9,7 @@ import chevronDownSvg from '../asset/chevron_down.svg';
 
 import template from './drawer.html';
 import {$locationService, Views} from './location-service';
-import {CONTAINER_LINK_CONFIGS, LAYOUT_LINK_CONFIGS, PageSpec, PIECE_LINK_CONFIGS} from './page-spec';
+import {CONTAINER_LINK_CONFIGS, LAYOUT_LINK_CONFIGS, PageSpec, PAGE_SPEC_TYPE, PIECE_LINK_CONFIGS} from './page-spec';
 
 
 export const $drawer = {
@@ -18,10 +18,10 @@ export const $drawer = {
   },
   shadow: {
     root: id('root', DIV, {
-      containers: omulti('#containers'),
-      layouts: omulti('#layouts'),
+      containers: oforeach('#containers', PAGE_SPEC_TYPE),
+      layouts: oforeach('#layouts', PAGE_SPEC_TYPE),
       onClick: ievent('click', Event),
-      pieces: omulti('#pieces'),
+      pieces: oforeach('#pieces', PAGE_SPEC_TYPE),
     }),
   },
 };
@@ -33,33 +33,25 @@ export class Drawer implements Ctrl {
     return [
       renderTheme(this.$),
       this.setupRootOnClick(),
-      this.createNodes(LAYOUT_LINK_CONFIGS).pipe(this.$.shadow.root.layouts()),
-      this.createNodes(PIECE_LINK_CONFIGS).pipe(this.$.shadow.root.pieces()),
-      this.createNodes(CONTAINER_LINK_CONFIGS).pipe(this.$.shadow.root.containers()),
+      of(LAYOUT_LINK_CONFIGS).pipe(this.$.shadow.root.layouts(config => this.renderConfig(config))),
+      of(PIECE_LINK_CONFIGS).pipe(this.$.shadow.root.pieces(config => this.renderConfig(config))),
+      of(CONTAINER_LINK_CONFIGS).pipe(this.$.shadow.root.containers(config => this.renderConfig(config))),
     ];
   }
 
-  private createNodes(
-      linkConfig: readonly PageSpec[],
-  ): Observable<readonly RenderSpec[]> {
-    const node$list = linkConfig.map(({label, path}) => {
-      return renderCustomElement({
-        registration: BUTTON,
-        children: of([
-          renderCustomElement({
-            registration: LINE_LAYOUT,
-            attrs: new Map([['path', of(path)]]),
-            inputs: {},
-            textContent: of(label),
-            id: label,
-          }),
-        ]),
-        inputs: {isSecondary: of(true)},
-        id: label,
-      });
-    });
-
-    return of(node$list);
+  private renderConfig({label, path}: PageSpec): Observable<RenderSpec> {
+    return of(renderCustomElement({
+      registration: BUTTON,
+      children: of([
+        renderCustomElement({
+          registration: LINE_LAYOUT,
+          attrs: new Map([['path', of(path)]]),
+          inputs: {},
+          textContent: of(label),
+        }),
+      ]),
+      inputs: {isSecondary: of(true)},
+    }));
   }
 
   private setupRootOnClick(): Observable<unknown> {

@@ -1,18 +1,18 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
-import {intersectType, undefinedType} from 'gs-types';
-import {Context, DIV, iattr, icall, id, itarget, ivalue, osingle, ostyle, registerCustomElement} from 'persona';
-import {Observable, combineLatest} from 'rxjs';
-import {map, withLatestFrom} from 'rxjs/operators';
+import {intersectType, undefinedType, unknownType} from 'gs-types';
+import {Context, DIV, iattr, icall, id, itarget, ivalue, ocase, ostyle, registerCustomElement} from 'persona';
+import {combineLatest, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {pickAction} from '../action/pick-action';
 import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
-import {$getFaceRenderSpec$} from '../renderspec/render-face-spec';
 import {ComponentState} from '../types/component-state';
 import {IsMultifaced} from '../types/is-multifaced';
 import {IsRotatable} from '../types/is-rotatable';
@@ -58,7 +58,7 @@ const $d6 = {
   shadow: {
     container: id('container', DIV, {
       height: ostyle('height'),
-      face: osingle(),
+      face: ocase(unknownType),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -121,11 +121,8 @@ class D6Ctrl extends BaseComponent<D6State> {
         this.state._('faces'),
       ])
           .pipe(
-              withLatestFrom($getFaceRenderSpec$.get(this.$.vine)),
-              map(([[currentFaceIndex, faces], getFaceRenderSpec]) => {
-                return getFaceRenderSpec(faces[currentFaceIndex]);
-              }),
-              this.$.shadow.container.face(),
+              map(([currentFaceIndex, faces]) => faces[currentFaceIndex]),
+              this.$.shadow.container.face(faceId => renderFace(this.$.vine, faceId)),
           ),
     ];
   }

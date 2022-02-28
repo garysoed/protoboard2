@@ -24,7 +24,7 @@ test('@protoboard2/src/face/lens-display', init => {
         return null;
       }
 
-      return renderTextNode({id, textContent: of('Rendered details')});
+      return renderTextNode({textContent: of('Rendered details')});
     });
 
     return {tester};

@@ -1,9 +1,9 @@
 import {cache} from 'gs-tools/export/data';
-import {stringType} from 'gs-types';
+import {nullableType, stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, id, itarget, osingle, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, iattr, id, itarget, ocase, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
-import {map, tap, withLatestFrom} from 'rxjs/operators';
+import {tap, withLatestFrom} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
 
@@ -16,7 +16,7 @@ const $testFace = {
   },
   shadow: {
     root: id('root', DIV, {
-      content: osingle(),
+      content: ocase(nullableType(stringType)),
       element: itarget(),
     }),
   },
@@ -29,17 +29,15 @@ class TestFace implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       $svgService.get(this.$.vine).getSvg('test').pipe(
-          map(raw => {
+          this.$.shadow.root.content(raw => {
             if (!raw) {
-              return null;
+              return of(null);
             }
-            return renderHtml({
+            return of(renderHtml({
               raw: of(raw),
               parseType: 'image/svg+xml',
-              id: raw,
-            });
+            }));
           }),
-          this.$.shadow.root.content(),
       ),
       this.$.host.shade.pipe(
           withLatestFrom(this.$.shadow.root.element),
@@ -67,7 +65,6 @@ export function renderTestFace(id: unknown): RenderSpec {
   }
   return renderCustomElement({
     registration: TEST_FACE,
-    id,
     attrs: new Map([
       ['shade', of(id)],
       ['slot', of('face-0')],

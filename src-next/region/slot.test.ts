@@ -34,7 +34,6 @@ test('@protoboard2/src/region/slot', init => {
       }
       return renderCustomElement({
         registration: D1,
-        id,
         inputs: {
           state: of($stateService.get(tester.vine).addRoot(d1State(id, id))._()),
         },

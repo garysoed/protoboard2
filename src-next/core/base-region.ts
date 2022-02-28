@@ -9,7 +9,7 @@ import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {dropAction} from '../action/drop-action';
 import {pickAction} from '../action/pick-action';
-import {renderContents} from '../render/render-contents';
+import {renderComponent} from '../render/render-component';
 import {RegionState} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -25,6 +25,8 @@ interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecTyp
     readonly dropConfig: UnresolvedIO<IValue<TriggerSpec, 'dropConfig'>>;
   }
 }
+
+export type RenderContentFn = (id: {}) => Observable<RenderSpec|null>;
 
 export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S> {
   return {
@@ -59,7 +61,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
     ];
   }
 
-  abstract renderContents(): OperatorFunction<readonly RenderSpec[], unknown>;
+  abstract renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown>;
 
   protected abstract get target$(): Observable<HTMLElement>;
 
@@ -83,8 +85,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
 
   private setupRenderContents(): Observable<unknown> {
     return (this.state as ImmutableResolver<RegionState>).$('contentIds').pipe(
-        renderContents(this.$baseRegion.vine),
-        this.renderContents(),
+        this.renderContents(componentId => renderComponent(this.$baseRegion.vine, componentId)),
     );
   }
 }

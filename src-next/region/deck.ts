@@ -1,10 +1,10 @@
 import {cache} from 'gs-tools/export/data';
-import {undefinedType} from 'gs-types';
-import {Context, DIV, icall, id, itarget, ivalue, osingle, registerCustomElement, RenderSpec} from 'persona';
+import {instanceofType, undefinedType} from 'gs-types';
+import {Context, DIV, icall, id, itarget, ivalue, ocase, registerCustomElement} from 'persona';
 import {Observable, OperatorFunction, pipe} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {BaseRegion, create$baseRegion} from '../core/base-region';
+import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -25,7 +25,7 @@ const $deck = {
   },
   shadow: {
     root: id('root', DIV, {
-      content: osingle('#content'),
+      content: ocase('#content', instanceofType(Object)),
       target: itarget(),
     }),
   },
@@ -58,10 +58,10 @@ class Deck extends BaseRegion<DeckState> {
     ];
   }
 
-  renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
     return pipe(
         map(specs => specs[specs.length - 1] ?? null),
-        this.$.shadow.root.content(),
+        this.$.shadow.root.content((id: {}) => renderContentFn(id)),
     );
   }
 

@@ -3,13 +3,13 @@ import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {stringType} from 'gs-types';
-import {Context, DIV, id, itarget, omulti, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {instanceofType, stringType} from 'gs-types';
+import {Context, DIV, id, itarget, oforeach, registerCustomElement, renderCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
-import {BaseRegion, create$baseRegion} from '../core/base-region';
+import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
@@ -29,7 +29,7 @@ const $test = {
   },
   shadow: {
     div: id('div', DIV, {
-      contents: omulti('#ref'),
+      contents: oforeach('#ref', instanceofType(Object)),
       target: itarget(),
     }),
   },
@@ -40,8 +40,8 @@ class Test extends BaseRegion<RegionState> {
     super($, 'Test region');
   }
 
-  renderContents(): OperatorFunction<readonly RenderSpec[], unknown> {
-    return this.$.shadow.div.contents();
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+    return this.$.shadow.div.contents(id => renderContentFn(id));
   }
 
   @cache()
@@ -84,7 +84,6 @@ test('@protoboard2/src/action/drop-action', init => {
       }
       return renderCustomElement({
         registration: D1,
-        id,
         inputs: {
           state: of($stateService.get(tester.vine).addRoot(d1State(id, id))._()),
         },
