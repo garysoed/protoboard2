@@ -42,7 +42,7 @@ export class Documentation implements Ctrl {
       return of(null);
     }
 
-    return of (renderCustomElement({registration: spec.registration, inputs: {}}));
+    return of (renderCustomElement({registration: spec.registration}));
   }
 }
 

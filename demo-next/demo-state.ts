@@ -81,27 +81,27 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
     case ComponentType.CARD:
       return renderCustomElement({
         registration: D2,
-        inputs: {state: of(state$._('pieces')._('card'))},
+        runs: $ => [of(state$._('pieces')._('card')).pipe($.state())],
       });
     case ComponentType.COIN:
       return renderCustomElement({
         registration: D2,
-        inputs: {state: of(state$._('pieces')._('coin'))},
+        runs: $ => [of(state$._('pieces')._('coin')).pipe($.state())],
       });
     case ComponentType.DICE:
       return renderCustomElement({
         registration: D6,
-        inputs: {state: of(state$._('pieces')._('dice'))},
+        runs: $ => [of(state$._('pieces')._('dice')).pipe($.state())],
       });
     case ComponentType.GEM:
       return renderCustomElement({
         registration: D1,
-        inputs: {state: of(state$._('pieces')._('gem'))},
+        runs: $ => [of(state$._('pieces')._('gem')).pipe($.state())],
       });
     case ComponentType.MEEPLE:
       return renderCustomElement({
         registration: D1,
-        inputs: {state: of(state$._('pieces')._('meeple'))},
+        runs: $ => [of(state$._('pieces')._('meeple')).pipe($.state())],
       });
   }
 }
@@ -113,9 +113,7 @@ export function renderFace(id: unknown): RenderSpec {
 
   return renderCustomElement({
     registration: RENDERED_FACE,
-    inputs: {
-      faceType: of(id),
-    },
+    runs: $ => [of(id).pipe($.faceType())],
   });
 }
 

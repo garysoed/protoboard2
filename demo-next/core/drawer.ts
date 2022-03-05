@@ -46,11 +46,10 @@ export class Drawer implements Ctrl {
         renderCustomElement({
           registration: LINE_LAYOUT,
           attrs: new Map([['path', of(path)]]),
-          inputs: {},
           textContent: of(label),
         }),
       ]),
-      inputs: {isSecondary: of(true)},
+      runs: $ => [of(true).pipe($.isSecondary())],
     }));
   }
 

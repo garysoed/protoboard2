@@ -70,9 +70,7 @@ test('@protoboard2/src/core/base-region', init => {
       }
       return renderCustomElement({
         registration: D1,
-        inputs: {
-          state: of(states.get(id)),
-        },
+        runs: $ => [of(states.get(id)).pipe($.state())],
       });
     });
     return {states, tester};

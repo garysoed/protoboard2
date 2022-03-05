@@ -44,7 +44,7 @@ export class HelpOverlay implements Ctrl {
   private renderHelpTable(index: number): Observable<RenderSpec> {
     return of(renderCustomElement({
       registration: HELP_TABLE,
-      inputs: {index: of(`${index}`)},
+      runs: $ => [of(`${index}`).pipe($.index())],
     }));
   }
 }
