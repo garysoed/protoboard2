@@ -5,7 +5,7 @@ import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
-import {Context, icall, id, registerCustomElement} from 'persona';
+import {Context, icall, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -35,7 +35,7 @@ const $test = {
     trigger: icall('trigger', undefinedType),
   },
   shadow: {
-    face: id('face', TEST_FACE),
+    face: query('#face', TEST_FACE),
   },
 };
 

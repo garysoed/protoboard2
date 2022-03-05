@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {ICON, registerSvg, renderTheme} from 'mask';
-import {Context, Ctrl, iattr, id, registerCustomElement} from 'persona';
+import {Context, Ctrl, iattr, query, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -41,8 +41,8 @@ const $renderedFace = {
     faceType: iattr('face-type'),
   },
   shadow: {
-    icon: id('icon', ICON),
-    lens: id('lens', LENS),
+    icon: query('#icon', ICON),
+    lens: query('#lens', LENS),
   },
 };
 

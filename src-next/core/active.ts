@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, itarget, oclass, oforeach, ostyle, otext, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, query, itarget, oclass, oforeach, ostyle, otext, registerCustomElement} from 'persona';
 import {fromEvent, Observable} from 'rxjs';
 import {map, share, throttleTime, withLatestFrom} from 'rxjs/operators';
 
@@ -16,11 +16,11 @@ const COUNT_THRESHOLD = 3;
 
 export const $active = {
   shadow: {
-    count: id('count', DIV, {
+    count: query('#count', DIV, {
       classMultiple: oclass('multiple'),
       textContent: otext(),
     }),
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       content: oforeach('#content', instanceofType(Object)),
       element: itarget(),
       left: ostyle('left'),

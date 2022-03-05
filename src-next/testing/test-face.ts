@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {nullableType, stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, id, itarget, ocase, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, iattr, query, itarget, ocase, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ const $testFace = {
     shade: iattr('shade'),
   },
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       content: ocase(nullableType(stringType)),
       element: itarget(),
     }),

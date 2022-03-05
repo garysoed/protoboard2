@@ -1,7 +1,7 @@
 import {source} from 'grapevine';
 import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {Context, Ctrl, DIV, id, itarget, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, query, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, fromEvent, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -23,7 +23,7 @@ const $test = {
     ...create$baseComponent().host,
   },
   shadow: {
-    div: id('div', DIV, {
+    div: query('#div', DIV, {
       target: itarget(),
     }),
   },
@@ -55,7 +55,7 @@ const $parent = {
     ...create$baseComponent().host,
   },
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       target: itarget(),
     }),
   },

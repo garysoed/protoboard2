@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
-import {Context, DIV, id, itarget, oforeach, registerCustomElement} from 'persona';
+import {Context, DIV, query, itarget, oforeach, registerCustomElement} from 'persona';
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
@@ -17,7 +17,7 @@ const $slot = {
     ...create$baseRegion<SlotState>().host,
   },
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       content: oforeach('#content', instanceofType(Object)),
       target: itarget(),
     }),

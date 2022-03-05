@@ -1,7 +1,7 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {Context, DIV, id, itarget, registerCustomElement} from 'persona';
+import {Context, DIV, query, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
@@ -19,7 +19,7 @@ const $test = {
     ...create$baseComponent().host,
   },
   shadow: {
-    div: id('div', DIV, {
+    div: query('#div', DIV, {
       target: itarget(),
     }),
   },

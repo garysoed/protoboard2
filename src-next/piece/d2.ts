@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
 import {intersectType, undefinedType, unknownType} from 'gs-types';
-import {Context, DIV, iattr, icall, id, itarget, ivalue, ocase, ostyle, registerCustomElement} from 'persona';
+import {Context, DIV, iattr, icall, query, itarget, ivalue, ocase, ostyle, registerCustomElement} from 'persona';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -53,7 +53,7 @@ const $d2 = {
     width: iattr('width'),
   },
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       height: ostyle('height'),
       face: ocase(unknownType),
       target: itarget(),

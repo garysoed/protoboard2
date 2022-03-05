@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, id, itarget, oforeach, registerCustomElement, renderCustomElement} from 'persona';
+import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -28,7 +28,7 @@ const $test = {
     ...create$baseRegion<RegionState>().host,
   },
   shadow: {
-    div: id('div', DIV, {
+    div: query('#div', DIV, {
       contents: oforeach('#ref', instanceofType(Object)),
       target: itarget(),
     }),

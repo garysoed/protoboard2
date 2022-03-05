@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
 import {intersectType, undefinedType, unknownType} from 'gs-types';
-import {Context, iattr, icall, id, itarget, ivalue, ocase, ostyle, registerCustomElement, SLOT} from 'persona';
+import {Context, iattr, icall, query, itarget, ivalue, ocase, ostyle, registerCustomElement, SLOT} from 'persona';
 import {Observable} from 'rxjs';
 
 import {pickAction} from '../action/pick-action';
@@ -41,7 +41,7 @@ const $d1 = {
     width: iattr('width'),
   },
   shadow: {
-    container: id('container', SLOT, {
+    container: query('#container', SLOT, {
       height: ostyle('height'),
       face: ocase(unknownType),
       target: itarget(),

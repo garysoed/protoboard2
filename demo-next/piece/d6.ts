@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {ICON, renderTheme} from 'mask';
-import {Context, Ctrl, id, registerCustomElement} from 'persona';
+import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D6} from '../../src-next/piece/d6';
@@ -13,7 +13,7 @@ import template from './d6.html';
 
 export const $d6Demo = {
   shadow: {
-    diceSlot: id('diceSlot', SLOT),
+    diceSlot: query('#diceSlot', SLOT),
   },
 };
 

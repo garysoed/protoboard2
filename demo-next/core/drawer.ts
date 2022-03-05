@@ -1,7 +1,7 @@
 import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
 import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, ievent, iflag, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, query, ievent, iflag, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ export const $drawer = {
     drawerExpanded: iflag('drawer-expanded'),
   },
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       containers: oforeach('#containers', PAGE_SPEC_TYPE),
       layouts: oforeach('#layouts', PAGE_SPEC_TYPE),
       onClick: ievent('click', Event),

@@ -1,5 +1,5 @@
 import {ICON, renderTheme} from 'mask';
-import {Context, Ctrl, id, registerCustomElement} from 'persona';
+import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D2} from '../../src-next/piece/d2';
@@ -12,8 +12,8 @@ import template from './d2.html';
 
 const $d2Demo = {
   shadow: {
-    cardSlot: id('cardSlot', SLOT),
-    coinSlot: id('coinSlot', SLOT),
+    cardSlot: query('#cardSlot', SLOT),
+    coinSlot: query('#coinSlot', SLOT),
   },
 };
 

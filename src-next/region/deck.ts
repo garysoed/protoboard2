@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType, undefinedType} from 'gs-types';
-import {Context, DIV, icall, id, itarget, ivalue, ocase, registerCustomElement} from 'persona';
+import {Context, DIV, icall, query, itarget, ivalue, ocase, registerCustomElement} from 'persona';
 import {Observable, OperatorFunction, pipe} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -24,7 +24,7 @@ const $deck = {
     // shuffleAction: shuffleActionConfigSpecs({}),
   },
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       content: ocase('#content', instanceofType(Object)),
       target: itarget(),
     }),

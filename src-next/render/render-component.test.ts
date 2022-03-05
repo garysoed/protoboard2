@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
-import {Context, Ctrl, DIV, id, oforeach, registerCustomElement, renderTextNode} from 'persona';
+import {Context, Ctrl, DIV, query, oforeach, registerCustomElement, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
@@ -21,7 +21,7 @@ const $state = source(vine => $stateService.get(vine).addRoot({
 
 const $test = {
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       content: oforeach('#ref', instanceofType(Object)),
     }),
   },

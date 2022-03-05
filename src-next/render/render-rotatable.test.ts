@@ -3,7 +3,7 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, Ctrl, DIV, id, ostyle, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, query, ostyle, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
@@ -20,7 +20,7 @@ const $state = source(vine => $stateService.get(vine).addRoot({
 
 const $test = {
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       transform: ostyle('transform'),
     }),
   },

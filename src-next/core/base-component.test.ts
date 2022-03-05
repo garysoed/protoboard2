@@ -3,7 +3,7 @@ import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-tes
 import {cache} from 'gs-tools/export/data';
 import {mutableState, MutableState} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
-import {Context, DIV, icall, id, itarget, registerCustomElement} from 'persona';
+import {Context, DIV, icall, query, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {EMPTY, fromEvent, Observable, of, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -35,7 +35,7 @@ const $child = {
     trigger: icall('trigger', undefinedType),
   },
   shadow: {
-    div: id('div', DIV, {
+    div: query('#div', DIV, {
       target: itarget(),
     }),
   },
@@ -74,10 +74,10 @@ const $test = {
     trigger: icall('trigger', undefinedType),
   },
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       target: itarget(),
     }),
-    div: id('div', DIV, {
+    div: query('#div', DIV, {
       target: itarget(),
     }),
   },

@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {unknownType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, ievent, oclass, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, query, ievent, oclass, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -12,7 +12,7 @@ import {HELP_TABLE} from './help-table';
 
 export const $helpOverlay = {
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       click: ievent('click', Event),
       isVisibleClass: oclass('isVisible'),
       tables: oforeach('#tables', unknownType),

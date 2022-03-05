@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
-import {Context, Ctrl, H3, iattr, id, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
+import {Context, Ctrl, H3, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -16,13 +16,13 @@ const $helpTable = {
     index: iattr('index'),
   },
   shadow: {
-    _row: id('_row', TEMPLATE, {
+    _row: query('#_row', TEMPLATE, {
       target: itarget(),
     }),
-    title: id('title', H3, {
+    title: query('#title', H3, {
       text: otext(),
     }),
-    content: id('content', TBODY, {
+    content: query('#content', TBODY, {
       rows: oforeach('#rows', ACTION_TRIGGER_TYPE),
     }),
   },

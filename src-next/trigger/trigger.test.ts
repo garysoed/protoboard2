@@ -2,7 +2,7 @@ import {source} from 'grapevine';
 import {assert, objectThat, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {forwardTo} from 'gs-tools/export/rxjs';
-import {Context, Ctrl, DIV, id, itarget, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, query, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest, windowHarness} from 'persona/export/testing';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -23,10 +23,10 @@ const $onChildEvent = source(() => new ReplaySubject<TriggerEvent>());
 
 const $test = {
   shadow: {
-    child: id('child', DIV, {
+    child: query('#child', DIV, {
       target: itarget(),
     }),
-    target: id('target', DIV, {
+    target: query('#target', DIV, {
       target: itarget(),
     }),
   },
@@ -63,7 +63,7 @@ const TEST = registerCustomElement({
 
 const $parent = {
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       target: itarget(),
     }),
   },

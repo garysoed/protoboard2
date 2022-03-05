@@ -3,7 +3,7 @@ import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, id, itarget, oforeach, registerCustomElement, renderCustomElement, renderTextNode} from 'persona';
+import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderCustomElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -29,7 +29,7 @@ const $test = {
     ...create$baseRegion<TestState>().host,
   },
   shadow: {
-    container: id('container', DIV, {
+    container: query('#container', DIV, {
       content: oforeach('#ref', instanceofType(Object)),
       target: itarget(),
     }),

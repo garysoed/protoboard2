@@ -1,5 +1,5 @@
 import {ICON, renderTheme} from 'mask';
-import {Context, Ctrl, id, registerCustomElement} from 'persona';
+import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D1} from '../../src-next/piece/d1';
@@ -12,8 +12,8 @@ import template from './d1.html';
 
 const $d1Demo = {
   shadow: {
-    gemSlot: id('gemSlot', SLOT, {}),
-    meepleSlot: id('meepleSlot', SLOT, {}),
+    gemSlot: query('#gemSlot', SLOT, {}),
+    meepleSlot: query('#meepleSlot', SLOT, {}),
   },
 };
 

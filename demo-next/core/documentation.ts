@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {nullableType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, id, ocase, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, query, ocase, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ import {getPageSpec, PageSpec, PAGE_SPEC_TYPE} from './page-spec';
 
 const $documentation = {
   shadow: {
-    root: id('root', DIV, {
+    root: query('#root', DIV, {
       content: ocase('#content', nullableType(PAGE_SPEC_TYPE)),
     }),
   },

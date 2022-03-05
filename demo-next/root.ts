@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {OVERLAY, renderTheme, ROOT_LAYOUT} from 'mask';
-import {Context, Ctrl, id, registerCustomElement} from 'persona';
+import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -20,9 +20,9 @@ import template from './root.html';
 
 const $root = {
   shadow: {
-    active: id('active', ACTIVE),
-    drawer: id('drawer', DRAWER),
-    root: id('root', ROOT_LAYOUT),
+    active: query('#active', ACTIVE),
+    drawer: query('#drawer', DRAWER),
+    root: query('#root', ROOT_LAYOUT),
   },
 };
 

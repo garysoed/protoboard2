@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, H3, iattr, id, otext, registerCustomElement} from 'persona';
+import {Context, Ctrl, H3, iattr, query, otext, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 
 import template from './documentation-template.html';
@@ -12,7 +12,7 @@ const $documentationTemplate = {
     label: iattr('label'),
   },
   shadow: {
-    title: id('title', H3, {
+    title: query('#title', H3, {
       text: otext(),
     }),
   },
