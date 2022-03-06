@@ -65,9 +65,8 @@ export function renderTestFace(id: unknown): RenderSpec {
   }
   return renderCustomElement({
     registration: TEST_FACE,
-    attrs: new Map([
-      ['shade', of(id)],
-      ['slot', of('face-0')],
-    ]),
+    runs: $ => [
+      of(id).pipe($.shade()),
+    ],
   });
 }

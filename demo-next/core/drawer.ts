@@ -1,7 +1,7 @@
 import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
 import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
-import {Context, Ctrl, DIV, query, ievent, iflag, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, ievent, iflag, itarget, oattr, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TEMPLATE} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -17,6 +17,9 @@ export const $drawer = {
     drawerExpanded: iflag('drawer-expanded'),
   },
   shadow: {
+    _config: query('#_config', TEMPLATE, {
+      target: itarget(),
+    }),
     root: query('#root', DIV, {
       containers: oforeach('#containers', PAGE_SPEC_TYPE),
       layouts: oforeach('#layouts', PAGE_SPEC_TYPE),
@@ -40,16 +43,20 @@ export class Drawer implements Ctrl {
   }
 
   private renderConfig({label, path}: PageSpec): Observable<RenderSpec> {
-    return of(renderCustomElement({
-      registration: BUTTON,
-      children: of([
-        renderCustomElement({
-          registration: LINE_LAYOUT,
-          attrs: new Map([['path', of(path)]]),
-          textContent: of(label),
+    return of(renderTemplate({
+      template$: this.$.shadow._config.target as Observable<HTMLTemplateElement>,
+      spec: {
+        button: query('mk-button', BUTTON),
+        line: query('mk-line-layout', LINE_LAYOUT, {
+          path: oattr('path'),
+          text: otext(),
         }),
-      ]),
-      runs: $ => [of(true).pipe($.isSecondary())],
+      },
+      runs: $ => [
+        of(true).pipe($.button.isSecondary()),
+        of(path).pipe($.line.path()),
+        of(label).pipe($.line.text()),
+      ],
     }));
   }
 
