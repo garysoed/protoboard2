@@ -25,9 +25,9 @@ interface ActionInstalledPayload {
 
 export interface BaseComponentSpecType<S> {
   host: {
-    readonly label: UnresolvedIO<IAttr>;
-    readonly onAction: UnresolvedIO<OEvent<ActionEvent>>;
-    readonly state: UnresolvedIO<IValue<ImmutableResolver<S>|undefined, 'state'>>;
+    readonly label: UnresolvedIO<HTMLElement, IAttr>;
+    readonly onAction: UnresolvedIO<HTMLElement, OEvent<ActionEvent>>;
+    readonly state: UnresolvedIO<HTMLElement, IValue<ImmutableResolver<S>|undefined, 'state'>>;
   };
 }
 
