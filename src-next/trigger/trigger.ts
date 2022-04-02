@@ -20,7 +20,7 @@ export function onTrigger(
 function onInternalTriggerEvent(triggerSpec$: Observable<TriggerSpec>): OperatorFunction<HTMLElement, TriggerEvent> {
   return pipe(
       switchMap(element => {
-        return ievent(TRIGGER_EVENT, TriggerEvent).resolve(element).value$;
+        return ievent(TRIGGER_EVENT, TriggerEvent).resolve(element);
       }),
       withLatestFrom(triggerSpec$),
       filter(([event, triggerSpec]) => {
@@ -54,13 +54,13 @@ function dispatchTrigger(): OperatorFunction<HTMLElement, unknown> {
     const onClick$ = createOnClick(element);
     const onKey$ = createOnKey(element);
     return merge(onClick$, onKey$).pipe(
-        oevent(TRIGGER_EVENT, TriggerEvent).resolve(element).update(),
+        oevent(TRIGGER_EVENT, TriggerEvent).resolve(element)(),
     );
   });
 }
 
 function createOnClick(element: HTMLElement): Observable<TriggerEvent> {
-  return ievent('click', MouseEvent).resolve(element).value$
+  return ievent('click', MouseEvent).resolve(element)
       .pipe(
           filterUnhandled(),
           setHandled(),
@@ -80,15 +80,14 @@ function createOnClick(element: HTMLElement): Observable<TriggerEvent> {
 }
 
 function createOnKey(element: HTMLElement): Observable<TriggerEvent> {
-  const onMouseOut$ = ievent('mouseout', MouseEvent).resolve(element).value$;
+  const onMouseOut$ = ievent('mouseout', MouseEvent).resolve(element);
   const onMouseOver$ = ievent<MaybeHandledEvent>('mouseover', MouseEvent)
       .resolve(element)
-      .value$
       .pipe(
           filterUnhandled(),
           setHandled(),
       );
-  const onMouseMove$ = ievent('mousemove', MouseEvent).resolve(element).value$;
+  const onMouseMove$ = ievent('mousemove', MouseEvent).resolve(element);
   return merge(
       onMouseOut$.pipe(mapTo(false)),
       onMouseOver$.pipe(mapTo(true)),

@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
-import {Context, Ctrl, H3, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
+import {Context, Ctrl, HEADING, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TABLE_CELL, TABLE_SECTION, TEMPLATE} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -19,10 +19,10 @@ const $helpTable = {
     _row: query('#_row', TEMPLATE, {
       target: itarget(),
     }),
-    title: query('#title', H3, {
+    title: query('#title', HEADING, {
       text: otext(),
     }),
-    content: query('#content', TBODY, {
+    content: query('#content', TABLE_SECTION, {
       rows: oforeach('#rows', ACTION_TRIGGER_TYPE),
     }),
   },
@@ -61,10 +61,10 @@ export class HelpTable implements Ctrl {
 
   private renderActionTrigger({actionName, trigger}: ActionTrigger): Observable<RenderSpec|null> {
     return of(renderTemplate({
-      template$: this.$.shadow._row.target as Observable<HTMLTemplateElement>,
+      template$: this.$.shadow._row.target,
       spec: {
         keyboard: query('mk-keyboard', KEYBOARD),
-        action: query('td:nth-child(2)', TD, {
+        action: query('td:nth-child(2)', TABLE_CELL, {
           text: otext(),
         }),
       },

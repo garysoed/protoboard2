@@ -29,9 +29,7 @@ export function forwardHelpEvent(
     config$: Observable<HelpActionConfig>,
 ): OperatorFunction<HTMLElement, unknown> {
   return pipe(
-      switchMap(element => ievent(SHOW_HELP_EVENT, ShowHelpEvent, {matchTarget: false})
-          .resolve(element)
-          .value$),
+      switchMap(element => ievent(SHOW_HELP_EVENT, ShowHelpEvent, {matchTarget: false}).resolve(element)),
       withLatestFrom(config$),
       tap(([event, config]) => {
         event.addContent(config.helpContent);

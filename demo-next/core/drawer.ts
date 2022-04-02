@@ -44,7 +44,7 @@ export class Drawer implements Ctrl {
 
   private renderConfig({label, path}: PageSpec): Observable<RenderSpec> {
     return of(renderTemplate({
-      template$: this.$.shadow._config.target as Observable<HTMLTemplateElement>,
+      template$: this.$.shadow._config.target,
       spec: {
         button: query('mk-button', BUTTON),
         line: query('mk-line-layout', LINE_LAYOUT, {

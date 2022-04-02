@@ -2,7 +2,7 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
-import {IAttr, ICall, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
+import {IAttr, ICall, IValue, OEvent} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -18,11 +18,11 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
-    readonly label: UnresolvedIO<HTMLElement, IAttr>;
-    readonly onAction: UnresolvedIO<HTMLElement, OEvent<ActionEvent>>;
-    readonly state: UnresolvedIO<HTMLElement, IValue<ImmutableResolver<S>|undefined, 'state'>>;
-    readonly drop: UnresolvedIO<HTMLElement, ICall<undefined, 'drop'>>;
-    readonly dropConfig: UnresolvedIO<HTMLElement, IValue<TriggerSpec, 'dropConfig'>>;
+    readonly label: IAttr;
+    readonly onAction: OEvent<ActionEvent>;
+    readonly state: IValue<ImmutableResolver<S>|undefined, 'state'>;
+    readonly drop: ICall<undefined, 'drop'>;
+    readonly dropConfig: IValue<TriggerSpec, 'dropConfig'>;
   }
 }
 
@@ -68,7 +68,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
   private setupHandlePick(): Observable<unknown> {
     const contentIds = this.state.$('contentIds') as unknown as MutableResolver<ReadonlyArray<{}>>;
     return this.target$.pipe(
-        switchMap(target => ievent(ACTION_EVENT, ActionEvent).resolve(target).value$),
+        switchMap(target => ievent(ACTION_EVENT, ActionEvent).resolve(target)),
         filter(event => event.action === pickAction),
         withLatestFrom(contentIds),
         map(([event, contentIds]) => {

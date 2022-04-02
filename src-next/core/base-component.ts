@@ -3,7 +3,7 @@ import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/expo
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, iattr, ivalue, oevent} from 'persona';
-import {IAttr, IValue, OEvent, UnresolvedIO} from 'persona/export/internal';
+import {IAttr, IValue, OEvent} from 'persona/export/internal';
 import {BehaviorSubject, combineLatest, EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -25,9 +25,9 @@ interface ActionInstalledPayload {
 
 export interface BaseComponentSpecType<S> {
   host: {
-    readonly label: UnresolvedIO<HTMLElement, IAttr>;
-    readonly onAction: UnresolvedIO<HTMLElement, OEvent<ActionEvent>>;
-    readonly state: UnresolvedIO<HTMLElement, IValue<ImmutableResolver<S>|undefined, 'state'>>;
+    readonly label: IAttr;
+    readonly onAction: OEvent<ActionEvent>;
+    readonly state: IValue<ImmutableResolver<S>|undefined, 'state'>;
   };
 }
 
