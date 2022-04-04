@@ -77,7 +77,7 @@ test('@protoboard2/src/piece/d1', init => {
       return {..._, element};
     });
 
-    should('trigger on click', () => {
+    should('trigger on R', () => {
       const id = '';
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();

@@ -2,7 +2,7 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {undefinedType} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
-import {IAttr, ICall, IValue, OEvent} from 'persona/export/internal';
+import {ICall, IValue} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
 import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
 
@@ -18,12 +18,9 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
-    readonly label: IAttr;
-    readonly onAction: OEvent<ActionEvent>;
-    readonly state: IValue<ImmutableResolver<S>|undefined, 'state'>;
     readonly drop: ICall<undefined, 'drop'>;
     readonly dropConfig: IValue<TriggerSpec, 'dropConfig'>;
-  }
+  } & BaseComponentSpecType<S>['host'];
 }
 
 export type RenderContentFn = (id: {}) => Observable<RenderSpec|null>;
