@@ -1,10 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType, undefinedType} from 'gs-types';
-import {Context, DIV, icall, query, itarget, ivalue, ocase, registerCustomElement} from 'persona';
-import {Observable, OperatorFunction, pipe, of} from 'rxjs';
-import {map, withLatestFrom, switchMap, repeat} from 'rxjs/operators';
+import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
+import {concat, Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {dropAction} from '../action/drop-action';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
@@ -40,15 +39,17 @@ class Deck extends BaseRegion<DeckState> {
 
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
+    const activeContents$ = $activeState.get(this.$.vine).$('contentIds');
+    const contents$ = this.state.$('contentIds');
     return [
       ...super.runs,
       this.installAction(
-          $ => pipe(
-              withLatestFrom($activeState.get(this.$.vine).$('contentIds')),
-              switchMap(([payload, contentIds]) => {
-                return of(payload).pipe(
-                    dropAction($),
-                    repeat(contentIds.length),
+          () => pipe(
+              withLatestFrom(activeContents$, contents$),
+              switchMap(([, activeContents, contents]) => {
+                return concat(
+                    of([]).pipe(activeContents$.set()),
+                    of([...contents, ...activeContents]).pipe(contents$.set()),
                 );
               }),
           ),
