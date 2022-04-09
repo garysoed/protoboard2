@@ -81,10 +81,41 @@ test('@protoboard2/src/region/deck', init => {
     });
 
     should('trigger on function call', () => {
-      const harness = getHarness(_.element, DeckHarness);
-      harness.simulateTrigger(TriggerType.D);
+      _.element.drop(undefined);
 
       assert(_.element).to.matchSnapshot('deck__drop-call.html');
+      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+    });
+  });
+
+  test('drop all action', _, init => {
+    const _ = init(_ => {
+      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
+      of(['steelblue', 'orange', 'chartreuse']).pipe(activeContents$.set()).subscribe();
+
+      const stateService = $stateService.get(_.tester.vine);
+      const state$ = stateService.addRoot<SlotState>({
+        id: {},
+        contentIds: mutableState(['red', 'green', 'blue']),
+      })._();
+      const element = _.tester.createElement(DECK);
+      element.state = state$;
+
+      return {..._, activeContents$, element};
+    });
+
+    should('trigger on keydown', () => {
+      const harness = getHarness(_.element, DeckHarness);
+      harness.simulateTrigger(TriggerType.D, {shiftKey: true});
+
+      assert(_.element).to.matchSnapshot('deck__dropall-keydown.html');
+      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+    });
+
+    should('trigger on function call', () => {
+      _.element.dropAll(undefined);
+
+      assert(_.element).to.matchSnapshot('deck__dropall-call.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
     });
   });
@@ -119,7 +150,7 @@ test('@protoboard2/src/region/deck', init => {
     should('trigger on function call', () => {
       const harness = getHarness(_.element, DeckHarness);
       const d1Harness = harness.getContent(D1Harness);
-      d1Harness.simulatePick();
+      d1Harness.target.pick(undefined);
 
       assert(_.element).to.matchSnapshot('deck__pick-call.html');
       assert(_.activeContents$).to.emitWith(

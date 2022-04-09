@@ -1,5 +1,4 @@
 import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
-import {debug} from 'gs-tools/export/rxjs';
 import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
@@ -68,7 +67,6 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
     ]);
     return merge(target$.pipe(onTrigger(config$)), onCall$)
         .pipe(
-            debug(null, actionName),
             action(this.$baseComponent, config$),
             withLatestFrom(this.state._('id')),
             map(([, id]) => new ActionEvent(action, id)),

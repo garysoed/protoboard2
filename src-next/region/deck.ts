@@ -1,9 +1,11 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType, undefinedType} from 'gs-types';
 import {Context, DIV, icall, query, itarget, ivalue, ocase, registerCustomElement} from 'persona';
-import {Observable, OperatorFunction, pipe} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Observable, OperatorFunction, pipe, of} from 'rxjs';
+import {map, withLatestFrom, switchMap, repeat} from 'rxjs/operators';
 
+import {dropAction} from '../action/drop-action';
+import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
@@ -40,13 +42,21 @@ class Deck extends BaseRegion<DeckState> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      // this.installAction(
-      //     dropAction,
-      //     'Drop all',
-      //     this.target$,
-      //     this.$.host.dropAllConfig,
-      //     this.$.host.dropAll,
-      // ),
+      this.installAction(
+          $ => pipe(
+              withLatestFrom($activeState.get(this.$.vine).$('contentIds')),
+              switchMap(([payload, contentIds]) => {
+                return of(payload).pipe(
+                    dropAction($),
+                    repeat(contentIds.length),
+                );
+              }),
+          ),
+          'Drop all',
+          this.target$,
+          this.$.host.dropAllConfig,
+          this.$.host.dropAll,
+      ),
       // this.installAction(
       //     pickAction,
       //     'Pick all',
