@@ -8,7 +8,7 @@ export class TriggerElementHarness extends ElementHarness<Element> {
 
   simulateTrigger(triggerType: TriggerType, options: MouseEventInit&KeyboardEventInit = {}): void {
     if (triggerType === TriggerType.CLICK) {
-      this.simulateClick();
+      this.simulateClick(options);
       return;
     }
 

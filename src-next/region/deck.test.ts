@@ -158,4 +158,40 @@ test('@protoboard2/src/region/deck', init => {
       );
     });
   });
+
+  test('pick all action', _, init => {
+    const _ = init(_ => {
+      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
+      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+
+      const stateService = $stateService.get(_.tester.vine);
+      const state$ = stateService.addRoot<SlotState>({
+        id: {},
+        contentIds: mutableState(['red', 'green', 'blue']),
+      })._();
+      const element = _.tester.createElement(DECK);
+      element.state = state$;
+
+      return {..._, activeContents$, element};
+    });
+
+    should('trigger on keydown', () => {
+      const harness = getHarness(_.element, DeckHarness);
+      harness.simulateTrigger(TriggerType.CLICK, {shiftKey: true});
+
+      assert(_.element).to.matchSnapshot('deck__pickall-keydown.html');
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<{}>().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      );
+    });
+
+    should('trigger on function call', () => {
+      _.element.pickAll(undefined);
+
+      assert(_.element).to.matchSnapshot('deck__pickall-call.html');
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<{}>().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      );
+    });
+  });
 });

@@ -1,8 +1,8 @@
 import {cache} from 'gs-tools/export/data';
 import {instanceofType, undefinedType} from 'gs-types';
 import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
-import {concat, Observable, of, OperatorFunction, pipe} from 'rxjs';
-import {map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {concat, Observable, of, OperatorFunction, pipe, EMPTY} from 'rxjs';
+import {map, switchMap, withLatestFrom, switchMapTo} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
@@ -46,10 +46,11 @@ class Deck extends BaseRegion<DeckState> {
       this.installAction(
           () => pipe(
               withLatestFrom(activeContents$, contents$),
-              switchMap(([, activeContents, contents]) => {
+              switchMap(([payload, activeContents, contents]) => {
                 return concat(
-                    of([]).pipe(activeContents$.set()),
-                    of([...contents, ...activeContents]).pipe(contents$.set()),
+                    of([]).pipe(activeContents$.set(), switchMapTo(EMPTY)),
+                    of([...contents, ...activeContents]).pipe(contents$.set(), switchMapTo(EMPTY)),
+                    of(payload),
                 );
               }),
           ),
@@ -58,13 +59,22 @@ class Deck extends BaseRegion<DeckState> {
           this.$.host.dropAllConfig,
           this.$.host.dropAll,
       ),
-      // this.installAction(
-      //     pickAction,
-      //     'Pick all',
-      //     this.target$,
-      //     this.$.host.pickAllConfig,
-      //     this.$.host.pickAll,
-      // ),
+      this.installAction(
+          () => pipe(
+              withLatestFrom(activeContents$, contents$),
+              switchMap(([payload, activeContents, contents]) => {
+                return concat(
+                    of([...activeContents, ...[...contents].reverse()]).pipe(activeContents$.set(), switchMapTo(EMPTY)),
+                    of([]).pipe(contents$.set(), switchMapTo(EMPTY)),
+                    of(payload),
+                );
+              }),
+          ),
+          'Pick all',
+          this.target$,
+          this.$.host.pickAllConfig,
+          this.$.host.pickAll,
+      ),
       // this.createActionSpec(shuffleAction, compileConfig($.host._.shuffleAction, this.context), 'Shuffle'),
     ];
   }
