@@ -4,6 +4,7 @@ import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElemen
 import {concat, Observable, of, OperatorFunction, pipe, EMPTY} from 'rxjs';
 import {map, switchMap, withLatestFrom, switchMapTo} from 'rxjs/operators';
 
+import {shuffleAction} from '../action/shuffle-action';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
@@ -22,7 +23,8 @@ const $deck = {
     dropAllConfig: ivalue('dropAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: true}),
     pickAll: icall('pickAll', undefinedType),
     pickAllConfig: ivalue('pickAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK, shift: true}),
-    // shuffleAction: shuffleActionConfigSpecs({}),
+    shuffle: icall('shuffle', undefinedType),
+    shuffleConfig: ivalue('shuffleConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.S}),
   },
   shadow: {
     root: query('#root', DIV, {
@@ -75,7 +77,13 @@ class Deck extends BaseRegion<DeckState> {
           this.$.host.pickAllConfig,
           this.$.host.pickAll,
       ),
-      // this.createActionSpec(shuffleAction, compileConfig($.host._.shuffleAction, this.context), 'Shuffle'),
+      this.installAction(
+          shuffleAction,
+          'Shuffle',
+          this.target$,
+          this.$.host.shuffleConfig,
+          this.$.host.shuffle,
+      ),
     ];
   }
 
