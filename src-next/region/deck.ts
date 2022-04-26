@@ -1,8 +1,8 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType, undefinedType} from 'gs-types';
+import {instanceofType} from 'gs-types';
 import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
-import {concat, Observable, of, OperatorFunction, pipe, EMPTY} from 'rxjs';
-import {map, switchMap, withLatestFrom, switchMapTo} from 'rxjs/operators';
+import {concat, EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {map, switchMap, switchMapTo, withLatestFrom} from 'rxjs/operators';
 
 import {shuffleAction} from '../action/shuffle-action';
 import {$activeState} from '../core/active-spec';
@@ -19,11 +19,11 @@ export interface DeckState extends RegionState { }
 const $deck = {
   host: {
     ...create$baseRegion<DeckState>().host,
-    dropAll: icall('dropAll', undefinedType),
+    dropAll: icall('dropAll', []),
     dropAllConfig: ivalue('dropAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: true}),
-    pickAll: icall('pickAll', undefinedType),
+    pickAll: icall('pickAll', []),
     pickAllConfig: ivalue('pickAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK, shift: true}),
-    shuffle: icall('shuffle', undefinedType),
+    shuffle: icall('shuffle', []),
     shuffleConfig: ivalue('shuffleConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.S}),
   },
   shadow: {

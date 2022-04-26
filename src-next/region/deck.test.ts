@@ -122,7 +122,7 @@ test('@protoboard2/src/region/deck', init => {
     });
 
     should('trigger on function call', () => {
-      _.element.dropAll(undefined);
+      _.element.dropAll();
 
       assert(_.element).to.matchSnapshot('deck__dropall-call.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
@@ -159,7 +159,7 @@ test('@protoboard2/src/region/deck', init => {
     should('trigger on function call', () => {
       const harness = getHarness(_.element, DeckHarness);
       const d1Harness = harness.getContent(D1Harness);
-      d1Harness.target.pick(undefined);
+      d1Harness.target.pick();
 
       assert(_.element).to.matchSnapshot('deck__pick-call.html');
       assert(_.activeContents$).to.emitWith(

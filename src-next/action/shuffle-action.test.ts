@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
-import {instanceofType, undefinedType} from 'gs-types';
+import {instanceofType} from 'gs-types';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement, renderCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
@@ -25,7 +25,7 @@ interface TestState extends RegionState { }
 const $test = {
   host: {
     ...create$baseRegion<TestState>().host,
-    trigger: icall('trigger', undefinedType),
+    trigger: icall('trigger', []),
   },
   shadow: {
     root: query('#root', DIV, {

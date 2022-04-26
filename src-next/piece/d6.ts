@@ -1,8 +1,8 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
-import {intersectType, undefinedType, unknownType} from 'gs-types';
-import {Context, DIV, iattr, icall, query, itarget, ivalue, ocase, ostyle, registerCustomElement} from 'persona';
+import {intersectType, unknownType} from 'gs-types';
+import {Context, DIV, iattr, icall, itarget, ivalue, ocase, ostyle, query, registerCustomElement} from 'persona';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -39,19 +39,19 @@ const $d6 = {
   host: {
     ...create$baseComponent<D6State>().host,
     height: iattr('height'),
-    flip: icall('flip', undefinedType),
+    flip: icall('flip', []),
     flipConfig: ivalue('flipConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.F}),
-    pick: icall('pick', undefinedType),
+    pick: icall('pick', []),
     pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK}),
-    roll: icall('roll', undefinedType),
+    roll: icall('roll', []),
     rollConfig: ivalue('rollConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.L}),
-    rotate: icall('rotate', undefinedType),
+    rotate: icall('rotate', []),
     rotateConfig: ivalue(
         'rotateConfig',
         intersectType([TRIGGER_SPEC_TYPE, ROTATE_CONFIG_TYPE]),
         {...DEFAULT_ROTATE_CONFIG, type: TriggerType.R},
     ),
-    turn: icall('turn', undefinedType),
+    turn: icall('turn', []),
     turnConfig: ivalue('turnConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.T}),
     width: iattr('width'),
   },

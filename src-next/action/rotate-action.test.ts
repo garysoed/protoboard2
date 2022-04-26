@@ -3,8 +3,7 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {undefinedType} from 'gs-types';
-import {Context, DIV, icall, query, itarget, ostyle, registerCustomElement} from 'persona';
+import {Context, DIV, icall, itarget, ostyle, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
 
@@ -26,7 +25,7 @@ const $config$ = source(() => new BehaviorSubject<RotateConfig>({stops: []}));
 const $test = {
   host: {
     ...create$baseComponent<TestState>().host,
-    trigger: icall('trigger', undefinedType),
+    trigger: icall('trigger', []),
   },
   shadow: {
     div: query('#div', DIV, {

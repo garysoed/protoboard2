@@ -2,8 +2,7 @@ import {$stateService, source} from 'grapevine';
 import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {mutableState, MutableState} from 'gs-tools/export/state';
-import {undefinedType} from 'gs-types';
-import {Context, DIV, icall, query, itarget, registerCustomElement} from 'persona';
+import {Context, DIV, icall, itarget, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {EMPTY, fromEvent, Observable, of, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -32,7 +31,7 @@ const $onUpdate$ = source(() => new Subject<number>());
 const $child = {
   host: {
     ...create$baseComponent().host,
-    trigger: icall('trigger', undefinedType),
+    trigger: icall('trigger', []),
   },
   shadow: {
     div: query('#div', DIV, {
@@ -71,7 +70,7 @@ const CHILD = registerCustomElement({
 const $test = {
   host: {
     ...create$baseComponent<TestState>().host,
-    trigger: icall('trigger', undefinedType),
+    trigger: icall('trigger', []),
   },
   shadow: {
     container: query('#container', DIV, {

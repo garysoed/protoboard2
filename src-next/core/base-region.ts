@@ -1,6 +1,5 @@
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
-import {undefinedType} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
 import {ICall, IValue} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -18,7 +17,7 @@ import {BaseComponent, BaseComponentSpecType, create$baseComponent} from './base
 
 interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecType<S> {
   host: {
-    readonly drop: ICall<undefined, 'drop'>;
+    readonly drop: ICall<readonly unknown[], 'drop'>;
     readonly dropConfig: IValue<TriggerSpec, 'dropConfig'>;
   } & BaseComponentSpecType<S>['host'];
 }
@@ -29,7 +28,7 @@ export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S
   return {
     host: {
       ...create$baseComponent<S>().host,
-      drop: icall('drop', undefinedType),
+      drop: icall('drop', []),
       dropConfig: ivalue('dropConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: false}),
     },
   };

@@ -3,7 +3,6 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {undefinedType} from 'gs-types';
 import {Context, icall, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -32,7 +31,7 @@ const FACES = [
 const $test = {
   host: {
     ...create$baseComponent<TestState>().host,
-    trigger: icall('trigger', undefinedType),
+    trigger: icall('trigger', []),
   },
   shadow: {
     face: query('#face', TEST_FACE),

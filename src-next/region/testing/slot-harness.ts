@@ -19,7 +19,7 @@ export class SlotHarness extends CustomElementHarness<typeof SLOT> {
   }
 
   simulateDrop(): void {
-    this.target.drop(undefined);
+    this.target.drop();
   }
 
   simulateHelp(): void {

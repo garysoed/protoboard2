@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {ImmutableResolver} from 'gs-tools/export/state';
-import {intersectType, undefinedType} from 'gs-types';
+import {intersectType} from 'gs-types';
 import {Context, iattr, icall, ivalue} from 'persona';
 import {IAttr, ICall, IValue} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -18,9 +18,9 @@ interface BasePieceSpecType<S extends PieceState> extends BaseComponentSpecType<
   host: {
     readonly height: IAttr,
     readonly width: IAttr,
-    readonly pick: ICall<undefined, 'pick'>;
+    readonly pick: ICall<readonly unknown[], 'pick'>;
     readonly pickConfig: IValue<TriggerSpec, 'pickConfig'>;
-    readonly rotate: ICall<undefined, 'rotate'>;
+    readonly rotate: ICall<readonly unknown[], 'rotate'>;
     readonly rotateConfig: IValue<RotateConfig&TriggerSpec, 'rotateConfig'>;
   } & BaseComponentSpecType<S>['host'];
 }
@@ -31,9 +31,9 @@ export function create$basePiece<S extends PieceState>(): BasePieceSpecType<S> {
       ...create$baseComponent<S>().host,
       height: iattr('height'),
       width: iattr('width'),
-      pick: icall('pick', undefinedType),
+      pick: icall('pick', []),
       pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK, shift: false}),
-      rotate: icall('rotate', undefinedType),
+      rotate: icall('rotate', []),
       rotateConfig: ivalue(
           'rotateConfig',
           intersectType([TRIGGER_SPEC_TYPE, ROTATE_CONFIG_TYPE]),
