@@ -3,7 +3,7 @@ import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D1} from '../../src-next/piece/d1';
-import {SLOT} from '../../src-next/region/slot';
+import {SURFACE} from '../../src-next/region/surface';
 import {$state$} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
@@ -12,8 +12,8 @@ import template from './d1.html';
 
 const $d1Demo = {
   shadow: {
-    gemSlot: query('#gemSlot', SLOT, {}),
-    meepleSlot: query('#meepleSlot', SLOT, {}),
+    gemSlot: query('#gemSlot', SURFACE, {}),
+    meepleSlot: query('#meepleSlot', SURFACE, {}),
   },
 };
 
@@ -38,7 +38,7 @@ export const D1_DEMO = registerCustomElement({
     D1,
     DOCUMENTATION_TEMPLATE,
     ICON,
-    SLOT,
+    SURFACE,
   ],
   spec: $d1Demo,
   tag: 'pbd-d1',

@@ -17,15 +17,15 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
-import {SLOT, SlotState} from './slot';
+import {SURFACE, SurfaceState} from './surface';
 import {SlotHarness} from './testing/slot-harness';
 
 
-test('@protoboard2/src/region/slot', init => {
+test('@protoboard2/src/region/surface', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/region/goldens', goldens));
 
-    const tester = setupTest({roots: [SLOT, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
+    const tester = setupTest({roots: [SURFACE, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
     registerComponentRenderSpec(tester.vine, id => {
@@ -45,11 +45,11 @@ test('@protoboard2/src/region/slot', init => {
 
   should('render the contents correctly', () => {
     const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot<SlotState>({
+    const state$ = stateService.addRoot<SurfaceState>({
       id: {},
       contentIds: mutableState(['red', 'green', 'blue']),
     })._();
-    const element = _.tester.createElement(SLOT);
+    const element = _.tester.createElement(SURFACE);
     element.state = state$;
 
     assert(element).to.matchSnapshot('slot__render.html');
@@ -61,11 +61,11 @@ test('@protoboard2/src/region/slot', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
-      const element = _.tester.createElement(SLOT);
+      const element = _.tester.createElement(SURFACE);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -94,11 +94,11 @@ test('@protoboard2/src/region/slot', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
-      const element = _.tester.createElement(SLOT);
+      const element = _.tester.createElement(SURFACE);
       element.state = state$;
 
       return {..._, activeContents$, element};

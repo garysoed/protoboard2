@@ -4,7 +4,7 @@ import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D6} from '../../src-next/piece/d6';
-import {SLOT} from '../../src-next/region/slot';
+import {SURFACE} from '../../src-next/region/surface';
 import {$state$} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
@@ -13,7 +13,7 @@ import template from './d6.html';
 
 export const $d6Demo = {
   shadow: {
-    diceSlot: query('#diceSlot', SLOT),
+    diceSlot: query('#diceSlot', SURFACE),
   },
 };
 
@@ -37,7 +37,7 @@ export const D6_DEMO = registerCustomElement({
     D6,
     DOCUMENTATION_TEMPLATE,
     ICON,
-    SLOT,
+    SURFACE,
   ],
   spec: $d6Demo,
   tag: 'pbd-d6',

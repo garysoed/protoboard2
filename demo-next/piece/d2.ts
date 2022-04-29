@@ -3,7 +3,7 @@ import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {D2} from '../../src-next/piece/d2';
-import {SLOT} from '../../src-next/region/slot';
+import {SURFACE} from '../../src-next/region/surface';
 import {$state$} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
@@ -12,8 +12,8 @@ import template from './d2.html';
 
 const $d2Demo = {
   shadow: {
-    cardSlot: query('#cardSlot', SLOT),
-    coinSlot: query('#coinSlot', SLOT),
+    cardSlot: query('#cardSlot', SURFACE),
+    coinSlot: query('#coinSlot', SURFACE),
   },
 };
 
@@ -37,7 +37,7 @@ export const D2_DEMO = registerCustomElement({
     D2,
     DOCUMENTATION_TEMPLATE,
     ICON,
-    SLOT,
+    SURFACE,
   ],
   spec: $d2Demo,
   tag: 'pbd-d2',

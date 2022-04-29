@@ -20,7 +20,7 @@ import {$random} from '../util/random';
 
 import {DECK} from './deck';
 import goldens from './goldens/goldens.json';
-import {SlotState} from './slot';
+import {SurfaceState} from './surface';
 import {DeckHarness} from './testing/deck-harness';
 
 
@@ -55,7 +55,7 @@ test('@protoboard2/src/region/deck', init => {
 
   should('render the contents correctly', () => {
     const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot<SlotState>({
+    const state$ = stateService.addRoot<SurfaceState>({
       id: {},
       contentIds: mutableState(['red', 'green', 'blue']),
     })._();
@@ -71,7 +71,7 @@ test('@protoboard2/src/region/deck', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
@@ -103,7 +103,7 @@ test('@protoboard2/src/region/deck', init => {
       of(['steelblue', 'orange', 'chartreuse']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
@@ -135,7 +135,7 @@ test('@protoboard2/src/region/deck', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
@@ -174,7 +174,7 @@ test('@protoboard2/src/region/deck', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();
@@ -210,7 +210,7 @@ test('@protoboard2/src/region/deck', init => {
       of(['steelblue']).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SlotState>({
+      const state$ = stateService.addRoot<SurfaceState>({
         id: {},
         contentIds: mutableState(['red', 'green', 'blue']),
       })._();

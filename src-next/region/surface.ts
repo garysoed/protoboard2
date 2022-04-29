@@ -7,14 +7,14 @@ import {Observable, OperatorFunction} from 'rxjs';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
 
-import template from './slot.html';
+import template from './surface.html';
 
 
-export interface SlotState extends RegionState {}
+export interface SurfaceState extends RegionState {}
 
-const $slot = {
+const $surface = {
   host: {
-    ...create$baseRegion<SlotState>().host,
+    ...create$baseRegion<SurfaceState>().host,
   },
   shadow: {
     root: query('#root', DIV, {
@@ -25,7 +25,7 @@ const $slot = {
 };
 
 
-export function slotState(id: {}, input: Partial<SlotState> = {}): SlotState {
+export function slotState(id: {}, input: Partial<SurfaceState> = {}): SurfaceState {
   return {
     id,
     contentIds: mutableState([]),
@@ -34,9 +34,9 @@ export function slotState(id: {}, input: Partial<SlotState> = {}): SlotState {
 }
 
 
-export class Slot extends BaseRegion<SlotState> {
-  constructor(private readonly $: Context<typeof $slot>) {
-    super($, 'Slot');
+export class Surface extends BaseRegion<SurfaceState> {
+  constructor(private readonly $: Context<typeof $surface>) {
+    super($, 'Surface');
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
@@ -49,9 +49,9 @@ export class Slot extends BaseRegion<SlotState> {
   }
 }
 
-export const SLOT = registerCustomElement({
-  ctrl: Slot,
-  spec: $slot,
-  tag: 'pb-slot',
+export const SURFACE = registerCustomElement({
+  ctrl: Surface,
+  spec: $surface,
+  tag: 'pb-surface',
   template,
 });

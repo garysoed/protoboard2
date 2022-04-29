@@ -7,22 +7,22 @@ import {of} from 'rxjs';
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
-import {slotState, SlotState} from '../src-next/region/slot';
+import {slotState, SurfaceState} from '../src-next/region/surface';
 
 import {FaceType, RENDERED_FACE} from './piece/rendered-face';
 
 
 export interface DemoState {
   d1: {
-    gemSlot: SlotState;
-    meepleSlot: SlotState;
+    gemSlot: SurfaceState;
+    meepleSlot: SurfaceState;
   };
   d2: {
-    cardSlot: SlotState;
-    coinSlot: SlotState;
+    cardSlot: SurfaceState;
+    coinSlot: SurfaceState;
   },
   d6: {
-    diceSlot: SlotState;
+    diceSlot: SurfaceState;
   },
   pieces: {
     card: D2State,

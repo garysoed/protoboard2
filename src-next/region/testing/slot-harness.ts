@@ -3,11 +3,11 @@ import {CustomElementHarness, getHarness, Harness, HarnessCtor} from 'persona/ex
 
 import {TriggerElementHarness} from '../../testing/trigger-element-harness';
 import {TriggerType} from '../../types/trigger-spec';
-import {SLOT} from '../slot';
+import {SURFACE} from '../surface';
 
 
-export class SlotHarness extends CustomElementHarness<typeof SLOT> {
-  static readonly validType = customElementType(SLOT);
+export class SlotHarness extends CustomElementHarness<typeof SURFACE> {
+  static readonly validType = customElementType(SURFACE);
 
   private readonly harness = getHarness(this.target, '#root', TriggerElementHarness);
 

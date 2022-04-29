@@ -9,7 +9,7 @@ import {ACTIVE} from '../src-next/core/active';
 import {LENS} from '../src-next/face/lens';
 import {LENS_DISPLAY} from '../src-next/face/lens-display';
 import {D1} from '../src-next/piece/d1';
-import {SLOT} from '../src-next/region/slot';
+import {SURFACE} from '../src-next/region/surface';
 
 import {DOCUMENTATION} from './core/documentation';
 import {DRAWER} from './core/drawer';
@@ -61,7 +61,7 @@ export const ROOT = registerCustomElement({
     OVERLAY,
     RENDERED_FACE,
     ROOT_LAYOUT,
-    SLOT,
+    SURFACE,
   ],
   spec: $root,
   tag: 'pbd-root',
