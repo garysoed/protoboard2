@@ -52,7 +52,7 @@ test('@protoboard2/src/region/surface', init => {
     const element = _.tester.createElement(SURFACE);
     element.state = state$;
 
-    assert(element).to.matchSnapshot('slot__render.html');
+    assert(element).to.matchSnapshot('surface__render.html');
   });
 
   test('drop action', _, init => {
@@ -75,7 +75,7 @@ test('@protoboard2/src/region/surface', init => {
       const harness = getHarness(_.element, SlotHarness);
       harness.simulateTrigger(TriggerType.D);
 
-      assert(_.element).to.matchSnapshot('slot__drop-keydown.html');
+      assert(_.element).to.matchSnapshot('surface__drop-keydown.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
     });
 
@@ -83,7 +83,7 @@ test('@protoboard2/src/region/surface', init => {
       const harness = getHarness(_.element, SlotHarness);
       harness.simulateDrop();
 
-      assert(_.element).to.matchSnapshot('slot__drop-call.html');
+      assert(_.element).to.matchSnapshot('surface__drop-call.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
     });
   });
@@ -109,7 +109,7 @@ test('@protoboard2/src/region/surface', init => {
       const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
-      assert(_.element).to.matchSnapshot('slot__pick-keydown.html');
+      assert(_.element).to.matchSnapshot('surface__pick-keydown.html');
       assert(_.activeContents$).to.emitWith(
           arrayThat<{}>().haveExactElements(['steelblue', 'green']),
       );
@@ -120,7 +120,7 @@ test('@protoboard2/src/region/surface', init => {
       const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
       d1Harness.simulatePick();
 
-      assert(_.element).to.matchSnapshot('slot__pick-call.html');
+      assert(_.element).to.matchSnapshot('surface__pick-call.html');
       assert(_.activeContents$).to.emitWith(arrayThat<{}>().haveExactElements(['steelblue', 'green']));
     });
   });
