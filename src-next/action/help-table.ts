@@ -1,6 +1,6 @@
 import {cache} from 'gs-tools/export/data';
 import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
-import {Context, Ctrl, HEADING, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TABLE_CELL, TABLE_SECTION, TEMPLATE} from 'persona';
+import {Context, Ctrl, H3, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -19,10 +19,10 @@ const $helpTable = {
     _row: query('#_row', TEMPLATE, {
       target: itarget(),
     }),
-    title: query('#title', HEADING, {
+    title: query('#title', H3, {
       text: otext(),
     }),
-    content: query('#content', TABLE_SECTION, {
+    content: query('#content', TBODY, {
       rows: oforeach('#rows', ACTION_TRIGGER_TYPE),
     }),
   },
@@ -64,7 +64,7 @@ export class HelpTable implements Ctrl {
       template$: this.$.shadow._row.target,
       spec: {
         keyboard: query('mk-keyboard', KEYBOARD),
-        action: query('td:nth-child(2)', TABLE_CELL, {
+        action: query('td:nth-child(2)', TD, {
           text: otext(),
         }),
       },
