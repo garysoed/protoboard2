@@ -34,6 +34,7 @@ test('@protoboard2/src/region/surface', init => {
       }
       return renderCustomElement({
         registration: D1,
+        spec: {},
         runs: $ => [
           of($stateService.get(tester.vine).addRoot(d1State(id, id))._()).pipe($.state()),
         ],

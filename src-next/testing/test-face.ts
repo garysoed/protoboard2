@@ -65,6 +65,7 @@ export function renderTestFace(id: unknown): RenderSpec {
   }
   return renderCustomElement({
     registration: TEST_FACE,
+    spec: {},
     runs: $ => [
       of(id).pipe($.shade()),
     ],

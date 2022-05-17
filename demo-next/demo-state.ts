@@ -81,26 +81,31 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
     case ComponentType.CARD:
       return renderCustomElement({
         registration: D2,
+        spec: {},
         runs: $ => [of(state$._('pieces')._('card')).pipe($.state())],
       });
     case ComponentType.COIN:
       return renderCustomElement({
         registration: D2,
+        spec: {},
         runs: $ => [of(state$._('pieces')._('coin')).pipe($.state())],
       });
     case ComponentType.DICE:
       return renderCustomElement({
         registration: D6,
+        spec: {},
         runs: $ => [of(state$._('pieces')._('dice')).pipe($.state())],
       });
     case ComponentType.GEM:
       return renderCustomElement({
         registration: D1,
+        spec: {},
         runs: $ => [of(state$._('pieces')._('gem')).pipe($.state())],
       });
     case ComponentType.MEEPLE:
       return renderCustomElement({
         registration: D1,
+        spec: {},
         runs: $ => [of(state$._('pieces')._('meeple')).pipe($.state())],
       });
   }
@@ -113,6 +118,7 @@ export function renderFace(id: unknown): RenderSpec {
 
   return renderCustomElement({
     registration: RENDERED_FACE,
+    spec: {},
     runs: $ => [of(id).pipe($.faceType())],
   });
 }

@@ -80,6 +80,7 @@ test('@protoboard2/action/shuffle-action', init => {
     });
     registerComponentRenderSpec(tester.vine, id => renderCustomElement({
       registration: TEST_FACE,
+      spec: {},
       runs: $ => [
         of(id as string).pipe($.shade()),
       ],
