@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {nullableType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, query, ocase, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, query, ocase, registerCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
@@ -42,7 +42,7 @@ export class Documentation implements Ctrl {
       return of(null);
     }
 
-    return of (renderCustomElement({spec: {}, registration: spec.registration}));
+    return of (renderElement({spec: {}, registration: spec.registration}));
   }
 }
 

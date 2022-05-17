@@ -5,7 +5,7 @@ import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
-import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement, renderCustomElement} from 'persona';
+import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -78,7 +78,7 @@ test('@protoboard2/action/shuffle-action', init => {
         {override: $random, withValue: fromSeed(seed)},
       ],
     });
-    registerComponentRenderSpec(tester.vine, id => renderCustomElement({
+    registerComponentRenderSpec(tester.vine, id => renderElement({
       registration: TEST_FACE,
       spec: {},
       runs: $ => [

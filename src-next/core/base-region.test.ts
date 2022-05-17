@@ -3,7 +3,7 @@ import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderCustomElement, renderTextNode} from 'persona';
+import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -68,7 +68,7 @@ test('@protoboard2/src/core/base-region', init => {
       if (!stringType.check(id)) {
         return null;
       }
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [of(states.get(id)).pipe($.state())],

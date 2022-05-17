@@ -3,7 +3,7 @@ import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
-import {renderCustomElement} from 'persona';
+import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
@@ -32,7 +32,7 @@ test('@protoboard2/src/region/surface', init => {
       if (!stringType.check(id)) {
         return null;
       }
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [

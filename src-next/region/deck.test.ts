@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
-import {renderCustomElement} from 'persona';
+import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
@@ -42,7 +42,7 @@ test('@protoboard2/src/region/deck', init => {
       if (!stringType.check(id)) {
         return null;
       }
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [

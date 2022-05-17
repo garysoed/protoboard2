@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {unknownType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, query, ievent, oclass, oforeach, registerCustomElement, renderCustomElement, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, query, ievent, oclass, oforeach, registerCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
@@ -42,7 +42,7 @@ export class HelpOverlay implements Ctrl {
   }
 
   private renderHelpTable(index: number): Observable<RenderSpec> {
-    return of(renderCustomElement({
+    return of(renderElement({
       registration: HELP_TABLE,
       spec: {},
       runs: $ => [of(`${index}`).pipe($.index())],

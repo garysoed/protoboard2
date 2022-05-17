@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {nullableType, stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, query, itarget, ocase, registerCustomElement, renderCustomElement, renderHtml, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, iattr, query, itarget, ocase, registerCustomElement, renderElement, renderHtml, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -63,7 +63,7 @@ export function renderTestFace(id: unknown): RenderSpec {
   if (!stringType.check(id)) {
     throw new Error(`Invalid ID ${id}`);
   }
-  return renderCustomElement({
+  return renderElement({
     registration: TEST_FACE,
     spec: {},
     runs: $ => [

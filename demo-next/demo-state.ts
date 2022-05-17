@@ -1,7 +1,7 @@
 import {$stateService, source, Vine} from 'grapevine';
 import {mutableState} from 'gs-tools/export/state';
 import {enumType} from 'gs-types';
-import {renderCustomElement, renderHtml, RenderSpec} from 'persona';
+import {renderElement, renderHtml, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
 import {D1, D1State, d1State} from '../src-next/piece/d1';
@@ -79,31 +79,31 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
   const state$ = $state$.get(vine);
   switch (id) {
     case ComponentType.CARD:
-      return renderCustomElement({
+      return renderElement({
         registration: D2,
         spec: {},
         runs: $ => [of(state$._('pieces')._('card')).pipe($.state())],
       });
     case ComponentType.COIN:
-      return renderCustomElement({
+      return renderElement({
         registration: D2,
         spec: {},
         runs: $ => [of(state$._('pieces')._('coin')).pipe($.state())],
       });
     case ComponentType.DICE:
-      return renderCustomElement({
+      return renderElement({
         registration: D6,
         spec: {},
         runs: $ => [of(state$._('pieces')._('dice')).pipe($.state())],
       });
     case ComponentType.GEM:
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [of(state$._('pieces')._('gem')).pipe($.state())],
       });
     case ComponentType.MEEPLE:
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [of(state$._('pieces')._('meeple')).pipe($.state())],
@@ -116,7 +116,7 @@ export function renderFace(id: unknown): RenderSpec {
     throw new Error(`ID ${id} is not a FaceType`);
   }
 
-  return renderCustomElement({
+  return renderElement({
     registration: RENDERED_FACE,
     spec: {},
     runs: $ => [of(id).pipe($.faceType())],

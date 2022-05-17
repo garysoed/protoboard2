@@ -4,7 +4,7 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderCustomElement} from 'persona';
+import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -82,7 +82,7 @@ test('@protoboard2/src/action/drop-action', init => {
       if (!stringType.check(id)) {
         throw new Error(`Invalid ID ${id}`);
       }
-      return renderCustomElement({
+      return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
