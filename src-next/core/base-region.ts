@@ -22,7 +22,7 @@ interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecTyp
   } & BaseComponentSpecType<S>['host'];
 }
 
-export type RenderContentFn = (id: {}) => Observable<RenderSpec|null>;
+export type RenderContentFn = (id: {}) => RenderSpec|null;
 
 export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S> {
   return {
@@ -45,7 +45,11 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      this.setupRenderContents(),
+      renderComponent(
+          this.$baseRegion.vine,
+          (this.state as ImmutableResolver<RegionState>).$('contentIds'),
+          fn => this.renderContents(fn),
+      ),
       this.setupHandlePick(),
       this.installAction(
           dropAction,
@@ -76,12 +80,6 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
         }),
         filterNonNullable(),
         contentIds.set(),
-    );
-  }
-
-  private setupRenderContents(): Observable<unknown> {
-    return (this.state as ImmutableResolver<RegionState>).$('contentIds').pipe(
-        this.renderContents(componentId => renderComponent(this.$baseRegion.vine, componentId)),
     );
   }
 }

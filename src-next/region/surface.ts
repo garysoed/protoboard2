@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {instanceofType} from 'gs-types';
 import {Context, DIV, query, itarget, oforeach, registerCustomElement} from 'persona';
-import {Observable, OperatorFunction} from 'rxjs';
+import {Observable, OperatorFunction, of} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
@@ -40,7 +40,7 @@ export class Surface extends BaseRegion<SurfaceState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.root.content(id => renderContentFn(id));
+    return this.$.shadow.root.content(id => of(renderContentFn(id)));
   }
 
   @cache()

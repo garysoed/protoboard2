@@ -109,14 +109,15 @@ class D2Ctrl extends BaseComponent<D2State> {
           renderRotatable(),
           this.$.shadow.container.transform(),
       ),
-      combineLatest([
-        this.state.$('currentFaceIndex'),
-        this.state._('faces'),
-      ])
-          .pipe(
-              map(([currentFaceIndex, faces]) => faces[currentFaceIndex]),
-              this.$.shadow.container.face(id => renderFace(this.$.vine, id)),
-          ),
+      renderFace(
+          this.$.vine,
+          combineLatest([
+            this.state.$('currentFaceIndex'),
+            this.state._('faces'),
+          ])
+              .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
+          render => this.$.shadow.container.face(render),
+      ),
     ];
   }
 }

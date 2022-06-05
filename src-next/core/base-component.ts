@@ -25,7 +25,7 @@ interface ActionInstalledPayload {
 
 export interface BaseComponentSpecType<S> {
   host: {
-    readonly label: IAttr;
+    readonly label: IAttr<string>;
     readonly onAction: OEvent<ActionEvent>;
     readonly state: IValue<ImmutableResolver<S>|undefined, 'state'>;
   };

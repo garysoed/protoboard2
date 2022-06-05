@@ -116,14 +116,15 @@ class D6Ctrl extends BaseComponent<D6State> {
           renderRotatable(),
           this.$.shadow.container.transform(),
       ),
-      combineLatest([
-        this.state.$('currentFaceIndex'),
-        this.state._('faces'),
-      ])
-          .pipe(
-              map(([currentFaceIndex, faces]) => faces[currentFaceIndex]),
-              this.$.shadow.container.face(faceId => renderFace(this.$.vine, faceId)),
-          ),
+      renderFace(
+          this.$.vine,
+          combineLatest([
+            this.state.$('currentFaceIndex'),
+            this.state._('faces'),
+          ])
+              .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
+          render => this.$.shadow.container.face(render),
+      ),
     ];
   }
 }

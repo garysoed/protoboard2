@@ -16,8 +16,8 @@ import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec
 
 interface BasePieceSpecType<S extends PieceState> extends BaseComponentSpecType<S> {
   host: {
-    readonly height: IAttr,
-    readonly width: IAttr,
+    readonly height: IAttr<string>,
+    readonly width: IAttr<string>,
     readonly pick: ICall<readonly unknown[], 'pick'>;
     readonly pickConfig: IValue<TriggerSpec, 'pickConfig'>;
     readonly rotate: ICall<readonly unknown[], 'rotate'>;

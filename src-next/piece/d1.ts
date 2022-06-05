@@ -68,8 +68,10 @@ class D1Ctrl extends BasePiece<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      this.state._('face').pipe(
-          this.$.shadow.container.face(faceId => renderFace(this.$.vine, faceId)),
+      renderFace(
+          this.$.vine,
+          this.state._('face'),
+          render => this.$.shadow.container.face(render),
       ),
     ];
   }

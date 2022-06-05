@@ -2,8 +2,8 @@ import {cache} from 'gs-tools/export/data';
 import {unknownType} from 'gs-types';
 import {renderTheme, THEME_LOADER_TYPE} from 'mask';
 import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
-import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {combineLatest, Observable, of} from 'rxjs';
+import {switchMap} from 'rxjs/operators';
 
 import {$getLensRenderSpec$} from '../renderspec/render-lens-spec';
 
@@ -26,17 +26,23 @@ export class LensDisplay implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$, this.$.shadow.root.theme),
-      $lensService.get(this.$.vine).faceId$.pipe(
-          this.$.shadow.root.content(contentId => {
-            if (!contentId) {
-              return of(null);
-            }
+      combineLatest([
+        $lensService.get(this.$.vine).faceId$,
+        $getLensRenderSpec$.get(this.$.vine),
+      ])
+          .pipe(
+              switchMap(([faceId, getLensRenderSpec]) => {
+                return of(faceId).pipe(
+                    this.$.shadow.root.content(faceId => {
+                      if (!faceId) {
+                        return null;
+                      }
 
-            return $getLensRenderSpec$.get(this.$.vine).pipe(
-                map(getLensRenderSpec => getLensRenderSpec(contentId)),
-            );
-          }),
-      ),
+                      return getLensRenderSpec(faceId);
+                    }),
+                );
+              }),
+          ),
     ];
   }
 }

@@ -1,8 +1,8 @@
 import {cache} from 'gs-tools/export/data';
 import {nullableType} from 'gs-types';
 import {renderTheme} from 'mask';
-import {Context, Ctrl, DIV, query, ocase, registerCustomElement, renderElement, RenderSpec} from 'persona';
-import {Observable, of} from 'rxjs';
+import {Context, Ctrl, DIV, ocase, query, registerCustomElement, renderElement, RenderSpec} from 'persona';
+import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {D1_DEMO} from '../piece/d1';
@@ -37,12 +37,12 @@ export class Documentation implements Ctrl {
   }
 
   @cache()
-  private renderContent(spec: PageSpec|null): Observable<RenderSpec|null> {
+  private renderContent(spec: PageSpec|null): RenderSpec|null {
     if (!spec) {
-      return of(null);
+      return null;
     }
 
-    return of (renderElement({spec: {}, registration: spec.registration}));
+    return renderElement({spec: {}, registration: spec.registration});
   }
 }
 

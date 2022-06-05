@@ -41,7 +41,7 @@ class Test extends BaseRegion<RegionState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.div.contents(id => renderContentFn(id));
+    return this.$.shadow.div.contents(id => of(renderContentFn(id)));
   }
 
   @cache()

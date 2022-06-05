@@ -49,7 +49,7 @@ class Test extends BaseRegion<TestState> {
   }
 
   renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.root.content(id => renderValuesFn(id));
+    return this.$.shadow.root.content(id => of(renderValuesFn(id)));
   }
 
   protected get target$(): Observable<HTMLElement> {

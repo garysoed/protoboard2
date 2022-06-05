@@ -31,12 +31,12 @@ class TestFace implements Ctrl {
       $svgService.get(this.$.vine).getSvg('test').pipe(
           this.$.shadow.root.content(raw => {
             if (!raw) {
-              return of(null);
+              return null;
             }
-            return of(renderHtml({
+            return renderHtml({
               raw: of(raw),
               parseType: 'image/svg+xml',
-            }));
+            });
           }),
       ),
       this.$.host.shade.pipe(
