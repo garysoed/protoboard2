@@ -3,8 +3,7 @@ import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
-import {Context, Ctrl, DIV, query, oforeach, registerCustomElement, renderTextNode} from 'persona';
+import {Context, Ctrl, DIV, oforeach, query, registerCustomElement, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
@@ -22,7 +21,7 @@ const $state = source(vine => $stateService.get(vine).addRoot({
 const $test = {
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach('#ref', instanceofType(Object)),
+      content: oforeach<{}>('#ref'),
     }),
   },
 };
@@ -36,7 +35,7 @@ class Test implements Ctrl {
       renderComponent(
           this.$.vine,
           $state.get(this.$.vine).$('contentIds'),
-          fn => this.$.shadow.container.content(id => of(fn(id))),
+          fn => this.$.shadow.container.content(id => fn(id)),
       ),
     ];
   }

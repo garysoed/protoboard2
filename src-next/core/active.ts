@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, DIV, itarget, oclass, oforeach, ostyle, otext, query, registerCustomElement} from 'persona';
-import {fromEvent, Observable, of} from 'rxjs';
+import {fromEvent, Observable} from 'rxjs';
 import {map, share, throttleTime, withLatestFrom} from 'rxjs/operators';
 
 import {renderComponent} from '../render/render-component';
@@ -21,7 +20,7 @@ export const $active = {
       textContent: otext(),
     }),
     root: query('#root', DIV, {
-      content: oforeach('#content', instanceofType(Object)),
+      content: oforeach<{}>('#content'),
       element: itarget(),
       left: ostyle('left'),
       top: ostyle('top'),
@@ -55,7 +54,7 @@ export class Active implements Ctrl {
           this.$.vine,
           $activeState.get(this.$.vine).$('contentIds')
               .pipe(map(specs => specs.slice(0, COUNT_THRESHOLD))),
-          fn => this.$.shadow.root.content(id => of(fn(id))),
+          fn => this.$.shadow.root.content(id => fn(id)),
       ),
     ];
   }

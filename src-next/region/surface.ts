@@ -1,8 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
-import {Context, DIV, query, itarget, oforeach, registerCustomElement} from 'persona';
-import {Observable, OperatorFunction, of} from 'rxjs';
+import {Context, DIV, itarget, oforeach, query, registerCustomElement} from 'persona';
+import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {RegionState} from '../types/region-state';
@@ -18,7 +17,7 @@ const $surface = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach('#content', instanceofType(Object)),
+      content: oforeach<{}>('#content'),
       target: itarget(),
     }),
   },
@@ -40,7 +39,7 @@ export class Surface extends BaseRegion<SurfaceState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.root.content(id => of(renderContentFn(id)));
+    return this.$.shadow.root.content(id => renderContentFn(id));
   }
 
   @cache()

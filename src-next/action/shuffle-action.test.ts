@@ -4,7 +4,6 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
-import {instanceofType} from 'gs-types';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
@@ -29,7 +28,7 @@ const $test = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach('#content', instanceofType(Object)),
+      content: oforeach<{}>('#content'),
       target: itarget(),
     }),
   },
@@ -49,7 +48,7 @@ class Test extends BaseRegion<TestState> {
   }
 
   renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.root.content(id => of(renderValuesFn(id)));
+    return this.$.shadow.root.content(id => renderValuesFn(id));
   }
 
   protected get target$(): Observable<HTMLElement> {

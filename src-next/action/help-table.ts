@@ -8,7 +8,7 @@ import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
 import {$helpService} from './help-service';
 import template from './help-table.html';
-import {ActionTrigger, ACTION_TRIGGER_TYPE, HelpContent} from './show-help-event';
+import {ActionTrigger, HelpContent} from './show-help-event';
 
 
 const $helpTable = {
@@ -23,7 +23,7 @@ const $helpTable = {
       text: otext(),
     }),
     content: query('#content', TBODY, {
-      rows: oforeach('#rows', ACTION_TRIGGER_TYPE),
+      rows: oforeach<ActionTrigger>('#rows'),
     }),
   },
 };
@@ -59,8 +59,8 @@ export class HelpTable implements Ctrl {
         );
   }
 
-  private renderActionTrigger({actionName, trigger}: ActionTrigger): Observable<RenderSpec|null> {
-    return of(renderTemplate({
+  private renderActionTrigger({actionName, trigger}: ActionTrigger): RenderSpec|null {
+    return renderTemplate({
       template$: this.$.shadow._row.target,
       spec: {
         keyboard: query('mk-keyboard', KEYBOARD),
@@ -72,7 +72,7 @@ export class HelpTable implements Ctrl {
         of(triggerKeySpecToString(trigger)).pipe($.keyboard.text()),
         of(actionName).pipe($.action.text()),
       ],
-    }));
+    });
   }
 
   @cache()

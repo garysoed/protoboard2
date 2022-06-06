@@ -3,8 +3,8 @@ import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderElement} from 'persona';
+import {stringType} from 'gs-types';
+import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -29,7 +29,7 @@ const $test = {
   },
   shadow: {
     div: query('#div', DIV, {
-      contents: oforeach('#ref', instanceofType(Object)),
+      contents: oforeach<{}>('#ref'),
       target: itarget(),
     }),
   },
@@ -41,7 +41,7 @@ class Test extends BaseRegion<RegionState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.div.contents(id => of(renderContentFn(id)));
+    return this.$.shadow.div.contents(id => renderContentFn(id));
   }
 
   @cache()

@@ -2,8 +2,8 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
-import {instanceofType, stringType} from 'gs-types';
-import {Context, DIV, query, itarget, oforeach, registerCustomElement, renderElement, renderTextNode} from 'persona';
+import {stringType} from 'gs-types';
+import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
@@ -30,7 +30,7 @@ const $test = {
   },
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach('#ref', instanceofType(Object)),
+      content: oforeach<{}>('#ref'),
       target: itarget(),
     }),
   },
@@ -46,7 +46,7 @@ class Test extends BaseRegion<TestState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
-    return this.$.shadow.container.content(id => of(renderContentFn(id)));
+    return this.$.shadow.container.content(id => renderContentFn(id));
   }
 }
 

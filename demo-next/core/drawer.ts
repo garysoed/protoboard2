@@ -9,7 +9,7 @@ import chevronDownSvg from '../asset/chevron_down.svg';
 
 import template from './drawer.html';
 import {$locationService, Views} from './location-service';
-import {CONTAINER_LINK_CONFIGS, LAYOUT_LINK_CONFIGS, PageSpec, PAGE_SPEC_TYPE, PIECE_LINK_CONFIGS} from './page-spec';
+import {CONTAINER_LINK_CONFIGS, LAYOUT_LINK_CONFIGS, PageSpec, PIECE_LINK_CONFIGS} from './page-spec';
 
 
 export const $drawer = {
@@ -21,10 +21,10 @@ export const $drawer = {
       target: itarget(),
     }),
     root: query('#root', DIV, {
-      containers: oforeach('#containers', PAGE_SPEC_TYPE),
-      layouts: oforeach('#layouts', PAGE_SPEC_TYPE),
+      containers: oforeach<PageSpec>('#containers'),
+      layouts: oforeach<PageSpec>('#layouts'),
       onClick: ievent('click', Event),
-      pieces: oforeach('#pieces', PAGE_SPEC_TYPE),
+      pieces: oforeach<PageSpec>('#pieces'),
     }),
   },
 };
@@ -42,8 +42,8 @@ export class Drawer implements Ctrl {
     ];
   }
 
-  private renderConfig({label, path}: PageSpec): Observable<RenderSpec> {
-    return of(renderTemplate({
+  private renderConfig({label, path}: PageSpec): RenderSpec {
+    return renderTemplate({
       template$: this.$.shadow._config.target,
       spec: {
         button: query('mk-button', BUTTON),
@@ -57,7 +57,7 @@ export class Drawer implements Ctrl {
         of(path).pipe($.line.path()),
         of(label).pipe($.line.text()),
       ],
-    }));
+    });
   }
 
   private setupRootOnClick(): Observable<unknown> {
