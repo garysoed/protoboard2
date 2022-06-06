@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
-import {nullableType, stringType} from 'gs-types';
+import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, query, itarget, ocase, registerCustomElement, renderElement, renderHtml, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, iattr, itarget, ocase, query, registerCustomElement, renderElement, renderHtml, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ const $testFace = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: ocase(nullableType(stringType)),
+      content: ocase<string|null>(),
       element: itarget(),
     }),
   },

@@ -1,5 +1,4 @@
 import {cache} from 'gs-tools/export/data';
-import {instanceofType} from 'gs-types';
 import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
 import {concat, EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, switchMapTo, withLatestFrom} from 'rxjs/operators';
@@ -28,7 +27,7 @@ const $deck = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: ocase('#content', instanceofType(Object)),
+      content: ocase<{}>('#content'),
       target: itarget(),
     }),
   },

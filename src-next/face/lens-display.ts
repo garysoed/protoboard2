@@ -1,6 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {unknownType} from 'gs-types';
-import {renderTheme, THEME_LOADER_TYPE} from 'mask';
+import {renderTheme, ThemeLoader} from 'mask';
 import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
@@ -13,8 +12,8 @@ import {$lensService} from './lens-service';
 export const $lensDisplay = {
   shadow: {
     root: root({
-      content: ocase('#content', unknownType),
-      theme: ocase('#theme', THEME_LOADER_TYPE),
+      content: ocase<unknown>('#content'),
+      theme: ocase<ThemeLoader>('#theme'),
     }),
   },
 };

@@ -1,6 +1,5 @@
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
-import {unknownType} from 'gs-types';
 import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} from 'persona';
 import {Observable, OperatorFunction} from 'rxjs';
 
@@ -27,7 +26,7 @@ const $d1 = {
   shadow: {
     container: query('#container', SLOT, {
       height: ostyle('height'),
-      face: ocase(unknownType),
+      face: ocase<unknown>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),

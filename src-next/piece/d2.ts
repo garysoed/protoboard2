@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {mutableState} from 'gs-tools/export/state';
-import {intersectType, unknownType} from 'gs-types';
+import {intersectType} from 'gs-types';
 import {Context, DIV, iattr, icall, itarget, ivalue, ocase, ostyle, query, registerCustomElement} from 'persona';
 import {combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -55,7 +55,7 @@ const $d2 = {
   shadow: {
     container: query('#container', DIV, {
       height: ostyle('height'),
-      face: ocase(unknownType),
+      face: ocase<unknown>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),

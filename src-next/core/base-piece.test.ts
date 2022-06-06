@@ -2,7 +2,6 @@ import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {mutableState} from 'gs-tools/export/state';
-import {stringType} from 'gs-types';
 import {Context, DIV, itarget, ocase, ostyle, query, registerCustomElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -26,7 +25,7 @@ const $test = {
   shadow: {
     container: query('#container', DIV, {
       target: itarget(),
-      content: ocase('#ref', stringType),
+      content: ocase<string>('#ref'),
       height: ostyle('height'),
       width: ostyle('width'),
       transform: ostyle('transform'),

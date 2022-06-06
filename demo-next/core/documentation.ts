@@ -1,5 +1,4 @@
 import {cache} from 'gs-tools/export/data';
-import {nullableType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, DIV, ocase, query, registerCustomElement, renderElement, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
@@ -12,13 +11,13 @@ import {D6_DEMO} from '../piece/d6';
 import template from './documentation.html';
 import {INSTRUCTION} from './instruction';
 import {$locationService} from './location-service';
-import {getPageSpec, PageSpec, PAGE_SPEC_TYPE} from './page-spec';
+import {getPageSpec, PageSpec} from './page-spec';
 
 
 const $documentation = {
   shadow: {
     root: query('#root', DIV, {
-      content: ocase('#content', nullableType(PAGE_SPEC_TYPE)),
+      content: ocase<PageSpec|null>('#content'),
     }),
   },
 };
