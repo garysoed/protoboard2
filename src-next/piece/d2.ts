@@ -11,6 +11,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {FaceId, getPayload} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
@@ -24,7 +25,11 @@ import template from './d1.html';
 export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
 
 
-export function d2State(id: {}, faces: readonly [unknown, unknown], partial: Partial<D2State> = {}): D2State {
+export function d2State(
+    id: {},
+    faces: readonly [FaceId<unknown>, FaceId<unknown>],
+    partial: Partial<D2State> = {},
+): D2State {
   return {
     id,
     currentFaceIndex: mutableState(0),
@@ -55,7 +60,7 @@ const $d2 = {
   shadow: {
     container: query('#container', DIV, {
       height: ostyle('height'),
-      face: ocase<unknown>(),
+      face: ocase<FaceId<unknown>>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -116,7 +121,7 @@ class D2Ctrl extends BaseComponent<D2State> {
             this.state._('faces'),
           ])
               .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
-          render => this.$.shadow.container.face(render),
+          render => this.$.shadow.container.face(id => render(getPayload(id), id)),
       ),
     ];
   }

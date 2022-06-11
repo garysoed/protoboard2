@@ -10,6 +10,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {faceId, getPayload} from '../id/face-id';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {ComponentState} from '../types/component-state';
@@ -23,10 +24,10 @@ import {rollAction} from './roll-action';
 interface TestState extends ComponentState, IsMultifaced { }
 
 const FACES = [
-  'orange',
-  'steelblue',
-  'purple',
-];
+  faceId('orange'),
+  faceId('steelblue'),
+  faceId('purple'),
+] as const;
 
 const $test = {
   host: {
@@ -49,7 +50,7 @@ class Test extends BaseComponent<TestState> {
       ...super.runs,
       this.$.host.trigger.pipe(rollAction(this.$)),
       this.state.$('currentFaceIndex').pipe(
-          map(index => FACES[index]),
+          map(index => getPayload(FACES[index])),
           this.$.shadow.face.shade(),
       ),
     ];

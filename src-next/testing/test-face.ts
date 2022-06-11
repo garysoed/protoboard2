@@ -59,15 +59,15 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: unknown): RenderSpec {
-  if (!stringType.check(id)) {
-    throw new Error(`Invalid ID ${id}`);
+export function renderTestFace(payload: unknown): RenderSpec {
+  if (!stringType.check(payload)) {
+    throw new Error(`Invalid ID ${payload}`);
   }
   return renderElement({
     registration: TEST_FACE,
     spec: {},
     runs: $ => [
-      of(id).pipe($.shade()),
+      of(payload).pipe($.shade()),
     ],
   });
 }

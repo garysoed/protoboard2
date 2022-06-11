@@ -11,6 +11,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {FaceId, getPayload} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
@@ -23,7 +24,14 @@ import template from './d6.html';
 
 export interface D6State extends ComponentState, IsRotatable, IsMultifaced { }
 
-type Faces = readonly [unknown, unknown, unknown, unknown, unknown, unknown];
+type Faces = readonly [
+  FaceId<unknown>,
+  FaceId<unknown>,
+  FaceId<unknown>,
+  FaceId<unknown>,
+  FaceId<unknown>,
+  FaceId<unknown>,
+];
 
 export function d6State(id: {}, faces: Faces, partial: Partial<D6State> = {}): D6State {
   return {
@@ -58,7 +66,7 @@ const $d6 = {
   shadow: {
     container: query('#container', DIV, {
       height: ostyle('height'),
-      face: ocase<unknown>(),
+      face: ocase<FaceId<unknown>>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -123,7 +131,7 @@ class D6Ctrl extends BaseComponent<D6State> {
             this.state._('faces'),
           ])
               .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
-          render => this.$.shadow.container.face(render),
+          render => this.$.shadow.container.face(id => render(getPayload(id), id)),
       ),
     ];
   }

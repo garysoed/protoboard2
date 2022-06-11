@@ -4,6 +4,7 @@ import {enumType} from 'gs-types';
 import {renderElement, renderHtml, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
+import {faceId} from '../src-next/id/face-id';
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
@@ -54,21 +55,21 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
     diceSlot: slotState({}, {contentIds: mutableState([ComponentType.DICE])}),
   },
   pieces: {
-    card: d2State(ComponentType.CARD, [FaceType.CARD_BACK, FaceType.CARD_FRONT]),
-    coin: d2State(ComponentType.COIN, [FaceType.COIN_BACK, FaceType.CARD_FRONT]),
+    card: d2State(ComponentType.CARD, [faceId(FaceType.CARD_BACK), faceId(FaceType.CARD_FRONT)]),
+    coin: d2State(ComponentType.COIN, [faceId(FaceType.COIN_BACK), faceId(FaceType.CARD_FRONT)]),
     dice: d6State(
         ComponentType.DICE,
         [
-          FaceType.DICE_PIP_1,
-          FaceType.DICE_PIP_2,
-          FaceType.DICE_PIP_3,
-          FaceType.DICE_PIP_4,
-          FaceType.DICE_PIP_5,
-          FaceType.DICE_PIP_6,
+          faceId(FaceType.DICE_PIP_1),
+          faceId(FaceType.DICE_PIP_2),
+          faceId(FaceType.DICE_PIP_3),
+          faceId(FaceType.DICE_PIP_4),
+          faceId(FaceType.DICE_PIP_5),
+          faceId(FaceType.DICE_PIP_6),
         ],
     ),
-    gem: d1State(ComponentType.GEM, [FaceType.GEM]),
-    meeple: d1State(ComponentType.MEEPLE, [FaceType.MEEPLE]),
+    gem: d1State(ComponentType.GEM, faceId(FaceType.GEM)),
+    meeple: d1State(ComponentType.MEEPLE, faceId(FaceType.MEEPLE)),
   },
 })._());
 
@@ -111,15 +112,15 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
   }
 }
 
-export function renderFace(id: unknown): RenderSpec {
-  if (!enumType<FaceType>(FaceType).check(id)) {
-    throw new Error(`ID ${id} is not a FaceType`);
+export function renderFace(payload: unknown): RenderSpec {
+  if (!enumType<FaceType>(FaceType).check(payload)) {
+    throw new Error(`ID ${payload} is not a FaceType`);
   }
 
   return renderElement({
     registration: RENDERED_FACE,
     spec: {},
-    runs: $ => [of(id).pipe($.faceType())],
+    runs: $ => [of(payload).pipe($.faceType())],
   });
 }
 

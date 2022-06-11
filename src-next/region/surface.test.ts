@@ -8,6 +8,7 @@ import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
+import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -36,7 +37,7 @@ test('@protoboard2/src/region/surface', init => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of($stateService.get(tester.vine).addRoot(d1State(id, id))._()).pipe($.state()),
+          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(id)))._()).pipe($.state()),
         ],
       });
     });

@@ -8,6 +8,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
+import {faceId} from '../id/face-id';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
@@ -20,12 +21,12 @@ import {D6Harness} from './testing/d6-harness';
 
 
 const FACES = [
-  'black',
-  'steelblue',
-  'crimson',
-  'forestgreen',
-  'orange',
-  'rebeccapurple',
+  faceId('black'),
+  faceId('steelblue'),
+  faceId('crimson'),
+  faceId('forestgreen'),
+  faceId('orange'),
+  faceId('rebeccapurple'),
 ] as const;
 
 

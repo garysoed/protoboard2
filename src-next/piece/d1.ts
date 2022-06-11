@@ -4,6 +4,7 @@ import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} fro
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
+import {FaceId, getPayload} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {PieceState} from '../types/piece-state';
 
@@ -11,7 +12,7 @@ import template from './d1.html';
 
 
 export interface D1State extends PieceState {
-  readonly face: unknown;
+  readonly face: FaceId<unknown>;
 }
 
 /**
@@ -26,7 +27,7 @@ const $d1 = {
   shadow: {
     container: query('#container', SLOT, {
       height: ostyle('height'),
-      face: ocase<unknown>(),
+      face: ocase<FaceId<unknown>>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -34,7 +35,7 @@ const $d1 = {
   },
 };
 
-export function d1State(id: {}, face: unknown, partial: Partial<D1State> = {}): D1State {
+export function d1State(id: {}, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
   return {
     id,
     face,
@@ -70,7 +71,7 @@ class D1Ctrl extends BasePiece<D1State> {
       renderFace(
           this.$.vine,
           this.state._('face'),
-          render => this.$.shadow.container.face(render),
+          render => this.$.shadow.container.face(id => render(getPayload(id), id)),
       ),
     ];
   }

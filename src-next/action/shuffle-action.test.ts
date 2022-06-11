@@ -4,13 +4,13 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
+import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, of, OperatorFunction} from 'rxjs';
+import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
-import {TEST_FACE} from '../testing/test-face';
+import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {RegionState} from '../types/region-state';
 import {$random} from '../util/random';
@@ -77,13 +77,7 @@ test('@protoboard2/action/shuffle-action', init => {
         {override: $random, withValue: fromSeed(seed)},
       ],
     });
-    registerComponentRenderSpec(tester.vine, id => renderElement({
-      registration: TEST_FACE,
-      spec: {},
-      runs: $ => [
-        of(id as string).pipe($.shade()),
-      ],
-    }));
+    registerComponentRenderSpec(tester.vine, renderTestFace);
 
     return {seed, tester};
   });

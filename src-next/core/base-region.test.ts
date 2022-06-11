@@ -7,6 +7,7 @@ import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderEle
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 
+import {faceId} from '../id/face-id';
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -106,7 +107,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, id))._());
+      _.states.set(id, stateService.addRoot(d1State(id, faceId(id)))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -127,7 +128,7 @@ test('@protoboard2/src/core/base-region', init => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, id))._());
+      _.states.set(id, stateService.addRoot(d1State(id, faceId(id)))._());
       const regionState = stateService.addRoot<RegionState>({
         id: 'region',
         contentIds: mutableState([]),
@@ -145,7 +146,7 @@ test('@protoboard2/src/core/base-region', init => {
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
       const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, id))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(id)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({
@@ -164,7 +165,7 @@ test('@protoboard2/src/core/base-region', init => {
 
     should('not removed element if action is not pick', () => {
       const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, id))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(id)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({

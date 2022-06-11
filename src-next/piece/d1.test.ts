@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
+import {faceId} from '../id/face-id';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
@@ -17,7 +18,7 @@ import goldens from './goldens/goldens.json';
 import {D1Harness} from './testing/d1-harness';
 
 
-const FACE_ID = 'steelblue';
+const FACE_ID = faceId('steelblue');
 
 
 test('@protoboard2/src/piece/d1', init => {

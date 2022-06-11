@@ -9,6 +9,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {faceId, getPayload} from '../id/face-id';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {ComponentState} from '../types/component-state';
@@ -23,9 +24,9 @@ interface TestState extends ComponentState, IsMultifaced { }
 const $config$ = source(() => new BehaviorSubject<TurnConfig>({step: 1}));
 
 const FACES = [
-  'orange',
-  'steelblue',
-  'purple',
+  faceId('orange'),
+  faceId('steelblue'),
+  faceId('purple'),
 ];
 
 const $test = {
@@ -49,7 +50,7 @@ class Test extends BaseComponent<TestState> {
       ...super.runs,
       this.$.host.trigger.pipe(turnAction(this.$, $config$.get(this.$.vine))),
       this.state.$('currentFaceIndex').pipe(
-          map(index => FACES[index]),
+          map(index => getPayload(FACES[index])),
           this.$.shadow.face.shade(),
       ),
     ];
