@@ -4,13 +4,15 @@ import {Context, Ctrl, ievent, ivalue, registerCustomElement} from 'persona';
 import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
+import {faceIdType} from '../id/face-id';
+
 import {$lensService} from './lens-service';
 import template from './lens.html';
 
 
 const $lens = {
   host: {
-    faceId: ivalue('faceId', unknownType),
+    faceId: ivalue('faceId', faceIdType(unknownType)),
     onMouseEnter: ievent('mouseenter', Event),
     onMouseLeave: ievent('mouseleave', Event),
   },

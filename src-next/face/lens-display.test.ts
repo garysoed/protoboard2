@@ -4,6 +4,7 @@ import {renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
+import {faceId} from '../id/face-id';
 import {registerLensRenderSpec} from '../renderspec/render-lens-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
@@ -12,7 +13,7 @@ import {LENS_DISPLAY} from './lens-display';
 import {$lensService} from './lens-service';
 
 
-const ID = {};
+const ID = faceId({});
 
 test('@protoboard2/src/face/lens-display', init => {
   const _ = init(() => {

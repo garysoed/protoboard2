@@ -1,4 +1,4 @@
-import {hasPropertiesType, stringType, Type} from 'gs-types';
+import {hasPropertiesType, Type} from 'gs-types';
 
 const __payload = Symbol('faceId');
 
@@ -14,6 +14,8 @@ export function getPayload<T>(id: FaceId<T>): T {
   return id[__payload];
 }
 
-export const FACE_ID_TYPE: Type<FaceId<string>> = hasPropertiesType({
-  [__payload]: stringType,
-});
+export function faceIdType<T>(payloadType: Type<T>): Type<FaceId<T>> {
+  return hasPropertiesType({
+    [__payload]: payloadType,
+  });
+}

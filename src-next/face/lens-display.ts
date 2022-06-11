@@ -4,6 +4,7 @@ import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
 import {combineLatest, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
+import {FaceId} from '../id/face-id';
 import {$getLensRenderSpec$} from '../renderspec/render-lens-spec';
 
 import {$lensService} from './lens-service';
@@ -12,7 +13,7 @@ import {$lensService} from './lens-service';
 export const $lensDisplay = {
   shadow: {
     root: root({
-      content: ocase<unknown>('#content'),
+      content: ocase<FaceId<unknown>|null>('#content'),
       theme: ocase<ThemeLoader>('#theme'),
     }),
   },

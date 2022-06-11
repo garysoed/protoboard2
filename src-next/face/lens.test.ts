@@ -1,11 +1,13 @@
 import {assert, createSpySubject, should, test} from 'gs-testing';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 
+import {faceId} from '../id/face-id';
+
 import {LENS} from './lens';
 import {$lensService} from './lens-service';
 
 
-const ID = {};
+const ID = faceId({});
 
 test('@protoboard2/src/face/lens', init => {
   const _ = init(() => {

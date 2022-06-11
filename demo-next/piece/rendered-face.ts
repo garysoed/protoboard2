@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {LENS} from '../../src-next/face/lens';
+import {faceId} from '../../src-next/id/face-id';
 import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';
@@ -54,7 +55,7 @@ class RenderedFace implements Ctrl {
     return [
       renderTheme(this.$),
       this.icon$.pipe(this.$.shadow.icon.icon()),
-      this.$.host.faceType.pipe(this.$.shadow.lens.faceId()),
+      this.$.host.faceType.pipe(map(faceId), this.$.shadow.lens.faceId()),
     ];
   }
 
