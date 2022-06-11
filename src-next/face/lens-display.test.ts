@@ -20,7 +20,7 @@ test('@protoboard2/src/face/lens-display', init => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/face/goldens', goldens));
     const tester = setupTest({roots: [LENS_DISPLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
-    registerLensRenderSpec(tester.vine, id => {
+    registerLensRenderSpec(tester.vine, (_payload, id) => {
       if (id !== ID) {
         return null;
       }
