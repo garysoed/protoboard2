@@ -4,7 +4,7 @@ import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} fro
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
-import {FaceId, getPayload} from '../id/face-id';
+import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {PieceState} from '../types/piece-state';
 
@@ -71,7 +71,7 @@ class D1Ctrl extends BasePiece<D1State> {
       renderFace(
           this.$.vine,
           this.state._('face'),
-          render => this.$.shadow.container.face(id => render(getPayload(id), id)),
+          render => this.$.shadow.container.face(render),
       ),
     ];
   }

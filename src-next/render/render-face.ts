@@ -6,7 +6,7 @@ import {switchMap} from 'rxjs/operators';
 import {FaceId} from '../id/face-id';
 import {$getFaceRenderSpec$} from '../renderspec/render-face-spec';
 
-type RenderFn = (payload: unknown, faceId: FaceId<unknown>) => RenderSpec|null;
+type RenderFn = (faceId: FaceId<unknown>) => RenderSpec|null;
 
 export function renderFace(
     vine: Vine,

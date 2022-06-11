@@ -11,7 +11,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {FaceId, getPayload} from '../id/face-id';
+import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
@@ -131,7 +131,7 @@ class D6Ctrl extends BaseComponent<D6State> {
             this.state._('faces'),
           ])
               .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
-          render => this.$.shadow.container.face(id => render(getPayload(id), id)),
+          render => this.$.shadow.container.face(id => render(id)),
       ),
     ];
   }
