@@ -1,3 +1,5 @@
+import {ComponentId} from '../id/component-id';
+
 export interface ComponentState {
-  readonly id: {};
+  readonly id: ComponentId<unknown>;
 }

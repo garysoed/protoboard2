@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
+import {componentId, getPayload} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
@@ -31,7 +32,7 @@ test('@protoboard2/src/piece/d1', init => {
   });
 
   should('render the face correctly', () => {
-    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State({}, FACE_ID))._();
+    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State(componentId({}), FACE_ID))._();
 
     const element = _.tester.createElement(D1);
     element.state = state;
@@ -48,24 +49,24 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
       harness.simulateTrigger(TriggerType.CLICK);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+      assert($activeState.get(_.tester.vine).$('contentIds').pipe(map(ids => ids.map(getPayload)))).to
+          .emitSequence([arrayThat().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
       _.element.state = state;
       _.element.pick(undefined);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
+      assert($activeState.get(_.tester.vine).$('contentIds').pipe(map(ids => ids.map(getPayload)))).to
           .emitSequence([arrayThat<{}>().haveExactElements([id])]);
     });
   });
@@ -81,7 +82,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on R', () => {
       const id = '';
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -93,7 +94,7 @@ test('@protoboard2/src/piece/d1', init => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D1State>(d1State(id, FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
       _.element.state = state;
       _.element.rotate(undefined);
 

@@ -5,6 +5,7 @@ import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
+import {componentId} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
@@ -45,7 +46,9 @@ test('@protoboard2/src/core/active', init => {
       const element = _.tester.createElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one']).pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+      of(['one'].map(componentId))
+          .pipe($activeState.get(_.tester.vine).$('contentIds').set())
+          .subscribe();
 
       assert(element).to.matchSnapshot('active__one.html');
     });
@@ -54,7 +57,7 @@ test('@protoboard2/src/core/active', init => {
       const element = _.tester.createElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one', 'two', 'three', 'four', 'five'])
+      of(['one', 'two', 'three', 'four', 'five'].map(componentId))
           .pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
 
       assert(element).to.matchSnapshot('active__overflow.html');
@@ -74,7 +77,8 @@ test('@protoboard2/src/core/active', init => {
       const element = _.tester.createElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one']).pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+      of(['one'].map(componentId))
+          .pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
       _.tester.fakeTime.tickToTrigger();

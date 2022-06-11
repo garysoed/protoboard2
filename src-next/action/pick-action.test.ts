@@ -1,12 +1,13 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {Context, DIV, query, itarget, registerCustomElement} from 'persona';
+import {Context, DIV, itarget, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {ComponentId, componentId} from '../id/component-id';
 import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -55,7 +56,7 @@ test('@protoboard2/src/action/pick-action', init => {
   });
 
   should('add the ID to activeState\'s content IDs', () => {
-    const id = {};
+    const id = componentId({});
     const stateService = $stateService.get(_.tester.vine);
     const state = stateService.addRoot<ComponentState>({id})._();
     const element = _.tester.createElement(TEST);
@@ -64,8 +65,7 @@ test('@protoboard2/src/action/pick-action', init => {
     const harness = getHarness(element, '#div', ElementHarness);
     harness.simulateClick();
 
-    assert($activeState.get(_.tester.vine).$('contentIds')).to.emitSequence([
-      arrayThat<{}>().haveExactElements([id]),
-    ]);
+    assert($activeState.get(_.tester.vine).$('contentIds'))
+        .to.emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
   });
 });

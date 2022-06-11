@@ -4,6 +4,7 @@ import {Context, DIV, itarget, oforeach, query, registerCustomElement} from 'per
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
+import {ComponentId} from '../id/component-id';
 import {RegionState} from '../types/region-state';
 
 import template from './surface.html';
@@ -17,14 +18,14 @@ const $surface = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach<{}>('#content'),
+      content: oforeach<ComponentId<unknown>>('#content'),
       target: itarget(),
     }),
   },
 };
 
 
-export function slotState(id: {}, input: Partial<SurfaceState> = {}): SurfaceState {
+export function surfaceState(id: ComponentId<unknown>, input: Partial<SurfaceState> = {}): SurfaceState {
   return {
     id,
     contentIds: mutableState([]),
@@ -38,7 +39,7 @@ export class Surface extends BaseRegion<SurfaceState> {
     super($, 'Surface');
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return this.$.shadow.root.content(id => renderContentFn(id));
   }
 

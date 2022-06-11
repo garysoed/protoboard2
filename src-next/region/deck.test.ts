@@ -7,8 +7,10 @@ import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
+import {ComponentId, componentId, getPayload} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
@@ -21,7 +23,7 @@ import {$random} from '../util/random';
 
 import {DECK} from './deck';
 import goldens from './goldens/goldens.json';
-import {SurfaceState} from './surface';
+import {surfaceState} from './surface';
 import {DeckHarness} from './testing/deck-harness';
 
 
@@ -39,15 +41,15 @@ test('@protoboard2/src/region/deck', init => {
     });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, id => {
-      if (!stringType.check(id)) {
+    registerComponentRenderSpec(tester.vine, (payload, id) => {
+      if (!stringType.check(payload)) {
         return null;
       }
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(id)))._()).pipe($.state()),
+          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(payload)))._()).pipe($.state()),
         ],
       });
     });
@@ -57,10 +59,9 @@ test('@protoboard2/src/region/deck', init => {
 
   should('render the contents correctly', () => {
     const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot<SurfaceState>({
-      id: {},
-      contentIds: mutableState(['red', 'green', 'blue']),
-    })._();
+    const state$ = stateService.addRoot(surfaceState(componentId({}), {
+      contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+    }))._();
     const element = _.tester.createElement(DECK);
     element.state = state$;
 
@@ -70,13 +71,12 @@ test('@protoboard2/src/region/deck', init => {
   test('drop action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(DECK);
       element.state = state$;
 
@@ -88,27 +88,26 @@ test('@protoboard2/src/region/deck', init => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(_.element).to.matchSnapshot('deck__drop-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
 
     should('trigger on function call', () => {
       _.element.drop(undefined);
 
       assert(_.element).to.matchSnapshot('deck__drop-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
   });
 
   test('drop all action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue', 'orange', 'chartreuse']).pipe(activeContents$.set()).subscribe();
+      of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(DECK);
       element.state = state$;
 
@@ -120,27 +119,26 @@ test('@protoboard2/src/region/deck', init => {
       harness.simulateTrigger(TriggerType.D, {shiftKey: true});
 
       assert(_.element).to.matchSnapshot('deck__dropall-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
 
     should('trigger on function call', () => {
       _.element.dropAll();
 
       assert(_.element).to.matchSnapshot('deck__dropall-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
   });
 
   test('pick child action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(DECK);
       element.state = state$;
 
@@ -153,8 +151,8 @@ test('@protoboard2/src/region/deck', init => {
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
       assert(_.element).to.matchSnapshot('deck__pick-keydown.html');
-      assert(_.activeContents$).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'blue']),
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
+          arrayThat().haveExactElements(['steelblue', 'blue']),
       );
     });
 
@@ -164,8 +162,8 @@ test('@protoboard2/src/region/deck', init => {
       d1Harness.target.pick();
 
       assert(_.element).to.matchSnapshot('deck__pick-call.html');
-      assert(_.activeContents$).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'blue']),
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
+          arrayThat().haveExactElements(['steelblue', 'blue']),
       );
     });
   });
@@ -173,13 +171,12 @@ test('@protoboard2/src/region/deck', init => {
   test('pick all action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(DECK);
       element.state = state$;
 
@@ -191,8 +188,8 @@ test('@protoboard2/src/region/deck', init => {
       harness.simulateTrigger(TriggerType.CLICK, {shiftKey: true});
 
       assert(_.element).to.matchSnapshot('deck__pickall-keydown.html');
-      assert(_.activeContents$).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
+          arrayThat().haveExactElements(['steelblue', 'blue', 'green', 'red']),
       );
     });
 
@@ -200,8 +197,8 @@ test('@protoboard2/src/region/deck', init => {
       _.element.pickAll(undefined);
 
       assert(_.element).to.matchSnapshot('deck__pickall-call.html');
-      assert(_.activeContents$).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
+          arrayThat().haveExactElements(['steelblue', 'blue', 'green', 'red']),
       );
     });
   });
@@ -209,13 +206,12 @@ test('@protoboard2/src/region/deck', init => {
   test('shuffle', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       _.seed.values = [0.5, 1, 0];
       const element = _.tester.createElement(DECK);
       element.state = state$;

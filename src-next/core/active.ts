@@ -4,6 +4,7 @@ import {Context, Ctrl, DIV, itarget, oclass, oforeach, ostyle, otext, query, reg
 import {fromEvent, Observable} from 'rxjs';
 import {map, share, throttleTime, withLatestFrom} from 'rxjs/operators';
 
+import {ComponentId} from '../id/component-id';
 import {renderComponent} from '../render/render-component';
 
 import {$activeState} from './active-spec';
@@ -20,7 +21,7 @@ export const $active = {
       textContent: otext(),
     }),
     root: query('#root', DIV, {
-      content: oforeach<{}>('#content'),
+      content: oforeach<ComponentId<unknown>>('#content'),
       element: itarget(),
       left: ostyle('left'),
       top: ostyle('top'),

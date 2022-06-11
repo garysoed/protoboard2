@@ -10,6 +10,7 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
+import {componentId, ComponentId} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -30,7 +31,7 @@ const $test = {
   },
   shadow: {
     div: query('#div', DIV, {
-      contents: oforeach<{}>('#ref'),
+      contents: oforeach<ComponentId<unknown>>('#ref'),
       target: itarget(),
     }),
   },
@@ -41,7 +42,7 @@ class Test extends BaseRegion<RegionState> {
     super($, 'Test region');
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return this.$.shadow.div.contents(id => renderContentFn(id));
   }
 
@@ -79,15 +80,15 @@ test('@protoboard2/src/action/drop-action', init => {
     });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, id => {
-      if (!stringType.check(id)) {
-        throw new Error(`Invalid ID ${id}`);
+    registerComponentRenderSpec(tester.vine, (payload, id) => {
+      if (!stringType.check(payload)) {
+        throw new Error(`Invalid ID ${payload}`);
       }
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(id)))._()).pipe($.state()),
+          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(payload)))._()).pipe($.state()),
         ],
       });
     });
@@ -95,13 +96,13 @@ test('@protoboard2/src/action/drop-action', init => {
   });
 
   should('move the component from active state correctly', () => {
-    const id = 'steelblue';
+    const id = componentId('steelblue');
     const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
     of([id]).pipe(activeIds$.set()).subscribe();
 
     const stateService = $stateService.get(_.tester.vine);
     const regionState = stateService.addRoot<RegionState>({
-      id: 'region',
+      id: componentId('region'),
       contentIds: mutableState([]),
     })._();
     const element = _.tester.createElement(TEST);
@@ -111,7 +112,7 @@ test('@protoboard2/src/action/drop-action', init => {
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__trigger.html');
-    assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
+    assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
   });
 
   should('do nothing if there are no components in active state', () => {
@@ -119,7 +120,7 @@ test('@protoboard2/src/action/drop-action', init => {
 
     const stateService = $stateService.get(_.tester.vine);
     const regionState = stateService.addRoot<RegionState>({
-      id: 'region',
+      id: componentId('region'),
       contentIds: mutableState([]),
     })._();
     const element = _.tester.createElement(TEST);
@@ -129,6 +130,6 @@ test('@protoboard2/src/action/drop-action', init => {
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__empty.html');
-    assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
+    assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
   });
 });

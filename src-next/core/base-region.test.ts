@@ -6,7 +6,9 @@ import {stringType} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
+import {map} from 'rxjs/operators';
 
+import {componentId, ComponentId} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
@@ -31,7 +33,7 @@ const $test = {
   },
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach<{}>('#ref'),
+      content: oforeach<ComponentId<unknown>>('#ref'),
       target: itarget(),
     }),
   },
@@ -46,7 +48,7 @@ class Test extends BaseRegion<TestState> {
     return this.$.shadow.container.target;
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return this.$.shadow.container.content(id => renderContentFn(id));
   }
 }
@@ -62,11 +64,11 @@ test('@protoboard2/src/core/base-region', init => {
   const _ = init(() => {
     runEnvironment(new BrowserSnapshotsEnv('src-next/core/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
-    const states = new Map<string, ImmutableResolver<D1State>>();
+    const states = new Map<ComponentId<unknown>, ImmutableResolver<D1State>>();
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, id => {
-      if (!stringType.check(id)) {
+    registerComponentRenderSpec(tester.vine, (payload, id) => {
+      if (!stringType.check(payload)) {
         return null;
       }
       return renderElement({
@@ -88,13 +90,18 @@ test('@protoboard2/src/core/base-region', init => {
 
       const stateService = $stateService.get(_.tester.vine);
       const state$ = stateService.addRoot(mutableState<TestState>({
-        id: 'test',
+        id: componentId('test'),
         contentIds: mutableState([]),
       })).$();
       const element = _.tester.createElement(TEST);
       element.state = state$;
 
-      of(['one', 'two', 'three']).pipe(state$.$('contentIds').set()).subscribe();
+      of(['one', 'two', 'three'])
+          .pipe(
+              map(ids => ids.map(componentId)),
+              state$.$('contentIds').set(),
+          )
+          .subscribe();
 
       assert(element).to.matchSnapshot('base-region.html');
     });
@@ -102,14 +109,15 @@ test('@protoboard2/src/core/base-region', init => {
 
   test('drop', () => {
     should('move the item from active state when triggered', () => {
-      const id = 'steelblue';
+      const color = 'steelblue';
+      const id = componentId(color);
       const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, faceId(id)))._());
+      _.states.set(id, stateService.addRoot(d1State(id, faceId(color)))._());
       const regionState = stateService.addRoot<RegionState>({
-        id: 'region',
+        id: componentId('region'),
         contentIds: mutableState([]),
       })._();
       const element = _.tester.createElement(TEST);
@@ -119,18 +127,19 @@ test('@protoboard2/src/core/base-region', init => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(element).to.matchSnapshot('base-region__drop.html');
-      assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
+      assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
     });
 
     should('move the item from active state on function calls', () => {
-      const id = 'steelblue';
+      const color = 'steelblue';
+      const id = componentId(color);
       const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, faceId(id)))._());
+      _.states.set(id, stateService.addRoot(d1State(id, faceId(color)))._());
       const regionState = stateService.addRoot<RegionState>({
-        id: 'region',
+        id: componentId('region'),
         contentIds: mutableState([]),
       })._();
       const element = _.tester.createElement(TEST);
@@ -139,18 +148,19 @@ test('@protoboard2/src/core/base-region', init => {
       element.drop(undefined);
 
       assert(element).to.matchSnapshot('base-region__drop-fn.html');
-      assert(activeIds$).to.emitSequence([arrayThat<{}>().beEmpty()]);
+      assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
     });
   });
 
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
-      const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(id)))._());
+      const color = 'steelblue';
+      const id = componentId(color);
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(color)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({
-        id: 'region',
+        id: componentId('region'),
         contentIds: mutableState([id]),
       })._();
       const element = _.tester.createElement(TEST);
@@ -160,16 +170,17 @@ test('@protoboard2/src/core/base-region', init => {
       d1.simulatePick();
 
       assert(element).to.matchSnapshot('base-region__pick.html');
-      assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().beEmpty()]);
+      assert(regionState.$('contentIds')).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
     });
 
     should('not removed element if action is not pick', () => {
-      const id = 'steelblue';
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(id)))._());
+      const color = 'steelblue';
+      const id = componentId(color);
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(color)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({
-        id: 'region',
+        id: componentId('region'),
         contentIds: mutableState([id]),
       })._();
       const element = _.tester.createElement(TEST);
@@ -179,7 +190,9 @@ test('@protoboard2/src/core/base-region', init => {
       d1.simulateRotate();
 
       assert(element).to.matchSnapshot('base-region__pick-noop.html');
-      assert(regionState.$('contentIds')).to.emitSequence([arrayThat<{}>().haveExactElements([id])]);
+      assert(regionState.$('contentIds')).to.emitSequence([
+        arrayThat<ComponentId<unknown>>().haveExactElements([id]),
+      ]);
     });
   });
 });

@@ -6,8 +6,10 @@ import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
+import {ComponentId, componentId, getPayload} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
@@ -18,7 +20,7 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
-import {SURFACE, SurfaceState} from './surface';
+import {SURFACE, surfaceState, SurfaceState} from './surface';
 import {SlotHarness} from './testing/slot-harness';
 
 
@@ -29,15 +31,15 @@ test('@protoboard2/src/region/surface', init => {
     const tester = setupTest({roots: [SURFACE, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, id => {
-      if (!stringType.check(id)) {
+    registerComponentRenderSpec(tester.vine, (payload, id) => {
+      if (!stringType.check(payload)) {
         return null;
       }
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(id)))._()).pipe($.state()),
+          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(payload)))._()).pipe($.state()),
         ],
       });
     });
@@ -47,10 +49,9 @@ test('@protoboard2/src/region/surface', init => {
 
   should('render the contents correctly', () => {
     const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot<SurfaceState>({
-      id: {},
-      contentIds: mutableState(['red', 'green', 'blue']),
-    })._();
+    const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
+      contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+    }))._();
     const element = _.tester.createElement(SURFACE);
     element.state = state$;
 
@@ -60,13 +61,12 @@ test('@protoboard2/src/region/surface', init => {
   test('drop action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(SURFACE);
       element.state = state$;
 
@@ -78,7 +78,7 @@ test('@protoboard2/src/region/surface', init => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(_.element).to.matchSnapshot('surface__drop-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
 
     should('trigger on function call', () => {
@@ -86,20 +86,19 @@ test('@protoboard2/src/region/surface', init => {
       harness.simulateDrop();
 
       assert(_.element).to.matchSnapshot('surface__drop-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
     });
   });
 
   test('pick child action', _, init => {
     const _ = init(_ => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue']).pipe(activeContents$.set()).subscribe();
+      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>({
-        id: {},
-        contentIds: mutableState(['red', 'green', 'blue']),
-      })._();
+      const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
+        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
+      }))._();
       const element = _.tester.createElement(SURFACE);
       element.state = state$;
 
@@ -112,7 +111,7 @@ test('@protoboard2/src/region/surface', init => {
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
       assert(_.element).to.matchSnapshot('surface__pick-keydown.html');
-      assert(_.activeContents$).to.emitWith(
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
           arrayThat<{}>().haveExactElements(['steelblue', 'green']),
       );
     });
@@ -123,7 +122,8 @@ test('@protoboard2/src/region/surface', init => {
       d1Harness.simulatePick();
 
       assert(_.element).to.matchSnapshot('surface__pick-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<{}>().haveExactElements(['steelblue', 'green']));
+      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to
+          .emitWith(arrayThat<{}>().haveExactElements(['steelblue', 'green']));
     });
   });
 });

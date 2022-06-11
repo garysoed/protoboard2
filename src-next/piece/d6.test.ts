@@ -8,6 +8,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
+import {ComponentId, componentId} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
@@ -49,7 +50,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   should('render the face correctly', () => {
     const state = $stateService.get(_.tester.vine).addRoot<D6State>(
-        d6State({}, FACES),
+        d6State(componentId({}), FACES),
     )._();
 
     const element = _.tester.createElement(D6);
@@ -65,7 +66,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on keydown', () => {
-      const id = '';
+      const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -79,7 +80,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on function call', () => {
-      const id = '';
+      const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -100,7 +101,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on click', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -111,11 +112,11 @@ test('@protoboard2/src/piece/d6', init => {
       harness.simulateTrigger(TriggerType.CLICK);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -124,7 +125,7 @@ test('@protoboard2/src/piece/d6', init => {
       _.element.pick(undefined);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
   });
 
@@ -136,7 +137,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on keydown', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -150,7 +151,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on function call', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -171,7 +172,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on keydown', () => {
-      const id = '';
+      const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -185,7 +186,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on function call', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -204,7 +205,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on keydown', () => {
-      const id = '';
+      const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),
@@ -218,7 +219,7 @@ test('@protoboard2/src/piece/d6', init => {
     });
 
     should('trigger on function call', () => {
-      const id = '';
+      const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D6State>(
           d6State(id, FACES),

@@ -11,6 +11,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {ComponentId} from '../id/component-id';
 import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
@@ -26,7 +27,7 @@ export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
 
 
 export function d2State(
-    id: {},
+    id: ComponentId<unknown>,
     faces: readonly [FaceId<unknown>, FaceId<unknown>],
     partial: Partial<D2State> = {},
 ): D2State {

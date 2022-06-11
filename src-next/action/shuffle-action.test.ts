@@ -9,6 +9,7 @@ import {setupTest} from 'persona/export/testing';
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
+import {componentId, ComponentId} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
@@ -28,7 +29,7 @@ const $test = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach<{}>('#content'),
+      content: oforeach<ComponentId<unknown>>('#content'),
       target: itarget(),
     }),
   },
@@ -47,7 +48,7 @@ class Test extends BaseRegion<TestState> {
     ];
   }
 
-  renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+  renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return this.$.shadow.root.content(id => renderValuesFn(id));
   }
 
@@ -86,8 +87,8 @@ test('@protoboard2/action/shuffle-action', init => {
     _.seed.values = [1, 0, 0.5, 2];
 
     const state = $stateService.get(_.tester.vine).addRoot<TestState>({
-      id: {},
-      contentIds: mutableState(['orange', 'steelblue', 'purple', 'red']),
+      id: componentId({}),
+      contentIds: mutableState(['orange', 'steelblue', 'purple', 'red'].map(componentId)),
     })._();
 
     const element = _.tester.createElement(TEST);

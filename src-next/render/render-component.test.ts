@@ -6,7 +6,9 @@ import {mutableState} from 'gs-tools/export/state';
 import {Context, Ctrl, DIV, oforeach, query, registerCustomElement, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 
+import {ComponentId, componentId} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 
 import goldens from './goldens/goldens.json';
@@ -14,14 +16,14 @@ import {renderComponent} from './render-component';
 
 
 const $state = source(vine => $stateService.get(vine).addRoot({
-  id: {},
-  contentIds: mutableState<readonly string[]>([]),
+  id: componentId({}),
+  contentIds: mutableState<ReadonlyArray<ComponentId<string>>>([]),
 })._());
 
 const $test = {
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach<{}>('#ref'),
+      content: oforeach<ComponentId<unknown>>('#ref'),
     }),
   },
 };
@@ -66,6 +68,7 @@ test('@protoboard2/src/render/render-component', init => {
       const element = _.tester.createElement(TEST);
 
       of(['one', 'two', 'three']).pipe(
+          map(ids => ids.map(componentId)),
           $state.get(_.tester.vine).$('contentIds').set(),
       ).subscribe();
 

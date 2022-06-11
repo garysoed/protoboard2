@@ -4,12 +4,13 @@ import {RenderSpec} from 'persona';
 import {combineLatest, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
+import {ComponentId} from '../id/component-id';
 import {$getComponentRenderSpec$} from '../renderspec/render-component-spec';
 
 
 export function renderContents(
     vine: Vine,
-): OperatorFunction<ReadonlyArray<{}>|undefined, readonly RenderSpec[]> {
+): OperatorFunction<ReadonlyArray<ComponentId<unknown>>|undefined, readonly RenderSpec[]> {
   return contentIds$ => {
     return combineLatest([
       contentIds$,

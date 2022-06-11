@@ -6,6 +6,7 @@ import {Context, DIV, itarget, ocase, ostyle, query, registerCustomElement} from
 import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, OperatorFunction} from 'rxjs';
 
+import {ComponentId, componentId} from '../id/component-id';
 import {TEST_FACE} from '../testing/test-face';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {PieceState} from '../types/piece-state';
@@ -78,7 +79,7 @@ test('@protoboard2/src-next/core/base-piece', init => {
     });
 
     should('trigger on click', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
       _.element.state = state;
@@ -87,18 +88,18 @@ test('@protoboard2/src-next/core/base-piece', init => {
       harness.simulateTrigger(TriggerType.CLICK);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
       _.element.state = state;
       _.element.pick(undefined);
 
       assert($activeState.get(_.tester.vine).$('contentIds')).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
   });
 
@@ -111,7 +112,7 @@ test('@protoboard2/src-next/core/base-piece', init => {
     });
 
     should('trigger on R', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
       _.element.state = state;
@@ -123,7 +124,7 @@ test('@protoboard2/src-next/core/base-piece', init => {
     });
 
     should('trigger on function call', () => {
-      const id = {};
+      const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
       _.element.state = state;

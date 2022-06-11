@@ -11,6 +11,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {ComponentId} from '../id/component-id';
 import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
@@ -33,7 +34,7 @@ type Faces = readonly [
   FaceId<unknown>,
 ];
 
-export function d6State(id: {}, faces: Faces, partial: Partial<D6State> = {}): D6State {
+export function d6State(id: ComponentId<unknown>, faces: Faces, partial: Partial<D6State> = {}): D6State {
   return {
     id,
     currentFaceIndex: mutableState(0),

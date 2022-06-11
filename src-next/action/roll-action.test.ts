@@ -10,6 +10,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {componentId} from '../id/component-id';
 import {faceId, getPayload} from '../id/face-id';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
@@ -85,7 +86,7 @@ test('@protoboard2/action/roll-action', init => {
   test('handleTrigger', () => {
     should('change the current face correctly', () => {
       const state = $stateService.get(_.tester.vine).addRoot<TestState>({
-        id: {},
+        id: componentId({}),
         faces: FACES,
         currentFaceIndex: mutableState(0),
       })._();

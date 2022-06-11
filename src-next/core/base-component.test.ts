@@ -10,6 +10,7 @@ import {map} from 'rxjs/operators';
 import {ActionEvent, ACTION_EVENT} from '../action/action-event';
 import {pickAction} from '../action/pick-action';
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
+import {componentId} from '../id/component-id';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {ComponentState} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -134,7 +135,7 @@ test('@protoboard2/src/core/base-component', init => {
   test('installAction', () => {
     should('trigger the action and dispatch the event', () => {
       const stateService = $stateService.get(_.tester.vine);
-      const id = {};
+      const id = componentId({});
       const state = stateService.addRoot(mutableState<TestState>({
         id,
         value: mutableState(123),
@@ -154,7 +155,7 @@ test('@protoboard2/src/core/base-component', init => {
   test('setupHelpAction', _, init => {
     const _ = init(_ => {
       const stateService = $stateService.get(_.tester.vine);
-      const id = {};
+      const id = componentId({});
       const state = stateService.addRoot(mutableState<TestState>({
         id,
         value: mutableState(123),
@@ -213,7 +214,7 @@ test('@protoboard2/src/core/base-component', init => {
     should('update the given mutable state, if there is one', () => {
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot(mutableState<TestState>({
-        id: 'test',
+        id: componentId('test'),
         value: mutableState(123),
       })).$();
 

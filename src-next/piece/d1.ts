@@ -4,6 +4,7 @@ import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} fro
 import {Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
+import {ComponentId} from '../id/component-id';
 import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {PieceState} from '../types/piece-state';
@@ -35,7 +36,7 @@ const $d1 = {
   },
 };
 
-export function d1State(id: {}, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
+export function d1State(id: ComponentId<unknown>, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
   return {
     id,
     face,

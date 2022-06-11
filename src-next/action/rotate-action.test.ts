@@ -8,6 +8,7 @@ import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {componentId} from '../id/component-id';
 import {renderRotatable} from '../render/render-rotatable';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
@@ -76,7 +77,7 @@ test('@protoboard2/src/action/rotate-action', init => {
     should('change the rotation to the next index', () => {
       $config$.get(_.tester.vine).next({stops: [11, 22, 33]});
       const state = $stateService.get(_.tester.vine).addRoot<TestState>({
-        id: {},
+        id: componentId({}),
         rotationDeg: mutableState(0),
       })._();
       const element = _.tester.createElement(TEST);
@@ -89,7 +90,7 @@ test('@protoboard2/src/action/rotate-action', init => {
     should('handle rotations that are more than 360', () => {
       $config$.get(_.tester.vine).next({stops: [123, 456, 678]});
       const state = $stateService.get(_.tester.vine).addRoot<TestState>({
-        id: {},
+        id: componentId({}),
         rotationDeg: mutableState(910),
       })._();
       const element = _.tester.createElement(TEST);

@@ -6,6 +6,7 @@ import {map, switchMap, switchMapTo, withLatestFrom} from 'rxjs/operators';
 import {shuffleAction} from '../action/shuffle-action';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
+import {ComponentId} from '../id/component-id';
 import {RegionState} from '../types/region-state';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -27,7 +28,7 @@ const $deck = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: ocase<{}>('#content'),
+      content: ocase<ComponentId<unknown>|null>('#content'),
       target: itarget(),
     }),
   },
@@ -86,10 +87,10 @@ class Deck extends BaseRegion<DeckState> {
     ];
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<{}>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return pipe(
         map(specs => specs[specs.length - 1] ?? null),
-        this.$.shadow.root.content((id: {}) => renderContentFn(id)),
+        this.$.shadow.root.content(id => id === null ? null : renderContentFn(id)),
     );
   }
 
