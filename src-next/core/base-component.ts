@@ -50,12 +50,12 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
       private readonly defaultComponentName: string,
   ) { }
 
-  protected installAction<C>(
-      action: Action<S, C>,
+  protected installAction<C, I>(
+      action: Action<S, C, I>,
       actionName: string,
       target$: Observable<HTMLElement>,
       config$: Observable<TriggerSpec&C>,
-      onCall$: Observable<unknown>,
+      onCall$: Observable<I>,
   ): Observable<unknown> {
     this.installedActionsArray$.next([
       ...this.installedActionsArray$.getValue(),

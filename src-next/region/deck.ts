@@ -8,7 +8,7 @@ import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {ComponentId} from '../id/component-id';
 import {RegionState} from '../types/region-state';
-import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import template from './deck.html';
 
@@ -45,7 +45,7 @@ class Deck extends BaseRegion<DeckState> {
     const contents$ = this.state.$('contentIds');
     return [
       ...super.runs,
-      this.installAction(
+      this.installAction<TriggerSpec, unknown>(
           () => pipe(
               withLatestFrom(activeContents$, contents$),
               switchMap(([payload, activeContents, contents]) => {
@@ -61,7 +61,7 @@ class Deck extends BaseRegion<DeckState> {
           this.$.host.dropAllConfig,
           this.$.host.dropAll,
       ),
-      this.installAction(
+      this.installAction<TriggerSpec, unknown>(
           () => pipe(
               withLatestFrom(activeContents$, contents$),
               switchMap(([payload, activeContents, contents]) => {
