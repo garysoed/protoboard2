@@ -9,7 +9,7 @@ import template from './pad.html';
 
 const $pad = {
   host: {
-    ...create$baseComponent().host,
+    ...create$baseComponent<PadState>().host,
   },
   root: query('#root', SVG, {
   }),
