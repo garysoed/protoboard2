@@ -9,7 +9,7 @@ import {TriggerEvent, TRIGGER_EVENT} from './trigger-event';
 
 export function onTrigger(
     triggerSpec$: Observable<TriggerSpec>,
-): OperatorFunction<HTMLElement, TriggerEvent> {
+): OperatorFunction<Element, TriggerEvent> {
   return element$ => {
     const dispatchTrigger$ = element$.pipe(dispatchTrigger(), switchMapTo(EMPTY));
     const onTrigger$ = element$.pipe(onInternalTriggerEvent(triggerSpec$));
@@ -17,7 +17,7 @@ export function onTrigger(
   };
 }
 
-function onInternalTriggerEvent(triggerSpec$: Observable<TriggerSpec>): OperatorFunction<HTMLElement, TriggerEvent> {
+function onInternalTriggerEvent(triggerSpec$: Observable<TriggerSpec>): OperatorFunction<Element, TriggerEvent> {
   return pipe(
       switchMap(element => {
         return ievent(TRIGGER_EVENT, TriggerEvent).resolve(element);
@@ -48,7 +48,7 @@ interface MaybeHandledEvent extends MouseEvent {
   [__convertedToTrigger]?: boolean;
 }
 
-function dispatchTrigger(): OperatorFunction<HTMLElement, unknown> {
+function dispatchTrigger(): OperatorFunction<Element, unknown> {
   return switchMap(element => {
 
     const onClick$ = createOnClick(element);
@@ -59,7 +59,7 @@ function dispatchTrigger(): OperatorFunction<HTMLElement, unknown> {
   });
 }
 
-function createOnClick(element: HTMLElement): Observable<TriggerEvent> {
+function createOnClick(element: Element): Observable<TriggerEvent> {
   return ievent('click', MouseEvent).resolve(element)
       .pipe(
           filterUnhandled(),
@@ -79,7 +79,7 @@ function createOnClick(element: HTMLElement): Observable<TriggerEvent> {
       );
 }
 
-function createOnKey(element: HTMLElement): Observable<TriggerEvent> {
+function createOnKey(element: Element): Observable<TriggerEvent> {
   const onMouseOut$ = ievent('mouseout', MouseEvent).resolve(element);
   const onMouseOver$ = ievent<MaybeHandledEvent>('mouseover', MouseEvent)
       .resolve(element)

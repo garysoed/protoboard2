@@ -17,7 +17,7 @@ import {TriggerSpec, TriggerType} from '../types/trigger-spec';
 
 
 interface ActionInstalledPayload {
-  readonly target$: Observable<HTMLElement>;
+  readonly target$: Observable<Element>;
   readonly actionName: string;
   readonly trigger$: Observable<TriggerSpec|null>;
 }
@@ -53,7 +53,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   protected installAction<C, I>(
       action: Action<S, C, I>,
       actionName: string,
-      target$: Observable<HTMLElement>,
+      target$: Observable<Element>,
       config$: Observable<TriggerSpec&C>,
       onCall$: Observable<I>,
   ): Observable<unknown> {
@@ -102,7 +102,7 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
           return combineLatest(actions$);
         }),
         map(payloads => {
-          const targetActionMap = new Map<HTMLElement, ActionTrigger[]>();
+          const targetActionMap = new Map<Element, ActionTrigger[]>();
           for (const payload of payloads) {
             const triggers = targetActionMap.get(payload.target) ?? [];
             triggers.push(payload);
