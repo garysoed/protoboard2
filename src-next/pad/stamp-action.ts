@@ -1,5 +1,5 @@
 import {flattenResolver} from 'gs-tools/export/state';
-import {arrayOfType, hasPropertiesType, numberType, stringType, Type, unknownType} from 'gs-types';
+import {arrayOfType, hasPropertiesType, intersectType, numberType, stringType, Type, unknownType} from 'gs-types';
 import {Context} from 'persona';
 import {of, OperatorFunction, pipe} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
@@ -11,17 +11,18 @@ import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import {PadState, StampState} from './pad-state';
 
-interface StampConfig {
+interface StampConfig extends TriggerSpec {
   readonly stampId: StampId<unknown>;
   readonly stampName: string;
-  readonly trigger: TriggerSpec;
 }
 
-export const STAMP_CONFIG_TYPE: Type<StampConfig> = hasPropertiesType({
-  stampId: stampIdType(unknownType),
-  stampName: stringType,
-  trigger: TRIGGER_SPEC_TYPE,
-});
+export const STAMP_CONFIG_TYPE: Type<StampConfig> = intersectType([
+  TRIGGER_SPEC_TYPE,
+  hasPropertiesType({
+    stampId: stampIdType(unknownType),
+    stampName: stringType,
+  }),
+]);
 
 export interface StampActionInput {
   readonly x: number;

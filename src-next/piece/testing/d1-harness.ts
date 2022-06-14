@@ -24,6 +24,6 @@ export class D1Harness extends CustomElementHarness<typeof D1> {
   }
 
   simulateTrigger(triggerType: TriggerType, options?: MouseEventInit & KeyboardEventInit): void {
-    return this.harness.simulateTrigger(triggerType, options);
+    this.harness.simulateTrigger(triggerType, options);
   }
 }

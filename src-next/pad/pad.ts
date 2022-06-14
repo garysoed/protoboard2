@@ -1,30 +1,69 @@
-import {Context, query, registerCustomElement, SVG} from 'persona';
-import {Observable} from 'rxjs';
+import {arrayOfType, hasPropertiesType, intersectType, unknownType} from 'gs-types';
+import {Context, icall, itarget, ivalue, query, registerCustomElement, SVG} from 'persona';
+import {EMPTY, Observable, of, merge} from 'rxjs';
+import {switchMap, filter} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {StampId, stampIdType} from '../id/stamp-id';
 
 import {PadState} from './pad-state';
 import template from './pad.html';
+import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
 
+export interface StampGenericActionInput extends StampActionInput {
+  readonly stampId: StampId<unknown>;
+}
+
+const STAMP_GENERIC_ACTION_INPUT_TYPE = intersectType([
+  hasPropertiesType({stampId: stampIdType(unknownType)}),
+  STAMP_ACTION_INPUT_TYPE,
+]);
 
 const $pad = {
   host: {
     ...create$baseComponent<PadState>().host,
+    stampConfigs: ivalue('stampConfigs', arrayOfType(STAMP_CONFIG_TYPE)),
+    stamp: icall<[StampGenericActionInput], 'stamp'>('stamp', [STAMP_GENERIC_ACTION_INPUT_TYPE]),
   },
-  root: query('#root', SVG, {
-  }),
+  shadow: {
+    root: query('#root', SVG, {
+      target: itarget(),
+    }),
+  },
 };
 export class PadCtrl extends BaseComponent<PadState> {
 
-  constructor($: Context<typeof $pad>) {
+  constructor(private readonly $: Context<typeof $pad>) {
     super($, 'Pad');
   }
 
-  protected get renders(): ReadonlyArray<Observable<unknown>> {
+  get runs(): ReadonlyArray<Observable<unknown>> {
     return [
+      ...super.runs,
+      this.setupStampActions(),
       // this.renderers.root.permanents(this.permanents$),
       // this.renderers.root.halfline(this.halfline$),
     ];
+  }
+
+  private setupStampActions(): Observable<unknown> {
+    return this.$.host.stampConfigs.pipe(
+        switchMap(configs => {
+          if (!configs) {
+            return EMPTY;
+          }
+
+          const registrations = configs.map(config => this.installAction(
+              stampActionFactory(config),
+              config.stampName,
+              this.$.shadow.root.target,
+              of(config),
+              this.$.host.stamp.pipe(filter(([arg]) => arg.stampId === config.stampId)),
+          ));
+
+          return merge(...registrations);
+        }),
+    );
   }
 
   // @cache()

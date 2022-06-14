@@ -41,7 +41,7 @@ class Test extends BaseComponent<PadState> {
             if (!config) {
               return EMPTY;
             }
-            const onTrigger$ = this.$.shadow.root.target.pipe(onTrigger(of(config.trigger)));
+            const onTrigger$ = this.$.shadow.root.target.pipe(onTrigger(of(config)));
             const onCall$ = this.$.host.stamp;
 
             return merge(onTrigger$, onCall$).pipe(
@@ -78,7 +78,7 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const config = {
       stampId: id,
       stampName,
-      trigger: {type: TriggerType.CLICK},
+      type: TriggerType.CLICK,
     };
 
     const otherStamp1 = {stampId: stampId('id1'), x: 12, y: 23};
@@ -106,7 +106,7 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const config = {
       stampId: id,
       stampName,
-      trigger: {type: TriggerType.CLICK},
+      type: TriggerType.CLICK,
     };
 
     const otherStamp1 = {stampId: stampId('id1'), x: 12, y: 23};

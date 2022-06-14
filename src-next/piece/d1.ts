@@ -16,6 +16,15 @@ export interface D1State extends PieceState {
   readonly face: FaceId<unknown>;
 }
 
+export function d1State(id: ComponentId<unknown>, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
+  return {
+    id,
+    face,
+    rotationDeg: mutableState(0),
+    ...partial,
+  };
+}
+
 /**
  * The D1's API.
  *
@@ -35,15 +44,6 @@ const $d1 = {
     }),
   },
 };
-
-export function d1State(id: ComponentId<unknown>, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
-  return {
-    id,
-    face,
-    rotationDeg: mutableState(0),
-    ...partial,
-  };
-}
 
 class D1Ctrl extends BasePiece<D1State> {
   /**
