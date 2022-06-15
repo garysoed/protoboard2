@@ -12,7 +12,7 @@ import {stampId} from '../id/stamp-id';
 import {onTrigger} from '../trigger/trigger';
 import {TriggerType} from '../types/trigger-spec';
 
-import {PadState, StampState} from './pad-state';
+import {PadContentType, PadState, StampState} from './pad-state';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
 
 const $test = {
@@ -66,7 +66,7 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
 
     const state = $stateService.get(tester.vine).addRoot<PadState>({
       id: componentId('id'),
-      stamps: mutableState([]),
+      contents: mutableState([]),
     })._();
 
     return {state, tester};
@@ -81,10 +81,10 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
       type: TriggerType.CLICK,
     };
 
-    const otherStamp1 = {stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2 = {stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3 = {stampId: stampId('id3'), x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('stamps').set()));
+    const otherStamp1 = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
+    const otherStamp2 = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
+    const otherStamp3 = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.createElement(TEST);
     element.config = config;
@@ -92,7 +92,7 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const harness = getHarness(element, 'div', ElementHarness);
     harness.simulateClick({clientX: 123, clientY: 456});
 
-    assert(_.state.$('stamps')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
       otherStamp3,
@@ -109,17 +109,17 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
       type: TriggerType.CLICK,
     };
 
-    const otherStamp1 = {stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2 = {stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3 = {stampId: stampId('id3'), x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('stamps').set()));
+    const otherStamp1 = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
+    const otherStamp2 = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
+    const otherStamp3 = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.createElement(TEST);
     element.config = config;
     element.state = _.state;
     element.stamp({x: 123, y: 456});
 
-    assert(_.state.$('stamps')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
       otherStamp3,

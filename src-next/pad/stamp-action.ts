@@ -9,7 +9,7 @@ import {StampId, stampIdType} from '../id/stamp-id';
 import {TriggerEvent} from '../trigger/trigger-event';
 import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
-import {PadState, StampState} from './pad-state';
+import {PadContentType, PadState, StampState} from './pad-state';
 
 interface StampConfig extends TriggerSpec {
   readonly stampId: StampId<unknown>;
@@ -38,11 +38,12 @@ type StampAction = (context: Context<BaseComponentSpecType<PadState>>) => Operat
 
 export function stampActionFactory(config: StampConfig): StampAction {
   return $ => {
-    const stamps$ = flattenResolver($.host.state).$('stamps');
+    const stamps$ = flattenResolver($.host.state).$('contents');
     return pipe(
         withLatestFrom(stamps$),
         switchMap(([input, stamps]) => {
           const stampState = {
+            type: PadContentType.STAMP,
             stampId: config.stampId,
             ...createNewStampLocation(input),
           };
@@ -55,7 +56,7 @@ export function stampActionFactory(config: StampConfig): StampAction {
   };
 }
 
-type StampLocation = Omit<StampState, 'stampId'>;
+type StampLocation = Omit<StampState, 'stampId'|'type'>;
 
 function createNewStampLocation(triggerOrInput: TriggerEvent|[StampActionInput]): StampLocation {
   if (arrayOfType(STAMP_ACTION_INPUT_TYPE).check(triggerOrInput)) {

@@ -9,7 +9,7 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 import {TriggerType} from '../types/trigger-spec';
 
 import {PAD} from './pad';
-import {padState, StampState} from './pad-state';
+import {PadContentType, padState, StampState} from './pad-state';
 import {PadHarness} from './testing/pad-harness';
 
 test('@protoboard2/src-next/pad/pad', init => {
@@ -46,14 +46,14 @@ test('@protoboard2/src-next/pad/pad', init => {
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
 
-      const oldStamp1 = {stampId: stampAId, x: 12, y: 34};
-      const oldStamp2 = {stampId: stampBId, x: 56, y: 78};
-      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('stamps').set()));
+      const oldStamp1 = {type: PadContentType.STAMP, stampId: stampAId, x: 12, y: 34};
+      const oldStamp2 = {type: PadContentType.STAMP, stampId: stampBId, x: 56, y: 78};
+      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
 
       const harness = getHarness(_.element, PadHarness);
       harness.simulateTrigger(TriggerType.CLICK, {clientX: 123, clientY: 456});
 
-      assert(_.state.$('stamps')).to.emitWith(arrayThat<StampState>().haveExactElements([
+      assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
         oldStamp1,
         oldStamp2,
         objectThat<StampState>().haveProperties({stampId: stampAId, x: 123, y: 456}),
@@ -76,13 +76,13 @@ test('@protoboard2/src-next/pad/pad', init => {
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
 
-      const oldStamp1 = {stampId: stampAId, x: 12, y: 34};
-      const oldStamp2 = {stampId: stampBId, x: 56, y: 78};
-      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('stamps').set()));
+      const oldStamp1 = {type: PadContentType.STAMP, stampId: stampAId, x: 12, y: 34};
+      const oldStamp2 = {type: PadContentType.STAMP, stampId: stampBId, x: 56, y: 78};
+      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
 
       _.element.stamp({stampId: stampAId, x: 123, y: 456});
 
-      assert(_.state.$('stamps')).to.emitWith(arrayThat<StampState>().haveExactElements([
+      assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
         oldStamp1,
         oldStamp2,
         objectThat<StampState>().haveProperties({stampId: stampAId, x: 123, y: 456}),
