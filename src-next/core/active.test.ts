@@ -1,6 +1,6 @@
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {renderString, renderTextNode} from 'persona';
+import {ParseType, renderString, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
@@ -70,7 +70,7 @@ test('@protoboard2/src/core/active', init => {
       registerComponentRenderSpec(_.tester.vine, () => {
         return renderString({
           raw: of('<div>content</div>'),
-          parseType: 'application/xhtml+xml',
+          parseType: ParseType.HTML,
           spec: {},
         });
       });
