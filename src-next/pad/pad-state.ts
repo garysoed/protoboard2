@@ -15,7 +15,7 @@ export interface StampState {
   readonly stampId: StampId<unknown>;
 }
 
-type PadContentState = StampState;
+export type PadContentState = StampState;
 
 export interface PadState extends ComponentState {
   readonly contents: MutableState<readonly PadContentState[]>;

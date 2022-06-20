@@ -1,12 +1,14 @@
+import {cache} from 'gs-tools/export/data';
 import {arrayOfType, hasPropertiesType, intersectType, unknownType} from 'gs-types';
-import {Context, icall, itarget, ivalue, query, registerCustomElement, SVG} from 'persona';
-import {EMPTY, Observable, of, merge} from 'rxjs';
-import {switchMap, filter} from 'rxjs/operators';
+import {Context, icall, itarget, ivalue, oforeach, query, registerCustomElement, RenderSpec, SVG} from 'persona';
+import {combineLatest, EMPTY, merge, Observable, of} from 'rxjs';
+import {filter, map, switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {StampId, stampIdType} from '../id/stamp-id';
+import {$getStampRenderSpec$} from '../renderspec/render-stamp-spec';
 
-import {PadState} from './pad-state';
+import {PadContentState, PadContentType, PadState} from './pad-state';
 import template from './pad.html';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
 
@@ -19,6 +21,8 @@ const STAMP_GENERIC_ACTION_INPUT_TYPE = intersectType([
   STAMP_ACTION_INPUT_TYPE,
 ]);
 
+type RenderFn = (state: PadContentState) => RenderSpec|null;
+
 const $pad = {
   host: {
     ...create$baseComponent<PadState>().host,
@@ -28,6 +32,7 @@ const $pad = {
   shadow: {
     root: query('#root', SVG, {
       target: itarget(),
+      contents: oforeach<PadContentState>(),
     }),
   },
 };
@@ -41,9 +46,42 @@ export class PadCtrl extends BaseComponent<PadState> {
     return [
       ...super.runs,
       this.setupStampActions(),
+      this.renderContents$,
       // this.renderers.root.permanents(this.permanents$),
       // this.renderers.root.halfline(this.halfline$),
     ];
+  }
+
+  @cache()
+  private get renderContents$(): Observable<unknown> {
+    return combineLatest([
+      this.state.$('contents'),
+      this.getRenderFn$,
+    ])
+        .pipe(
+            switchMap(([contents, renderFn]) => {
+              return of(contents).pipe(
+                  this.$.shadow.root.contents(state => renderFn(state)),
+              );
+            }),
+        );
+  }
+
+  @cache()
+  private get getRenderFn$(): Observable<RenderFn> {
+    return combineLatest([
+      $getStampRenderSpec$.get(this.$.vine),
+    ])
+        .pipe(
+            map(([stampRenderFn]) => {
+              return (state: PadContentState) => {
+                switch (state.type) {
+                  case PadContentType.STAMP:
+                    return stampRenderFn(state);
+                }
+              };
+            }),
+        );
   }
 
   private setupStampActions(): Observable<unknown> {

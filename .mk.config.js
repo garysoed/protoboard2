@@ -4,6 +4,7 @@ set_vars({
       'src-next/action/goldens',
       'src-next/core/goldens',
       'src-next/face/goldens',
+      'src-next/pad/goldens',
       'src-next/piece/goldens',
       'src-next/region/goldens',
       'src-next/render/goldens',
