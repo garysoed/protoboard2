@@ -1,7 +1,7 @@
 import {$stateService, source, Vine} from 'grapevine';
 import {mutableState} from 'gs-tools/export/state';
 import {enumType} from 'gs-types';
-import {renderElement, renderHtml, RenderSpec} from 'persona';
+import {renderElement, renderString, RenderSpec} from 'persona';
 import {of} from 'rxjs';
 
 import {componentId} from '../src-next/id/component-id';
@@ -130,13 +130,14 @@ export function renderLens(id: unknown): RenderSpec|null {
     return null;
   }
 
-  return renderHtml({
+  return renderString({
     raw: of(`
     <div slot="details">
       <h3 id="name">${getFaceName(id)}</h3>
       <p mk-body-1>More detailed information on the piece goes here.</p>
     </div>`),
-    parseType: 'text/html',
+    parseType: 'application/xhtml+xml',
+    spec: {},
   });
 }
 

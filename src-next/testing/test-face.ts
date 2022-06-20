@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, itarget, ocase, query, registerCustomElement, renderElement, renderHtml, RenderSpec} from 'persona';
+import {Context, Ctrl, DIV, iattr, itarget, ocase, query, registerCustomElement, renderElement, renderString, RenderSpec} from 'persona';
 import {Observable, of} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
@@ -33,8 +33,9 @@ class TestFace implements Ctrl {
             if (!raw) {
               return null;
             }
-            return renderHtml({
+            return renderString({
               raw: of(raw),
+              spec: {},
               parseType: 'image/svg+xml',
             });
           }),

@@ -1,6 +1,6 @@
 import {assert, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {renderHtml, renderTextNode} from 'persona';
+import {renderString, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
@@ -68,9 +68,10 @@ test('@protoboard2/src/core/active', init => {
     should('render left correctly', () => {
       const left = 123;
       registerComponentRenderSpec(_.tester.vine, () => {
-        return renderHtml({
+        return renderString({
           raw: of('<div>content</div>'),
-          parseType: 'text/xml',
+          parseType: 'application/xhtml+xml',
+          spec: {},
         });
       });
 
