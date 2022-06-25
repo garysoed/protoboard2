@@ -1,9 +1,9 @@
 import {cache} from 'gs-tools/export/data';
 import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
-import {Context, Ctrl, DIV, iattr, itarget, ocase, query, registerCustomElement, renderElement, renderString, RenderSpec, ParseType} from 'persona';
+import {Context, Ctrl, DIV, iattr, ocase, oproperty, ParseType, query, registerCustomElement, renderElement, RenderSpec, renderString} from 'persona';
 import {Observable, of} from 'rxjs';
-import {tap, withLatestFrom} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
 
@@ -17,7 +17,7 @@ const $testFace = {
   shadow: {
     root: query('#root', DIV, {
       content: ocase<string|null>(),
-      element: itarget(),
+      shade: oproperty('--pbtShade'),
     }),
   },
 };
@@ -41,10 +41,8 @@ class TestFace implements Ctrl {
           }),
       ),
       this.$.host.shade.pipe(
-          withLatestFrom(this.$.shadow.root.element),
-          tap(([shade, target]) => {
-            target.style.setProperty('--pbtShade', shade ?? 'steelblue');
-          }),
+          map(shade => shade ?? 'steelblue'),
+          this.$.shadow.root.shade(),
       ),
     ];
   }
