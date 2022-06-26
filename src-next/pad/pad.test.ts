@@ -1,7 +1,7 @@
 import {$stateService} from 'grapevine';
 import {assert, run, runEnvironment, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {ParseType, query, renderString, SVG} from 'persona';
+import {ostyle, ParseType, query, renderString, SVG} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
@@ -34,20 +34,23 @@ test('@protoboard2/src-next/pad/pad', init => {
     const STAMP_B_ID = stampId('b');
 
     const _ = init(_ => {
-      // TODO: Add shades
-      // TODO: Center align
       registerStampRenderSpec(_.tester.vine, state => {
+        const shade = state.stampId === STAMP_A_ID ? 'steelblue' : 'orange';
         return renderString({
           raw: of(testSvg),
           parseType: ParseType.SVG,
           spec: {
             root: query(null, SVG, {}),
+            colorable: query('#foreground', SVG, {
+              style: ostyle('fill'),
+            }),
           },
           runs: $ => [
-            of(`${state.x}`).pipe($.root.x()),
-            of(`${state.y}`).pipe($.root.y()),
+            of(`${state.x - 25}`).pipe($.root.x()),
+            of(`${state.y - 25}`).pipe($.root.y()),
             of('50px').pipe($.root.width()),
             of('50px').pipe($.root.height()),
+            of(shade).pipe($.colorable.style()),
           ],
         });
       });
