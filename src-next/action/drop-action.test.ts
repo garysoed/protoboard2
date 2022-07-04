@@ -10,7 +10,7 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
-import {componentId, ComponentId} from '../id/component-id';
+import {componentId, ComponentId, getPayload} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -80,7 +80,8 @@ test('@protoboard2/src/action/drop-action', init => {
     });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, (payload, id) => {
+    registerComponentRenderSpec(tester.vine, id => {
+      const payload = getPayload(id);
       if (!stringType.check(payload)) {
         throw new Error(`Invalid ID ${payload}`);
       }

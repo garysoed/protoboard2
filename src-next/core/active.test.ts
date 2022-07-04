@@ -5,7 +5,7 @@ import {setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
-import {componentId} from '../id/component-id';
+import {componentId, getPayload} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 
@@ -25,7 +25,7 @@ test('@protoboard2/src/core/active', init => {
     const tester = setupTest({roots: [ACTIVE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     registerComponentRenderSpec(tester.vine, id => {
       return renderTextNode({
-        textContent: of(id as string),
+        textContent: of(getPayload(id) as string),
       });
     });
 

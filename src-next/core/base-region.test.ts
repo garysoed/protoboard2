@@ -8,7 +8,7 @@ import {getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {componentId, ComponentId} from '../id/component-id';
+import {componentId, ComponentId, getPayload} from '../id/component-id';
 import {faceId} from '../id/face-id';
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
@@ -67,7 +67,8 @@ test('@protoboard2/src/core/base-region', init => {
     const states = new Map<ComponentId<unknown>, ImmutableResolver<D1State>>();
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, (payload, id) => {
+    registerComponentRenderSpec(tester.vine, (id) => {
+      const payload = getPayload(id);
       if (!stringType.check(payload)) {
         return null;
       }
@@ -84,7 +85,7 @@ test('@protoboard2/src/core/base-region', init => {
     should('render the contents correctly', () => {
       registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
-          textContent: of(id as string),
+          textContent: of(getPayload(id) as string),
         });
       });
 

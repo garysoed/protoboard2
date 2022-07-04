@@ -31,7 +31,8 @@ test('@protoboard2/src/region/surface', init => {
     const tester = setupTest({roots: [SURFACE, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, (payload, id) => {
+    registerComponentRenderSpec(tester.vine, (id) => {
+      const payload = getPayload(id);
       if (!stringType.check(payload)) {
         return null;
       }

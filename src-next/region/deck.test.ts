@@ -41,7 +41,8 @@ test('@protoboard2/src/region/deck', init => {
     });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    registerComponentRenderSpec(tester.vine, (payload, id) => {
+    registerComponentRenderSpec(tester.vine, (id) => {
+      const payload = getPayload(id);
       if (!stringType.check(payload)) {
         return null;
       }

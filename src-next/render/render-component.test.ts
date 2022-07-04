@@ -8,7 +8,7 @@ import {setupTest} from 'persona/export/testing';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {ComponentId, componentId} from '../id/component-id';
+import {ComponentId, componentId, getPayload} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 
 import goldens from './goldens/goldens.json';
@@ -61,7 +61,7 @@ test('@protoboard2/src/render/render-component', init => {
     should('render the contents correctly', () => {
       registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
-          textContent: of(id as string),
+          textContent: of(getPayload(id) as string),
         });
       });
 
