@@ -10,6 +10,10 @@ export class PadHarness extends CustomElementHarness<typeof PAD> {
 
   private readonly harness = getHarness(this.target, '#root', TriggerElementHarness);
 
+  simulateMouseMove(init?: MouseEventInit): void {
+    this.harness.simulateMouseMove(init);
+  }
+
   simulateStamp(input: StampGenericActionInput): void {
     this.target.stamp(input);
   }

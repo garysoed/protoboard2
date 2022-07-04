@@ -7,13 +7,13 @@ import {map} from 'rxjs/operators';
 import {LineId} from '../id/line-id';
 
 
-interface LineRenderSpec {
-  pathLength: Observable<Length>;
-  stroke: Observable<string>;
-  strokeDasharray: Observable<readonly Length[]>;
-  strokeLinecap: Observable<LineCap>;
-  strokeOpacity: Observable<number>;
-  strokeWidth: Observable<Length>;
+export interface LineRenderSpec {
+  readonly pathLength?: Observable<Length>;
+  readonly stroke?: Observable<string>;
+  readonly strokeDasharray?: Observable<readonly Length[]>;
+  readonly strokeLinecap?: Observable<LineCap>;
+  readonly strokeOpacity?: Observable<number>;
+  readonly strokeWidth?: Observable<Length>;
 }
 
 type RenderLineSpecProvider = (id: LineId<unknown>) => LineRenderSpec|null;

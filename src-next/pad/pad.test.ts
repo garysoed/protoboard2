@@ -7,7 +7,9 @@ import {of} from 'rxjs';
 
 import testSvg from '../asset/icon.svg';
 import {componentId} from '../id/component-id';
+import {lineId} from '../id/line-id';
 import {stampId} from '../id/stamp-id';
+import {registerLineRenderSpec} from '../renderspec/render-line-spec';
 import {registerStampRenderSpec} from '../renderspec/render-stamp-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
@@ -105,6 +107,61 @@ test('@protoboard2/src-next/pad/pad', init => {
       _.element.stamp({stampId: STAMP_A_ID, x: 123, y: 456});
 
       assert(_.element).to.matchSnapshot('pad__stamp_call.html');
+    });
+  });
+
+  test('line action', _, init => {
+    const LINE_ID = lineId('line');
+
+    const _ = init(_ => {
+      registerLineRenderSpec(_.tester.vine, () => ({
+        stroke: of('orange'),
+        strokeWidth: of(10),
+      }));
+
+      const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
+      const element = _.tester.createElement(PAD);
+      element.state = state;
+
+      return {..._, element};
+    });
+
+    should('trigger on click', () => {
+      const config = {
+        lineId: LINE_ID,
+        lineName: 'Line',
+        type: TriggerType.CLICK,
+      };
+      _.element.lineConfigs = [config];
+
+      const harness = getHarness(_.element, PadHarness);
+      harness.simulateTrigger(TriggerType.CLICK, {clientX: 12, clientY: 45});
+      harness.simulateMouseMove({clientX: 36, clientY: 135});
+
+      assert(_.element).to.matchSnapshot('pad__line_halfline_click.html');
+
+      harness.simulateTrigger(TriggerType.CLICK, {clientX: 24, clientY: 90});
+
+      assert(_.element).to.matchSnapshot('pad__line_click.html');
+    });
+
+    should('trigger on function call', () => {
+      const config = {
+        lineId: LINE_ID,
+        lineName: 'Line',
+        type: TriggerType.CLICK,
+      };
+      _.element.lineConfigs = [config];
+
+      const harness = getHarness(_.element, PadHarness);
+      _.element.line({lineId: LINE_ID, x: 12, y: 45});
+      harness.simulateMouseMove({clientX: 36, clientY: 135});
+
+      assert(_.element).to.matchSnapshot('pad__line_halfline_call.html');
+
+      _.element.line({lineId: LINE_ID, x: 24, y: 90});
+
+      assert(_.element).to.matchSnapshot('pad__line_call.html');
     });
   });
 });
