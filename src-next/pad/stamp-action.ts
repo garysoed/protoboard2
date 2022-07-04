@@ -42,7 +42,7 @@ export function stampActionFactory(config: StampConfig): StampAction {
     return pipe(
         withLatestFrom(stamps$),
         switchMap(([input, stamps]) => {
-          const stampState = {
+          const stampState: StampState = {
             type: PadContentType.STAMP,
             stampId: config.stampId,
             ...createNewStampLocation(input),

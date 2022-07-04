@@ -14,7 +14,7 @@ import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
 import {PAD} from './pad';
-import {PadContentType, padState} from './pad-state';
+import {PadContentType, padState, StampState} from './pad-state';
 import {PadHarness} from './testing/pad-harness';
 
 test('@protoboard2/src-next/pad/pad', init => {
@@ -74,8 +74,8 @@ test('@protoboard2/src-next/pad/pad', init => {
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
 
-      const oldStamp1 = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
-      const oldStamp2 = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
+      const oldStamp1: StampState = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
+      const oldStamp2: StampState = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
       run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
 
       const harness = getHarness(_.element, PadHarness);
@@ -98,8 +98,8 @@ test('@protoboard2/src-next/pad/pad', init => {
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
 
-      const oldStamp1 = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
-      const oldStamp2 = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
+      const oldStamp1: StampState = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
+      const oldStamp2: StampState = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
       run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
 
       _.element.stamp({stampId: STAMP_A_ID, x: 123, y: 456});

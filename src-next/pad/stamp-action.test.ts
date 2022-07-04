@@ -12,6 +12,7 @@ import {stampId} from '../id/stamp-id';
 import {onTrigger} from '../trigger/trigger';
 import {TriggerType} from '../types/trigger-spec';
 
+import {padState} from './pad-state';
 import {PadContentType, PadState, StampState} from './pad-state';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
 
@@ -64,10 +65,9 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
   const _ = init(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = $stateService.get(tester.vine).addRoot<PadState>({
-      id: componentId('id'),
+    const state = $stateService.get(tester.vine).addRoot<PadState>(padState(componentId('id'), {
       contents: mutableState([]),
-    })._();
+    }))._();
 
     return {state, tester};
   });
@@ -81,9 +81,9 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
       type: TriggerType.CLICK,
     };
 
-    const otherStamp1 = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2 = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3 = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.createElement(TEST);
@@ -109,9 +109,9 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
       type: TriggerType.CLICK,
     };
 
-    const otherStamp1 = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2 = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3 = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.createElement(TEST);

@@ -1,11 +1,12 @@
 import {cache} from 'gs-tools/export/data';
 import {arrayOfType, hasPropertiesType, intersectType, unknownType} from 'gs-types';
-import {Context, icall, itarget, ivalue, oforeach, query, registerCustomElement, RenderSpec, SVG} from 'persona';
+import {Context, icall, itarget, ivalue, LINE, oforeach, query, registerCustomElement, renderElement, RenderSpec, SVG} from 'persona';
 import {combineLatest, EMPTY, merge, Observable, of} from 'rxjs';
 import {filter, map, switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {StampId, stampIdType} from '../id/stamp-id';
+import {$getLineRenderSpec$} from '../renderspec/render-line-spec';
 import {$getStampRenderSpec$} from '../renderspec/render-stamp-spec';
 
 import {PadContentState, PadContentType, PadState} from './pad-state';
@@ -71,13 +72,53 @@ export class PadCtrl extends BaseComponent<PadState> {
   private get getRenderFn$(): Observable<RenderFn> {
     return combineLatest([
       $getStampRenderSpec$.get(this.$.vine),
+      $getLineRenderSpec$.get(this.$.vine),
     ])
         .pipe(
-            map(([stampRenderFn]) => {
+            map(([stampRenderFn, lineRenderFn]) => {
               return (state: PadContentState) => {
                 switch (state.type) {
                   case PadContentType.STAMP:
                     return stampRenderFn(state);
+                  case PadContentType.LINE: {
+                    const lineRenderSpec = lineRenderFn(state.lineId);
+                    return renderElement({
+                      registration: LINE,
+                      spec: {},
+                      runs: $ => {
+                        const obsList: Array<Observable<unknown>> = [];
+                        if (!lineRenderSpec) {
+                          return obsList;
+                        }
+
+                        if (lineRenderSpec.pathLength) {
+                          obsList.push(lineRenderSpec.pathLength.pipe($.pathLength()));
+                        }
+
+                        if (lineRenderSpec.stroke) {
+                          obsList.push(lineRenderSpec.stroke.pipe($.stroke()));
+                        }
+
+                        if (lineRenderSpec.strokeDasharray) {
+                          obsList.push(lineRenderSpec.strokeDasharray.pipe($.strokeDasharray()));
+                        }
+
+                        if (lineRenderSpec.strokeLinecap) {
+                          obsList.push(lineRenderSpec.strokeLinecap.pipe($.strokeLinecap()));
+                        }
+
+                        if (lineRenderSpec.strokeWidth) {
+                          obsList.push(lineRenderSpec.strokeOpacity.pipe($.strokeOpacity()));
+                        }
+
+                        if (lineRenderSpec.strokeWidth) {
+                          obsList.push(lineRenderSpec.strokeWidth.pipe($.strokeWidth()));
+                        }
+
+                        return obsList;
+                      },
+                    });
+                  }
                 }
               };
             }),
