@@ -18,7 +18,6 @@ declare({
     bin: 'npm',
     flags: [
       'link',
-      'almagest',
       'gs-tools',
       'gs-testing',
       'gs-types',
