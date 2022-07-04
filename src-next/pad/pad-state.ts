@@ -28,7 +28,7 @@ export interface StampState {
 
 export type PadContentState = LineState|StampState;
 
-interface HalfLineState {
+export interface HalfLineState {
   readonly x1: number;
   readonly y1: number;
   readonly lineId: LineId<unknown>;
