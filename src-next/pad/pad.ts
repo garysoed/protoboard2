@@ -32,6 +32,7 @@ const LINE_GENERIC_ACTION_INPUT_TYPE = intersectType([
 ]);
 
 type RenderContentFn = (state: PadContentState) => RenderSpec|null;
+type RenderHalfLineFn = (state: HalfLineState|null) => RenderSpec|null;
 
 const $pad = {
   host: {
@@ -44,8 +45,14 @@ const $pad = {
   shadow: {
     root: query('#root', SVG, {
       target: itarget(),
-      contents: oforeach<PadContentState>('#contents'),
-      halfLine: ocase<HalfLineState|null>('#halfLine'),
+      contents: oforeach<readonly [PadContentState, RenderContentFn]>(
+          '#contents',
+          ([state]) => state,
+      ),
+      halfLine: ocase<readonly [HalfLineState|null, RenderHalfLineFn]>(
+          '#halfLine',
+          ([state]) => state,
+      ),
       rect: irect(),
       onMouseMove: ievent('mousemove', MouseEvent),
     }),
@@ -74,11 +81,8 @@ export class PadCtrl extends BaseComponent<PadState> {
       this.getRenderFn$,
     ])
         .pipe(
-            switchMap(([contents, renderFn]) => {
-              return of(contents).pipe(
-                  this.$.shadow.root.contents(content => renderFn(content)),
-              );
-            }),
+            map(([contents, renderFn]) => contents.map(content => [content, renderFn] as const)),
+            this.$.shadow.root.contents(([content, renderFn]) => renderFn(content)),
         );
   }
 
@@ -96,26 +100,26 @@ export class PadCtrl extends BaseComponent<PadState> {
 
     return combineLatest([
       this.state.$('halfLine'),
-      $getLineRenderSpec$.get(this.$.vine),
+      $getLineRenderSpec$.get(this.$.vine).pipe(
+          map(renderFn => {
+            return (halfLine: HalfLineState|null) => {
+              if (!halfLine) {
+                return null;
+              }
+
+              return this.renderLine(
+                  renderFn(halfLine.lineId),
+                  of(halfLine.x1),
+                  of(halfLine.y1),
+                  mouseLocation$.pipe(map(({x}) => x)),
+                  mouseLocation$.pipe(map(({y}) => y)),
+              );
+            };
+          }),
+      ),
     ])
         .pipe(
-            switchMap(([halfLine, renderFn]) => {
-              return of(halfLine).pipe(
-                  this.$.shadow.root.halfLine(halfLine => {
-                    if (!halfLine) {
-                      return null;
-                    }
-
-                    return this.renderLine(
-                        renderFn(halfLine.lineId),
-                        of(halfLine.x1),
-                        of(halfLine.y1),
-                        mouseLocation$.pipe(map(({x}) => x)),
-                        mouseLocation$.pipe(map(({y}) => y)),
-                    );
-                  }),
-              );
-            }),
+            this.$.shadow.root.halfLine(([halfLine, renderFn]) => renderFn(halfLine)),
         );
   }
 
