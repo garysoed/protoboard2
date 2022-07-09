@@ -4,8 +4,8 @@ import {enumType} from 'gs-types';
 import {renderElement, renderString, RenderSpec, ParseType} from 'persona';
 import {of} from 'rxjs';
 
-import {componentId} from '../src-next/id/component-id';
-import {faceId} from '../src-next/id/face-id';
+import {ComponentId, componentId, getPayload as getComponentIdPayload} from '../src-next/id/component-id';
+import {FaceId, faceId, getPayload as getFaceIdPayload} from '../src-next/id/face-id';
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
@@ -74,12 +74,13 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
   },
 })._());
 
-export function renderComponent(id: unknown, vine: Vine): RenderSpec {
-  if (!enumType<ComponentType>(ComponentType).check(id)) {
+export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpec {
+  const payload = getComponentIdPayload(id);
+  if (!enumType<ComponentType>(ComponentType).check(payload)) {
     throw new Error('ID is not ComponentType');
   }
   const state$ = $state$.get(vine);
-  switch (id) {
+  switch (payload) {
     case ComponentType.CARD:
       return renderElement({
         registration: D2,
@@ -113,7 +114,8 @@ export function renderComponent(id: unknown, vine: Vine): RenderSpec {
   }
 }
 
-export function renderFace(payload: unknown): RenderSpec {
+export function renderFace(id: FaceId<unknown>): RenderSpec {
+  const payload = getFaceIdPayload(id);
   if (!enumType<FaceType>(FaceType).check(payload)) {
     throw new Error(`ID ${payload} is not a FaceType`);
   }
@@ -125,15 +127,16 @@ export function renderFace(payload: unknown): RenderSpec {
   });
 }
 
-export function renderLens(id: unknown): RenderSpec|null {
-  if (!enumType<FaceType>(FaceType).check(id)) {
+export function renderLens(id: FaceId<unknown>): RenderSpec|null {
+  const payload = getFaceIdPayload(id);
+  if (!enumType<FaceType>(FaceType).check(payload)) {
     return null;
   }
 
   return renderString({
     raw: of(`
     <div slot="details">
-      <h3 id="name">${getFaceName(id)}</h3>
+      <h3 id="name">${getFaceName(payload)}</h3>
       <p mk-body-1>More detailed information on the piece goes here.</p>
     </div>`),
     parseType: ParseType.HTML,

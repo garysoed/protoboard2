@@ -35,7 +35,6 @@ export class Documentation implements Ctrl {
     ];
   }
 
-  @cache()
   private renderContent(spec: PageSpec|null): RenderSpec|null {
     if (!spec) {
       return null;
