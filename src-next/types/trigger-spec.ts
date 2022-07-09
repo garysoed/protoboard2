@@ -38,6 +38,7 @@ export enum TriggerType {
   NUM_8 = '8',
   NUM_9 = '9',
   QUESTION = '?',
+  BACKSPACE = 'backspace',
   CLICK = 'click',
 }
 

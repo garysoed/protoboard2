@@ -9,11 +9,14 @@ import {LineId, lineIdType} from '../id/line-id';
 import {StampId, stampIdType} from '../id/stamp-id';
 import {$getLineRenderSpec$, LineRenderSpec} from '../renderspec/render-line-spec';
 import {$getStampRenderSpec$} from '../renderspec/render-stamp-spec';
+import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+
 
 import {LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE, lineActionFactory} from './line-action';
 import {HalfLineState, PadContentState, PadContentType, PadState} from './pad-state';
 import template from './pad.html';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
+import {undoAction} from './undo-action';
 
 export interface StampGenericActionInput extends StampActionInput {
   readonly stampId: StampId<unknown>;
@@ -41,6 +44,8 @@ const $pad = {
     line: icall<[LineGenericActionInput], 'line'>('line', [LINE_GENERIC_ACTION_INPUT_TYPE]),
     stampConfigs: ivalue('stampConfigs', arrayOfType(STAMP_CONFIG_TYPE)),
     stamp: icall<[StampGenericActionInput], 'stamp'>('stamp', [STAMP_GENERIC_ACTION_INPUT_TYPE]),
+    undoConfig: ivalue('undoConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.BACKSPACE}),
+    undo: icall<[], 'undo'>('undo', []),
   },
   shadow: {
     root: query('#root', SVG, {
@@ -59,7 +64,6 @@ const $pad = {
   },
 };
 export class PadCtrl extends BaseComponent<PadState> {
-
   constructor(private readonly $: Context<typeof $pad>) {
     super($, 'Pad');
   }
@@ -69,6 +73,13 @@ export class PadCtrl extends BaseComponent<PadState> {
       ...super.runs,
       this.setupLineActions(),
       this.setupStampActions(),
+      this.installAction(
+          undoAction,
+          'Undo',
+          this.$.shadow.root.target,
+          this.$.host.undoConfig,
+          this.$.host.undo,
+      ),
       this.renderContents$,
       this.renderHalfLine$,
     ];
