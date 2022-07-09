@@ -43,23 +43,29 @@ enum ComponentType {
   MEEPLE = 'meeple',
 }
 
+const CARD_ID = componentId(ComponentType.CARD);
+const COIN_ID = componentId(ComponentType.COIN);
+const DICE_ID = componentId(ComponentType.DICE);
+const GEM_ID = componentId(ComponentType.GEM);
+const MEEPLE_ID = componentId(ComponentType.MEEPLE);
+
 export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>({
   d1: {
-    gemSlot: surfaceState(componentId({}), {contentIds: mutableState([componentId(ComponentType.GEM)])}),
-    meepleSlot: surfaceState(componentId({}), {contentIds: mutableState([componentId(ComponentType.MEEPLE)])}),
+    gemSlot: surfaceState(componentId({}), {contentIds: mutableState([GEM_ID])}),
+    meepleSlot: surfaceState(componentId({}), {contentIds: mutableState([MEEPLE_ID])}),
   },
   d2: {
-    cardSlot: surfaceState(componentId({}), {contentIds: mutableState([componentId(ComponentType.CARD)])}),
-    coinSlot: surfaceState(componentId({}), {contentIds: mutableState([componentId(ComponentType.COIN)])}),
+    cardSlot: surfaceState(componentId({}), {contentIds: mutableState([CARD_ID])}),
+    coinSlot: surfaceState(componentId({}), {contentIds: mutableState([COIN_ID])}),
   },
   d6: {
-    diceSlot: surfaceState(componentId({}), {contentIds: mutableState([componentId(ComponentType.DICE)])}),
+    diceSlot: surfaceState(componentId({}), {contentIds: mutableState([DICE_ID])}),
   },
   pieces: {
-    card: d2State(componentId(ComponentType.CARD), [faceId(FaceType.CARD_BACK), faceId(FaceType.CARD_FRONT)]),
-    coin: d2State(componentId(ComponentType.COIN), [faceId(FaceType.COIN_BACK), faceId(FaceType.CARD_FRONT)]),
+    card: d2State(CARD_ID, [faceId(FaceType.CARD_BACK), faceId(FaceType.CARD_FRONT)]),
+    coin: d2State(COIN_ID, [faceId(FaceType.COIN_BACK), faceId(FaceType.CARD_FRONT)]),
     dice: d6State(
-        componentId(ComponentType.DICE),
+        DICE_ID,
         [
           faceId(FaceType.DICE_PIP_1),
           faceId(FaceType.DICE_PIP_2),
@@ -69,8 +75,8 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
           faceId(FaceType.DICE_PIP_6),
         ],
     ),
-    gem: d1State(componentId(ComponentType.GEM), faceId(FaceType.GEM)),
-    meeple: d1State(componentId(ComponentType.MEEPLE), faceId(FaceType.MEEPLE)),
+    gem: d1State(GEM_ID, faceId(FaceType.GEM)),
+    meeple: d1State(MEEPLE_ID, faceId(FaceType.MEEPLE)),
   },
 })._());
 
