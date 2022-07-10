@@ -9,6 +9,7 @@ import {FaceId, faceId, getPayload as getFaceIdPayload} from '../src-next/id/fac
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
+import {deckState, DeckState} from '../src-next/region/deck';
 import {surfaceState, SurfaceState} from '../src-next/region/surface';
 
 import {FaceType, RENDERED_FACE} from './piece/rendered-face';
@@ -25,6 +26,9 @@ export interface DemoState {
   },
   d6: {
     diceSlot: SurfaceState,
+  },
+  deck: {
+    deck: DeckState,
   },
   surface: {
     surface: SurfaceState,
@@ -63,6 +67,9 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
   },
   d6: {
     diceSlot: surfaceState(componentId({}), {contentIds: mutableState([DICE_ID])}),
+  },
+  deck: {
+    deck: deckState(componentId({})),
   },
   surface: {
     surface: surfaceState(componentId({})),

@@ -1,4 +1,5 @@
 import {cache} from 'gs-tools/export/data';
+import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
 import {concat, EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, switchMapTo, withLatestFrom} from 'rxjs/operators';
@@ -15,6 +16,13 @@ import template from './deck.html';
 
 export interface DeckState extends RegionState { }
 
+export function deckState(id: ComponentId<unknown>, input: Partial<DeckState> = {}): DeckState {
+  return {
+    id,
+    contentIds: mutableState([]),
+    ...input,
+  };
+}
 
 const $deck = {
   host: {

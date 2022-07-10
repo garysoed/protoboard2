@@ -1,5 +1,5 @@
 import {cache} from 'gs-tools/export/data';
-import {ICON, renderTheme} from 'mask';
+import {renderTheme} from 'mask';
 import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
@@ -34,7 +34,6 @@ export const SURFACE_DEMO = registerCustomElement({
   ctrl: SurfaceDemo,
   deps: [
     DOCUMENTATION_TEMPLATE,
-    ICON,
     SURFACE,
   ],
   spec: surfaceDemo,

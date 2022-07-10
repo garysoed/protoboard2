@@ -4,15 +4,10 @@ import {Context, Ctrl, DIV, ocase, query, registerCustomElement, renderElement, 
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {D1_DEMO} from '../piece/d1';
-import {D2_DEMO} from '../piece/d2';
-import {D6_DEMO} from '../piece/d6';
-import {SURFACE_DEMO} from '../region/surface';
 
 import template from './documentation.html';
-import {INSTRUCTION} from './instruction';
 import {$locationService} from './location-service';
-import {getPageSpec, PageSpec} from './page-spec';
+import {ALL_SPECS, getPageSpec, PageSpec} from './page-spec';
 
 
 const $documentation = {
@@ -47,15 +42,7 @@ export class Documentation implements Ctrl {
 
 export const DOCUMENTATION = registerCustomElement({
   ctrl: Documentation,
-  deps: [
-    // CanvasDemo,
-    D1_DEMO,
-    D2_DEMO,
-    D6_DEMO,
-    // DeckDemo,
-    INSTRUCTION,
-    SURFACE_DEMO,
-  ],
+  deps: ALL_SPECS.map(spec => spec.registration),
   spec: $documentation,
   tag: 'pbd-documentation',
   template,

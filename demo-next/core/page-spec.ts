@@ -4,6 +4,7 @@ import {CustomElementRegistration} from 'persona';
 import {D1_DEMO} from '../piece/d1';
 import {D2_DEMO} from '../piece/d2';
 import {D6_DEMO} from '../piece/d6';
+import {DECK_DEMO} from '../region/deck';
 import {SURFACE_DEMO} from '../region/surface';
 
 import {INSTRUCTION} from './instruction';
@@ -23,7 +24,7 @@ export const PAGE_SPEC_TYPE = hasPropertiesType({
 });
 
 export const CONTAINER_LINK_CONFIGS: readonly PageSpec[] = [
-  // {label: 'Deck', path: Views.DECK},
+  {label: 'Deck', path: Views.DECK, registration: DECK_DEMO},
   {label: 'Surface', path: Views.SURFACE, registration: SURFACE_DEMO},
 ];
 
@@ -39,7 +40,7 @@ export const PIECE_LINK_CONFIGS: readonly PageSpec[] = [
   {label: 'D6', path: Views.D6, registration: D6_DEMO},
 ];
 
-const ALL_SPECS: readonly PageSpec[] = [
+export const ALL_SPECS: readonly PageSpec[] = [
   ...CONTAINER_LINK_CONFIGS,
   ...LAYOUT_LINK_CONFIGS,
   ...PIECE_LINK_CONFIGS,

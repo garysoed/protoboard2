@@ -1,0 +1,22 @@
+<style>
+  .deckContainer {
+    display: inline-block;
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+  }
+</style>
+
+<pbd-documentation-template mk-body-1 label="Deck">
+  <div slot="content">
+    <p>
+      Deck is a region that can take multiple components. Players can shuffle items in the deck and
+      only have access to the items in the top.
+    </p>
+    <p>
+      <div class="deckContainer">
+        <pb-deck id="deck"></pb-deck>
+      </div>
+    </p>
+  </div>
+</pbd-documentation-template>
