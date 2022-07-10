@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 import {D1_DEMO} from '../piece/d1';
 import {D2_DEMO} from '../piece/d2';
 import {D6_DEMO} from '../piece/d6';
+import {SURFACE_DEMO} from '../region/surface';
 
 import template from './documentation.html';
 import {INSTRUCTION} from './instruction';
@@ -53,7 +54,7 @@ export const DOCUMENTATION = registerCustomElement({
     D6_DEMO,
     // DeckDemo,
     INSTRUCTION,
-    // SlotDemo,
+    SURFACE_DEMO,
   ],
   spec: $documentation,
   tag: 'pbd-documentation',

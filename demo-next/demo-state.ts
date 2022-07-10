@@ -16,15 +16,18 @@ import {FaceType, RENDERED_FACE} from './piece/rendered-face';
 
 export interface DemoState {
   d1: {
-    gemSlot: SurfaceState;
-    meepleSlot: SurfaceState;
-  };
+    gemSlot: SurfaceState,
+    meepleSlot: SurfaceState,
+  },
   d2: {
-    cardSlot: SurfaceState;
-    coinSlot: SurfaceState;
+    cardSlot: SurfaceState,
+    coinSlot: SurfaceState,
   },
   d6: {
-    diceSlot: SurfaceState;
+    diceSlot: SurfaceState,
+  },
+  surface: {
+    surface: SurfaceState,
   },
   pieces: {
     card: D2State,
@@ -60,6 +63,9 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
   },
   d6: {
     diceSlot: surfaceState(componentId({}), {contentIds: mutableState([DICE_ID])}),
+  },
+  surface: {
+    surface: surfaceState(componentId({})),
   },
   pieces: {
     card: d2State(CARD_ID, [faceId(FaceType.CARD_BACK), faceId(FaceType.CARD_FRONT)]),

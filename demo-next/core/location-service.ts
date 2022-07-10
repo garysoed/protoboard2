@@ -9,7 +9,7 @@ export enum Views {
   D6 = 'd6',
   // DECK = 'de',
   INSTRUCTION = 'in',
-  // SLOT = 'sl',
+  SURFACE = 'su',
 }
 
 const ROUTE_SPEC = {
@@ -19,7 +19,7 @@ const ROUTE_SPEC = {
   [Views.D2]: fromPattern('/d2', {}),
   [Views.D6]: fromPattern('/d6', {}),
   // [Views.DECK]: fromPattern('/deck', {}),
-  // [Views.SLOT]: fromPattern('/slot', {}),
+  [Views.SURFACE]: fromPattern('/surface', {}),
 };
 
 const DEFAULT_ROUTE = {payload: {}, type: Views.INSTRUCTION};
