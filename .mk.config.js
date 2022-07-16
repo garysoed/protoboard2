@@ -34,6 +34,19 @@ declare({
 });
 
 declare({
+  name: 'css',
+  as: shell({
+    bin: 'mask',
+    flags: [
+      '--base=amber',
+      '--acc=lime',
+      '--mode=dark',
+      '--out=./demo-next/asset/theme.css',
+    ]
+  }),
+})
+
+declare({
   name: 'demo',
   as: parallel(({vars}) => ({
     cmds: [

@@ -48,7 +48,6 @@
     "raw-loader": "^4.0.2",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^7.0.1",
-    "tslib": "^1.10.0",
-    "webpack": "^5.73.0"
+    "tslib": "^1.10.0"
   }
 }
