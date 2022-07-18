@@ -99,7 +99,7 @@ test('@protoboard2/src/action/help-action', init => {
     $helpConfig$.get(_.tester.vine).next({
       helpContent,
     });
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
 
     const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
     const harness = getHarness(element, '#div', TriggerElementHarness);
@@ -127,7 +127,7 @@ test('@protoboard2/src/action/help-action', init => {
       componentName: 'Component',
     };
     $parentConfig$.get(_.tester.vine).next({helpContent: parentHelpContent});
-    const element = _.tester.createElement(PARENT);
+    const element = _.tester.bootstrapElement(PARENT);
 
     const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
     const child = getHarness(element, 'pbt-test', ElementHarness);

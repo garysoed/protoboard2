@@ -80,7 +80,7 @@ test('@protoboard2/src-next/pad/undo-action', init => {
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
     const harness = getHarness(element, 'div', TriggerElementHarness);
@@ -102,7 +102,7 @@ test('@protoboard2/src-next/pad/undo-action', init => {
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
     element.undo();

@@ -94,7 +94,7 @@ test('@protoboard2/src/core/base-region', init => {
         id: componentId('test'),
         contentIds: mutableState([]),
       })).$();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state$;
 
       of(['one', 'two', 'three'])
@@ -121,7 +121,7 @@ test('@protoboard2/src/core/base-region', init => {
         id: componentId('region'),
         contentIds: mutableState([]),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
 
       const harness = getHarness(element, '#container', TriggerElementHarness);
@@ -143,7 +143,7 @@ test('@protoboard2/src/core/base-region', init => {
         id: componentId('region'),
         contentIds: mutableState([]),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
 
       element.drop(undefined);
@@ -164,7 +164,7 @@ test('@protoboard2/src/core/base-region', init => {
         id: componentId('region'),
         contentIds: mutableState([id]),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
 
       const d1 = getHarness(element, 'pb-d1', D1Harness);
@@ -184,7 +184,7 @@ test('@protoboard2/src/core/base-region', init => {
         id: componentId('region'),
         contentIds: mutableState([id]),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
 
       const d1 = getHarness(element, 'pb-d1', D1Harness);

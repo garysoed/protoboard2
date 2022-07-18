@@ -106,7 +106,7 @@ test('@protoboard2/src/action/drop-action', init => {
       id: componentId('region'),
       contentIds: mutableState([]),
     })._();
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
 
     const harness = getHarness(element, '#div', ElementHarness);
@@ -124,7 +124,7 @@ test('@protoboard2/src/action/drop-action', init => {
       id: componentId('region'),
       contentIds: mutableState([]),
     })._();
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
 
     const harness = getHarness(element, '#div', ElementHarness);

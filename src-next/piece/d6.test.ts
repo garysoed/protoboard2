@@ -53,7 +53,7 @@ test('@protoboard2/src/piece/d6', init => {
         d6State(componentId({}), FACES),
     )._();
 
-    const element = _.tester.createElement(D6);
+    const element = _.tester.bootstrapElement(D6);
     element.state = state;
 
     assert(element).to.matchSnapshot('d6__render.html');
@@ -61,7 +61,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   test('flip action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       return {..._, element};
     });
 
@@ -96,7 +96,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   test('pick action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       return {..._, element};
     });
 
@@ -132,7 +132,7 @@ test('@protoboard2/src/piece/d6', init => {
   test('roll action', _, init => {
     const _ = init(_ => {
       _.seed.values = [0.7];
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       return {..._, element};
     });
 
@@ -165,7 +165,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   test('rotate action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');
       return {..._, element};
@@ -200,7 +200,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   test('turn action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       return {..._, element};
     });
 
@@ -235,7 +235,7 @@ test('@protoboard2/src/piece/d6', init => {
 
   test('help action', () => {
     should('display the correct help contents', () => {
-      const element = _.tester.createElement(D6);
+      const element = _.tester.bootstrapElement(D6);
       const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
       const harness = getHarness(element, D6Harness);
       harness.simulateHelp();

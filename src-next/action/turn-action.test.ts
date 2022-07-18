@@ -82,7 +82,7 @@ test('@protoboard2/action/turn-action', init => {
       faces: FACES,
       currentFaceIndex: mutableState(0),
     })._();
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = state;
     element.trigger(undefined);
 
@@ -96,7 +96,7 @@ test('@protoboard2/action/turn-action', init => {
       faces: FACES,
       currentFaceIndex: mutableState(0),
     })._();
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = state;
     element.trigger(undefined);
     element.trigger(undefined);

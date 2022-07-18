@@ -59,7 +59,7 @@ test('@protoboard2/src/render/render-rotatable', init => {
     const rotationDeg = 123;
     of(rotationDeg).pipe($state.get(_.tester.vine).$('rotationDeg').set()).subscribe();
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
 
     assert(element).to.matchSnapshot('render-rotatable.html');
   });

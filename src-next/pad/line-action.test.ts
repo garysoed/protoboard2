@@ -93,11 +93,9 @@ test('@protoboard2/src-next/pad/line-action', init => {
     const otherLine3: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 90, y1: 1, x2: 12, y2: 23};
     run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
-    // Append element to the page to pick up the rect
-    _.tester.addToBody(element);
     const harness = getHarness(element, 'div', ElementHarness);
 
     // Add the halfline
@@ -147,9 +145,7 @@ test('@protoboard2/src-next/pad/line-action', init => {
     const otherLine3: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 90, y1: 1, x2: 12, y2: 23};
     run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
-    // Append element to the page to pick up the rect
-    _.tester.addToBody(element);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
 
@@ -199,9 +195,7 @@ test('@protoboard2/src-next/pad/line-action', init => {
     const halfLine = {lineId: otherId, x1: 56, y1: 67};
     run(of(halfLine).pipe(_.state.$('halfLine').set()));
 
-    const element = _.tester.createElement(TEST);
-    // Append element to the page to pick up the rect
-    _.tester.addToBody(element);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
     const harness = getHarness(element, 'div', ElementHarness);

@@ -92,7 +92,7 @@ test('@protoboard2/action/roll-action', init => {
       })._();
       _.seed.values = [0.9];
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
       element.trigger(undefined);
 

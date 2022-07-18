@@ -65,7 +65,7 @@ test('@protoboard2/src/render/render-component', init => {
         });
       });
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
 
       of(['one', 'two', 'three']).pipe(
           map(ids => ids.map(componentId)),

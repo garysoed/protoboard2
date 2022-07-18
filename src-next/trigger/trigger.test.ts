@@ -101,7 +101,7 @@ test('@protoboard2/src/trigger/trigger', init => {
     should('trigger click based actions', () => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.CLICK, alt: true, meta: true});
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', ElementHarness);
       const altKey = true;
       const ctrlKey = false;
@@ -137,7 +137,7 @@ test('@protoboard2/src/trigger/trigger', init => {
     should('emit when hovered and the correct key was pressed', () => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T, alt: true, meta: true});
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', TriggerElementHarness);
       const altKey = true;
       const ctrlKey = false;
@@ -170,7 +170,7 @@ test('@protoboard2/src/trigger/trigger', init => {
     should('not emit when the wrong key was pressed', () => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', ElementHarness);
       const mouseX = 12;
       const mouseY = 34;
@@ -188,7 +188,7 @@ test('@protoboard2/src/trigger/trigger', init => {
     should('not emit when not hovered', () => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', ElementHarness);
       const mouseX = 12;
       const mouseY = 34;
@@ -213,7 +213,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
       $containerTriggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(CONTAINER);
+      const element = _.tester.bootstrapElement(CONTAINER);
       const testEl = getHarness(element, '#test', ElementHarness).target;
       const childHarness = getHarness(testEl, '#child', TriggerElementHarness);
       const mouseX = 12;
@@ -233,7 +233,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
       $containerTriggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(CONTAINER);
+      const element = _.tester.bootstrapElement(CONTAINER);
       const testEl = getHarness(element, '#test', ElementHarness).target;
       const childHarness = getHarness(testEl, '#child', TriggerElementHarness);
       const mouseX = 12;
@@ -253,7 +253,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.C});
       $containerTriggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(CONTAINER);
+      const element = _.tester.bootstrapElement(CONTAINER);
       const testEl = getHarness(element, '#test', ElementHarness).target;
       const childHarness = getHarness(testEl, '#child', TriggerElementHarness);
       const mouseX = 12;
@@ -273,7 +273,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
       $containerTriggerSpec.get(_.tester.vine).next({type: TriggerType.T});
 
-      const element = _.tester.createElement(CONTAINER);
+      const element = _.tester.bootstrapElement(CONTAINER);
       const testEl = getHarness(element, '#test', ElementHarness).target;
       const targetHarness = getHarness(testEl, '#target', TriggerElementHarness);
       const mouseX = 12;
@@ -293,7 +293,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       $triggerSpec.get(_.tester.vine).next({type: TriggerType.T});
       $containerTriggerSpec.get(_.tester.vine).next({type: TriggerType.C});
 
-      const element = _.tester.createElement(CONTAINER);
+      const element = _.tester.bootstrapElement(CONTAINER);
       document.body.appendChild(element);
       const testEl = getHarness(element, '#test', ElementHarness).target;
       const targetHarness = getHarness(testEl, '#target', TriggerElementHarness);
@@ -320,7 +320,7 @@ test('@protoboard2/src/trigger/trigger', init => {
         shift: true,
       });
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', ElementHarness);
       const mouseX = 12;
       const mouseY = 34;
@@ -359,7 +359,7 @@ test('@protoboard2/src/trigger/trigger', init => {
         shift: undefined,
       });
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       const harness = getHarness(element, '#target', ElementHarness);
       const mouseX = 12;
       const mouseY = 34;

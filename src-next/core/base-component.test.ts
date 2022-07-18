@@ -141,7 +141,7 @@ test('@protoboard2/src/core/base-component', init => {
         value: mutableState(123),
       })).$();
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
 
       const event$ = createSpySubject(fromEvent<ActionEvent>(element, ACTION_EVENT));
@@ -161,7 +161,7 @@ test('@protoboard2/src/core/base-component', init => {
         value: mutableState(123),
       })).$();
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
 
       const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
@@ -218,7 +218,7 @@ test('@protoboard2/src/core/base-component', init => {
         value: mutableState(123),
       })).$();
 
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
 
       const newValue = 345;
@@ -235,7 +235,7 @@ test('@protoboard2/src/core/base-component', init => {
         value: mutableState(value),
       })).$();
 
-      _.tester.createElement(TEST);
+      _.tester.bootstrapElement(TEST);
 
       $onUpdate$.get(_.tester.vine).next(345);
 

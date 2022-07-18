@@ -91,7 +91,7 @@ test('@protoboard2/action/shuffle-action', init => {
       contentIds: mutableState(['orange', 'steelblue', 'purple', 'red'].map(componentId)),
     })._();
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = state;
     element.trigger(undefined);
 

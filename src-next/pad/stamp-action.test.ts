@@ -94,11 +94,9 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
-    // Append element to the page to pick up the rect
-    _.tester.addToBody(element);
     const harness = getHarness(element, 'div', ElementHarness);
     harness.simulateClick({clientX: 123, clientY: 456});
 
@@ -124,11 +122,9 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
-    // Append element to the page to pick up the rect
-    _.tester.addToBody(element);
     element.stamp({x: 123, y: 456});
 
     assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([

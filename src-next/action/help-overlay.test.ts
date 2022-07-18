@@ -29,14 +29,14 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('render', () => {
     should('not add the isVisible class if there are no actions in the help service', () => {
-      const overlay = _.tester.createElement(HELP_OVERLAY);
+      const overlay = _.tester.bootstrapElement(HELP_OVERLAY);
       triggerHelp([]);
 
       assert(overlay).to.matchSnapshot('help-overlay__render-empty.html');
     });
 
     should('add the isVisible class if there is an action in the help service', () => {
-      const overlay = _.tester.createElement(HELP_OVERLAY);
+      const overlay = _.tester.bootstrapElement(HELP_OVERLAY);
       triggerHelp([
         {
           actions: [
@@ -56,7 +56,7 @@ test('@protoboard2/action/help-overlay', init => {
     });
 
     should('render deletion correctly', () => {
-      const overlay = _.tester.createElement(HELP_OVERLAY);
+      const overlay = _.tester.bootstrapElement(HELP_OVERLAY);
       triggerHelp([
         {
           actions: [
@@ -73,7 +73,7 @@ test('@protoboard2/action/help-overlay', init => {
 
   test('setupHandleClick', () => {
     should('hide the help when clicked', () => {
-      const overlay = _.tester.createElement(HELP_OVERLAY);
+      const overlay = _.tester.bootstrapElement(HELP_OVERLAY);
       triggerHelp([
         {
           actions: [

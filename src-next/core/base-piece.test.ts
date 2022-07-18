@@ -74,7 +74,7 @@ test('@protoboard2/src-next/core/base-piece', init => {
 
   test('pick', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       return {..._, element};
     });
 
@@ -105,7 +105,7 @@ test('@protoboard2/src-next/core/base-piece', init => {
 
   test('rotate', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');
       return {..._, element};

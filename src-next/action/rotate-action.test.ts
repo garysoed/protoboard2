@@ -80,7 +80,7 @@ test('@protoboard2/src/action/rotate-action', init => {
         id: componentId({}),
         rotationDeg: mutableState(0),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
       element.trigger(undefined);
 
@@ -93,7 +93,7 @@ test('@protoboard2/src/action/rotate-action', init => {
         id: componentId({}),
         rotationDeg: mutableState(910),
       })._();
-      const element = _.tester.createElement(TEST);
+      const element = _.tester.bootstrapElement(TEST);
       element.state = state;
       element.trigger(undefined);
 

@@ -53,7 +53,7 @@ test('@protoboard2/src/region/surface', init => {
     const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
       contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
     }))._();
-    const element = _.tester.createElement(SURFACE);
+    const element = _.tester.bootstrapElement(SURFACE);
     element.state = state$;
 
     assert(element).to.matchSnapshot('surface__render.html');
@@ -68,7 +68,7 @@ test('@protoboard2/src/region/surface', init => {
       const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(SURFACE);
+      const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -100,7 +100,7 @@ test('@protoboard2/src/region/surface', init => {
       const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(SURFACE);
+      const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
 
       return {..._, activeContents$, element};

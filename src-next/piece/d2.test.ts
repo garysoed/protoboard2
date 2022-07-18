@@ -47,7 +47,7 @@ test('@protoboard2/src/piece/d2', init => {
         d2State(componentId({}), [FACE_1_ID, FACE_2_ID]),
     )._();
 
-    const element = _.tester.createElement(D2);
+    const element = _.tester.bootstrapElement(D2);
     element.state = state;
 
     assert(element).to.matchSnapshot('d2__render.html');
@@ -55,7 +55,7 @@ test('@protoboard2/src/piece/d2', init => {
 
   test('flip action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D2);
+      const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
 
@@ -90,7 +90,7 @@ test('@protoboard2/src/piece/d2', init => {
 
   test('pick action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D2);
+      const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
 
@@ -126,7 +126,7 @@ test('@protoboard2/src/piece/d2', init => {
   test('roll action', _, init => {
     const _ = init(_ => {
       _.seed.values = [0.7];
-      const element = _.tester.createElement(D2);
+      const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
 
@@ -159,7 +159,7 @@ test('@protoboard2/src/piece/d2', init => {
 
   test('rotate action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D2);
+      const element = _.tester.bootstrapElement(D2);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');
       return {..._, element};
@@ -194,7 +194,7 @@ test('@protoboard2/src/piece/d2', init => {
 
   test('help action', () => {
     should('display the correct help contents', () => {
-      const element = _.tester.createElement(D2);
+      const element = _.tester.bootstrapElement(D2);
       const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
       const harness = getHarness(element, D2Harness);
       harness.simulateHelp();

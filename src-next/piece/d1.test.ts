@@ -34,7 +34,7 @@ test('@protoboard2/src/piece/d1', init => {
   should('render the face correctly', () => {
     const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State(componentId({}), FACE_ID))._();
 
-    const element = _.tester.createElement(D1);
+    const element = _.tester.bootstrapElement(D1);
     element.state = state;
 
     assert(element).to.matchSnapshot('d1__render.html');
@@ -42,7 +42,7 @@ test('@protoboard2/src/piece/d1', init => {
 
   test('pick action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D1);
+      const element = _.tester.bootstrapElement(D1);
       return {..._, element};
     });
 
@@ -73,7 +73,7 @@ test('@protoboard2/src/piece/d1', init => {
 
   test('rotate action', _, init => {
     const _ = init(_ => {
-      const element = _.tester.createElement(D1);
+      const element = _.tester.bootstrapElement(D1);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');
       return {..._, element};
@@ -104,7 +104,7 @@ test('@protoboard2/src/piece/d1', init => {
 
   test('help action', () => {
     should('display the correct help contents', () => {
-      const element = _.tester.createElement(D1);
+      const element = _.tester.bootstrapElement(D1);
       const event$ = createSpySubject(fromEvent<ShowHelpEvent>(element, SHOW_HELP_EVENT));
       const harness = getHarness(element, D1Harness);
       harness.simulateHelp();

@@ -63,7 +63,7 @@ test('@protoboard2/src/region/deck', init => {
     const state$ = stateService.addRoot(surfaceState(componentId({}), {
       contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
     }))._();
-    const element = _.tester.createElement(DECK);
+    const element = _.tester.bootstrapElement(DECK);
     element.state = state$;
 
     assert(element).to.matchSnapshot('deck__render.html');
@@ -78,7 +78,7 @@ test('@protoboard2/src/region/deck', init => {
       const state$ = stateService.addRoot(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(DECK);
+      const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -109,7 +109,7 @@ test('@protoboard2/src/region/deck', init => {
       const state$ = stateService.addRoot(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(DECK);
+      const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -140,7 +140,7 @@ test('@protoboard2/src/region/deck', init => {
       const state$ = stateService.addRoot(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(DECK);
+      const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -178,7 +178,7 @@ test('@protoboard2/src/region/deck', init => {
       const state$ = stateService.addRoot(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      const element = _.tester.createElement(DECK);
+      const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};
@@ -214,7 +214,7 @@ test('@protoboard2/src/region/deck', init => {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
       _.seed.values = [0.5, 1, 0];
-      const element = _.tester.createElement(DECK);
+      const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
       return {..._, activeContents$, element};

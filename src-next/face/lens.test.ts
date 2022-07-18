@@ -18,7 +18,7 @@ test('@protoboard2/src/face/lens', init => {
 
   should('call LensService with show and hide on mouse enter and mouse leave', () => {
     const content = document.createElement('div');
-    const element = _.tester.createElement(LENS);
+    const element = _.tester.bootstrapElement(LENS);
     element.faceId = ID;
     element.appendChild(content);
 

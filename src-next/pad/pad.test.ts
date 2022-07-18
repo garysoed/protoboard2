@@ -57,7 +57,7 @@ test('@protoboard2/src-next/pad/pad', init => {
         });
       });
       const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
-      const element = _.tester.createElement(PAD);
+      const element = _.tester.bootstrapElement(PAD);
       element.state = state;
       return {..._, element, state};
     });
@@ -120,7 +120,7 @@ test('@protoboard2/src-next/pad/pad', init => {
       }));
 
       const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
-      const element = _.tester.createElement(PAD);
+      const element = _.tester.bootstrapElement(PAD);
       element.state = state;
 
       return {..._, element};

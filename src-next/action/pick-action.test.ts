@@ -59,7 +59,7 @@ test('@protoboard2/src/action/pick-action', init => {
     const id = componentId({});
     const stateService = $stateService.get(_.tester.vine);
     const state = stateService.addRoot<ComponentState>({id})._();
-    const element = _.tester.createElement(TEST);
+    const element = _.tester.bootstrapElement(TEST);
     element.state = state;
 
     const harness = getHarness(element, '#div', ElementHarness);

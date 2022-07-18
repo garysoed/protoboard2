@@ -35,7 +35,7 @@ test('@protoboard2/src/face/lens-display', init => {
     should('render the elements correctly', () => {
       $lensService.get(_.tester.vine).show(ID);
 
-      const element = _.tester.createElement(LENS_DISPLAY);
+      const element = _.tester.bootstrapElement(LENS_DISPLAY);
       assert(element).to.matchSnapshot('lens-display__show.html');
     });
 
@@ -43,7 +43,7 @@ test('@protoboard2/src/face/lens-display', init => {
       const lensService = $lensService.get(_.tester.vine);
       lensService.show(ID);
 
-      const element = _.tester.createElement(LENS_DISPLAY);
+      const element = _.tester.bootstrapElement(LENS_DISPLAY);
       lensService.hide();
 
       assert(element).to.matchSnapshot('lens-display__hide.html');

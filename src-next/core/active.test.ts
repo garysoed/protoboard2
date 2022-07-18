@@ -34,7 +34,7 @@ test('@protoboard2/src/core/active', init => {
 
   test('itemCount$', _, () => {
     should('render the 0 item count correctly', () => {
-      const element = _.tester.createElement(ACTIVE);
+      const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
       of([]).pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
@@ -43,7 +43,7 @@ test('@protoboard2/src/core/active', init => {
     });
 
     should('render the 1 item count correctly', () => {
-      const element = _.tester.createElement(ACTIVE);
+      const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
       of(['one'].map(componentId))
@@ -54,7 +54,7 @@ test('@protoboard2/src/core/active', init => {
     });
 
     should('render with overflow count correctly', () => {
-      const element = _.tester.createElement(ACTIVE);
+      const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
       of(['one', 'two', 'three', 'four', 'five'].map(componentId))
@@ -75,7 +75,7 @@ test('@protoboard2/src/core/active', init => {
         });
       });
 
-      const element = _.tester.createElement(ACTIVE);
+      const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
       of(['one'].map(componentId))
