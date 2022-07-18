@@ -3,8 +3,8 @@ export interface TriggerDetails {
   readonly ctrlKey: boolean;
   readonly metaKey: boolean;
   readonly shiftKey: boolean;
-  readonly mouseX: number;
-  readonly mouseY: number;
+  readonly mouseClientX: number;
+  readonly mouseClientY: number;
   readonly eventType: 'click'|'key';
   readonly key: string|null;
 }

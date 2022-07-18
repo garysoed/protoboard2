@@ -70,8 +70,8 @@ function createOnClick(element: Element): Observable<TriggerEvent> {
               ctrlKey: event.ctrlKey,
               metaKey: event.metaKey,
               shiftKey: event.shiftKey,
-              mouseX: event.offsetX,
-              mouseY: event.offsetY,
+              mouseClientX: event.clientX,
+              mouseClientY: event.clientY,
               eventType: 'click',
               key: null,
             });
@@ -103,8 +103,8 @@ function createOnKey(element: Element): Observable<TriggerEvent> {
               ctrlKey: keyboardEvent.ctrlKey,
               metaKey: keyboardEvent.metaKey,
               shiftKey: keyboardEvent.shiftKey,
-              mouseX: mouseEvent.offsetX,
-              mouseY: mouseEvent.offsetY,
+              mouseClientX: mouseEvent.clientX,
+              mouseClientY: mouseEvent.clientY,
               eventType: 'key',
               key: keyboardEvent.key.toLowerCase(),
             });

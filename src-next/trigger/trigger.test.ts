@@ -125,8 +125,8 @@ test('@protoboard2/src/trigger/trigger', init => {
           altKey,
           ctrlKey,
           metaKey,
-          mouseX,
-          mouseY,
+          mouseClientX: 12,
+          mouseClientY: 34,
           shiftKey,
         }),
       ]);
@@ -160,8 +160,8 @@ test('@protoboard2/src/trigger/trigger', init => {
           altKey,
           ctrlKey,
           metaKey,
-          mouseX,
-          mouseY,
+          mouseClientX: 12,
+          mouseClientY: 34,
           shiftKey,
         }),
       ]);
@@ -222,7 +222,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       childHarness.simulateTrigger(TriggerType.T, {clientX: mouseX, clientY: mouseY});
 
       assert($onChildEvent.get(_.tester.vine).pipe(map(event => event.details))).to.emitSequence([
-        objectThat<TriggerDetails>().haveProperties({mouseX, mouseY}),
+        objectThat<TriggerDetails>().haveProperties({mouseClientX: mouseX, mouseClientY: mouseY}),
       ]);
       assert($onEvent.get(_.tester.vine)).toNot.emit();
       assert($onContainerEvent.get(_.tester.vine)).toNot.emit();
@@ -243,7 +243,7 @@ test('@protoboard2/src/trigger/trigger', init => {
 
       assert($onChildEvent.get(_.tester.vine)).toNot.emit();
       assert($onEvent.get(_.tester.vine).pipe(map(event => event.details))).to.emitSequence([
-        objectThat<TriggerDetails>().haveProperties({mouseX, mouseY}),
+        objectThat<TriggerDetails>().haveProperties({mouseClientX: mouseX, mouseClientY: mouseY}),
       ]);
       assert($onContainerEvent.get(_.tester.vine)).toNot.emit();
     });
@@ -264,7 +264,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       assert($onChildEvent.get(_.tester.vine)).toNot.emit();
       assert($onEvent.get(_.tester.vine)).toNot.emit();
       assert($onContainerEvent.get(_.tester.vine).pipe(map(event => event.details))).to.emitSequence([
-        objectThat<TriggerDetails>().haveProperties({mouseX, mouseY}),
+        objectThat<TriggerDetails>().haveProperties({mouseClientX: mouseX, mouseClientY: mouseY}),
       ]);
     });
 
@@ -283,7 +283,7 @@ test('@protoboard2/src/trigger/trigger', init => {
 
       assert($onChildEvent.get(_.tester.vine)).toNot.emit();
       assert($onEvent.get(_.tester.vine).pipe(map(event => event.details))).to.emitSequence([
-        objectThat<TriggerDetails>().haveProperties({mouseX, mouseY}),
+        objectThat<TriggerDetails>().haveProperties({mouseClientX: mouseX, mouseClientY: mouseY}),
       ]);
       assert($onContainerEvent.get(_.tester.vine)).toNot.emit();
     });
@@ -305,7 +305,7 @@ test('@protoboard2/src/trigger/trigger', init => {
       assert($onChildEvent.get(_.tester.vine)).toNot.emit();
       assert($onEvent.get(_.tester.vine)).toNot.emit();
       assert($onContainerEvent.get(_.tester.vine).pipe(map(event => event.details))).to.emitSequence([
-        objectThat<TriggerDetails>().haveProperties({mouseX, mouseY}),
+        objectThat<TriggerDetails>().haveProperties({mouseClientX: mouseX, mouseClientY: mouseY}),
       ]);
     });
   });
@@ -343,8 +343,8 @@ test('@protoboard2/src/trigger/trigger', init => {
           altKey: true,
           ctrlKey: true,
           metaKey: true,
-          mouseX,
-          mouseY,
+          mouseClientX: 12,
+          mouseClientY: 34,
           shiftKey: true,
         }),
       ]);
@@ -389,16 +389,16 @@ test('@protoboard2/src/trigger/trigger', init => {
           altKey: true,
           ctrlKey: true,
           metaKey: true,
-          mouseX,
-          mouseY,
+          mouseClientX: 12,
+          mouseClientY: 34,
           shiftKey: true,
         }),
         objectThat<TriggerDetails>().haveProperties({
           altKey: false,
           ctrlKey: false,
           metaKey: false,
-          mouseX,
-          mouseY,
+          mouseClientX: 12,
+          mouseClientY: 34,
           shiftKey: false,
         }),
       ]);

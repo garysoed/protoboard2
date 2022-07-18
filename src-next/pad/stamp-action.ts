@@ -64,7 +64,7 @@ function createNewStampLocation(triggerOrInput: TriggerEvent|[StampActionInput])
   }
 
   return {
-    x: triggerOrInput.details.mouseX,
-    y: triggerOrInput.details.mouseY,
+    x: triggerOrInput.details.mouseClientX,
+    y: triggerOrInput.details.mouseClientY,
   };
 }
