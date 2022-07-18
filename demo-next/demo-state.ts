@@ -13,7 +13,7 @@ import {deckState, DeckState} from '../src-next/region/deck';
 import {padState, PadState} from '../src-next/region/pad/pad-state';
 import {surfaceState, SurfaceState} from '../src-next/region/surface';
 
-import {FaceType, RENDERED_FACE} from './core/rendered-face';
+import {FaceType, renderDemoFace} from './core/render-face';
 
 
 export interface DemoState {
@@ -90,9 +90,9 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
           faceId(FaceType.DICE_PIP_1),
           faceId(FaceType.DICE_PIP_2),
           faceId(FaceType.DICE_PIP_3),
-          faceId(FaceType.DICE_PIP_4),
-          faceId(FaceType.DICE_PIP_5),
           faceId(FaceType.DICE_PIP_6),
+          faceId(FaceType.DICE_PIP_5),
+          faceId(FaceType.DICE_PIP_4),
         ],
     ),
     gem: d1State(GEM_ID, faceId(FaceType.GEM)),
@@ -140,17 +140,13 @@ export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpe
   }
 }
 
-export function renderFace(id: FaceId<unknown>): RenderSpec {
+export function renderFace(id: FaceId<unknown>, vine: Vine): RenderSpec {
   const payload = getFaceIdPayload(id);
   if (!enumType<FaceType>(FaceType).check(payload)) {
     throw new Error(`ID ${payload} is not a FaceType`);
   }
 
-  return renderElement({
-    registration: RENDERED_FACE,
-    spec: {},
-    runs: $ => [of(payload).pipe($.faceType())],
-  });
+  return renderDemoFace(vine, payload);
 }
 
 export function renderLens(id: FaceId<unknown>): RenderSpec|null {

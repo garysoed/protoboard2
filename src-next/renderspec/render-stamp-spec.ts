@@ -6,7 +6,7 @@ import {map} from 'rxjs/operators';
 
 import {StampState} from '../region/pad/pad-state';
 
-type SvgRenderSpec = RenderElementSpec<any, any, SVGElement>|
+export type SvgRenderSpec = RenderElementSpec<any, any, SVGElement>|
     RenderStringSpec<ParseType.SVG, any>;
 type RenderStampSpecProvider = (stampState: StampState) => SvgRenderSpec|null;
 

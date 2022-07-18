@@ -14,7 +14,6 @@ import {SURFACE} from '../src-next/region/surface';
 import {DOCUMENTATION} from './core/documentation';
 import {DRAWER} from './core/drawer';
 import {$locationService, Views} from './core/location-service';
-import {RENDERED_FACE} from './core/rendered-face';
 import template from './root.html';
 
 
@@ -59,7 +58,6 @@ export const ROOT = registerCustomElement({
     LENS,
     LENS_DISPLAY,
     OVERLAY,
-    RENDERED_FACE,
     ROOT_LAYOUT,
     SURFACE,
   ],

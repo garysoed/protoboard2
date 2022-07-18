@@ -7,6 +7,7 @@ import {registerLensRenderSpec} from '../src-next/renderspec/render-lens-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
+import {registerFaceSvgs} from './core/render-face';
 import {renderComponent, renderFace, renderLens} from './demo-state';
 import {ROOT} from './root';
 
@@ -31,8 +32,9 @@ window.addEventListener('load', () => {
   for (const [key, content] of iconConfigs) {
     registerSvg(vine, key, {type: 'embed', content});
   }
+  registerFaceSvgs(vine);
 
-  registerFaceRenderSpec(vine, id => renderFace(id));
+  registerFaceRenderSpec(vine, id => renderFace(id, vine));
   registerComponentRenderSpec(vine, id => renderComponent(id, vine));
   registerLensRenderSpec(vine, id => renderLens(id));
   $locationService.get(vine).run().subscribe();

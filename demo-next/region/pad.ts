@@ -1,8 +1,7 @@
 import {enumType, stringType} from 'gs-types';
-import {$svgService, ICON, renderTheme} from 'mask';
-import {Context, Ctrl, ParseType, query, registerCustomElement, renderString, SVG} from 'persona';
+import {ICON, renderTheme} from 'mask';
+import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
 
 import {getPayload as getLineIdPayload, lineId} from '../../src-next/id/line-id';
 import {getPayload as getStampIdPayload, stampId} from '../../src-next/id/stamp-id';
@@ -11,7 +10,7 @@ import {SURFACE} from '../../src-next/region/surface';
 import {registerLineRenderSpec} from '../../src-next/renderspec/render-line-spec';
 import {registerStampRenderSpec} from '../../src-next/renderspec/render-stamp-spec';
 import {TriggerType} from '../../src-next/types/trigger-spec';
-import {FaceType} from '../core/rendered-face';
+import {FaceType, FACE_SIZE_PX, renderDemoFace} from '../core/render-face';
 import {$state$} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
@@ -31,7 +30,6 @@ const LINE_BLUE_ID = lineId('blue');
 const STAMP_COIN_ID = stampId(FaceType.COIN_FRONT);
 const STAMP_GEM_ID = stampId(FaceType.GEM);
 const STAMP_MEEPLE_ID = stampId(FaceType.MEEPLE);
-const STAMP_SIZE = 50;
 
 
 class PadDemo implements Ctrl {
@@ -78,21 +76,12 @@ export const PAD_DEMO = registerCustomElement({
       if (!enumType<FaceType>(FaceType).check(payload)) {
         return null;
       }
-      const svg$ = $svgService.get(vine).getSvg(payload);
-      return renderString({
-        // TODO: Remove the ??
-        raw: svg$.pipe(map(content => content ?? '')),
-        spec: {
-          root: query(null, SVG, {}),
-        },
-        parseType: ParseType.SVG,
-        runs: $ => [
-          of(state.x).pipe(map(v => v - STAMP_SIZE / 2), $.root.x()),
-          of(state.y).pipe(map(v => v - STAMP_SIZE / 2), $.root.y()),
-          of(STAMP_SIZE).pipe($.root.width()),
-          of(STAMP_SIZE).pipe($.root.height()),
-        ],
-      });
+
+      return renderDemoFace(
+          vine,
+          payload,
+          {x: state.x - FACE_SIZE_PX / 2, y: state.y - FACE_SIZE_PX / 2},
+      );
     });
   },
   deps: [
