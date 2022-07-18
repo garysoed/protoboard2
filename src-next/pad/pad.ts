@@ -239,7 +239,7 @@ export class PadCtrl extends BaseComponent<PadState> {
           }
 
           const registrations = configs.map(config => this.installAction(
-              stampActionFactory(config),
+              stampActionFactory(config, this.$.shadow.root.target),
               config.stampName,
               this.$.shadow.root.target,
               of(config),

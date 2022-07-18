@@ -48,10 +48,10 @@ test('@protoboard2/src-next/pad/pad', init => {
             }),
           },
           runs: $ => [
-            of(`${state.x - 25}`).pipe($.root.x()),
-            of(`${state.y - 25}`).pipe($.root.y()),
-            of('50px').pipe($.root.width()),
-            of('50px').pipe($.root.height()),
+            of(state.x - 25).pipe($.root.x()),
+            of(state.y - 25).pipe($.root.y()),
+            of('50px' as const).pipe($.root.width()),
+            of('50px' as const).pipe($.root.height()),
             of(shade).pipe($.colorable.style()),
           ],
         });

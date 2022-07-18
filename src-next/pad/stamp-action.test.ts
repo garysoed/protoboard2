@@ -46,7 +46,7 @@ class Test extends BaseComponent<PadState> {
             const onCall$ = this.$.host.stamp;
 
             return merge(onTrigger$, onCall$).pipe(
-                stampActionFactory(config)(this.$),
+                stampActionFactory(config, this.$.shadow.root.target)(this.$),
             );
           }),
       ),
@@ -58,7 +58,15 @@ const TEST = registerCustomElement({
   tag: 'pbt-pad',
   ctrl: Test,
   spec: $test,
-  template: '<div></div>',
+  template: `
+      <style>
+        #root {
+          position: absolute;
+          top: 10px;
+          left: 30px;
+        }
+      </style>
+      <div id="root"></div>`,
 });
 
 test('@protoboard2/src-next/pad/stamp-action', init => {
@@ -89,6 +97,8 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const element = _.tester.createElement(TEST);
     element.config = config;
     element.state = _.state;
+    // Append element to the page to pick up the rect
+    _.tester.addToBody(element);
     const harness = getHarness(element, 'div', ElementHarness);
     harness.simulateClick({clientX: 123, clientY: 456});
 
@@ -96,7 +106,7 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
       otherStamp1,
       otherStamp2,
       otherStamp3,
-      objectThat<StampState>().haveProperties({stampId: id, x: 123, y: 456}),
+      objectThat<StampState>().haveProperties({stampId: id, x: 93, y: 446}),
     ]));
   });
 
@@ -117,13 +127,15 @@ test('@protoboard2/src-next/pad/stamp-action', init => {
     const element = _.tester.createElement(TEST);
     element.config = config;
     element.state = _.state;
+    // Append element to the page to pick up the rect
+    _.tester.addToBody(element);
     element.stamp({x: 123, y: 456});
 
     assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
       otherStamp3,
-      objectThat<StampState>().haveProperties({stampId: id, x: 123, y: 456}),
+      objectThat<StampState>().haveProperties({stampId: id, x: 93, y: 446}),
     ]));
   });
 });

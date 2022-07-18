@@ -1,7 +1,7 @@
 import {flattenResolver} from 'gs-tools/export/state';
 import {arrayOfType, hasPropertiesType, intersectType, numberType, stringType, Type, unknownType} from 'gs-types';
 import {Context} from 'persona';
-import {of, OperatorFunction, pipe} from 'rxjs';
+import {of, OperatorFunction, pipe, Observable} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponentSpecType} from '../core/base-component';
@@ -36,16 +36,19 @@ export const STAMP_ACTION_INPUT_TYPE = hasPropertiesType({
 
 type StampAction = (context: Context<BaseComponentSpecType<PadState>>) => OperatorFunction<TriggerEvent|[StampActionInput], TriggerEvent|[StampActionInput]>;
 
-export function stampActionFactory(config: StampConfig): StampAction {
+export function stampActionFactory(config: StampConfig, target$: Observable<Element>): StampAction {
   return $ => {
     const stamps$ = flattenResolver($.host.state).$('contents');
     return pipe(
-        withLatestFrom(stamps$),
-        switchMap(([input, stamps]) => {
+        withLatestFrom(stamps$, target$),
+        switchMap(([input, stamps, target]) => {
+          const rect = target.getBoundingClientRect();
+          const {x: xRaw, y: yRaw} = createNewStampLocation(input);
           const stampState: StampState = {
             type: PadContentType.STAMP,
             stampId: config.stampId,
-            ...createNewStampLocation(input),
+            x: xRaw - rect.left,
+            y: yRaw - rect.top,
           };
           return of([...stamps, stampState]).pipe(
               stamps$.set(),
