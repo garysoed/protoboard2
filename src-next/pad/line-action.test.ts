@@ -45,7 +45,7 @@ class Test extends BaseComponent<PadState> {
             const onCall$ = this.$.host.line;
 
             return merge(onTrigger$, onCall$).pipe(
-                lineActionFactory(config)(this.$),
+                lineActionFactory(config, this.$.shadow.root.target)(this.$),
             );
           }),
       ),
@@ -57,7 +57,15 @@ const TEST = registerCustomElement({
   tag: 'pbt-pad',
   ctrl: Test,
   spec: $test,
-  template: '<div></div>',
+  template: `
+      <style>
+        #root {
+          position: absolute;
+          top: 10px;
+          left: 30px;
+        }
+      </style>
+      <div id="root"></div>`,
 });
 
 test('@protoboard2/src-next/pad/line-action', init => {
@@ -88,6 +96,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
     const element = _.tester.createElement(TEST);
     element.config = config;
     element.state = _.state;
+    // Append element to the page to pick up the rect
+    _.tester.addToBody(element);
     const harness = getHarness(element, 'div', ElementHarness);
 
     // Add the halfline
@@ -99,8 +109,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
       otherLine3,
     ]));
     assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
-      x1: 123,
-      y1: 456,
+      x1: 93,
+      y1: 446,
       lineId: id,
     }));
 
@@ -114,10 +124,10 @@ test('@protoboard2/src-next/pad/line-action', init => {
       objectThat<LineState>().haveProperties({
         type: PadContentType.LINE,
         lineId: id,
-        x1: 123,
-        y1: 456,
-        x2: 789,
-        y2: 234,
+        x1: 93,
+        y1: 446,
+        x2: 759,
+        y2: 224,
       }),
     ]));
     assert(_.state.$('halfLine')).to.emitWith(null);
@@ -138,6 +148,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
     run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.createElement(TEST);
+    // Append element to the page to pick up the rect
+    _.tester.addToBody(element);
     element.config = config;
     element.state = _.state;
 
@@ -150,8 +162,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
       otherLine3,
     ]));
     assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
-      x1: 123,
-      y1: 456,
+      x1: 93,
+      y1: 446,
       lineId: id,
     }));
 
@@ -165,10 +177,10 @@ test('@protoboard2/src-next/pad/line-action', init => {
       objectThat<LineState>().haveProperties({
         type: PadContentType.LINE,
         lineId: id,
-        x1: 123,
-        y1: 456,
-        x2: 789,
-        y2: 234,
+        x1: 93,
+        y1: 446,
+        x2: 759,
+        y2: 224,
       }),
     ]));
     assert(_.state.$('halfLine')).to.emitWith(null);
@@ -188,6 +200,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
     run(of(halfLine).pipe(_.state.$('halfLine').set()));
 
     const element = _.tester.createElement(TEST);
+    // Append element to the page to pick up the rect
+    _.tester.addToBody(element);
     element.config = config;
     element.state = _.state;
     const harness = getHarness(element, 'div', ElementHarness);
@@ -197,8 +211,8 @@ test('@protoboard2/src-next/pad/line-action', init => {
 
     assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().beEmpty());
     assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
-      x1: 123,
-      y1: 456,
+      x1: 93,
+      y1: 446,
       lineId: id,
     }));
   });

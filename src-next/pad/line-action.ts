@@ -1,7 +1,7 @@
 import {flattenResolver} from 'gs-tools/export/state';
 import {arrayOfType, hasPropertiesType, intersectType, numberType, stringType, Type, unknownType} from 'gs-types';
 import {Context} from 'persona';
-import {merge, of, OperatorFunction, pipe} from 'rxjs';
+import {merge, of, OperatorFunction, pipe, Observable} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponentSpecType} from '../core/base-component';
@@ -36,14 +36,17 @@ export const LINE_ACTION_INPUT_TYPE = hasPropertiesType({
 
 type LineAction = (context: Context<BaseComponentSpecType<PadState>>) => OperatorFunction<TriggerEvent|[LineActionInput], TriggerEvent|[LineActionInput]>;
 
-export function lineActionFactory(config: LineConfig): LineAction {
+export function lineActionFactory(config: LineConfig, target$: Observable<Element>): LineAction {
   return $ => {
     const contents$ = flattenResolver($.host.state).$('contents');
     const halfLine$ = flattenResolver($.host.state).$('halfLine');
     return pipe(
-        withLatestFrom(contents$, halfLine$),
-        switchMap(([input, contents, halfLine]) => {
-          const {x, y} = getLineLocation(input);
+        withLatestFrom(contents$, halfLine$, target$),
+        switchMap(([input, contents, halfLine, target]) => {
+          const rect = target.getBoundingClientRect();
+          const {x: xRaw, y: yRaw} = getLineLocation(input);
+          const x = xRaw - rect.left;
+          const y = yRaw - rect.top;
           if (halfLine === null || halfLine.lineId !== config.lineId) {
             const newHalfLine = {
               x1: x,

@@ -2,7 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {arrayOfType, hasPropertiesType, intersectType, unknownType} from 'gs-types';
 import {Context, icall, ievent, irect, itarget, ivalue, LINE, ocase, oforeach, query, registerCustomElement, renderElement, RenderSpec, SVG} from 'persona';
 import {combineLatest, EMPTY, merge, Observable, of} from 'rxjs';
-import {filter, map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {LineId, lineIdType} from '../id/line-id';
@@ -12,7 +12,7 @@ import {$getStampRenderSpec$} from '../renderspec/render-stamp-spec';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 
-import {LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE, lineActionFactory} from './line-action';
+import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE} from './line-action';
 import {HalfLineState, PadContentState, PadContentType, PadState} from './pad-state';
 import template from './pad.html';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
@@ -122,8 +122,8 @@ export class PadCtrl extends BaseComponent<PadState> {
                   renderFn(halfLine.lineId),
                   of(halfLine.x1),
                   of(halfLine.y1),
-                  mouseLocation$.pipe(map(({x}) => x)),
-                  mouseLocation$.pipe(map(({y}) => y)),
+                  mouseLocation$.pipe(map(({x}) => x), startWith(halfLine.x1)),
+                  mouseLocation$.pipe(map(({y}) => y), startWith(halfLine.y1)),
               );
             };
           }),
@@ -219,7 +219,7 @@ export class PadCtrl extends BaseComponent<PadState> {
           }
 
           const registrations = configs.map(config => this.installAction(
-              lineActionFactory(config),
+              lineActionFactory(config, this.$.shadow.root.target),
               config.lineName,
               this.$.shadow.root.target,
               of(config),

@@ -6,6 +6,7 @@ import {of} from 'rxjs';
 
 import {ComponentId, componentId, getPayload as getComponentIdPayload} from '../src-next/id/component-id';
 import {FaceId, faceId, getPayload as getFaceIdPayload} from '../src-next/id/face-id';
+import {padState, PadState} from '../src-next/pad/pad-state';
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
@@ -29,6 +30,9 @@ export interface DemoState {
   },
   deck: {
     deck: DeckState,
+  },
+  pad: {
+    pad: PadState,
   },
   surface: {
     surface: SurfaceState,
@@ -70,6 +74,9 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
   },
   deck: {
     deck: deckState(componentId({})),
+  },
+  pad: {
+    pad: padState(componentId({})),
   },
   surface: {
     surface: surfaceState(componentId({})),
