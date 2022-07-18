@@ -6,16 +6,16 @@ import {map} from 'rxjs/operators';
 
 import {getPayload as getLineIdPayload, lineId} from '../../src-next/id/line-id';
 import {getPayload as getStampIdPayload, stampId} from '../../src-next/id/stamp-id';
-import {PAD} from '../../src-next/pad/pad';
+import {PAD} from '../../src-next/region/pad/pad';
 import {SURFACE} from '../../src-next/region/surface';
 import {registerLineRenderSpec} from '../../src-next/renderspec/render-line-spec';
 import {registerStampRenderSpec} from '../../src-next/renderspec/render-stamp-spec';
 import {TriggerType} from '../../src-next/types/trigger-spec';
+import {FaceType} from '../core/rendered-face';
 import {$state$} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
 import template from './pad.html';
-import {FaceType} from './rendered-face';
 
 
 const $padDemo = {

@@ -1,9 +1,9 @@
 import {mutableState, MutableState} from 'gs-tools/export/state';
 
-import {ComponentId} from '../id/component-id';
-import {LineId} from '../id/line-id';
-import {StampId} from '../id/stamp-id';
-import {ComponentState} from '../types/component-state';
+import {ComponentId} from '../../id/component-id';
+import {LineId} from '../../id/line-id';
+import {StampId} from '../../id/stamp-id';
+import {ComponentState} from '../../types/component-state';
 
 export enum PadContentType {
   LINE,

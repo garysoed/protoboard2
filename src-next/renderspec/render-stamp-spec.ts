@@ -4,7 +4,7 @@ import {ParseType, RenderElementSpec, RenderStringSpec} from 'persona';
 import {OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {StampState} from '../pad/pad-state';
+import {StampState} from '../region/pad/pad-state';
 
 type SvgRenderSpec = RenderElementSpec<any, any, SVGElement>|
     RenderStringSpec<ParseType.SVG, any>;

@@ -5,23 +5,23 @@ import {ostyle, ParseType, query, renderString, SVG} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
-import testSvg from '../asset/icon.svg';
-import {componentId} from '../id/component-id';
-import {lineId} from '../id/line-id';
-import {stampId} from '../id/stamp-id';
-import {registerLineRenderSpec} from '../renderspec/render-line-spec';
-import {registerStampRenderSpec} from '../renderspec/render-stamp-spec';
-import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
-import {TriggerType} from '../types/trigger-spec';
+import testSvg from '../../asset/icon.svg';
+import {componentId} from '../../id/component-id';
+import {lineId} from '../../id/line-id';
+import {stampId} from '../../id/stamp-id';
+import {registerLineRenderSpec} from '../../renderspec/render-line-spec';
+import {registerStampRenderSpec} from '../../renderspec/render-stamp-spec';
+import {THEME_LOADER_TEST_OVERRIDE} from '../../testing/theme-loader-test-override';
+import {TriggerType} from '../../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
 import {PAD} from './pad';
 import {PadContentType, padState, StampState} from './pad-state';
 import {PadHarness} from './testing/pad-harness';
 
-test('@protoboard2/src-next/pad/pad', init => {
+test('@protoboard2/src-next/region/pad/pad', init => {
   const _ = init(() => {
-    runEnvironment(new BrowserSnapshotsEnv('src-next/pad/goldens', goldens));
+    runEnvironment(new BrowserSnapshotsEnv('src-next/region/pad/goldens', goldens));
 
     const tester = setupTest({
       roots: [PAD],

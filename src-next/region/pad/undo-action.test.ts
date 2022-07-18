@@ -6,12 +6,12 @@ import {getHarness, setupTest} from 'persona/export/testing';
 import {EMPTY, merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {componentId} from '../id/component-id';
-import {stampId} from '../id/stamp-id';
-import {TriggerElementHarness} from '../testing/trigger-element-harness';
-import {onTrigger} from '../trigger/trigger';
-import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+import {BaseComponent, create$baseComponent} from '../../core/base-component';
+import {componentId} from '../../id/component-id';
+import {stampId} from '../../id/stamp-id';
+import {TriggerElementHarness} from '../../testing/trigger-element-harness';
+import {onTrigger} from '../../trigger/trigger';
+import {TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 import {PadContentType, padState, PadState, StampState} from './pad-state';
 import {undoAction} from './undo-action';
@@ -59,7 +59,7 @@ const TEST = registerCustomElement({
   template: '<div></div>',
 });
 
-test('@protoboard2/src-next/pad/undo-action', init => {
+test('@protoboard2/src-next/region/pad/undo-action', init => {
   const _ = init(() => {
     const tester = setupTest({roots: [TEST]});
 

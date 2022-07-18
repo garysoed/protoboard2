@@ -3,7 +3,7 @@ import {Context} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
 
-import {BaseComponentSpecType} from '../core/base-component';
+import {BaseComponentSpecType} from '../../core/base-component';
 
 import {PadState} from './pad-state';
 

@@ -6,14 +6,14 @@ import {of} from 'rxjs';
 
 import {ComponentId, componentId, getPayload as getComponentIdPayload} from '../src-next/id/component-id';
 import {FaceId, faceId, getPayload as getFaceIdPayload} from '../src-next/id/face-id';
-import {padState, PadState} from '../src-next/pad/pad-state';
 import {D1, D1State, d1State} from '../src-next/piece/d1';
 import {D2, d2State, D2State} from '../src-next/piece/d2';
 import {D6, d6State, D6State} from '../src-next/piece/d6';
 import {deckState, DeckState} from '../src-next/region/deck';
+import {padState, PadState} from '../src-next/region/pad/pad-state';
 import {surfaceState, SurfaceState} from '../src-next/region/surface';
 
-import {FaceType, RENDERED_FACE} from './piece/rendered-face';
+import {FaceType, RENDERED_FACE} from './core/rendered-face';
 
 
 export interface DemoState {

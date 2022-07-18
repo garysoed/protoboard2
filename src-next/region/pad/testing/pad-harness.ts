@@ -1,8 +1,8 @@
 import {customElementType} from 'persona';
 import {CustomElementHarness, getHarness} from 'persona/export/testing';
 
-import {TriggerElementHarness} from '../../testing/trigger-element-harness';
-import {TriggerType} from '../../types/trigger-spec';
+import {TriggerElementHarness} from '../../../testing/trigger-element-harness';
+import {TriggerType} from '../../../types/trigger-spec';
 import {PAD, StampGenericActionInput} from '../pad';
 
 export class PadHarness extends CustomElementHarness<typeof PAD> {

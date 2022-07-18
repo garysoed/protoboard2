@@ -4,10 +4,10 @@ import {Context} from 'persona';
 import {merge, of, OperatorFunction, pipe, Observable} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseComponentSpecType} from '../core/base-component';
-import {LineId, lineIdType} from '../id/line-id';
-import {TriggerEvent} from '../trigger/trigger-event';
-import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+import {BaseComponentSpecType} from '../../core/base-component';
+import {LineId, lineIdType} from '../../id/line-id';
+import {TriggerEvent} from '../../trigger/trigger-event';
+import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 import {LineState, PadContentType, PadState} from './pad-state';
 

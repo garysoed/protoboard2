@@ -6,11 +6,11 @@ import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {EMPTY, merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {componentId} from '../id/component-id';
-import {stampId} from '../id/stamp-id';
-import {onTrigger} from '../trigger/trigger';
-import {TriggerType} from '../types/trigger-spec';
+import {BaseComponent, create$baseComponent} from '../../core/base-component';
+import {componentId} from '../../id/component-id';
+import {stampId} from '../../id/stamp-id';
+import {onTrigger} from '../../trigger/trigger';
+import {TriggerType} from '../../types/trigger-spec';
 
 import {padState} from './pad-state';
 import {PadContentType, PadState, StampState} from './pad-state';
@@ -69,7 +69,7 @@ const TEST = registerCustomElement({
       <div id="root"></div>`,
 });
 
-test('@protoboard2/src-next/pad/stamp-action', init => {
+test('@protoboard2/src-next/region/pad/stamp-action', init => {
   const _ = init(() => {
     const tester = setupTest({roots: [TEST]});
 

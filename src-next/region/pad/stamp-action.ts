@@ -4,10 +4,10 @@ import {Context} from 'persona';
 import {of, OperatorFunction, pipe, Observable} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseComponentSpecType} from '../core/base-component';
-import {StampId, stampIdType} from '../id/stamp-id';
-import {TriggerEvent} from '../trigger/trigger-event';
-import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+import {BaseComponentSpecType} from '../../core/base-component';
+import {StampId, stampIdType} from '../../id/stamp-id';
+import {TriggerEvent} from '../../trigger/trigger-event';
+import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 import {PadContentType, PadState, StampState} from './pad-state';
 

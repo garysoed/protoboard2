@@ -4,12 +4,12 @@ import {Context, icall, ievent, irect, itarget, ivalue, LINE, ocase, oforeach, q
 import {combineLatest, EMPTY, merge, Observable, of} from 'rxjs';
 import {filter, map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
-import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {LineId, lineIdType} from '../id/line-id';
-import {StampId, stampIdType} from '../id/stamp-id';
-import {$getLineRenderSpec$, LineRenderSpec} from '../renderspec/render-line-spec';
-import {$getStampRenderSpec$} from '../renderspec/render-stamp-spec';
-import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
+import {BaseComponent, create$baseComponent} from '../../core/base-component';
+import {LineId, lineIdType} from '../../id/line-id';
+import {StampId, stampIdType} from '../../id/stamp-id';
+import {$getLineRenderSpec$, LineRenderSpec} from '../../renderspec/render-line-spec';
+import {$getStampRenderSpec$} from '../../renderspec/render-stamp-spec';
+import {TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 
 import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE} from './line-action';
