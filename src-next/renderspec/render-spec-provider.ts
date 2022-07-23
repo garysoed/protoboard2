@@ -3,10 +3,9 @@ import {OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 export type RenderSpecProvider<I> = (id: I) => RenderSpec|null;
-export type CombinedRenderSpecProvider<I> = (id: I) => RenderSpec|null;
 
 export function combineProviders<I>():
-    OperatorFunction<ReadonlyArray<RenderSpecProvider<I>>, CombinedRenderSpecProvider<I>> {
+    OperatorFunction<ReadonlyArray<RenderSpecProvider<I>>, RenderSpecProvider<I>> {
   return map(providersArray => (id: I) => {
     for (const provider of [...providersArray].reverse()) {
       const spec = provider(id);
