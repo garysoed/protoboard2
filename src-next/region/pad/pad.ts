@@ -130,7 +130,7 @@ export class PadCtrl extends BaseComponent<PadState> {
       ),
     ])
         .pipe(
-            this.$.shadow.root.halfLine(([halfLine, renderFn]) => renderFn(halfLine)),
+            this.$.shadow.root.halfLine(map(([halfLine, renderFn]) => renderFn(halfLine))),
         );
   }
 

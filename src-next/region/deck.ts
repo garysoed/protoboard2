@@ -98,7 +98,7 @@ class Deck extends BaseRegion<DeckState> {
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
     return pipe(
         map(specs => specs[specs.length - 1] ?? null),
-        this.$.shadow.root.content(id => id === null ? null : renderContentFn(id)),
+        this.$.shadow.root.content(map(id => id === null ? null : renderContentFn(id))),
     );
   }
 

@@ -1,12 +1,12 @@
 import {Vine} from 'grapevine';
 import {RenderSpec} from 'persona';
 import {combineLatest, Observable, of, OperatorFunction} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {switchMap, map} from 'rxjs/operators';
 
 import {FaceId} from '../id/face-id';
 import {$getFaceRenderSpec$} from '../renderspec/render-face-spec';
 
-type RenderFn = (faceId: FaceId<unknown>) => RenderSpec|null;
+type RenderFn = OperatorFunction<FaceId<unknown>, RenderSpec|null>;
 
 export function renderFace(
     vine: Vine,
@@ -19,8 +19,9 @@ export function renderFace(
   ])
       .pipe(
           switchMap(([faceId, getFaceRenderSpec]) => {
+            // TODO: Get rid of the of()
             return of(faceId).pipe(
-                renderFn(faceId => getFaceRenderSpec(faceId)),
+                renderFn(map(faceId => getFaceRenderSpec(faceId))),
             );
           }),
       );

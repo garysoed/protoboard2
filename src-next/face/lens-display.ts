@@ -1,19 +1,20 @@
 import {cache} from 'gs-tools/export/data';
 import {renderTheme, ThemeLoader} from 'mask';
-import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
-import {combineLatest, Observable, of} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {Context, Ctrl, ocase, registerCustomElement, RenderSpec, root} from 'persona';
+import {combineLatest, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {FaceId} from '../id/face-id';
 import {$getLensRenderSpec$} from '../renderspec/render-lens-spec';
 
 import {$lensService} from './lens-service';
 
+type GetLensRenderSpecFn = (faceId: FaceId<unknown>) => RenderSpec|null;
 
 export const $lensDisplay = {
   shadow: {
     root: root({
-      content: ocase<FaceId<unknown>|null>('#content'),
+      content: ocase<[FaceId<unknown>|null, GetLensRenderSpecFn]>('#content', ([faceId]) => faceId),
       theme: ocase<ThemeLoader>('#theme'),
     }),
   },
@@ -31,17 +32,13 @@ export class LensDisplay implements Ctrl {
         $getLensRenderSpec$.get(this.$.vine),
       ])
           .pipe(
-              switchMap(([faceId, getLensRenderSpec]) => {
-                return of(faceId).pipe(
-                    this.$.shadow.root.content(faceId => {
-                      if (!faceId) {
-                        return null;
-                      }
+              this.$.shadow.root.content(map(([faceId, getLensRenderSpec]) => {
+                if (!faceId) {
+                  return null;
+                }
 
-                      return getLensRenderSpec(faceId);
-                    }),
-                );
-              }),
+                return getLensRenderSpec(faceId);
+              })),
           ),
     ];
   }

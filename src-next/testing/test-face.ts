@@ -31,7 +31,7 @@ class TestFace implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       $svgService.get(this.$.vine).getSvg('test').pipe(
-          this.$.shadow.root.content(raw => {
+          this.$.shadow.root.content(map(raw => {
             if (!raw) {
               return null;
             }
@@ -40,7 +40,7 @@ class TestFace implements Ctrl {
               spec: {},
               parseType: ParseType.SVG,
             });
-          }),
+          })),
       ),
       this.$.host.shade.pipe(
           map(shade => shade ?? 'steelblue'),
