@@ -7,6 +7,7 @@ import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {Observable, OperatorFunction} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {componentId, ComponentId} from '../id/component-id';
@@ -49,7 +50,7 @@ class Test extends BaseRegion<TestState> {
   }
 
   renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
-    return this.$.shadow.root.content(id => renderValuesFn(id));
+    return this.$.shadow.root.content(map(id => renderValuesFn(id)));
   }
 
   protected get target$(): Observable<HTMLElement> {

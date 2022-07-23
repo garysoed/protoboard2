@@ -37,7 +37,7 @@ class Test implements Ctrl {
       renderComponent(
           this.$.vine,
           $state.get(this.$.vine).$('contentIds'),
-          fn => this.$.shadow.container.content(id => fn(id)),
+          fn => this.$.shadow.container.content(map(id => fn(id))),
       ),
     ];
   }

@@ -7,6 +7,7 @@ import {stringType} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {Observable, of, OperatorFunction} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
@@ -43,7 +44,7 @@ class Test extends BaseRegion<RegionState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
-    return this.$.shadow.div.contents(id => renderContentFn(id));
+    return this.$.shadow.div.contents(map(id => renderContentFn(id)));
   }
 
   @cache()

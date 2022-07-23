@@ -2,7 +2,7 @@ import {assertByType, filterNonNullable} from 'gs-tools/export/rxjs';
 import {enumType} from 'gs-types';
 import {BUTTON, ICON, LINE_LAYOUT, registerSvg, renderTheme} from 'mask';
 import {Context, Ctrl, DIV, ievent, iflag, itarget, oattr, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TEMPLATE} from 'persona';
-import {Observable, of} from 'rxjs';
+import {Observable, of, OperatorFunction} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 
 import chevronDownSvg from '../asset/chevron_down.svg';
@@ -36,27 +36,29 @@ export class Drawer implements Ctrl {
     return [
       renderTheme(this.$),
       this.setupRootOnClick(),
-      of(LAYOUT_LINK_CONFIGS).pipe(this.$.shadow.root.layouts(config => this.renderConfig(config))),
-      of(PIECE_LINK_CONFIGS).pipe(this.$.shadow.root.pieces(config => this.renderConfig(config))),
-      of(CONTAINER_LINK_CONFIGS).pipe(this.$.shadow.root.containers(config => this.renderConfig(config))),
+      of(LAYOUT_LINK_CONFIGS).pipe(this.$.shadow.root.layouts(this.renderConfig())),
+      of(PIECE_LINK_CONFIGS).pipe(this.$.shadow.root.pieces(this.renderConfig())),
+      of(CONTAINER_LINK_CONFIGS).pipe(this.$.shadow.root.containers(this.renderConfig())),
     ];
   }
 
-  private renderConfig({label, path}: PageSpec): RenderSpec {
-    return renderTemplate({
-      template$: this.$.shadow._config.target,
-      spec: {
-        button: query('mk-button', BUTTON),
-        line: query('mk-line-layout', LINE_LAYOUT, {
-          path: oattr('path'),
-          text: otext(),
-        }),
-      },
-      runs: $ => [
-        of(true).pipe($.button.isSecondary()),
-        of(path).pipe($.line.path()),
-        of(label).pipe($.line.text()),
-      ],
+  private renderConfig(): OperatorFunction<PageSpec, RenderSpec> {
+    return map(({label, path}) => {
+      return renderTemplate({
+        template$: this.$.shadow._config.target,
+        spec: {
+          button: query('mk-button', BUTTON),
+          line: query('mk-line-layout', LINE_LAYOUT, {
+            path: oattr('path'),
+            text: otext(),
+          }),
+        },
+        runs: $ => [
+          of(true).pipe($.button.isSecondary()),
+          of(path).pipe($.line.path()),
+          of(label).pipe($.line.text()),
+        ],
+      });
     });
   }
 

@@ -93,7 +93,7 @@ export class PadCtrl extends BaseComponent<PadState> {
     ])
         .pipe(
             map(([contents, renderFn]) => contents.map(content => [content, renderFn] as const)),
-            this.$.shadow.root.contents(([content, renderFn]) => renderFn(content)),
+            this.$.shadow.root.contents(map(([content, renderFn]) => renderFn(content))),
         );
   }
 

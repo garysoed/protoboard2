@@ -23,6 +23,7 @@ interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecTyp
   } & BaseComponentSpecType<S>['host'];
 }
 
+// TODO: Convert to operator function
 export type RenderContentFn = (id: ComponentId<unknown>) => RenderSpec|null;
 
 export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S> {

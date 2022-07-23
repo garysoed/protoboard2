@@ -55,7 +55,7 @@ export class Active implements Ctrl {
           this.$.vine,
           $activeState.get(this.$.vine).$('contentIds')
               .pipe(map(specs => specs.slice(0, COUNT_THRESHOLD))),
-          fn => this.$.shadow.root.content(id => fn(id)),
+          fn => this.$.shadow.root.content(map(id => fn(id))),
       ),
     ];
   }

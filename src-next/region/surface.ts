@@ -2,6 +2,7 @@ import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {Observable, OperatorFunction} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {ComponentId} from '../id/component-id';
@@ -40,7 +41,7 @@ export class Surface extends BaseRegion<SurfaceState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
-    return this.$.shadow.root.content(id => renderContentFn(id));
+    return this.$.shadow.root.content(map(id => renderContentFn(id)));
   }
 
   @cache()

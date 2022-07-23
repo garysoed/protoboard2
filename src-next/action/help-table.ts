@@ -1,7 +1,7 @@
 import {cache} from 'gs-tools/export/data';
 import {KEYBOARD, renderTheme, SpecialKeys} from 'mask';
 import {Context, Ctrl, H3, iattr, itarget, oforeach, otext, query, registerCustomElement, RenderSpec, renderTemplate, TBODY, TD, TEMPLATE} from 'persona';
-import {combineLatest, Observable, of} from 'rxjs';
+import {combineLatest, Observable, of, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {TriggerSpec, TriggerType} from '../types/trigger-spec';
@@ -37,7 +37,7 @@ export class HelpTable implements Ctrl {
     return [
       renderTheme(this.$),
       this.title$.pipe(this.$.shadow.title.text()),
-      this.rows$.pipe(this.$.shadow.content.rows(trigger => this.renderActionTrigger(trigger))),
+      this.rows$.pipe(this.$.shadow.content.rows(this.renderActionTrigger())),
     ];
   }
 
@@ -59,19 +59,21 @@ export class HelpTable implements Ctrl {
         );
   }
 
-  private renderActionTrigger({actionName, trigger}: ActionTrigger): RenderSpec|null {
-    return renderTemplate({
-      template$: this.$.shadow._row.target,
-      spec: {
-        keyboard: query('mk-keyboard', KEYBOARD),
-        action: query('td:nth-child(2)', TD, {
-          text: otext(),
-        }),
-      },
-      runs: $ => [
-        of(triggerKeySpecToString(trigger)).pipe($.keyboard.text()),
-        of(actionName).pipe($.action.text()),
-      ],
+  private renderActionTrigger(): OperatorFunction<ActionTrigger, RenderSpec|null> {
+    return map(({actionName, trigger}) => {
+      return renderTemplate({
+        template$: this.$.shadow._row.target,
+        spec: {
+          keyboard: query('mk-keyboard', KEYBOARD),
+          action: query('td:nth-child(2)', TD, {
+            text: otext(),
+          }),
+        },
+        runs: $ => [
+          of(triggerKeySpecToString(trigger)).pipe($.keyboard.text()),
+          of(actionName).pipe($.action.text()),
+        ],
+      });
     });
   }
 

@@ -49,7 +49,7 @@ class Test extends BaseRegion<TestState> {
   }
 
   renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
-    return this.$.shadow.container.content(id => renderContentFn(id));
+    return this.$.shadow.container.content(map(id => renderContentFn(id)));
   }
 }
 
