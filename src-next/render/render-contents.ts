@@ -1,5 +1,6 @@
 import {Vine} from 'grapevine';
-import {$asArray, $filterNonNull, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $filterNonNull, $map} from 'gs-tools/export/collect';
+import {$pipe} from 'gs-tools/export/typescript';
 import {RenderSpec} from 'persona';
 import {combineLatest, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';

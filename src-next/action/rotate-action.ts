@@ -1,5 +1,6 @@
-import {$asArray, $map, $pipe, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
+import {$asArray, $map, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
 import {flattenResolver} from 'gs-tools/export/state';
+import {$pipe} from 'gs-tools/export/typescript';
 import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
 import {Observable, OperatorFunction, pipe} from 'rxjs';

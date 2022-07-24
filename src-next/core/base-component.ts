@@ -1,5 +1,6 @@
-import {$asArray, $map, $pipe} from 'gs-tools/export/collect';
+import {$asArray, $map} from 'gs-tools/export/collect';
 import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
+import {$pipe} from 'gs-tools/export/typescript';
 import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, iattr, ivalue, oevent} from 'persona';
