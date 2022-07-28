@@ -26,8 +26,8 @@
     "target": "es6"
   },
   "include": [
-    "demo-next/**/*.ts",
-    "src-next/**/*.ts",
+    "demo/**/*.ts",
+    "src/**/*.ts",
     "node_modules/devbase/ts/typings/*.d.ts",
     "export/index.ts",
   ],
