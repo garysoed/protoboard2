@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ImmutableResolver, mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
@@ -60,8 +60,8 @@ const TEST = registerCustomElement({
   template: '<div id="container"><!-- #ref --></div>',
 });
 
-test('@protoboard2/src/core/base-region', init => {
-  const _ = init(() => {
+test('@protoboard2/src/core/base-region', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/core/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     const states = new Map<ComponentId<unknown>, ImmutableResolver<D1State>>();

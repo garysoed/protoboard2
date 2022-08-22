@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, run, should, test} from 'gs-testing';
+import {arrayThat, assert, run, setup, should, test} from 'gs-testing';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, ivalue, query, registerCustomElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
@@ -59,8 +59,8 @@ const TEST = registerCustomElement({
   template: '<div></div>',
 });
 
-test('@protoboard2/src/region/pad/undo-action', init => {
-  const _ = init(() => {
+test('@protoboard2/src/region/pad/undo-action', () => {
+  const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
     const state = $stateService.get(tester.vine).addRoot<PadState>(padState(componentId('id'), {

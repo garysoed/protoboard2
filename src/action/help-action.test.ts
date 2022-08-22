@@ -1,5 +1,5 @@
 import {source} from 'grapevine';
-import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-testing';
+import {assert, createSmartMatcher, createSpySubject, setup, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {Context, Ctrl, DIV, query, itarget, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
@@ -82,8 +82,8 @@ const PARENT = registerCustomElement({
   template: '<div id="container"><pbt-test></pbt-test></div>',
 });
 
-test('@protoboard2/src/action/help-action', init => {
-  const _ = init(() => {
+test('@protoboard2/src/action/help-action', () => {
+  const _ = setup(() => {
     const tester = setupTest({roots: [PARENT]});
     return {tester};
   });

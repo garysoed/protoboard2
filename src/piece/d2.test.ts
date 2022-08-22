@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {getHarness, setupTest} from 'persona/export/testing';
@@ -25,8 +25,8 @@ const FACE_1_ID = faceId('black');
 const FACE_2_ID = faceId('steelblue');
 
 
-test('@protoboard2/src/piece/d2', init => {
-  const _ = init(() => {
+test('@protoboard2/src/piece/d2', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/piece/goldens', goldens));
 
     const seed = new FakeSeed();
@@ -53,8 +53,8 @@ test('@protoboard2/src/piece/d2', init => {
     assert(element).to.matchSnapshot('d2__render.html');
   });
 
-  test('flip action', _, init => {
-    const _ = init(_ => {
+  test('flip action', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
@@ -88,8 +88,8 @@ test('@protoboard2/src/piece/d2', init => {
     });
   });
 
-  test('pick action', _, init => {
-    const _ = init(_ => {
+  test('pick action', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
@@ -123,8 +123,8 @@ test('@protoboard2/src/piece/d2', init => {
     });
   });
 
-  test('roll action', _, init => {
-    const _ = init(_ => {
+  test('roll action', () => {
+    setup(_, () => {
       _.seed.values = [0.7];
       const element = _.tester.bootstrapElement(D2);
       return {..._, element};
@@ -157,8 +157,8 @@ test('@protoboard2/src/piece/d2', init => {
     });
   });
 
-  test('rotate action', _, init => {
-    const _ = init(_ => {
+  test('rotate action', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(D2);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');

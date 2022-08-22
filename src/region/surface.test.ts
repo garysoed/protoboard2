@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
@@ -24,8 +24,8 @@ import {SURFACE, surfaceState, SurfaceState} from './surface';
 import {SlotHarness} from './testing/slot-harness';
 
 
-test('@protoboard2/src/region/surface', init => {
-  const _ = init(() => {
+test('@protoboard2/src/region/surface', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/region/goldens', goldens));
 
     const tester = setupTest({roots: [SURFACE, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
@@ -59,8 +59,8 @@ test('@protoboard2/src/region/surface', init => {
     assert(element).to.matchSnapshot('surface__render.html');
   });
 
-  test('drop action', _, init => {
-    const _ = init(_ => {
+  test('drop action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
@@ -91,8 +91,8 @@ test('@protoboard2/src/region/surface', init => {
     });
   });
 
-  test('pick child action', _, init => {
-    const _ = init(_ => {
+  test('pick child action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 

@@ -1,5 +1,5 @@
 import {source} from 'grapevine';
-import {assert, objectThat, should, test} from 'gs-testing';
+import {assert, objectThat, setup, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {forwardTo} from 'gs-tools/export/rxjs';
 import {Context, Ctrl, DIV, query, itarget, registerCustomElement} from 'persona';
@@ -91,8 +91,8 @@ const CONTAINER = registerCustomElement({
   template: '<div id="container"><pbt-test id="test"></pbt-test></div>',
 });
 
-test('@protoboard2/src/trigger/trigger', init => {
-  const _ = init(() => {
+test('@protoboard2/src/trigger/trigger', () => {
+  const _ = setup(() => {
     const tester = setupTest({roots: [CONTAINER]});
     return {tester};
   });

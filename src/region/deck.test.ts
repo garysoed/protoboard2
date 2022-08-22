@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
 import {mutableState} from 'gs-tools/export/state';
@@ -27,8 +27,8 @@ import {surfaceState} from './surface';
 import {DeckHarness} from './testing/deck-harness';
 
 
-test('@protoboard2/src/region/deck', init => {
-  const _ = init(() => {
+test('@protoboard2/src/region/deck', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/region/goldens', goldens));
 
     const seed = new FakeSeed();
@@ -69,8 +69,8 @@ test('@protoboard2/src/region/deck', init => {
     assert(element).to.matchSnapshot('deck__render.html');
   });
 
-  test('drop action', _, init => {
-    const _ = init(_ => {
+  test('drop action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
@@ -100,8 +100,8 @@ test('@protoboard2/src/region/deck', init => {
     });
   });
 
-  test('drop all action', _, init => {
-    const _ = init(_ => {
+  test('drop all action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(activeContents$.set()).subscribe();
 
@@ -131,8 +131,8 @@ test('@protoboard2/src/region/deck', init => {
     });
   });
 
-  test('pick child action', _, init => {
-    const _ = init(_ => {
+  test('pick child action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
@@ -169,8 +169,8 @@ test('@protoboard2/src/region/deck', init => {
     });
   });
 
-  test('pick all action', _, init => {
-    const _ = init(_ => {
+  test('pick all action', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 
@@ -204,8 +204,8 @@ test('@protoboard2/src/region/deck', init => {
     });
   });
 
-  test('shuffle', _, init => {
-    const _ = init(_ => {
+  test('shuffle', () => {
+    setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
       of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
 

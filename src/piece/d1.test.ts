@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {fromEvent} from 'rxjs';
@@ -22,8 +22,8 @@ import {D1Harness} from './testing/d1-harness';
 const FACE_ID = faceId('steelblue');
 
 
-test('@protoboard2/src/piece/d1', init => {
-  const _ = init(() => {
+test('@protoboard2/src/piece/d1', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/piece/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
@@ -40,8 +40,8 @@ test('@protoboard2/src/piece/d1', init => {
     assert(element).to.matchSnapshot('d1__render.html');
   });
 
-  test('pick action', _, init => {
-    const _ = init(_ => {
+  test('pick action', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(D1);
       return {..._, element};
     });
@@ -71,8 +71,8 @@ test('@protoboard2/src/piece/d1', init => {
     });
   });
 
-  test('rotate action', _, init => {
-    const _ = init(_ => {
+  test('rotate action', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(D1);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');

@@ -1,5 +1,5 @@
 import {$stateService, source} from 'grapevine';
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
@@ -50,8 +50,8 @@ const TEST = registerCustomElement({
   template: '<div id="container"><!-- #ref --></div>',
 });
 
-test('@protoboard2/src/render/render-component', init => {
-  const _ = init(() => {
+test('@protoboard2/src/render/render-component', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/render/goldens', goldens));
     const tester = setupTest({roots: [TEST]});
     return {tester};

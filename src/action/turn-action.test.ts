@@ -1,5 +1,5 @@
 import {$stateService, source} from 'grapevine';
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {mutableState} from 'gs-tools/export/state';
@@ -66,8 +66,8 @@ const TEST = registerCustomElement({
   template: '<pbt-face id="face"></pbt-face>',
 });
 
-test('@protoboard2/action/turn-action', init => {
-  const _ = init(() => {
+test('@protoboard2/action/turn-action', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
 
     const tester = setupTest({roots: [TEST], overrides: [THEME_LOADER_TEST_OVERRIDE]});

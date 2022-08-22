@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, runEnvironment, should, test} from 'gs-testing';
+import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, itarget, ocase, ostyle, query, registerCustomElement} from 'persona';
@@ -64,16 +64,16 @@ const TEST = registerCustomElement({
   template: '<div id="container"><pbt-face></pbt-face></div>',
 });
 
-test('@protoboard2/src/core/base-piece', init => {
-  const _ = init(() => {
+test('@protoboard2/src/core/base-piece', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/core/goldens', goldens));
 
     const tester = setupTest({roots: [TEST]});
     return {tester};
   });
 
-  test('pick', _, init => {
-    const _ = init(_ => {
+  test('pick', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(TEST);
       return {..._, element};
     });
@@ -103,8 +103,8 @@ test('@protoboard2/src/core/base-piece', init => {
     });
   });
 
-  test('rotate', _, init => {
-    const _ = init(_ => {
+  test('rotate', () => {
+    setup(_, () => {
       const element = _.tester.bootstrapElement(TEST);
       element.setAttribute('height', '48px');
       element.setAttribute('width', '48px');

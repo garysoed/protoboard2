@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {FakeSeed, fromSeed} from 'gs-tools/export/random';
@@ -66,8 +66,8 @@ const TEST = registerCustomElement({
   template: '<div id="root"><!-- #content --></div>',
 });
 
-test('@protoboard2/action/shuffle-action', init => {
-  const _ = init(() => {
+test('@protoboard2/action/shuffle-action', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
 
     const seed = new FakeSeed();

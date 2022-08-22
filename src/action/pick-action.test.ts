@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {arrayThat, assert, should, test} from 'gs-testing';
+import {arrayThat, assert, setup, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {Context, DIV, itarget, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
@@ -49,8 +49,8 @@ const TEST = registerCustomElement({
   template: '<div id="div"></div>',
 });
 
-test('@protoboard2/src/action/pick-action', init => {
-  const _ = init(() => {
+test('@protoboard2/src/action/pick-action', () => {
+  const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
     return {tester};
   });

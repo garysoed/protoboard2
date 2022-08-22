@@ -1,4 +1,4 @@
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ParseType, renderString, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
@@ -18,8 +18,8 @@ const dest = new WebConsoleDestination({installTrigger: true});
 ON_LOG_$.subscribe(event => dest.log(event));
 
 
-test('@protoboard2/src/core/active', init => {
-  const _ = init(() => {
+test('@protoboard2/src/core/active', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/core/goldens', goldens));
 
     const tester = setupTest({roots: [ACTIVE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
@@ -32,7 +32,7 @@ test('@protoboard2/src/core/active', init => {
     return {tester};
   });
 
-  test('itemCount$', _, () => {
+  test('itemCount$', () => {
     should('render the 0 item count correctly', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);

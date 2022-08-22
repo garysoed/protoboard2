@@ -1,4 +1,4 @@
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
@@ -15,8 +15,8 @@ import {$lensService} from './lens-service';
 
 const ID = faceId({});
 
-test('@protoboard2/src/face/lens-display', init => {
-  const _ = init(() => {
+test('@protoboard2/src/face/lens-display', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/face/goldens', goldens));
     const tester = setupTest({roots: [LENS_DISPLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 

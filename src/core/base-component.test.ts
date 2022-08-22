@@ -1,5 +1,5 @@
 import {$stateService, source} from 'grapevine';
-import {assert, createSmartMatcher, createSpySubject, should, test} from 'gs-testing';
+import {assert, createSmartMatcher, createSpySubject, setup, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
 import {mutableState, MutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, query, registerCustomElement} from 'persona';
@@ -125,8 +125,8 @@ const TEST = registerCustomElement({
       </div>`,
 });
 
-test('@protoboard2/src/core/base-component', init => {
-  const _ = init(() => {
+test('@protoboard2/src/core/base-component', () => {
+  const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
     return {tester};
@@ -152,8 +152,8 @@ test('@protoboard2/src/core/base-component', init => {
     });
   });
 
-  test('setupHelpAction', _, init => {
-    const _ = init(_ => {
+  test('setupHelpAction', () => {
+    setup(_, () => {
       const stateService = $stateService.get(_.tester.vine);
       const id = componentId({});
       const state = stateService.addRoot(mutableState<TestState>({

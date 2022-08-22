@@ -1,5 +1,5 @@
 import {$stateService} from 'grapevine';
-import {assert, run, runEnvironment, should, test} from 'gs-testing';
+import {assert, run, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ostyle, ParseType, query, renderString, SVG} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
@@ -19,8 +19,8 @@ import {PAD} from './pad';
 import {PadContentType, padState, StampState} from './pad-state';
 import {PadHarness} from './testing/pad-harness';
 
-test('@protoboard2/src/region/pad/pad', init => {
-  const _ = init(() => {
+test('@protoboard2/src/region/pad/pad', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/region/pad/goldens', goldens));
 
     const tester = setupTest({
@@ -31,11 +31,11 @@ test('@protoboard2/src/region/pad/pad', init => {
     return {tester};
   });
 
-  test('stamp action', _, init => {
+  test('stamp action', () => {
     const STAMP_A_ID = stampId('a');
     const STAMP_B_ID = stampId('b');
 
-    const _ = init(_ => {
+    setup(_, () => {
       registerStampRenderSpec(_.tester.vine, state => {
         const shade = state.stampId === STAMP_A_ID ? 'steelblue' : 'orange';
         return renderString({
@@ -110,10 +110,10 @@ test('@protoboard2/src/region/pad/pad', init => {
     });
   });
 
-  test('line action', _, init => {
+  test('line action', () => {
     const LINE_ID = lineId('line');
 
-    const _ = init(_ => {
+    setup(_, () => {
       registerLineRenderSpec(_.tester.vine, () => ({
         stroke: of('orange'),
         strokeWidth: of(10),

@@ -1,4 +1,4 @@
-import {assert, runEnvironment, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {getHarness, setupTest} from 'persona/export/testing';
 
@@ -18,8 +18,8 @@ function triggerHelp(contents: readonly HelpContent[]): void {
   window.dispatchEvent(event);
 }
 
-test('@protoboard2/action/help-overlay', init => {
-  const _ = init(() => {
+test('@protoboard2/action/help-overlay', () => {
+  const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
 
     const tester = setupTest({roots: [HELP_OVERLAY], overrides: [THEME_LOADER_TEST_OVERRIDE]});
