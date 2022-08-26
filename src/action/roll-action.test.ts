@@ -2,11 +2,11 @@ import {$stateService} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {incrementingRandom} from 'gs-tools/export/random2';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, icall, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable} from 'rxjs';
+import {Observable, BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
@@ -16,7 +16,7 @@ import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {ComponentState} from '../types/component-state';
 import {IsMultifaced} from '../types/is-multifaced';
-import {$random} from '../util/random';
+import {$random, $randomSeed} from '../util/random';
 
 import goldens from './goldens/goldens.json';
 import {rollAction} from './roll-action';
@@ -70,17 +70,18 @@ const TEST = registerCustomElement({
 test('@protoboard2/action/roll-action', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
+    const seed$ = new BehaviorSubject<number>(0.9);
 
-    const seed = new FakeSeed();
     const tester = setupTest({
       roots: [TEST],
       overrides: [
         THEME_LOADER_TEST_OVERRIDE,
-        {override: $random, withValue: fromSeed(seed)},
+        {override: $random, withValue: incrementingRandom(10)},
+        {override: $randomSeed, withValue: () => seed$.getValue()},
       ],
     });
 
-    return {seed, tester};
+    return {seed$, tester};
   });
 
   test('handleTrigger', () => {
@@ -90,7 +91,7 @@ test('@protoboard2/action/roll-action', () => {
         faces: FACES,
         currentFaceIndex: mutableState(0),
       })._();
-      _.seed.values = [0.9];
+      _.seed$.next(0.9);
 
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;

@@ -2,11 +2,11 @@ import {$stateService} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {incrementingRandom} from 'gs-tools/export/random2';
 import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, OperatorFunction} from 'rxjs';
+import {Observable, OperatorFunction, BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
@@ -15,7 +15,7 @@ import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {RegionState} from '../types/region-state';
-import {$random} from '../util/random';
+import {$random, $randomSeed} from '../util/random';
 
 import goldens from './goldens/goldens.json';
 import {shuffleAction} from './shuffle-action';
@@ -70,22 +70,23 @@ test('@protoboard2/action/shuffle-action', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
 
-    const seed = new FakeSeed();
+    const seed$ = new BehaviorSubject<number>(0.9);
 
     const tester = setupTest({
       roots: [TEST, TEST_FACE],
       overrides: [
         THEME_LOADER_TEST_OVERRIDE,
-        {override: $random, withValue: fromSeed(seed)},
+        {override: $random, withValue: incrementingRandom(10)},
+        {override: $randomSeed, withValue: () => seed$.getValue()},
       ],
     });
     registerComponentRenderSpec(tester.vine, renderTestFace);
 
-    return {seed, tester};
+    return {seed$, tester};
   });
 
   should('shuffle the child elements correctly', () => {
-    _.seed.values = [1, 0, 0.5, 2];
+    _.seed$.next(0.9);
 
     const state = $stateService.get(_.tester.vine).addRoot<TestState>({
       id: componentId({}),

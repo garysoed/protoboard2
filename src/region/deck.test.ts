@@ -1,12 +1,12 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {incrementingRandom} from 'gs-tools/export/random2';
 import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
@@ -19,7 +19,7 @@ import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
-import {$random} from '../util/random';
+import {$random, $randomSeed} from '../util/random';
 
 import {DECK} from './deck';
 import goldens from './goldens/goldens.json';
@@ -30,13 +30,14 @@ import {DeckHarness} from './testing/deck-harness';
 test('@protoboard2/src/region/deck', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/region/goldens', goldens));
+    const seed$ = new BehaviorSubject<number>(0.9);
 
-    const seed = new FakeSeed();
     const tester = setupTest({
       roots: [DECK, D1, TEST_FACE],
       overrides: [
         THEME_LOADER_TEST_OVERRIDE,
-        {override: $random, withValue: fromSeed(seed)},
+        {override: $random, withValue: incrementingRandom(10)},
+        {override: $randomSeed, withValue: () => seed$.getValue()},
       ],
     });
 
@@ -55,7 +56,7 @@ test('@protoboard2/src/region/deck', () => {
       });
     });
 
-    return {seed, tester};
+    return {seed$, tester};
   });
 
   should('render the contents correctly', () => {
@@ -213,7 +214,7 @@ test('@protoboard2/src/region/deck', () => {
       const state$ = stateService.addRoot(surfaceState(componentId({}), {
         contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
       }))._();
-      _.seed.values = [0.5, 1, 0];
+      _.seed$.next(0.8);
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 

@@ -1,4 +1,4 @@
-import {shuffle} from 'gs-tools/export/random';
+import {shuffle} from 'gs-tools/export/random2';
 import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {flattenResolver} from 'gs-tools/export/state';
 import {Context} from 'persona';
@@ -7,7 +7,7 @@ import {map, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponentSpecType} from '../core/base-component';
 import {IsContainer} from '../types/is-container';
-import {$random} from '../util/random';
+import {$random, $randomSeed} from '../util/random';
 
 
 export function shuffleAction(
@@ -18,7 +18,7 @@ export function shuffleAction(
   return pipe(
       withLatestFrom(contentIds$),
       map(([, contentIds]) => {
-        return shuffle(contentIds, $random.get($.vine));
+        return shuffle(contentIds, $random.get($.vine)).run($randomSeed.get($.vine)());
       }),
       filterNonNullable(),
       contentIds$.set(),

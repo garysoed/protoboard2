@@ -1,4 +1,6 @@
 import {source} from 'grapevine';
-import {Random, aleaSeed, fromSeed} from 'gs-tools/export/random';
+import {aleaRandom, Random} from 'gs-tools/export/random2';
 
-export const $random = source<Random>(() => fromSeed(aleaSeed('')));
+export const $random = source<Random<number>>(() => aleaRandom());
+
+export const $randomSeed = source<() => number>(() => () => Math.random());

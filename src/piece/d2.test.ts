@@ -1,9 +1,9 @@
 import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {FakeSeed, fromSeed} from 'gs-tools/export/random';
+import {incrementingRandom} from 'gs-tools/export/random2';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {fromEvent} from 'rxjs';
+import {fromEvent, BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
@@ -14,7 +14,7 @@ import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
-import {$random} from '../util/random';
+import {$random, $randomSeed} from '../util/random';
 
 import {D2, d2State, D2State} from './d2';
 import goldens from './goldens/goldens.json';
@@ -28,18 +28,19 @@ const FACE_2_ID = faceId('steelblue');
 test('@protoboard2/src/piece/d2', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/piece/goldens', goldens));
+    const seed$ = new BehaviorSubject<number>(0.9);
 
-    const seed = new FakeSeed();
     const tester = setupTest({
       roots: [D2, TEST_FACE],
       overrides: [
-        {override: $random, withValue: fromSeed(seed)},
         THEME_LOADER_TEST_OVERRIDE,
+        {override: $random, withValue: incrementingRandom(10)},
+        {override: $randomSeed, withValue: () => seed$.getValue()},
       ],
     });
 
     registerFaceRenderSpec(tester.vine, renderTestFace);
-    return {seed, tester};
+    return {seed$, tester};
   });
 
   should('render the face correctly', () => {
@@ -125,7 +126,7 @@ test('@protoboard2/src/piece/d2', () => {
 
   test('roll action', () => {
     setup(_, () => {
-      _.seed.values = [0.7];
+      _.seed$.next(0.7);
       const element = _.tester.bootstrapElement(D2);
       return {..._, element};
     });
