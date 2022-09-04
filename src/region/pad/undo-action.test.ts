@@ -8,7 +8,6 @@ import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
 import {componentId} from '../../id/component-id';
-import {stampId} from '../../id/stamp-id';
 import {TriggerElementHarness} from '../../testing/trigger-element-harness';
 import {onTrigger} from '../../trigger/trigger';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
@@ -75,9 +74,9 @@ test('@protoboard2/src/region/pad/undo-action', () => {
       type: TriggerType.BACKSPACE,
     };
 
-    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);
@@ -97,9 +96,9 @@ test('@protoboard2/src/region/pad/undo-action', () => {
       type: TriggerType.BACKSPACE,
     };
 
-    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);

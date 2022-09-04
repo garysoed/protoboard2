@@ -140,7 +140,7 @@ export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpe
   }
 }
 
-export function renderFace(id: FaceId<unknown>, vine: Vine): RenderSpec {
+export function renderFace(id: FaceId<unknown>, vine: Vine): RenderSpec|null {
   const payload = getFaceIdPayload(id);
   if (!enumType<FaceType>(FaceType).check(payload)) {
     throw new Error(`ID ${payload} is not a FaceType`);

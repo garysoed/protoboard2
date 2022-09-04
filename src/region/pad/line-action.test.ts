@@ -8,11 +8,11 @@ import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
 import {componentId} from '../../id/component-id';
-import {lineId} from '../../id/line-id';
 import {onTrigger} from '../../trigger/trigger';
 import {TriggerType} from '../../types/trigger-spec';
 
-import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE} from './line-action';
+import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE} from './line-action';
+import {LINE_CONFIG_TYPE} from './pad';
 import {HalfLineState, LineState, PadContentType, padState, PadState} from './pad-state';
 
 const $test = {
@@ -80,17 +80,18 @@ test('@protoboard2/src/region/pad/line-action', () => {
   });
 
   should('add the new line when triggered from trigger event', () => {
-    const id = lineId('id');
+    const id = 'id';
     const lineName = 'test line';
     const config = {
       lineId: id,
       lineName,
       type: TriggerType.CLICK,
+      renderFn: () => ({}),
     };
 
-    const otherLine1: LineState = {type: PadContentType.LINE, lineId: lineId('id1'), x1: 12, y1: 23, x2: 34, y2: 45};
-    const otherLine2: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 56, y1: 67, x2: 78, y2: 89};
-    const otherLine3: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 90, y1: 1, x2: 12, y2: 23};
+    const otherLine1: LineState = {type: PadContentType.LINE, lineId: 'id1', x1: 12, y1: 23, x2: 34, y2: 45};
+    const otherLine2: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 56, y1: 67, x2: 78, y2: 89};
+    const otherLine3: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 90, y1: 1, x2: 12, y2: 23};
     run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);
@@ -132,17 +133,18 @@ test('@protoboard2/src/region/pad/line-action', () => {
   });
 
   should('add the new stamp when triggered from function call', () => {
-    const id = lineId('id');
+    const id = 'id';
     const lineName = 'test line';
     const config = {
       lineId: id,
       lineName,
       type: TriggerType.CLICK,
+      renderFn: () => ({}),
     };
 
-    const otherLine1: LineState = {type: PadContentType.LINE, lineId: lineId('id1'), x1: 12, y1: 23, x2: 34, y2: 45};
-    const otherLine2: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 56, y1: 67, x2: 78, y2: 89};
-    const otherLine3: LineState = {type: PadContentType.LINE, lineId: lineId('id2'), x1: 90, y1: 1, x2: 12, y2: 23};
+    const otherLine1: LineState = {type: PadContentType.LINE, lineId: 'id1', x1: 12, y1: 23, x2: 34, y2: 45};
+    const otherLine2: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 56, y1: 67, x2: 78, y2: 89};
+    const otherLine3: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 90, y1: 1, x2: 12, y2: 23};
     run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);
@@ -183,13 +185,14 @@ test('@protoboard2/src/region/pad/line-action', () => {
   });
 
   should('reset the half line if trigger with a different line ID', () => {
-    const id = lineId('id');
-    const otherId = lineId('other');
+    const id = 'id';
+    const otherId = 'other';
     const lineName = 'test line';
     const config = {
       lineId: id,
       lineName,
       type: TriggerType.CLICK,
+      renderFn: () => ({}),
     };
 
     const halfLine = {lineId: otherId, x1: 56, y1: 67};

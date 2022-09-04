@@ -1,36 +1,78 @@
+import {$asMap, $map} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {arrayOfType, hasPropertiesType, intersectType, unknownType} from 'gs-types';
-import {Context, icall, ievent, irect, itarget, ivalue, LINE, ocase, oforeach, query, registerCustomElement, renderElement, RenderSpec, SVG} from 'persona';
+import {$pipe} from 'gs-tools/export/typescript';
+import {arrayOfType, hasPropertiesType, instanceofType, intersectType, stringType, Type} from 'gs-types';
+import {Context, icall, ievent, irect, itarget, ivalue, Length, LINE, LineCap, ocase, oforeach, ParseType, query, registerCustomElement, renderElement, RenderElementSpec, RenderSpec, RenderStringSpec, SVG} from 'persona';
 import {combineLatest, EMPTY, merge, Observable, of} from 'rxjs';
 import {filter, map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
-import {LineId, lineIdType} from '../../id/line-id';
-import {StampId, stampIdType} from '../../id/stamp-id';
-import {$getLineRenderSpec$, LineRenderSpec} from '../../renderspec/render-line-spec';
-import {$getStampRenderSpec$} from '../../renderspec/render-stamp-spec';
-import {TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
+import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 
-import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE, LINE_CONFIG_TYPE} from './line-action';
-import {HalfLineState, PadContentState, PadContentType, PadState} from './pad-state';
+import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE} from './line-action';
+import {HalfLineState, PadContentState, PadContentType, PadState, StampState} from './pad-state';
 import template from './pad.html';
-import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
+import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE} from './stamp-action';
 import {undoAction} from './undo-action';
 
+
+export interface LineRenderSpec {
+  readonly pathLength?: Observable<Length>;
+  readonly stroke?: Observable<string>;
+  readonly strokeDasharray?: Observable<readonly Length[]>;
+  readonly strokeLinecap?: Observable<LineCap>;
+  readonly strokeOpacity?: Observable<number>;
+  readonly strokeWidth?: Observable<Length>;
+}
+
+export type StampRenderSpec = RenderElementSpec<any, any, SVGElement>|
+    RenderStringSpec<ParseType.SVG, any>|null;
+
+interface LineConfig extends TriggerSpec {
+  readonly lineId: string;
+  readonly lineName: string;
+  readonly renderFn: () => LineRenderSpec;
+}
+
+export const LINE_CONFIG_TYPE: Type<LineConfig> = intersectType([
+  TRIGGER_SPEC_TYPE,
+  hasPropertiesType({
+    lineId: stringType,
+    lineName: stringType,
+    renderFn: instanceofType<() => LineRenderSpec>(Function),
+  }),
+]);
+
+
+interface StampConfig extends TriggerSpec {
+  readonly stampId: string;
+  readonly stampName: string;
+  readonly renderFn: (state: StampState) => StampRenderSpec;
+}
+
+export const STAMP_CONFIG_TYPE: Type<StampConfig> = intersectType([
+  TRIGGER_SPEC_TYPE,
+  hasPropertiesType({
+    stampId: stringType,
+    stampName: stringType,
+    renderFn: instanceofType<(state: StampState) => StampRenderSpec>(Function),
+  }),
+]);
+
 export interface StampGenericActionInput extends StampActionInput {
-  readonly stampId: StampId<unknown>;
+  readonly stampId: string;
 }
 const STAMP_GENERIC_ACTION_INPUT_TYPE = intersectType([
-  hasPropertiesType({stampId: stampIdType(unknownType)}),
+  hasPropertiesType({stampId: stringType}),
   STAMP_ACTION_INPUT_TYPE,
 ]);
 
 export interface LineGenericActionInput extends LineActionInput {
-  readonly lineId: LineId<unknown>;
+  readonly lineId: string;
 }
 const LINE_GENERIC_ACTION_INPUT_TYPE = intersectType([
-  hasPropertiesType({lineId: lineIdType(unknownType)}),
+  hasPropertiesType({lineId: stringType}),
   LINE_ACTION_INPUT_TYPE,
 ]);
 
@@ -66,6 +108,28 @@ const $pad = {
 export class PadCtrl extends BaseComponent<PadState> {
   constructor(private readonly $: Context<typeof $pad>) {
     super($, 'Pad');
+  }
+
+  @cache()
+  private get lineConfigsMap$(): Observable<ReadonlyMap<string, LineConfig>> {
+    return this.$.host.lineConfigs.pipe(
+        map(configs => $pipe(
+            configs ?? [],
+            $map(config => [config.lineId, config] as const),
+            $asMap(),
+        )),
+    );
+  }
+
+  @cache()
+  private get stampConfigsMap$(): Observable<ReadonlyMap<string, StampConfig>> {
+    return this.$.host.stampConfigs.pipe(
+        map(configs => $pipe(
+            configs ?? [],
+            $map(config => [config.stampId, config] as const),
+            $asMap(),
+        )),
+    );
   }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
@@ -111,15 +175,20 @@ export class PadCtrl extends BaseComponent<PadState> {
 
     return combineLatest([
       this.state.$('halfLine'),
-      $getLineRenderSpec$.get(this.$.vine).pipe(
-          map(renderFn => {
+      this.lineConfigsMap$.pipe(
+          map(configsMap => {
             return (halfLine: HalfLineState|null) => {
               if (!halfLine) {
                 return null;
               }
 
+              const config = configsMap.get(halfLine.lineId);
+              if (!config) {
+                return null;
+              }
+
               return this.renderLine(
-                  renderFn(halfLine.lineId),
+                  config.renderFn(),
                   of(halfLine.x1),
                   of(halfLine.y1),
                   mouseLocation$.pipe(map(({x}) => x), startWith(halfLine.x1)),
@@ -137,23 +206,33 @@ export class PadCtrl extends BaseComponent<PadState> {
   @cache()
   private get getRenderFn$(): Observable<RenderContentFn> {
     return combineLatest([
-      $getStampRenderSpec$.get(this.$.vine),
-      $getLineRenderSpec$.get(this.$.vine),
+      this.stampConfigsMap$,
+      this.lineConfigsMap$,
     ])
         .pipe(
-            map(([stampRenderFn, lineRenderFn]) => {
+            map(([stampConfigsMap, lineConfigsMap]) => {
               return (state: PadContentState) => {
                 switch (state.type) {
-                  case PadContentType.STAMP:
-                    return stampRenderFn(state);
-                  case PadContentType.LINE:
+                  case PadContentType.STAMP: {
+                    const stampConfig = stampConfigsMap.get(state.stampId);
+                    if (!stampConfig) {
+                      return null;
+                    }
+                    return stampConfig.renderFn(state);
+                  }
+                  case PadContentType.LINE: {
+                    const lineConfig = lineConfigsMap.get(state.lineId);
+                    if (!lineConfig) {
+                      return null;
+                    }
                     return this.renderLine(
-                        lineRenderFn(state.lineId),
+                        lineConfig.renderFn(),
                         of(state.x1),
                         of(state.y1),
                         of(state.x2),
                         of(state.y2),
                     );
+                  }
                 }
               };
             }),

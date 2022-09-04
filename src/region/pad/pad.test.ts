@@ -7,19 +7,42 @@ import {of} from 'rxjs';
 
 import testSvg from '../../asset/icon.svg';
 import {componentId} from '../../id/component-id';
-import {lineId} from '../../id/line-id';
-import {stampId} from '../../id/stamp-id';
-import {registerLineRenderSpec} from '../../renderspec/render-line-spec';
-import {registerStampRenderSpec} from '../../renderspec/render-stamp-spec';
 import {THEME_LOADER_TEST_OVERRIDE} from '../../testing/theme-loader-test-override';
 import {TriggerType} from '../../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
-import {PAD} from './pad';
+import {LineRenderSpec, PAD, StampRenderSpec} from './pad';
 import {PadContentType, padState, StampState} from './pad-state';
 import {PadHarness} from './testing/pad-harness';
 
 test('@protoboard2/src/region/pad/pad', () => {
+  function renderLine(): LineRenderSpec {
+    return {
+      stroke: of('orange'),
+      strokeWidth: of(10),
+    };
+  }
+
+  function renderStamp(shade: string): (state: StampState) => StampRenderSpec {
+    return state => renderString({
+      raw: of(testSvg),
+      parseType: ParseType.SVG,
+      spec: {
+        root: query(null, SVG, {}),
+        colorable: query('#foreground', SVG, {
+          style: ostyle('fill'),
+        }),
+      },
+      runs: $ => [
+        of(state.x - 25).pipe($.root.x()),
+        of(state.y - 25).pipe($.root.y()),
+        of('50px' as const).pipe($.root.width()),
+        of('50px' as const).pipe($.root.height()),
+        of(shade).pipe($.colorable.style()),
+      ],
+    });
+  }
+
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/region/pad/goldens', goldens));
 
@@ -32,30 +55,10 @@ test('@protoboard2/src/region/pad/pad', () => {
   });
 
   test('stamp action', () => {
-    const STAMP_A_ID = stampId('a');
-    const STAMP_B_ID = stampId('b');
+    const STAMP_A_ID = 'a';
+    const STAMP_B_ID = 'b';
 
     setup(_, () => {
-      registerStampRenderSpec(_.tester.vine, state => {
-        const shade = state.stampId === STAMP_A_ID ? 'steelblue' : 'orange';
-        return renderString({
-          raw: of(testSvg),
-          parseType: ParseType.SVG,
-          spec: {
-            root: query(null, SVG, {}),
-            colorable: query('#foreground', SVG, {
-              style: ostyle('fill'),
-            }),
-          },
-          runs: $ => [
-            of(state.x - 25).pipe($.root.x()),
-            of(state.y - 25).pipe($.root.y()),
-            of('50px' as const).pipe($.root.width()),
-            of('50px' as const).pipe($.root.height()),
-            of(shade).pipe($.colorable.style()),
-          ],
-        });
-      });
       const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
@@ -67,11 +70,13 @@ test('@protoboard2/src/region/pad/pad', () => {
         stampId: STAMP_A_ID,
         stampName: 'Stamp A',
         type: TriggerType.CLICK,
+        renderFn: renderStamp('steelblue'),
       };
       const stampBConfig = {
         stampId: STAMP_B_ID,
         stampName: 'Stamp B',
         type: TriggerType.B,
+        renderFn: renderStamp('orange'),
       };
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
@@ -91,11 +96,13 @@ test('@protoboard2/src/region/pad/pad', () => {
         stampId: STAMP_A_ID,
         stampName: 'Stamp A',
         type: TriggerType.CLICK,
+        renderFn: renderStamp('steelblue'),
       };
       const stampBConfig = {
         stampId: STAMP_B_ID,
         stampName: 'Stamp B',
         type: TriggerType.B,
+        renderFn: renderStamp('orange'),
       };
 
       _.element.stampConfigs = [stampAConfig, stampBConfig];
@@ -111,14 +118,9 @@ test('@protoboard2/src/region/pad/pad', () => {
   });
 
   test('line action', () => {
-    const LINE_ID = lineId('line');
+    const LINE_ID = 'line';
 
     setup(_, () => {
-      registerLineRenderSpec(_.tester.vine, () => ({
-        stroke: of('orange'),
-        strokeWidth: of(10),
-      }));
-
       const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
@@ -131,6 +133,7 @@ test('@protoboard2/src/region/pad/pad', () => {
         lineId: LINE_ID,
         lineName: 'Line',
         type: TriggerType.CLICK,
+        renderFn: renderLine,
       };
       _.element.lineConfigs = [config];
 
@@ -150,6 +153,7 @@ test('@protoboard2/src/region/pad/pad', () => {
         lineId: LINE_ID,
         lineName: 'Line',
         type: TriggerType.CLICK,
+        renderFn: renderLine,
       };
       _.element.lineConfigs = [config];
 

@@ -5,7 +5,7 @@ import {OStyle} from 'persona/export/internal';
 import {of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {SvgRenderSpec} from '../../src/renderspec/render-stamp-spec';
+import {StampRenderSpec} from '../../src/region/pad/pad';
 import cardBackSvg from '../asset/card_back.svg';
 import cardFrontSvg from '../asset/card_front.svg';
 import coinFrontSvg from '../asset/coin.svg';
@@ -41,7 +41,7 @@ interface Options {
   readonly y?: Length;
 }
 
-export function renderDemoFace(vine: Vine, faceType: FaceType, options: Options = {}): SvgRenderSpec {
+export function renderDemoFace(vine: Vine, faceType: FaceType, options: Options = {}): StampRenderSpec {
   const svg$ = $svgService.get(vine).getSvg(faceType);
   return renderString({
     // TODO: Remove the ??

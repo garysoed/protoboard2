@@ -1,8 +1,6 @@
 import {mutableState, MutableState} from 'gs-tools/export/state';
 
 import {ComponentId} from '../../id/component-id';
-import {LineId} from '../../id/line-id';
-import {StampId} from '../../id/stamp-id';
 import {ComponentState} from '../../types/component-state';
 
 export enum PadContentType {
@@ -16,14 +14,14 @@ export interface LineState {
   readonly y1: number;
   readonly x2: number;
   readonly y2: number;
-  readonly lineId: LineId<unknown>;
+  readonly lineId: string;
 }
 
 export interface StampState {
   readonly type: PadContentType.STAMP;
   readonly x: number;
   readonly y: number;
-  readonly stampId: StampId<unknown>;
+  readonly stampId: string;
 }
 
 export type PadContentState = LineState|StampState;
@@ -31,7 +29,7 @@ export type PadContentState = LineState|StampState;
 export interface HalfLineState {
   readonly x1: number;
   readonly y1: number;
-  readonly lineId: LineId<unknown>;
+  readonly lineId: string;
 }
 
 export interface PadState extends ComponentState {

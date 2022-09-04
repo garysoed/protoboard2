@@ -8,13 +8,13 @@ import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
 import {componentId} from '../../id/component-id';
-import {stampId} from '../../id/stamp-id';
 import {onTrigger} from '../../trigger/trigger';
 import {TriggerType} from '../../types/trigger-spec';
 
-import {padState} from './pad-state';
-import {PadContentType, PadState, StampState} from './pad-state';
-import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE, STAMP_CONFIG_TYPE} from './stamp-action';
+import {STAMP_CONFIG_TYPE} from './pad';
+import {PadContentType, padState, PadState, StampState} from './pad-state';
+import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE} from './stamp-action';
+
 
 const $test = {
   host: {
@@ -81,17 +81,18 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
   });
 
   should('add the new stamp when triggered from trigger event', () => {
-    const id = stampId('id');
+    const id = 'id';
     const stampName = 'test stamp';
     const config = {
       stampId: id,
       stampName,
       type: TriggerType.CLICK,
+      renderFn: () => null,
     };
 
-    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);
@@ -109,17 +110,18 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
   });
 
   should('add the new stamp when triggered from function call', () => {
-    const id = stampId('id');
+    const id = 'id';
     const stampName = 'test stamp';
     const config = {
       stampId: id,
       stampName,
       type: TriggerType.CLICK,
+      renderFn: () => null,
     };
 
-    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: stampId('id1'), x: 12, y: 23};
-    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: stampId('id2'), x: 34, y: 45};
-    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: stampId('id3'), x: 56, y: 67};
+    const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
+    const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
+    const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
     run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
 
     const element = _.tester.bootstrapElement(TEST);

@@ -1,28 +1,14 @@
 import {flattenResolver} from 'gs-tools/export/state';
-import {arrayOfType, hasPropertiesType, intersectType, numberType, stringType, Type, unknownType} from 'gs-types';
+import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
-import {merge, of, OperatorFunction, pipe, Observable} from 'rxjs';
+import {merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {mapTo, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {BaseComponentSpecType} from '../../core/base-component';
-import {LineId, lineIdType} from '../../id/line-id';
 import {TriggerEvent} from '../../trigger/trigger-event';
-import {TriggerSpec, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
 import {LineState, PadContentType, PadState} from './pad-state';
 
-interface LineConfig extends TriggerSpec {
-  readonly lineId: LineId<unknown>;
-  readonly lineName: string;
-}
-
-export const LINE_CONFIG_TYPE: Type<LineConfig> = intersectType([
-  TRIGGER_SPEC_TYPE,
-  hasPropertiesType({
-    lineId: lineIdType(unknownType),
-    lineName: stringType,
-  }),
-]);
 
 export interface LineActionInput {
   readonly x: number;
@@ -35,8 +21,11 @@ export const LINE_ACTION_INPUT_TYPE = hasPropertiesType({
 });
 
 type LineAction = (context: Context<BaseComponentSpecType<PadState>>) => OperatorFunction<TriggerEvent|[LineActionInput], TriggerEvent|[LineActionInput]>;
+interface Config {
+  readonly lineId: string;
+}
 
-export function lineActionFactory(config: LineConfig, target$: Observable<Element>): LineAction {
+export function lineActionFactory(config: Config, target$: Observable<Element>): LineAction {
   return $ => {
     const contents$ = flattenResolver($.host.state).$('contents');
     const halfLine$ = flattenResolver($.host.state).$('halfLine');
