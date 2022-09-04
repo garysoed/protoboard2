@@ -8,6 +8,7 @@ import {Observable, OperatorFunction} from 'rxjs';
 
 import {ComponentId, componentId} from '../id/component-id';
 import {TEST_FACE} from '../testing/test-face';
+import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {PieceState} from '../types/piece-state';
 import {TriggerType} from '../types/trigger-spec';
@@ -68,7 +69,10 @@ test('@protoboard2/src/core/base-piece', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/core/goldens', goldens));
 
-    const tester = setupTest({roots: [TEST]});
+    const tester = setupTest({
+      roots: [TEST],
+      overrides: [THEME_LOADER_TEST_OVERRIDE],
+    });
     return {tester};
   });
 

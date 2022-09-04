@@ -1,3 +1,9 @@
+export {D2} from '../src/piece/d2';
+
+export {componentId} from '../src/id/component-id';
+export {faceId} from '../src/id/face-id';
+
+export {$getFaceRenderSpec$, registerFaceRenderSpec} from '../src/renderspec/render-face-spec';
 // export {Lens, $lens} from '../src/face/lens';
 // export {LensDisplay} from '../src/face/lens-display';
 
