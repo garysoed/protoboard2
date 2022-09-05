@@ -5,18 +5,18 @@ import {Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
 import {ComponentId} from '../id/component-id';
-import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
+import {FaceSpec} from '../types/is-multifaced';
 import {PieceState} from '../types/piece-state';
 
 import template from './d1.html';
 
 
 export interface D1State extends PieceState {
-  readonly face: FaceId<unknown>;
+  readonly face: FaceSpec;
 }
 
-export function d1State(id: ComponentId<unknown>, face: FaceId<unknown>, partial: Partial<D1State> = {}): D1State {
+export function d1State(id: ComponentId<unknown>, face: FaceSpec, partial: Partial<D1State> = {}): D1State {
   return {
     id,
     face,
@@ -37,7 +37,7 @@ const $d1 = {
   shadow: {
     container: query('#container', SLOT, {
       height: ostyle('height'),
-      face: ocase<FaceId<unknown>>(),
+      face: ocase<FaceSpec>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -69,10 +69,8 @@ class D1Ctrl extends BasePiece<D1State> {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       ...super.runs,
-      renderFace(
-          this.$.vine,
-          this.state._('face'),
-          render => this.$.shadow.container.face(render),
+      this.state._('face').pipe(
+          this.$.shadow.container.face(renderFace()),
       ),
     ];
   }

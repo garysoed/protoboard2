@@ -9,12 +9,10 @@ import {Observable, of, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {componentId, ComponentId, getPayload} from '../id/component-id';
-import {faceId} from '../id/face-id';
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
-import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
-import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {RegionState} from '../types/region-state';
@@ -66,7 +64,6 @@ test('@protoboard2/src/core/base-region', () => {
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     const states = new Map<ComponentId<unknown>, ImmutableResolver<D1State>>();
 
-    registerFaceRenderSpec(tester.vine, renderTestFace);
     registerComponentRenderSpec(tester.vine, (id) => {
       const payload = getPayload(id);
       if (!stringType.check(payload)) {
@@ -116,7 +113,7 @@ test('@protoboard2/src/core/base-region', () => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, faceId(color)))._());
+      _.states.set(id, stateService.addRoot(d1State(id, createRenderSpec(color)))._());
       const regionState = stateService.addRoot<RegionState>({
         id: componentId('region'),
         contentIds: mutableState([]),
@@ -138,7 +135,7 @@ test('@protoboard2/src/core/base-region', () => {
       of([id]).pipe(activeIds$.set()).subscribe();
 
       const stateService = $stateService.get(_.tester.vine);
-      _.states.set(id, stateService.addRoot(d1State(id, faceId(color)))._());
+      _.states.set(id, stateService.addRoot(d1State(id, createRenderSpec(color)))._());
       const regionState = stateService.addRoot<RegionState>({
         id: componentId('region'),
         contentIds: mutableState([]),
@@ -157,7 +154,7 @@ test('@protoboard2/src/core/base-region', () => {
     should('remove picked elements', () => {
       const color = 'steelblue';
       const id = componentId(color);
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(color)))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, createRenderSpec(color)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({
@@ -177,7 +174,7 @@ test('@protoboard2/src/core/base-region', () => {
     should('not removed element if action is not pick', () => {
       const color = 'steelblue';
       const id = componentId(color);
-      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, faceId(color)))._());
+      _.states.set(id, $stateService.get(_.tester.vine).addRoot(d1State(id, createRenderSpec(color)))._());
 
       const stateService = $stateService.get(_.tester.vine);
       const regionState = stateService.addRoot<RegionState>({

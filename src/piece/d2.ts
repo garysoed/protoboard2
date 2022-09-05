@@ -12,11 +12,10 @@ import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {ComponentId} from '../id/component-id';
-import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
-import {IsMultifaced} from '../types/is-multifaced';
+import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
 import {IsRotatable} from '../types/is-rotatable';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -28,7 +27,7 @@ export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
 
 export function d2State(
     id: ComponentId<unknown>,
-    faces: readonly [FaceId<unknown>, FaceId<unknown>],
+    faces: readonly [FaceSpec, FaceSpec],
     partial: Partial<D2State> = {},
 ): D2State {
   return {
@@ -61,7 +60,7 @@ const $d2 = {
   shadow: {
     container: query('#container', DIV, {
       height: ostyle('height'),
-      face: ocase<FaceId<unknown>>(),
+      face: ocase<FaceSpec>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -115,15 +114,14 @@ class D2Ctrl extends BaseComponent<D2State> {
           renderRotatable(),
           this.$.shadow.container.transform(),
       ),
-      renderFace(
-          this.$.vine,
-          combineLatest([
-            this.state.$('currentFaceIndex'),
-            this.state._('faces'),
-          ])
-              .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
-          render => this.$.shadow.container.face(id => render(id)),
-      ),
+      combineLatest([
+        this.state.$('currentFaceIndex'),
+        this.state._('faces'),
+      ])
+          .pipe(
+              map(([currentFaceIndex, faces]) => faces[currentFaceIndex]),
+              this.$.shadow.container.face(renderFace()),
+          ),
     ];
   }
 }

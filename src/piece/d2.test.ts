@@ -3,15 +3,13 @@ import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment,
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {incrementingRandom} from 'gs-tools/export/random2';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {fromEvent, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, fromEvent} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
 import {ComponentId, componentId} from '../id/component-id';
-import {faceId} from '../id/face-id';
-import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
-import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
 import {$random, $randomSeed} from '../util/random';
@@ -21,8 +19,8 @@ import goldens from './goldens/goldens.json';
 import {D2Harness} from './testing/d2-harness';
 
 
-const FACE_1_ID = faceId('black');
-const FACE_2_ID = faceId('steelblue');
+const FACE_1_SPEC = createRenderSpec('black');
+const FACE_2_SPEC = createRenderSpec('steelblue');
 
 
 test('@protoboard2/src/piece/d2', () => {
@@ -39,13 +37,12 @@ test('@protoboard2/src/piece/d2', () => {
       ],
     });
 
-    registerFaceRenderSpec(tester.vine, renderTestFace);
     return {seed$, tester};
   });
 
   should('render the face correctly', () => {
     const state = $stateService.get(_.tester.vine).addRoot<D2State>(
-        d2State(componentId({}), [FACE_1_ID, FACE_2_ID]),
+        d2State(componentId({}), [FACE_1_SPEC, FACE_2_SPEC]),
     )._();
 
     const element = _.tester.bootstrapElement(D2);
@@ -64,7 +61,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
 
@@ -78,7 +75,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
 
@@ -99,7 +96,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
 
@@ -114,7 +111,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
       _.element.pick(undefined);
@@ -135,7 +132,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
 
@@ -149,7 +146,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
       _.element.roll(undefined);
@@ -170,7 +167,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId('');
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
 
@@ -184,7 +181,7 @@ test('@protoboard2/src/piece/d2', () => {
       const id = componentId({});
       const stateService = $stateService.get(_.tester.vine);
       const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_ID, FACE_2_ID]),
+          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
       )._();
       _.element.state = state;
       _.element.rotate(undefined);

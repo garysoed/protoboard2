@@ -1,17 +1,17 @@
 import {$stateService, source, Vine} from 'grapevine';
 import {mutableState} from 'gs-tools/export/state';
 import {enumType} from 'gs-types';
-import {renderElement, renderString, RenderSpec, ParseType} from 'persona';
+import {ParseType, renderElement, RenderSpec, renderString} from 'persona';
 import {of} from 'rxjs';
 
 import {ComponentId, componentId, getPayload as getComponentIdPayload} from '../src/id/component-id';
-import {FaceId, faceId, getPayload as getFaceIdPayload} from '../src/id/face-id';
 import {D1, D1State, d1State} from '../src/piece/d1';
 import {D2, d2State, D2State} from '../src/piece/d2';
 import {D6, d6State, D6State} from '../src/piece/d6';
 import {deckState, DeckState} from '../src/region/deck';
 import {padState, PadState} from '../src/region/pad/pad-state';
 import {surfaceState, SurfaceState} from '../src/region/surface';
+import {FaceSpec} from '../src/types/is-multifaced';
 
 import {FaceType, renderDemoFace} from './core/render-face';
 
@@ -82,21 +82,27 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
     surface: surfaceState(componentId({})),
   },
   pieces: {
-    card: d2State(CARD_ID, [faceId(FaceType.CARD_BACK), faceId(FaceType.CARD_FRONT)]),
-    coin: d2State(COIN_ID, [faceId(FaceType.COIN_BACK), faceId(FaceType.CARD_FRONT)]),
+    card: d2State(
+        CARD_ID,
+        [faceSpec(vine, FaceType.CARD_BACK), faceSpec(vine, FaceType.CARD_FRONT)],
+    ),
+    coin: d2State(
+        COIN_ID,
+        [faceSpec(vine, FaceType.COIN_BACK), faceSpec(vine, FaceType.COIN_FRONT)],
+    ),
     dice: d6State(
         DICE_ID,
         [
-          faceId(FaceType.DICE_PIP_1),
-          faceId(FaceType.DICE_PIP_2),
-          faceId(FaceType.DICE_PIP_3),
-          faceId(FaceType.DICE_PIP_6),
-          faceId(FaceType.DICE_PIP_5),
-          faceId(FaceType.DICE_PIP_4),
+          faceSpec(vine, FaceType.DICE_PIP_1),
+          faceSpec(vine, FaceType.DICE_PIP_2),
+          faceSpec(vine, FaceType.DICE_PIP_3),
+          faceSpec(vine, FaceType.DICE_PIP_6),
+          faceSpec(vine, FaceType.DICE_PIP_5),
+          faceSpec(vine, FaceType.DICE_PIP_4),
         ],
     ),
-    gem: d1State(GEM_ID, faceId(FaceType.GEM)),
-    meeple: d1State(MEEPLE_ID, faceId(FaceType.MEEPLE)),
+    gem: d1State(GEM_ID, faceSpec(vine, FaceType.GEM)),
+    meeple: d1State(MEEPLE_ID, faceSpec(vine, FaceType.MEEPLE)),
   },
 })._());
 
@@ -140,25 +146,22 @@ export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpe
   }
 }
 
-export function renderFace(id: FaceId<unknown>, vine: Vine): RenderSpec|null {
-  const payload = getFaceIdPayload(id);
-  if (!enumType<FaceType>(FaceType).check(payload)) {
-    throw new Error(`ID ${payload} is not a FaceType`);
-  }
-
-  return renderDemoFace(vine, payload);
+function faceSpec(vine: Vine, faceType: FaceType): FaceSpec {
+  return {
+    renderFn: () => renderDemoFace(vine, faceType),
+    renderLensFn: () => renderLens(faceType),
+  };
 }
 
-export function renderLens(id: FaceId<unknown>): RenderSpec|null {
-  const payload = getFaceIdPayload(id);
-  if (!enumType<FaceType>(FaceType).check(payload)) {
-    return null;
-  }
+export function renderFace(faceType: FaceType, vine: Vine): RenderSpec|null {
+  return renderDemoFace(vine, faceType);
+}
 
+export function renderLens(faceType: FaceType): RenderSpec|null {
   return renderString({
     raw: of(`
     <div slot="details">
-      <h3 id="name">${getFaceName(payload)}</h3>
+      <h3 id="name">${getFaceName(faceType)}</h3>
       <p mk-body-1>More detailed information on the piece goes here.</p>
     </div>`),
     parseType: ParseType.HTML,

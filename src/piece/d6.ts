@@ -12,11 +12,10 @@ import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {ComponentId} from '../id/component-id';
-import {FaceId} from '../id/face-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState} from '../types/component-state';
-import {IsMultifaced} from '../types/is-multifaced';
+import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
 import {IsRotatable} from '../types/is-rotatable';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -26,12 +25,12 @@ import template from './d6.html';
 export interface D6State extends ComponentState, IsRotatable, IsMultifaced { }
 
 type Faces = readonly [
-  FaceId<unknown>,
-  FaceId<unknown>,
-  FaceId<unknown>,
-  FaceId<unknown>,
-  FaceId<unknown>,
-  FaceId<unknown>,
+  FaceSpec,
+  FaceSpec,
+  FaceSpec,
+  FaceSpec,
+  FaceSpec,
+  FaceSpec,
 ];
 
 export function d6State(id: ComponentId<unknown>, faces: Faces, partial: Partial<D6State> = {}): D6State {
@@ -67,7 +66,7 @@ const $d6 = {
   shadow: {
     container: query('#container', DIV, {
       height: ostyle('height'),
-      face: ocase<FaceId<unknown>>(),
+      face: ocase<FaceSpec>(),
       target: itarget(),
       transform: ostyle('transform'),
       width: ostyle('width'),
@@ -125,15 +124,14 @@ class D6Ctrl extends BaseComponent<D6State> {
           renderRotatable(),
           this.$.shadow.container.transform(),
       ),
-      renderFace(
-          this.$.vine,
-          combineLatest([
-            this.state.$('currentFaceIndex'),
-            this.state._('faces'),
-          ])
-              .pipe(map(([currentFaceIndex, faces]) => faces[currentFaceIndex])),
-          render => this.$.shadow.container.face(id => render(id)),
-      ),
+      combineLatest([
+        this.state.$('currentFaceIndex'),
+        this.state._('faces'),
+      ])
+          .pipe(
+              map(([currentFaceIndex, faces]) => faces[currentFaceIndex]),
+              this.$.shadow.container.face(renderFace()),
+          ),
     ];
   }
 }

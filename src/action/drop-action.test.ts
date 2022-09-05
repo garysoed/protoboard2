@@ -12,11 +12,9 @@ import {map} from 'rxjs/operators';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {componentId, ComponentId, getPayload} from '../id/component-id';
-import {faceId} from '../id/face-id';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
-import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
-import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {onTrigger} from '../trigger/trigger';
 import {RegionState} from '../types/region-state';
@@ -80,7 +78,6 @@ test('@protoboard2/src/action/drop-action', () => {
       overrides: [THEME_LOADER_TEST_OVERRIDE],
     });
 
-    registerFaceRenderSpec(tester.vine, renderTestFace);
     registerComponentRenderSpec(tester.vine, id => {
       const payload = getPayload(id);
       if (!stringType.check(payload)) {
@@ -90,7 +87,12 @@ test('@protoboard2/src/action/drop-action', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of($stateService.get(tester.vine).addRoot(d1State(id, faceId(payload)))._()).pipe($.state()),
+          of(
+              $stateService.get(tester.vine).addRoot(
+                  d1State(id, createRenderSpec(payload)),
+              )._(),
+          )
+              .pipe($.state()),
         ],
       });
     });

@@ -8,9 +8,7 @@ import {map} from 'rxjs/operators';
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
 import {componentId, getPayload} from '../id/component-id';
-import {faceId} from '../id/face-id';
-import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
-import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
 
@@ -19,20 +17,17 @@ import goldens from './goldens/goldens.json';
 import {D1Harness} from './testing/d1-harness';
 
 
-const FACE_ID = faceId('steelblue');
-
-
 test('@protoboard2/src/piece/d1', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/piece/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
-
-    registerFaceRenderSpec(tester.vine, renderTestFace);
     return {tester};
   });
 
   should('render the face correctly', () => {
-    const state = $stateService.get(_.tester.vine).addRoot<D1State>(d1State(componentId({}), FACE_ID))._();
+    const state = $stateService.get(_.tester.vine).addRoot<D1State>(
+        d1State(componentId({}), createRenderSpec('steelblue')),
+    )._();
 
     const element = _.tester.bootstrapElement(D1);
     element.state = state;
@@ -49,7 +44,7 @@ test('@protoboard2/src/piece/d1', () => {
     should('trigger on click', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), createRenderSpec('steelblue')))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -62,7 +57,7 @@ test('@protoboard2/src/piece/d1', () => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), createRenderSpec('steelblue')))._();
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -82,7 +77,7 @@ test('@protoboard2/src/piece/d1', () => {
     should('trigger on R', () => {
       const id = '';
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), createRenderSpec('steelblue')))._();
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -94,7 +89,7 @@ test('@protoboard2/src/piece/d1', () => {
     should('trigger on function call', () => {
       const id = {};
       const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot(d1State(componentId(id), FACE_ID))._();
+      const state = stateService.addRoot(d1State(componentId(id), createRenderSpec('steelblue')))._();
       _.element.state = state;
       _.element.rotate(undefined);
 

@@ -1,13 +1,13 @@
 import {cache} from 'gs-tools/export/data';
-import {stringType, unknownType} from 'gs-types';
+import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
 import {Context, Ctrl, DIV, iattr, ocase, oproperty, ParseType, query, registerCustomElement, renderElement, RenderSpec, renderString} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
-import {ComponentId, componentIdType, getPayload as getComponentPayload} from '../id/component-id';
-import {FaceId, getPayload as getFacePayload} from '../id/face-id';
+import {ComponentId, getPayload as getComponentPayload} from '../id/component-id';
+import {FaceSpec} from '../types/is-multifaced';
 
 import template from './test-face.html';
 
@@ -60,8 +60,17 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: ComponentId<unknown>|FaceId<unknown>): RenderSpec {
-  const payload = getPayload(id);
+export function renderTestFace(id: ComponentId<unknown>|string): RenderSpec {
+  if (stringType.check(id)) {
+    return renderElement({
+      registration: TEST_FACE,
+      spec: {},
+      runs: $ => [
+        of(id).pipe($.shade()),
+      ],
+    });
+  }
+  const payload = getComponentPayload(id);
   if (!stringType.check(payload)) {
     throw new Error(`Invalid ID ${id}`);
   }
@@ -74,10 +83,6 @@ export function renderTestFace(id: ComponentId<unknown>|FaceId<unknown>): Render
   });
 }
 
-function getPayload(id: ComponentId<unknown>|FaceId<unknown>): unknown {
-  if (componentIdType(unknownType).check(id)) {
-    return getComponentPayload(id);
-  }
-
-  return getFacePayload(id);
+export function createRenderSpec(color: string): FaceSpec {
+  return {renderFn: () => renderTestFace(color), renderLensFn: () => renderTestFace(color)};
 }

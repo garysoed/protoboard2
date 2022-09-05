@@ -2,13 +2,11 @@ import {registerSvg, start, UrlThemeLoader} from 'mask';
 import {ON_LOG_$, WebConsoleDestination} from 'santa';
 
 import {registerComponentRenderSpec} from '../src/renderspec/render-component-spec';
-import {registerFaceRenderSpec} from '../src/renderspec/render-face-spec';
-import {registerLensRenderSpec} from '../src/renderspec/render-lens-spec';
 
 import protoboardSvg from './asset/icon.svg';
 import {$locationService} from './core/location-service';
 import {registerFaceSvgs} from './core/render-face';
-import {renderComponent, renderFace, renderLens} from './demo-state';
+import {renderComponent} from './demo-state';
 import {ROOT} from './root';
 
 
@@ -34,9 +32,7 @@ window.addEventListener('load', () => {
   }
   registerFaceSvgs(vine);
 
-  registerFaceRenderSpec(vine, id => renderFace(id, vine));
   registerComponentRenderSpec(vine, id => renderComponent(id, vine));
-  registerLensRenderSpec(vine, id => renderLens(id));
   $locationService.get(vine).run().subscribe();
 });
 

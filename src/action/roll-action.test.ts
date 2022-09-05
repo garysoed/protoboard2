@@ -4,18 +4,17 @@ import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {incrementingRandom} from 'gs-tools/export/random2';
 import {mutableState} from 'gs-tools/export/state';
-import {Context, icall, query, registerCustomElement} from 'persona';
+import {Context, icall, ocase, registerCustomElement, root} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {componentId} from '../id/component-id';
-import {faceId, getPayload} from '../id/face-id';
-import {TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {ComponentState} from '../types/component-state';
-import {IsMultifaced} from '../types/is-multifaced';
+import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
 import {$random, $randomSeed} from '../util/random';
 
 import goldens from './goldens/goldens.json';
@@ -25,9 +24,9 @@ import {rollAction} from './roll-action';
 interface TestState extends ComponentState, IsMultifaced { }
 
 const FACES = [
-  faceId('orange'),
-  faceId('steelblue'),
-  faceId('purple'),
+  createRenderSpec('orange'),
+  createRenderSpec('steelblue'),
+  createRenderSpec('purple'),
 ] as const;
 
 const $test = {
@@ -36,7 +35,7 @@ const $test = {
     trigger: icall('trigger', []),
   },
   shadow: {
-    face: query('#face', TEST_FACE),
+    root: root({content: ocase<FaceSpec>()}),
   },
 };
 
@@ -51,8 +50,8 @@ class Test extends BaseComponent<TestState> {
       ...super.runs,
       this.$.host.trigger.pipe(rollAction(this.$)),
       this.state.$('currentFaceIndex').pipe(
-          map(index => getPayload(FACES[index])),
-          this.$.shadow.face.shade(),
+          map(index => FACES[index]),
+          this.$.shadow.root.content(map(spec => spec.renderFn())),
       ),
     ];
   }
@@ -63,7 +62,7 @@ const TEST = registerCustomElement({
   deps: [TEST_FACE],
   spec: $test,
   tag: 'pbt-test',
-  template: '<pbt-face id="face"></pbt-face>',
+  template: '',
 });
 
 

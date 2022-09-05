@@ -9,9 +9,7 @@ import {map} from 'rxjs/operators';
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
 import {ComponentId, componentId} from '../id/component-id';
-import {faceId} from '../id/face-id';
-import {registerFaceRenderSpec} from '../renderspec/render-face-spec';
-import {renderTestFace, TEST_FACE} from '../testing/test-face';
+import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
 import {$random, $randomSeed} from '../util/random';
@@ -22,12 +20,12 @@ import {D6Harness} from './testing/d6-harness';
 
 
 const FACES = [
-  faceId('black'),
-  faceId('steelblue'),
-  faceId('crimson'),
-  faceId('forestgreen'),
-  faceId('orange'),
-  faceId('rebeccapurple'),
+  createRenderSpec('black'),
+  createRenderSpec('steelblue'),
+  createRenderSpec('crimson'),
+  createRenderSpec('forestgreen'),
+  createRenderSpec('orange'),
+  createRenderSpec('rebeccapurple'),
 ] as const;
 
 
@@ -45,7 +43,6 @@ test('@protoboard2/src/piece/d6', () => {
       ],
     });
 
-    registerFaceRenderSpec(tester.vine, renderTestFace);
     return {seed$, tester};
   });
 
