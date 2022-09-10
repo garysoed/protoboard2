@@ -1,8 +1,7 @@
-import {mapNullableTo} from 'gs-tools/export/rxjs';
 import {enumType, hasPropertiesType, Type} from 'gs-types';
 import {Anchor, AnchorSpec} from 'mask';
 import {reverse} from 'nabu';
-import {AlignmentBaseline, iattr, numberParser, oattr, stringEnumParser, TextAnchor} from 'persona';
+import {AlignmentBaseline, numberParser, oattr, stringEnumParser, TextAnchor} from 'persona';
 import { } from 'persona/src/parser/string-enum-parser';
 import {combineLatest, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -31,22 +30,10 @@ interface Args {
 }
 
 export function alignTextToRect(args: Args): ReadonlyArray<Observable<unknown>> {
-  const rectX$ = args.rect$.pipe(
-      switchMap(rect => iattr('x', numberParser()).resolve(rect)),
-      mapNullableTo(0),
-  );
-  const rectWidth$ = args.rect$.pipe(
-      switchMap(rect => iattr('width', numberParser()).resolve(rect)),
-      mapNullableTo(0),
-  );
-  const rectY$ = args.rect$.pipe(
-      switchMap(rect => iattr('y', numberParser()).resolve(rect)),
-      mapNullableTo(0),
-  );
-  const rectHeight$ = args.rect$.pipe(
-      switchMap(rect => iattr('height', numberParser()).resolve(rect)),
-      mapNullableTo(0),
-  );
+  const rectX$ = args.rect$.pipe(map(rect => rect.x.baseVal.value));
+  const rectWidth$ = args.rect$.pipe(map(rect => rect.width.baseVal.value));
+  const rectY$ = args.rect$.pipe(map(rect => rect.y.baseVal.value));
+  const rectHeight$ = args.rect$.pipe(map(rect => rect.height.baseVal.value));
 
   const textX$ = args.text$.pipe(map(text => oattr('x', reverse(numberParser())).resolve(text)));
   const textY$ = args.text$.pipe(map(text => oattr('y', reverse(numberParser())).resolve(text)));
@@ -80,7 +67,7 @@ export function alignTextToRect(args: Args): ReadonlyArray<Observable<unknown>> 
             }),
             applyFn(textX$),
         ),
-    combineLatest([ rectY$, rectHeight$ ])
+    combineLatest([rectY$, rectHeight$])
         .pipe(
             map(([rectY, rectHeight]) => {
               switch (args.anchorSpec.rect.vertical) {
