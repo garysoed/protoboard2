@@ -8,6 +8,7 @@ set_vars({
       'src/region/goldens',
       'src/region/pad/goldens',
       'src/render/goldens',
+      'src/svg/goldens',
     ],
   },
 });
