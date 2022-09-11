@@ -36,9 +36,10 @@ class Test implements Ctrl {
                 ...renderSvgText({
                   anchorSpec,
                   context: {document: this.$.element.ownerDocument, vine: this.$.vine},
+                  lineHeight$: of(15),
                   rect$: this.$.shadow.rect.target,
                   text$: this.$.shadow.text.target,
-                  content$: of('dop'),
+                  content$: of('dop\nline 2 and a really long line'),
                 }),
             );
           }),
@@ -57,7 +58,7 @@ const TEST = registerCustomElement({
             x="20"
             y="40"
             width="60"
-            height="80">
+            height="100">
         </rect>
         <text></text>
       </svg>`,
