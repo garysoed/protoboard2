@@ -4,11 +4,11 @@ import {filterNonNullable} from 'gs-tools/export/rxjs';
 import {Anchor} from 'mask';
 import {Context, Ctrl, itarget, ivalue, query, RECT, registerCustomElement, TEXT} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {merge, Observable} from 'rxjs';
+import {merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
-import {alignTextToRect, ALIGN_SPEC_TYPE} from './align-text-to-rect';
 import goldens from './goldens/goldens.json';
+import {renderSvgText, ALIGN_SPEC_TYPE} from './render-svg-text';
 
 
 const $test = {
@@ -33,10 +33,12 @@ class Test implements Ctrl {
           filterNonNullable(),
           switchMap(anchorSpec => {
             return merge(
-                ...alignTextToRect({
+                ...renderSvgText({
                   anchorSpec,
+                  context: {document: this.$.element.ownerDocument, vine: this.$.vine},
                   rect$: this.$.shadow.rect.target,
                   text$: this.$.shadow.text.target,
+                  content$: of('dop'),
                 }),
             );
           }),
@@ -57,11 +59,11 @@ const TEST = registerCustomElement({
             width="60"
             height="80">
         </rect>
-        <text>dop</text>
+        <text></text>
       </svg>`,
 });
 
-test('@protoboard2/src/svg/align-text-to-rect', () => {
+test('@protoboard2/src/svg/render-svg-text', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/svg/goldens', goldens));
 
@@ -76,7 +78,7 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.START, vertical: Anchor.START},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__horizontal-start-start.html');
+    assert(element).to.matchSnapshot('render-svg-text__horizontal-start-start.html');
   });
 
   should('align correctly when horizontal content and target anchors are (MIDDLE, MIDDLE)', () => {
@@ -86,7 +88,7 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.MIDDLE, vertical: Anchor.START},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__horizontal-middle-middle.html');
+    assert(element).to.matchSnapshot('render-svg-text__horizontal-middle-middle.html');
   });
 
   should('align correctly when horizontal content and target anchors are (END, END)', () => {
@@ -96,7 +98,7 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.END, vertical: Anchor.START},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__horizontal-end-end.html');
+    assert(element).to.matchSnapshot('render-svg-text__horizontal-end-end.html');
   });
 
   should('align correctly when vertical content and target anchors are (START, START)', () => {
@@ -106,7 +108,7 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.START, vertical: Anchor.START},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__vertical-start-start.html');
+    assert(element).to.matchSnapshot('render-svg-text__vertical-start-start.html');
   });
 
   should('align correctly when vertical content and target anchors are (MIDDLE, MIDDLE)', () => {
@@ -116,7 +118,7 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.START, vertical: Anchor.MIDDLE},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__vertical-middle-middle.html');
+    assert(element).to.matchSnapshot('render-svg-text__vertical-middle-middle.html');
   });
 
   should('align correctly when vertical content and target anchors are (END, END)', () => {
@@ -126,6 +128,6 @@ test('@protoboard2/src/svg/align-text-to-rect', () => {
       text: {horizontal: Anchor.START, vertical: Anchor.END},
     };
 
-    assert(element).to.matchSnapshot('align-text-to-rect__vertical-end-end.html');
+    assert(element).to.matchSnapshot('render-svg-text__vertical-end-end.html');
   });
 });

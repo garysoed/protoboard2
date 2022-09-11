@@ -1,8 +1,8 @@
 import {enumType, hasPropertiesType, Type} from 'gs-types';
 import {Anchor, AnchorSpec} from 'mask';
 import {reverse} from 'nabu';
-import {AlignmentBaseline, numberParser, oattr, stringEnumParser, TextAnchor} from 'persona';
-import { } from 'persona/src/parser/string-enum-parser';
+import {AlignmentBaseline, numberParser, oattr, oforeach, otext, renderElement, stringEnumParser, TextAnchor, TSPAN} from 'persona';
+import {RenderContext} from 'persona/export/internal';
 import {combineLatest, Observable, of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
@@ -25,27 +25,34 @@ export const ALIGN_SPEC_TYPE: Type<AlignSpec> = hasPropertiesType({
 
 interface Args {
   readonly anchorSpec: AlignSpec;
+  readonly content$: Observable<string>;
   readonly rect$: Observable<SVGRectElement>;
   readonly text$: Observable<SVGTextElement>;
+  readonly context: RenderContext;
 }
 
-export function alignTextToRect(args: Args): ReadonlyArray<Observable<unknown>> {
-  const rectX$ = args.rect$.pipe(map(rect => rect.x.baseVal.value));
-  const rectWidth$ = args.rect$.pipe(map(rect => rect.width.baseVal.value));
+export function renderSvgText(args: Args): ReadonlyArray<Observable<unknown>> {
   const rectY$ = args.rect$.pipe(map(rect => rect.y.baseVal.value));
   const rectHeight$ = args.rect$.pipe(map(rect => rect.height.baseVal.value));
+  const textX$ = combineLatest([
+    args.rect$.pipe(map(rect => rect.x.baseVal.value)),
+    args.rect$.pipe(map(rect => rect.width.baseVal.value)),
+  ])
+      .pipe(
+          map(([rectX, rectWidth]) => {
+            switch (args.anchorSpec.rect.horizontal) {
+              case Anchor.START:
+                return rectX;
+              case Anchor.MIDDLE:
+                return rectX + rectWidth / 2;
+              case Anchor.END:
+                return rectX + rectWidth;
+            }
+          }),
+      );
 
-  const textX$ = args.text$.pipe(map(text => oattr('x', reverse(numberParser())).resolve(text)));
-  const textY$ = args.text$.pipe(map(text => oattr('y', reverse(numberParser())).resolve(text)));
-  const textAlignmentBaseline$ = args.text$.pipe(
-      map(text => {
-        return oattr(
-            'alignment-baseline',
-            reverse(stringEnumParser<AlignmentBaseline>(AlignmentBaseline)),
-        ).resolve(text);
-      }),
-  );
-  const textAnchor$ = args.text$.pipe(
+  const otextY$ = args.text$.pipe(map(text => oattr('y', reverse(numberParser())).resolve(text)));
+  const otextAnchor$ = args.text$.pipe(
       map(text => {
         return oattr('text-anchor', reverse(stringEnumParser<TextAnchor>(TextAnchor)))
             .resolve(text);
@@ -53,20 +60,6 @@ export function alignTextToRect(args: Args): ReadonlyArray<Observable<unknown>> 
   );
 
   return [
-    combineLatest([rectX$, rectWidth$])
-        .pipe(
-            map(([rectX, rectWidth]) => {
-              switch (args.anchorSpec.rect.horizontal) {
-                case Anchor.START:
-                  return rectX;
-                case Anchor.MIDDLE:
-                  return rectX + rectWidth / 2;
-                case Anchor.END:
-                  return rectX + rectWidth;
-              }
-            }),
-            applyFn(textX$),
-        ),
     combineLatest([rectY$, rectHeight$])
         .pipe(
             map(([rectY, rectHeight]) => {
@@ -79,10 +72,35 @@ export function alignTextToRect(args: Args): ReadonlyArray<Observable<unknown>> 
                   return rectY + rectHeight;
               }
             }),
-            applyFn(textY$),
+            applyFn(otextY$),
         ),
-    of(getAlignmentBaseline(args.anchorSpec.text.vertical)).pipe(applyFn(textAlignmentBaseline$)),
-    of(getTextAnchor(args.anchorSpec.text.horizontal)).pipe(applyFn(textAnchor$)),
+
+    of(getTextAnchor(args.anchorSpec.text.horizontal)).pipe(applyFn(otextAnchor$)),
+    args.content$.pipe(
+        switchMap(content => {
+          const ocontent$ = args.text$.pipe(
+              map(text => oforeach<string>().resolve(text, args.context)),
+          );
+
+          return ocontent$.pipe(
+              switchMap(ocontent => {
+                return of([content]).pipe(
+                    ocontent(map(line => renderElement({
+                      registration: TSPAN,
+                      spec: {
+                        content: otext(),
+                      },
+                      runs: $ => [
+                        of(line).pipe($.content()),
+                        textX$.pipe($.x()),
+                        of(getAlignmentBaseline(args.anchorSpec.text.vertical))
+                            .pipe($.alignmentBaseline()),
+                      ],
+                    }))),
+                );
+              }),
+          );
+        })),
   ];
 }
 
