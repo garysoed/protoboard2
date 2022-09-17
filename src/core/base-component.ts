@@ -1,7 +1,6 @@
 import {$asArray, $map} from 'gs-tools/export/collect';
 import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
 import {$pipe} from 'gs-tools/export/typescript';
-import {instanceofType} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, iattr, ivalue, oevent} from 'persona';
 import {IAttr, IValue, OEvent} from 'persona/export/internal';
@@ -15,6 +14,7 @@ import {ActionTrigger} from '../action/show-help-event';
 import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
 import {TriggerSpec, TriggerType} from '../types/trigger-spec';
+import {immutableResolverType} from '../util/immutable-resolver-type';
 
 
 interface ActionInstalledPayload {
@@ -37,7 +37,7 @@ export function create$baseComponent<S extends ComponentState>(): BaseComponentS
     host: {
       label: iattr('label'),
       onAction: oevent(ACTION_EVENT, ActionEvent),
-      state: ivalue('state', instanceofType<ImmutableResolver<S>>(Object)),
+      state: ivalue('state', immutableResolverType<S>()),
     },
   };
 }
