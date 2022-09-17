@@ -1,8 +1,7 @@
-import {$stateService, source, Vine} from 'grapevine';
-import {mutableState} from 'gs-tools/export/state';
+import {source, Vine} from 'grapevine';
 import {enumType} from 'gs-types';
 import {ParseType, renderElement, RenderSpec, renderString} from 'persona';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 
 import {ComponentId, componentId, getPayload as getComponentIdPayload} from '../src/id/component-id';
 import {D1, D1State, d1State} from '../src/piece/d1';
@@ -60,17 +59,17 @@ const DICE_ID = componentId(ComponentType.DICE);
 const GEM_ID = componentId(ComponentType.GEM);
 const MEEPLE_ID = componentId(ComponentType.MEEPLE);
 
-export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>({
+export const $state$ = source(vine => ({
   d1: {
-    gemSlot: surfaceState(componentId({}), {contentIds: mutableState([GEM_ID])}),
-    meepleSlot: surfaceState(componentId({}), {contentIds: mutableState([MEEPLE_ID])}),
+    gemSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([GEM_ID])}),
+    meepleSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([MEEPLE_ID])}),
   },
   d2: {
-    cardSlot: surfaceState(componentId({}), {contentIds: mutableState([CARD_ID])}),
-    coinSlot: surfaceState(componentId({}), {contentIds: mutableState([COIN_ID])}),
+    cardSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([CARD_ID])}),
+    coinSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([COIN_ID])}),
   },
   d6: {
-    diceSlot: surfaceState(componentId({}), {contentIds: mutableState([DICE_ID])}),
+    diceSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([DICE_ID])}),
   },
   deck: {
     deck: deckState(componentId({})),
@@ -104,7 +103,7 @@ export const $state$ = source(vine => $stateService.get(vine).addRoot<DemoState>
     gem: d1State(GEM_ID, faceSpec(vine, FaceType.GEM)),
     meeple: d1State(MEEPLE_ID, faceSpec(vine, FaceType.MEEPLE)),
   },
-})._());
+}));
 
 export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpec {
   const payload = getComponentIdPayload(id);
@@ -117,31 +116,31 @@ export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpe
       return renderElement({
         registration: D2,
         spec: {},
-        runs: $ => [of(state$._('pieces')._('card')).pipe($.state())],
+        runs: $ => [of(state$.pieces.card).pipe($.state())],
       });
     case ComponentType.COIN:
       return renderElement({
         registration: D2,
         spec: {},
-        runs: $ => [of(state$._('pieces')._('coin')).pipe($.state())],
+        runs: $ => [of(state$.pieces.coin).pipe($.state())],
       });
     case ComponentType.DICE:
       return renderElement({
         registration: D6,
         spec: {},
-        runs: $ => [of(state$._('pieces')._('dice')).pipe($.state())],
+        runs: $ => [of(state$.pieces.dice).pipe($.state())],
       });
     case ComponentType.GEM:
       return renderElement({
         registration: D1,
         spec: {},
-        runs: $ => [of(state$._('pieces')._('gem')).pipe($.state())],
+        runs: $ => [of(state$.pieces.gem).pipe($.state())],
       });
     case ComponentType.MEEPLE:
       return renderElement({
         registration: D1,
         spec: {},
-        runs: $ => [of(state$._('pieces')._('meeple')).pipe($.state())],
+        runs: $ => [of(state$.pieces.meeple).pipe($.state())],
       });
   }
 }

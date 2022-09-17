@@ -1,5 +1,5 @@
-import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {ImmutableResolver} from 'gs-tools/export/state';
+import {filterNonNullable, ObservableWalker} from 'gs-tools/export/rxjs';
+import {Type} from 'gs-types';
 import {Context, icall, ievent, ivalue, RenderSpec} from 'persona';
 import {ICall, IValue} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -26,10 +26,10 @@ interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecTyp
 // TODO: Convert to operator function
 export type RenderContentFn = (id: ComponentId<unknown>) => RenderSpec|null;
 
-export function create$baseRegion<S extends RegionState>(): BaseRegionSpecType<S> {
+export function create$baseRegion<S extends RegionState>(stateType: Type<S>): BaseRegionSpecType<S> {
   return {
     host: {
-      ...create$baseComponent<S>().host,
+      ...create$baseComponent<S>(stateType).host,
       drop: icall('drop', []),
       dropConfig: ivalue('dropConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: false}),
     },
@@ -49,7 +49,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
       ...super.runs,
       renderComponent(
           this.$baseRegion.vine,
-          (this.state as ImmutableResolver<RegionState>).$('contentIds'),
+          (this.state as ObservableWalker<RegionState>).$('contentIds'),
           fn => this.renderContents(fn),
       ),
       this.setupHandlePick(),
@@ -68,7 +68,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
   protected abstract get target$(): Observable<HTMLElement>;
 
   private setupHandlePick(): Observable<unknown> {
-    const contentIds = (this.state as ImmutableResolver<RegionState>).$('contentIds');
+    const contentIds = (this.state as ObservableWalker<RegionState>).$('contentIds');
     return this.target$.pipe(
         switchMap(target => ievent(ACTION_EVENT, ActionEvent).resolve(target)),
         filter(event => event.action === pickAction),

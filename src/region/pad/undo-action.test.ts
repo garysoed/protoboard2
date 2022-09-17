@@ -1,9 +1,7 @@
-import {$stateService} from 'grapevine';
-import {arrayThat, assert, run, setup, should, test} from 'gs-testing';
-import {mutableState} from 'gs-tools/export/state';
+import {arrayThat, assert, setup, should, test} from 'gs-testing';
 import {Context, DIV, icall, itarget, ivalue, query, registerCustomElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {EMPTY, merge, Observable, of} from 'rxjs';
+import {BehaviorSubject, EMPTY, merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
@@ -12,12 +10,12 @@ import {TriggerElementHarness} from '../../testing/trigger-element-harness';
 import {onTrigger} from '../../trigger/trigger';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-spec';
 
-import {PadContentType, padState, PadState, StampState} from './pad-state';
+import {PadContentState, PadContentType, padState, PadState, PAD_STATE_TYPE, StampState} from './pad-state';
 import {undoAction} from './undo-action';
 
 const $test = {
   host: {
-    ...create$baseComponent<PadState>().host,
+    ...create$baseComponent<PadState>(PAD_STATE_TYPE).host,
     config: ivalue('config', TRIGGER_SPEC_TYPE),
     undo: icall<[], 'undo'>('undo', []),
   },
@@ -62,9 +60,9 @@ test('@protoboard2/src/region/pad/undo-action', () => {
   const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = $stateService.get(tester.vine).addRoot<PadState>(padState(componentId('id'), {
-      contents: mutableState([]),
-    }))._();
+    const state = padState(componentId('id'), {
+      contents: new BehaviorSubject<readonly PadContentState[]>([]),
+    });
 
     return {state, tester};
   });
@@ -77,7 +75,7 @@ test('@protoboard2/src/region/pad/undo-action', () => {
     const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
     const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
+    _.state.contents.next([otherStamp1, otherStamp2, otherStamp3]);
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
@@ -85,7 +83,7 @@ test('@protoboard2/src/region/pad/undo-action', () => {
     const harness = getHarness(element, 'div', TriggerElementHarness);
     harness.simulateTrigger(TriggerType.BACKSPACE);
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
     ]));
@@ -99,14 +97,14 @@ test('@protoboard2/src/region/pad/undo-action', () => {
     const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
     const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
+    _.state.contents.next([otherStamp1, otherStamp2, otherStamp3]);
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
     element.undo();
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
     ]));

@@ -1,4 +1,4 @@
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, forwardTo, walkObservable} from 'gs-tools/export/rxjs';
 import {Context} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -13,10 +13,13 @@ export function pickAction(
 ): OperatorFunction<unknown, unknown> {
   const activeState = $activeState.get($.vine);
   return pipe(
-      withLatestFrom(flattenResolver($.host.state)._('id'), activeState.$('contentIds')),
+      withLatestFrom(
+          walkObservable($.host.state.pipe(filterNonNullable()))._('id'),
+          activeState.contentIds,
+      ),
       map(([, id, contentIds]) => {
         return [...contentIds, id];
       }),
-      activeState.$('contentIds').set(),
+      forwardTo(activeState.contentIds),
   );
 }

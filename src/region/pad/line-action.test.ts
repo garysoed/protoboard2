@@ -1,9 +1,7 @@
-import {$stateService} from 'grapevine';
-import {arrayThat, assert, objectThat, run, setup, should, test} from 'gs-testing';
-import {mutableState} from 'gs-tools/export/state';
+import {arrayThat, assert, objectThat, setup, should, test} from 'gs-testing';
 import {Context, DIV, icall, itarget, ivalue, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
-import {EMPTY, merge, Observable, of} from 'rxjs';
+import {BehaviorSubject, EMPTY, merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
@@ -13,11 +11,11 @@ import {TriggerType} from '../../types/trigger-spec';
 
 import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE} from './line-action';
 import {LINE_CONFIG_TYPE} from './pad';
-import {HalfLineState, LineState, PadContentType, padState, PadState} from './pad-state';
+import {HalfLineState, LineState, PadContentState, PadContentType, padState, PadState, PAD_STATE_TYPE} from './pad-state';
 
 const $test = {
   host: {
-    ...create$baseComponent<PadState>().host,
+    ...create$baseComponent<PadState>(PAD_STATE_TYPE).host,
     config: ivalue('config', LINE_CONFIG_TYPE),
     line: icall<[LineActionInput], 'line'>('line', [LINE_ACTION_INPUT_TYPE]),
   },
@@ -72,9 +70,9 @@ test('@protoboard2/src/region/pad/line-action', () => {
   const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = $stateService.get(tester.vine).addRoot<PadState>(padState(componentId('id'), {
-      contents: mutableState([]),
-    }))._();
+    const state = padState(componentId('id'), {
+      contents: new BehaviorSubject<readonly PadContentState[]>([]),
+    });
 
     return {state, tester};
   });
@@ -92,7 +90,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
     const otherLine1: LineState = {type: PadContentType.LINE, lineId: 'id1', x1: 12, y1: 23, x2: 34, y2: 45};
     const otherLine2: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 56, y1: 67, x2: 78, y2: 89};
     const otherLine3: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 90, y1: 1, x2: 12, y2: 23};
-    run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
+    _.state.contents.next([otherLine1, otherLine2, otherLine3]);
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
@@ -102,12 +100,12 @@ test('@protoboard2/src/region/pad/line-action', () => {
     // Add the halfline
     harness.simulateClick({clientX: 123, clientY: 456});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<LineState>().haveExactElements([
       otherLine1,
       otherLine2,
       otherLine3,
     ]));
-    assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
+    assert(_.state.halfLine).to.emitWith(objectThat<HalfLineState>().haveProperties({
       x1: 93,
       y1: 446,
       lineId: id,
@@ -116,7 +114,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
     // Complete the line
     harness.simulateClick({clientX: 789, clientY: 234});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<LineState>().haveExactElements([
       otherLine1,
       otherLine2,
       otherLine3,
@@ -129,7 +127,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
         y2: 224,
       }),
     ]));
-    assert(_.state.$('halfLine')).to.emitWith(null);
+    assert(_.state.halfLine).to.emitWith(null);
   });
 
   should('add the new stamp when triggered from function call', () => {
@@ -145,7 +143,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
     const otherLine1: LineState = {type: PadContentType.LINE, lineId: 'id1', x1: 12, y1: 23, x2: 34, y2: 45};
     const otherLine2: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 56, y1: 67, x2: 78, y2: 89};
     const otherLine3: LineState = {type: PadContentType.LINE, lineId: 'id2', x1: 90, y1: 1, x2: 12, y2: 23};
-    run(of([otherLine1, otherLine2, otherLine3]).pipe(_.state.$('contents').set()));
+    _.state.contents.next([otherLine1, otherLine2, otherLine3]);
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
@@ -154,12 +152,12 @@ test('@protoboard2/src/region/pad/line-action', () => {
     // Add the halfline
     element.line({x: 123, y: 456});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<LineState>().haveExactElements([
       otherLine1,
       otherLine2,
       otherLine3,
     ]));
-    assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
+    assert(_.state.halfLine).to.emitWith(objectThat<HalfLineState>().haveProperties({
       x1: 93,
       y1: 446,
       lineId: id,
@@ -168,7 +166,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
     // Complete the line
     element.line({x: 789, y: 234});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<LineState>().haveExactElements([
       otherLine1,
       otherLine2,
       otherLine3,
@@ -181,7 +179,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
         y2: 224,
       }),
     ]));
-    assert(_.state.$('halfLine')).to.emitWith(null);
+    assert(_.state.halfLine).to.emitWith(null);
   });
 
   should('reset the half line if trigger with a different line ID', () => {
@@ -196,7 +194,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
     };
 
     const halfLine = {lineId: otherId, x1: 56, y1: 67};
-    run(of(halfLine).pipe(_.state.$('halfLine').set()));
+    _.state.halfLine.next(halfLine);
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
@@ -206,8 +204,8 @@ test('@protoboard2/src/region/pad/line-action', () => {
     // Add the halfline
     harness.simulateClick({clientX: 123, clientY: 456});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<LineState>().beEmpty());
-    assert(_.state.$('halfLine')).to.emitWith(objectThat<HalfLineState>().haveProperties({
+    assert(_.state.contents).to.emitWith(arrayThat<LineState>().beEmpty());
+    assert(_.state.halfLine).to.emitWith(objectThat<HalfLineState>().haveProperties({
       x1: 93,
       y1: 446,
       lineId: id,

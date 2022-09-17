@@ -1,4 +1,3 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {incrementingRandom} from 'gs-tools/export/random2';
@@ -14,7 +13,7 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 import {TriggerType} from '../types/trigger-spec';
 import {$random, $randomSeed} from '../util/random';
 
-import {D2, d2State, D2State} from './d2';
+import {D2, d2State} from './d2';
 import goldens from './goldens/goldens.json';
 import {D2Harness} from './testing/d2-harness';
 
@@ -41,9 +40,7 @@ test('@protoboard2/src/piece/d2', () => {
   });
 
   should('render the face correctly', () => {
-    const state = $stateService.get(_.tester.vine).addRoot<D2State>(
-        d2State(componentId({}), [FACE_1_SPEC, FACE_2_SPEC]),
-    )._();
+    const state = d2State(componentId({}), [FACE_1_SPEC, FACE_2_SPEC]);
 
     const element = _.tester.bootstrapElement(D2);
     element.state = state;
@@ -59,10 +56,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on keydown', () => {
       const id = componentId('');
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -73,10 +67,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on function call', () => {
       const id = componentId('');
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -94,29 +85,23 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on click', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
       harness.simulateTrigger(TriggerType.CLICK);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
+      assert($activeState.get(_.tester.vine).contentIds).to
           .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
       _.element.pick(undefined);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
+      assert($activeState.get(_.tester.vine).contentIds).to
           .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
   });
@@ -130,10 +115,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on keydown', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -144,10 +126,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on function call', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
       _.element.roll(undefined);
 
@@ -165,10 +144,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on keydown', () => {
       const id = componentId('');
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -179,10 +155,7 @@ test('@protoboard2/src/piece/d2', () => {
 
     should('trigger on function call', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<D2State>(
-          d2State(id, [FACE_1_SPEC, FACE_2_SPEC]),
-      )._();
+      const state = d2State(id, [FACE_1_SPEC, FACE_2_SPEC]);
       _.element.state = state;
       _.element.rotate(undefined);
 

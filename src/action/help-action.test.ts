@@ -9,6 +9,7 @@ import {map} from 'rxjs/operators';
 import {create$baseComponent} from '../core/base-component';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
 import {onTrigger} from '../trigger/trigger';
+import {COMPONENT_STATE_TYPE} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {forwardHelpEvent, helpAction, HelpActionConfig} from './help-action';
@@ -20,7 +21,7 @@ const $parentConfig$ = source(() => new BehaviorSubject<HelpActionConfig>({helpC
 
 const $test = {
   host: {
-    ...create$baseComponent().host,
+    ...create$baseComponent(COMPONENT_STATE_TYPE).host,
   },
   shadow: {
     div: query('#div', DIV, {
@@ -52,7 +53,7 @@ const TEST = registerCustomElement({
 
 const $parent = {
   host: {
-    ...create$baseComponent().host,
+    ...create$baseComponent(COMPONENT_STATE_TYPE).host,
   },
   shadow: {
     container: query('#container', DIV, {

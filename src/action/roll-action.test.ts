@@ -1,9 +1,8 @@
-import {$stateService} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {incrementingRandom} from 'gs-tools/export/random2';
-import {mutableState} from 'gs-tools/export/state';
+import {intersectType, Type} from 'gs-types';
 import {Context, icall, ocase, registerCustomElement, root} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -13,8 +12,8 @@ import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {componentId} from '../id/component-id';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
-import {ComponentState} from '../types/component-state';
-import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
+import {FaceSpec, IsMultifaced, IS_MULTIFACED_TYPE} from '../types/is-multifaced';
 import {$random, $randomSeed} from '../util/random';
 
 import goldens from './goldens/goldens.json';
@@ -22,6 +21,11 @@ import {rollAction} from './roll-action';
 
 
 interface TestState extends ComponentState, IsMultifaced { }
+
+const TEST_STATE_TYPE: Type<TestState> = intersectType([
+  COMPONENT_STATE_TYPE,
+  IS_MULTIFACED_TYPE,
+]);
 
 const FACES = [
   createRenderSpec('orange'),
@@ -31,7 +35,7 @@ const FACES = [
 
 const $test = {
   host: {
-    ...create$baseComponent<TestState>().host,
+    ...create$baseComponent<TestState>(TEST_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -85,11 +89,11 @@ test('@protoboard2/action/roll-action', () => {
 
   test('handleTrigger', () => {
     should('change the current face correctly', () => {
-      const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+      const state = {
         id: componentId({}),
         faces: FACES,
-        currentFaceIndex: mutableState(0),
-      })._();
+        currentFaceIndex: new BehaviorSubject(0),
+      };
       _.seed$.next(0.9);
 
       const element = _.tester.bootstrapElement(TEST);

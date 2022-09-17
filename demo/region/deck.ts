@@ -17,7 +17,7 @@ export const deckDemo = {
 };
 
 class DeckDemo implements Ctrl {
-  private readonly state$ = $state$.get(this.$.vine)._('deck');
+  private readonly state = $state$.get(this.$.vine).deck;
 
   constructor(private readonly $: Context<typeof deckDemo>) { }
 
@@ -25,7 +25,7 @@ class DeckDemo implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      of(this.state$._('deck')).pipe(this.$.shadow.deck.state()),
+      of(this.state.deck).pipe(this.$.shadow.deck.state()),
     ];
   }
 }

@@ -1,7 +1,8 @@
-import {mutableState, MutableState} from 'gs-tools/export/state';
+import {hasPropertiesType, instanceofType, intersectType, Type} from 'gs-types';
+import {BehaviorSubject, Subject} from 'rxjs';
 
 import {ComponentId} from '../../id/component-id';
-import {ComponentState} from '../../types/component-state';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../../types/component-state';
 
 export enum PadContentType {
   LINE,
@@ -33,15 +34,23 @@ export interface HalfLineState {
 }
 
 export interface PadState extends ComponentState {
-  readonly contents: MutableState<readonly PadContentState[]>;
-  readonly halfLine: MutableState<HalfLineState|null>;
+  readonly contents: Subject<readonly PadContentState[]>;
+  readonly halfLine: Subject<HalfLineState|null>;
 }
+
+export const PAD_STATE_TYPE: Type<PadState> = intersectType([
+  hasPropertiesType({
+    contents: instanceofType<Subject<readonly PadContentState[]>>(Subject),
+    halfLine: instanceofType<Subject<HalfLineState|null>>(Subject),
+  }),
+  COMPONENT_STATE_TYPE,
+]);
 
 export function padState(id: ComponentId<unknown>, partial: Partial<PadState> = {}): PadState {
   return {
     id,
-    contents: mutableState([]),
-    halfLine: mutableState(null),
+    contents: new BehaviorSubject<readonly PadContentState[]>([]),
+    halfLine: new BehaviorSubject<HalfLineState|null>(null),
     ...partial,
   };
 }

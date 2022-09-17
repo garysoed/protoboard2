@@ -1,7 +1,6 @@
 import {cache} from 'gs-tools/export/data';
-import {mapNullableTo} from 'gs-tools/export/rxjs';
-import {ImmutableResolver} from 'gs-tools/export/state';
-import {intersectType} from 'gs-types';
+import {mapNullableTo, ObservableWalker} from 'gs-tools/export/rxjs';
+import {intersectType, Type} from 'gs-types';
 import {Context, iattr, icall, ivalue} from 'persona';
 import {IAttr, ICall, IValue} from 'persona/export/internal';
 import {Observable, OperatorFunction} from 'rxjs';
@@ -25,10 +24,10 @@ interface BasePieceSpecType<S extends PieceState> extends BaseComponentSpecType<
   } & BaseComponentSpecType<S>['host'];
 }
 
-export function create$basePiece<S extends PieceState>(): BasePieceSpecType<S> {
+export function create$basePiece<S extends PieceState>(pieceStateType: Type<S>): BasePieceSpecType<S> {
   return {
     host: {
-      ...create$baseComponent<S>().host,
+      ...create$baseComponent<S>(pieceStateType).host,
       height: iattr('height'),
       width: iattr('width'),
       pick: icall('pick', []),
@@ -68,7 +67,7 @@ export abstract class BasePiece<S extends PieceState> extends BaseComponent<S> {
       ...super.runs,
       this.$basePiece.host.height.pipe(mapNullableTo(''), this.renderHeight()),
       this.$basePiece.host.width.pipe(mapNullableTo(''), this.renderWidth()),
-      (this.state as ImmutableResolver<PieceState>).$('rotationDeg').pipe(
+      (this.state as ObservableWalker<PieceState>).$('rotationDeg').pipe(
           renderRotatable(),
           this.renderRotationDeg(),
       ),

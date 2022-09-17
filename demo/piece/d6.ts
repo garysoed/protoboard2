@@ -18,7 +18,7 @@ export const $d6Demo = {
 };
 
 class D6Demo implements Ctrl {
-  private readonly state$ = $state$.get(this.$.vine)._('d6');
+  private readonly state = $state$.get(this.$.vine).d6;
 
   constructor(private readonly $: Context<typeof $d6Demo>) { }
 
@@ -26,7 +26,7 @@ class D6Demo implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      of(this.state$._('diceSlot')).pipe(this.$.shadow.diceSlot.state()),
+      of(this.state.diceSlot).pipe(this.$.shadow.diceSlot.state()),
     ];
   }
 }

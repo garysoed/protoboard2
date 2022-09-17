@@ -1,9 +1,8 @@
 import {cache} from 'gs-tools/export/data';
 import {mapNullableTo} from 'gs-tools/export/rxjs';
-import {mutableState} from 'gs-tools/export/state';
-import {intersectType} from 'gs-types';
+import {intersectType, Type} from 'gs-types';
 import {Context, DIV, iattr, icall, itarget, ivalue, ocase, ostyle, query, registerCustomElement} from 'persona';
-import {combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {pickAction} from '../action/pick-action';
@@ -14,15 +13,21 @@ import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {ComponentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
-import {ComponentState} from '../types/component-state';
-import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
-import {IsRotatable} from '../types/is-rotatable';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
+import {FaceSpec, IsMultifaced, IS_MULTIFACED_TYPE} from '../types/is-multifaced';
+import {IsRotatable, IS_ROTATABLE_TYPE} from '../types/is-rotatable';
 import {TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import template from './d1.html';
 
 
 export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
+
+const D2_STATE_TYPE: Type<D2State> = intersectType([
+  COMPONENT_STATE_TYPE,
+  IS_ROTATABLE_TYPE,
+  IS_MULTIFACED_TYPE,
+]);
 
 
 export function d2State(
@@ -32,16 +37,16 @@ export function d2State(
 ): D2State {
   return {
     id,
-    currentFaceIndex: mutableState(0),
+    currentFaceIndex: new BehaviorSubject(0),
     faces,
-    rotationDeg: mutableState(0),
+    rotationDeg: new BehaviorSubject(0),
     ...partial,
   };
 }
 
 const $d2 = {
   host: {
-    ...create$baseComponent<D2State>().host,
+    ...create$baseComponent<D2State>(D2_STATE_TYPE).host,
     height: iattr('height'),
     flip: icall('flip', []),
     flipConfig: ivalue('flipConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.F}),

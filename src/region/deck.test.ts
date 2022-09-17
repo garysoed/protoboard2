@@ -1,8 +1,7 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {incrementingRandom} from 'gs-tools/export/random2';
-import {mutableState} from 'gs-tools/export/state';
+import {forwardTo} from 'gs-tools/export/rxjs';
 import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
@@ -48,9 +47,7 @@ test('@protoboard2/src/region/deck', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(
-              $stateService.get(tester.vine).addRoot(d1State(id, createRenderSpec(payload)))._(),
-          ).pipe($.state()),
+          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
         ],
       });
     });
@@ -59,10 +56,9 @@ test('@protoboard2/src/region/deck', () => {
   });
 
   should('render the contents correctly', () => {
-    const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot(surfaceState(componentId({}), {
-      contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-    }))._();
+    const state$ = surfaceState(componentId({}), {
+      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+    });
     const element = _.tester.bootstrapElement(DECK);
     element.state = state$;
 
@@ -71,13 +67,12 @@ test('@protoboard2/src/region/deck', () => {
 
   test('drop action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
@@ -102,13 +97,12 @@ test('@protoboard2/src/region/deck', () => {
 
   test('drop all action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(forwardTo(activeContents$)).subscribe();
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
@@ -133,13 +127,12 @@ test('@protoboard2/src/region/deck', () => {
 
   test('pick child action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
@@ -171,13 +164,12 @@ test('@protoboard2/src/region/deck', () => {
 
   test('pick all action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
@@ -206,13 +198,12 @@ test('@protoboard2/src/region/deck', () => {
 
   test('shuffle', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       _.seed$.next(0.8);
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;

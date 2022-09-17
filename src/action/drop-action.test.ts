@@ -1,12 +1,10 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
-import {Observable, of, OperatorFunction} from 'rxjs';
+import {BehaviorSubject, Observable, of, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
@@ -17,7 +15,7 @@ import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {onTrigger} from '../trigger/trigger';
-import {RegionState} from '../types/region-state';
+import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {dropAction} from './drop-action';
@@ -26,7 +24,7 @@ import goldens from './goldens/goldens.json';
 
 const $test = {
   host: {
-    ...create$baseRegion<RegionState>().host,
+    ...create$baseRegion<RegionState>(REGION_STATE_TYPE).host,
   },
   shadow: {
     div: query('#div', DIV, {
@@ -87,12 +85,7 @@ test('@protoboard2/src/action/drop-action', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(
-              $stateService.get(tester.vine).addRoot(
-                  d1State(id, createRenderSpec(payload)),
-              )._(),
-          )
-              .pipe($.state()),
+          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
         ],
       });
     });
@@ -101,14 +94,13 @@ test('@protoboard2/src/action/drop-action', () => {
 
   should('move the component from active state correctly', () => {
     const id = componentId('steelblue');
-    const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
-    of([id]).pipe(activeIds$.set()).subscribe();
+    const activeIds$ = $activeState.get(_.tester.vine).contentIds;
+    activeIds$.next([id]);
 
-    const stateService = $stateService.get(_.tester.vine);
-    const regionState = stateService.addRoot<RegionState>({
+    const regionState = {
       id: componentId('region'),
-      contentIds: mutableState([]),
-    })._();
+      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+    };
     const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
 
@@ -120,13 +112,12 @@ test('@protoboard2/src/action/drop-action', () => {
   });
 
   should('do nothing if there are no components in active state', () => {
-    const activeIds$ = $activeState.get(_.tester.vine).$('contentIds');
+    const activeIds$ = $activeState.get(_.tester.vine).contentIds;
 
-    const stateService = $stateService.get(_.tester.vine);
-    const regionState = stateService.addRoot<RegionState>({
+    const regionState = {
       id: componentId('region'),
-      contentIds: mutableState([]),
-    })._();
+      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+    };
     const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
 

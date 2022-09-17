@@ -1,5 +1,4 @@
-import {$stateService} from 'grapevine';
-import {assert, run, runEnvironment, setup, should, test} from 'gs-testing';
+import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {ostyle, ParseType, query, renderString, SVG} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
@@ -59,7 +58,7 @@ test('@protoboard2/src/region/pad/pad', () => {
     const STAMP_B_ID = 'b';
 
     setup(_, () => {
-      const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
+      const state = padState(componentId('id'));
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
       return {..._, element, state};
@@ -83,7 +82,7 @@ test('@protoboard2/src/region/pad/pad', () => {
 
       const oldStamp1: StampState = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
       const oldStamp2: StampState = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
-      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
+      _.state.contents.next([oldStamp1, oldStamp2]);
 
       const harness = getHarness(_.element, PadHarness);
       harness.simulateTrigger(TriggerType.CLICK, {clientX: 123, clientY: 456});
@@ -109,7 +108,7 @@ test('@protoboard2/src/region/pad/pad', () => {
 
       const oldStamp1: StampState = {type: PadContentType.STAMP, stampId: STAMP_A_ID, x: 12, y: 34};
       const oldStamp2: StampState = {type: PadContentType.STAMP, stampId: STAMP_B_ID, x: 56, y: 78};
-      run(of([oldStamp1, oldStamp2]).pipe(_.state.$('contents').set()));
+      _.state.contents.next([oldStamp1, oldStamp2]);
 
       _.element.stamp({stampId: STAMP_A_ID, x: 123, y: 456});
 
@@ -121,7 +120,7 @@ test('@protoboard2/src/region/pad/pad', () => {
     const LINE_ID = 'line';
 
     setup(_, () => {
-      const state = $stateService.get(_.tester.vine).addRoot(padState(componentId('id')))._();
+      const state = padState(componentId('id'));
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
 

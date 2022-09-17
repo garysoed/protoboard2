@@ -1,4 +1,4 @@
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
 import {merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
@@ -27,8 +27,8 @@ interface Config {
 
 export function lineActionFactory(config: Config, target$: Observable<Element>): LineAction {
   return $ => {
-    const contents$ = flattenResolver($.host.state).$('contents');
-    const halfLine$ = flattenResolver($.host.state).$('halfLine');
+    const contents$ = walkObservable($.host.state.pipe(filterNonNullable())).$('contents');
+    const halfLine$ = walkObservable($.host.state.pipe(filterNonNullable())).$('halfLine');
     return pipe(
         withLatestFrom(contents$, halfLine$, target$),
         switchMap(([input, contents, halfLine, target]) => {

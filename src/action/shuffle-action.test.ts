@@ -1,12 +1,10 @@
-import {$stateService} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
 import {incrementingRandom} from 'gs-tools/export/random2';
-import {mutableState} from 'gs-tools/export/state';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, OperatorFunction, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
@@ -14,7 +12,7 @@ import {componentId, ComponentId} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {renderTestFace, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
-import {RegionState} from '../types/region-state';
+import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 import {$random, $randomSeed} from '../util/random';
 
 import goldens from './goldens/goldens.json';
@@ -25,7 +23,7 @@ interface TestState extends RegionState { }
 
 const $test = {
   host: {
-    ...create$baseRegion<TestState>().host,
+    ...create$baseRegion<TestState>(REGION_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -88,10 +86,12 @@ test('@protoboard2/action/shuffle-action', () => {
   should('shuffle the child elements correctly', () => {
     _.seed$.next(0.9);
 
-    const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+    const state: TestState = {
       id: componentId({}),
-      contentIds: mutableState(['orange', 'steelblue', 'purple', 'red'].map(componentId)),
-    })._();
+      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(
+          ['orange', 'steelblue', 'purple', 'red'].map(componentId),
+      ),
+    };
 
     const element = _.tester.bootstrapElement(TEST);
     element.state = state;

@@ -1,7 +1,6 @@
-import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {Context} from 'persona';
-import {concat, of, OperatorFunction, pipe} from 'rxjs';
+import {of, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
@@ -11,8 +10,8 @@ import {IsContainer} from '../types/is-container';
 
 export function dropAction($: Context<BaseComponentSpecType<IsContainer>>): OperatorFunction<unknown, unknown> {
   const activeState = $activeState.get($.vine);
-  const activeContentIds = activeState.$('contentIds');
-  const regionContentIds = flattenResolver($.host.state).$('contentIds');
+  const activeContentIds = activeState.contentIds;
+  const regionContentIds = walkObservable($.host.state.pipe(filterNonNullable())).$('contentIds');
   return pipe(
       withLatestFrom(regionContentIds, activeContentIds),
       map(([, regionIds, activeIds]) => {
@@ -29,10 +28,8 @@ export function dropAction($: Context<BaseComponentSpecType<IsContainer>>): Oper
       }),
       filterNonNullable(),
       switchMap(({activeContents, regionContents}) => {
-        return concat(
-            of(activeContents).pipe(activeContentIds.set()),
-            of(regionContents).pipe(regionContentIds.set()),
-        );
+        activeContentIds.next(activeContents);
+        return of(regionContents).pipe(regionContentIds.set());
       }),
   );
 }

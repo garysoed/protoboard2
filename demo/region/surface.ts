@@ -17,7 +17,7 @@ export const surfaceDemo = {
 };
 
 class SurfaceDemo implements Ctrl {
-  private readonly state$ = $state$.get(this.$.vine)._('surface');
+  private readonly state = $state$.get(this.$.vine).surface;
 
   constructor(private readonly $: Context<typeof surfaceDemo>) { }
 
@@ -25,7 +25,7 @@ class SurfaceDemo implements Ctrl {
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      of(this.state$._('surface')).pipe(this.$.shadow.surface.state()),
+      of(this.state.surface).pipe(this.$.shadow.surface.state()),
     ];
   }
 }

@@ -1,11 +1,9 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {mutableState} from 'gs-tools/export/state';
 import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
@@ -18,7 +16,7 @@ import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override'
 import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
-import {SURFACE, surfaceState, SurfaceState} from './surface';
+import {SURFACE, surfaceState} from './surface';
 import {SlotHarness} from './testing/slot-harness';
 
 
@@ -37,9 +35,7 @@ test('@protoboard2/src/region/surface', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(
-              $stateService.get(tester.vine).addRoot(d1State(id, createRenderSpec(payload)))._(),
-          ).pipe($.state()),
+          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
         ],
       });
     });
@@ -48,10 +44,9 @@ test('@protoboard2/src/region/surface', () => {
   });
 
   should('render the contents correctly', () => {
-    const stateService = $stateService.get(_.tester.vine);
-    const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
-      contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-    }))._();
+    const state$ = surfaceState(componentId({}), {
+      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+    });
     const element = _.tester.bootstrapElement(SURFACE);
     element.state = state$;
 
@@ -60,13 +55,12 @@ test('@protoboard2/src/region/surface', () => {
 
   test('drop action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      activeContents$.next([componentId('steelblue')]);
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
 
@@ -92,13 +86,12 @@ test('@protoboard2/src/region/surface', () => {
 
   test('pick child action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).$('contentIds');
-      of([componentId('steelblue')]).pipe(activeContents$.set()).subscribe();
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      activeContents$.next([componentId('steelblue')]);
 
-      const stateService = $stateService.get(_.tester.vine);
-      const state$ = stateService.addRoot<SurfaceState>(surfaceState(componentId({}), {
-        contentIds: mutableState(['red', 'green', 'blue'].map(componentId)),
-      }))._();
+      const state$ = surfaceState(componentId({}), {
+        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
 

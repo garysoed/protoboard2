@@ -1,6 +1,5 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, objectThat, run, setup, should, test} from 'gs-testing';
-import {mutableState} from 'gs-tools/export/state';
+import {forwardTo} from 'gs-tools/export/rxjs';
 import {Context, DIV, icall, itarget, ivalue, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {EMPTY, merge, Observable, of} from 'rxjs';
@@ -12,13 +11,13 @@ import {onTrigger} from '../../trigger/trigger';
 import {TriggerType} from '../../types/trigger-spec';
 
 import {STAMP_CONFIG_TYPE} from './pad';
-import {PadContentType, padState, PadState, StampState} from './pad-state';
+import {PadContentType, padState, PadState, PAD_STATE_TYPE, StampState} from './pad-state';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE} from './stamp-action';
 
 
 const $test = {
   host: {
-    ...create$baseComponent<PadState>().host,
+    ...create$baseComponent<PadState>(PAD_STATE_TYPE).host,
     config: ivalue('config', STAMP_CONFIG_TYPE),
     stamp: icall<[StampActionInput], 'stamp'>('stamp', [STAMP_ACTION_INPUT_TYPE]),
   },
@@ -73,9 +72,7 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
   const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = $stateService.get(tester.vine).addRoot<PadState>(padState(componentId('id'), {
-      contents: mutableState([]),
-    }))._();
+    const state = padState(componentId('id'));
 
     return {state, tester};
   });
@@ -93,7 +90,7 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
     const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
     const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
+    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(forwardTo(_.state.contents)));
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
@@ -101,7 +98,7 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
     const harness = getHarness(element, 'div', ElementHarness);
     harness.simulateClick({clientX: 123, clientY: 456});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
       otherStamp3,
@@ -122,14 +119,14 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
     const otherStamp1: StampState = {type: PadContentType.STAMP, stampId: 'id1', x: 12, y: 23};
     const otherStamp2: StampState = {type: PadContentType.STAMP, stampId: 'id2', x: 34, y: 45};
     const otherStamp3: StampState = {type: PadContentType.STAMP, stampId: 'id3', x: 56, y: 67};
-    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(_.state.$('contents').set()));
+    run(of([otherStamp1, otherStamp2, otherStamp3]).pipe(forwardTo(_.state.contents)));
 
     const element = _.tester.bootstrapElement(TEST);
     element.config = config;
     element.state = _.state;
     element.stamp({x: 123, y: 456});
 
-    assert(_.state.$('contents')).to.emitWith(arrayThat<StampState>().haveExactElements([
+    assert(_.state.contents).to.emitWith(arrayThat<StampState>().haveExactElements([
       otherStamp1,
       otherStamp2,
       otherStamp3,

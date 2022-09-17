@@ -29,14 +29,14 @@ const STAMP_MEEPLE_ID = FaceType.MEEPLE;
 
 
 class PadDemo implements Ctrl {
-  private readonly state$ = $state$.get(this.$.vine)._('pad');
+  private readonly state = $state$.get(this.$.vine).pad;
 
   constructor(private readonly $: Context<typeof $padDemo>) { }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      of(this.state$._('pad')).pipe(this.$.shadow.pad.state()),
+      of(this.state.pad).pipe(this.$.shadow.pad.state()),
       of([
         {lineId: LINE_RED_ID, lineName: 'Red', type: TriggerType.Q, renderFn: () => renderLine('LINE_RED_ID')},
         {lineId: LINE_GREEN_ID, lineName: 'Green', type: TriggerType.W, renderFn: () => renderLine('LINE_GREEN_ID')},

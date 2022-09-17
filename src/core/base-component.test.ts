@@ -1,10 +1,10 @@
-import {$stateService, source} from 'grapevine';
+import {source} from 'grapevine';
 import {assert, createSmartMatcher, createSpySubject, setup, should, test} from 'gs-testing';
 import {cache} from 'gs-tools/export/data';
-import {mutableState, MutableState} from 'gs-tools/export/state';
+import {hasPropertiesType, instanceofType, intersectType, Type} from 'gs-types';
 import {Context, DIV, icall, itarget, query, registerCustomElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
-import {EMPTY, fromEvent, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, EMPTY, fromEvent, Observable, of, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {ActionEvent, ACTION_EVENT} from '../action/action-event';
@@ -12,7 +12,7 @@ import {pickAction} from '../action/pick-action';
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {componentId} from '../id/component-id';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
-import {ComponentState} from '../types/component-state';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {BaseComponent, create$baseComponent} from './base-component';
@@ -24,14 +24,21 @@ const ACTION_2 = 'Action 2';
 const COMPONENT_NAME = 'Component Name';
 
 interface TestState extends ComponentState {
-  readonly value: MutableState<number>;
+  readonly value: Subject<number>;
 }
+
+const TEST_STATE_TYPE: Type<TestState> = intersectType([
+  COMPONENT_STATE_TYPE,
+  hasPropertiesType({
+    value: instanceofType<Subject<number>>(Subject),
+  }),
+]);
 
 const $onUpdate$ = source(() => new Subject<number>());
 
 const $child = {
   host: {
-    ...create$baseComponent().host,
+    ...create$baseComponent(COMPONENT_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -70,7 +77,7 @@ const CHILD = registerCustomElement({
 
 const $test = {
   host: {
-    ...create$baseComponent<TestState>().host,
+    ...create$baseComponent<TestState>(TEST_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -134,12 +141,11 @@ test('@protoboard2/src/core/base-component', () => {
 
   test('installAction', () => {
     should('trigger the action and dispatch the event', () => {
-      const stateService = $stateService.get(_.tester.vine);
       const id = componentId({});
-      const state = stateService.addRoot(mutableState<TestState>({
+      const state = {
         id,
-        value: mutableState(123),
-      })).$();
+        value: new BehaviorSubject(123),
+      };
 
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
@@ -154,12 +160,11 @@ test('@protoboard2/src/core/base-component', () => {
 
   test('setupHelpAction', () => {
     setup(_, () => {
-      const stateService = $stateService.get(_.tester.vine);
       const id = componentId({});
-      const state = stateService.addRoot(mutableState<TestState>({
+      const state = {
         id,
-        value: mutableState(123),
-      })).$();
+        value: new BehaviorSubject(123),
+      };
 
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
@@ -212,11 +217,10 @@ test('@protoboard2/src/core/base-component', () => {
 
   test('updateState', () => {
     should('update the given mutable state, if there is one', () => {
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot(mutableState<TestState>({
+      const state = {
         id: componentId('test'),
-        value: mutableState(123),
-      })).$();
+        value: new BehaviorSubject(123),
+      };
 
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
@@ -224,22 +228,21 @@ test('@protoboard2/src/core/base-component', () => {
       const newValue = 345;
       $onUpdate$.get(_.tester.vine).next(newValue);
 
-      assert(state.$('value')).to.emitSequence([newValue]);
+      assert(state.value).to.emitSequence([newValue]);
     });
 
     should('do nothing if there are no given mutable states', () => {
-      const stateService = $stateService.get(_.tester.vine);
       const value = 123;
-      const state = stateService.addRoot(mutableState({
+      const state = {
         id: 'id',
-        value: mutableState(value),
-      })).$();
+        value: new BehaviorSubject(value),
+      };
 
       _.tester.bootstrapElement(TEST);
 
       $onUpdate$.get(_.tester.vine).next(345);
 
-      assert(state.$('value')).to.emitSequence([value]);
+      assert(state.value).to.emitSequence([value]);
     });
   });
 });

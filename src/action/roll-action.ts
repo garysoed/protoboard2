@@ -1,5 +1,5 @@
 import {asRandom} from 'gs-tools/export/random2';
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {Context} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -12,8 +12,8 @@ import {$random, $randomSeed} from '../util/random';
 export function rollAction(
     $: Context<BaseComponentSpecType<IsMultifaced>>,
 ): OperatorFunction<unknown, unknown> {
-  const state$ = flattenResolver($.host.state);
-  const faces$ = state$._('faces');
+  const stateWalker = walkObservable($.host.state.pipe(filterNonNullable()));
+  const faces$ = stateWalker._('faces');
   return pipe(
       withLatestFrom(faces$),
       map(([, faces]) => {
@@ -21,6 +21,6 @@ export function rollAction(
           return asRandom(Math.floor(randomValue * faces.length));
         }).run($randomSeed.get($.vine)());
       }),
-      state$.$('currentFaceIndex').set(),
+      stateWalker.$('currentFaceIndex').set(),
   );
 }

@@ -50,10 +50,9 @@ export class Active implements Ctrl {
       this.left$.pipe(this.$.shadow.root.left()),
       this.top$.pipe(this.$.shadow.root.top()),
 
-
       renderComponent(
           this.$.vine,
-          $activeState.get(this.$.vine).$('contentIds')
+          $activeState.get(this.$.vine).contentIds
               .pipe(map(specs => specs.slice(0, COUNT_THRESHOLD))),
           fn => this.$.shadow.root.content(map(id => fn(id))),
       ),
@@ -62,7 +61,7 @@ export class Active implements Ctrl {
 
   @cache()
   private get itemCount$(): Observable<number> {
-    return $activeState.get(this.$.vine).$('contentIds').pipe(
+    return $activeState.get(this.$.vine).contentIds.pipe(
         map(ids => (ids?.length) ?? 0),
     );
   }

@@ -1,4 +1,4 @@
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
 import {Observable, of, OperatorFunction, pipe} from 'rxjs';
@@ -28,7 +28,7 @@ type StampAction = (context: Context<BaseComponentSpecType<PadState>>) => Operat
 
 export function stampActionFactory(config: Config, target$: Observable<Element>): StampAction {
   return $ => {
-    const stamps$ = flattenResolver($.host.state).$('contents');
+    const stamps$ = walkObservable($.host.state.pipe(filterNonNullable())).$('contents');
     return pipe(
         withLatestFrom(stamps$, target$),
         switchMap(([input, stamps, target]) => {

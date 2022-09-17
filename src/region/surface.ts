@@ -1,21 +1,23 @@
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
+import {Type} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement} from 'persona';
-import {Observable, OperatorFunction} from 'rxjs';
+import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {ComponentId} from '../id/component-id';
-import {RegionState} from '../types/region-state';
+import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 
 import template from './surface.html';
 
 
 export interface SurfaceState extends RegionState {}
 
+const SURFACE_STATE_TYPE: Type<SurfaceState> = REGION_STATE_TYPE;
+
 const $surface = {
   host: {
-    ...create$baseRegion<SurfaceState>().host,
+    ...create$baseRegion<SurfaceState>(SURFACE_STATE_TYPE).host,
   },
   shadow: {
     root: query('#root', DIV, {
@@ -29,7 +31,7 @@ const $surface = {
 export function surfaceState(id: ComponentId<unknown>, input: Partial<SurfaceState> = {}): SurfaceState {
   return {
     id,
-    contentIds: mutableState([]),
+    contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
     ...input,
   };
 }

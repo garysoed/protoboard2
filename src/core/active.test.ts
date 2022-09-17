@@ -37,7 +37,7 @@ test('@protoboard2/src/core/active', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
-      of([]).pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+      $activeState.get(_.tester.vine).contentIds.next([]);
 
       assert(element).to.matchSnapshot('active__empty.html');
     });
@@ -46,9 +46,7 @@ test('@protoboard2/src/core/active', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one'].map(componentId))
-          .pipe($activeState.get(_.tester.vine).$('contentIds').set())
-          .subscribe();
+      $activeState.get(_.tester.vine).contentIds.next(['one'].map(componentId));
 
       assert(element).to.matchSnapshot('active__one.html');
     });
@@ -57,8 +55,7 @@ test('@protoboard2/src/core/active', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one', 'two', 'three', 'four', 'five'].map(componentId))
-          .pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+      $activeState.get(_.tester.vine).contentIds.next(['one', 'two', 'three', 'four', 'five'].map(componentId));
 
       assert(element).to.matchSnapshot('active__overflow.html');
     });
@@ -78,8 +75,7 @@ test('@protoboard2/src/core/active', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
-      of(['one'].map(componentId))
-          .pipe($activeState.get(_.tester.vine).$('contentIds').set()).subscribe();
+      $activeState.get(_.tester.vine).contentIds.next(['one'].map(componentId));
 
       window.dispatchEvent(new MouseEvent('mousemove', {clientX: left}));
       _.tester.fakeTime.tickToTrigger();

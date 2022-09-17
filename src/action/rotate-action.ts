@@ -1,5 +1,5 @@
 import {$asArray, $map, $sort, $zip, countableIterable, normal, withMap} from 'gs-tools/export/collect';
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {$pipe} from 'gs-tools/export/typescript';
 import {arrayOfType, hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
@@ -26,7 +26,7 @@ export function rotateAction(
     $: Context<BaseComponentSpecType<IsRotatable>>,
     config$: Observable<RotateConfig>,
 ): OperatorFunction<unknown, unknown> {
-  const currentRotation$ = flattenResolver($.host.state).$('rotationDeg');
+  const currentRotation$ = walkObservable($.host.state.pipe(filterNonNullable())).$('rotationDeg');
   return pipe(
       withLatestFrom(config$, currentRotation$),
       map(([, config, rotationDeg]) => {

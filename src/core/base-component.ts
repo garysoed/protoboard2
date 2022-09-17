@@ -1,10 +1,11 @@
 import {$asArray, $map} from 'gs-tools/export/collect';
-import {flattenResolver, ImmutableResolver, MutableResolver} from 'gs-tools/export/state';
+import {filterNonNullable, MutableWalker, ObservableWalker, walkObservable} from 'gs-tools/export/rxjs';
 import {$pipe} from 'gs-tools/export/typescript';
+import {Type} from 'gs-types';
 import {renderTheme} from 'mask';
 import {Context, Ctrl, iattr, ivalue, oevent} from 'persona';
 import {IAttr, IValue, OEvent} from 'persona/export/internal';
-import {BehaviorSubject, combineLatest, EMPTY, merge, Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {BehaviorSubject, combineLatest, merge, Observable, of, OperatorFunction} from 'rxjs';
 import {map, startWith, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {Action} from '../action/action';
@@ -14,7 +15,6 @@ import {ActionTrigger} from '../action/show-help-event';
 import {onTrigger} from '../trigger/trigger';
 import {ComponentState} from '../types/component-state';
 import {TriggerSpec, TriggerType} from '../types/trigger-spec';
-import {immutableResolverType} from '../util/immutable-resolver-type';
 
 
 interface ActionInstalledPayload {
@@ -28,35 +28,35 @@ export interface BaseComponentSpecType<S> {
   host: {
     readonly label: IAttr<string>;
     readonly onAction: OEvent<ActionEvent>;
-    readonly state: IValue<ImmutableResolver<S>|undefined, 'state'>;
+    readonly state: IValue<S|undefined, 'state'>;
   };
 }
 
-export function create$baseComponent<S extends ComponentState>(): BaseComponentSpecType<S> {
+export function create$baseComponent<State extends ComponentState>(stateType: Type<State>): BaseComponentSpecType<State> {
   return {
     host: {
       label: iattr('label'),
       onAction: oevent(ACTION_EVENT, ActionEvent),
-      state: ivalue('state', immutableResolverType<S>()),
+      state: ivalue('state', stateType),
     },
   };
 }
 
 
-export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
+export abstract class BaseComponent<State extends ComponentState> implements Ctrl {
   private readonly installedActionsArray$ = new BehaviorSubject<readonly ActionInstalledPayload[]>([]);
 
   constructor(
-      private readonly $baseComponent: Context<BaseComponentSpecType<S>>,
+      private readonly $baseComponent: Context<BaseComponentSpecType<State>>,
       private readonly defaultComponentName: string,
   ) { }
 
-  protected installAction<C, I>(
-      action: Action<S, C, I>,
+  protected installAction<Config, CallArgs>(
+      action: Action<State, Config, CallArgs>,
       actionName: string,
       target$: Observable<Element>,
-      config$: Observable<TriggerSpec&C>,
-      onCall$: Observable<I>,
+      config$: Observable<TriggerSpec&Config>,
+      onCall$: Observable<CallArgs>,
   ): Observable<unknown> {
     this.installedActionsArray$.next([
       ...this.installedActionsArray$.getValue(),
@@ -75,8 +75,8 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
         );
   }
 
-  protected get state(): ImmutableResolver<S> {
-    return flattenResolver(this.$baseComponent.host.state);
+  protected get state(): ObservableWalker<State> {
+    return walkObservable(this.$baseComponent.host.state.pipe(filterNonNullable()));
   }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
@@ -143,17 +143,8 @@ export abstract class BaseComponent<S extends ComponentState> implements Ctrl {
   }
 
   updateState<T>(
-      mapFn: (resolverFrom: ImmutableResolver<S>) => MutableResolver<T>,
+      mapFn: (resolverFrom: ObservableWalker<State>) => MutableWalker<T>,
   ): OperatorFunction<T, unknown> {
-    return pipe(
-        withLatestFrom(this.$baseComponent.host.state),
-        switchMap(([value, mutable]) => {
-          if (!mutable) {
-            return EMPTY;
-          }
-
-          return of(value).pipe(mapFn(mutable).set());
-        }),
-    );
+    return mapFn(this.state).set();
   }
 }

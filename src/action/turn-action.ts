@@ -1,4 +1,4 @@
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {hasPropertiesType, numberType} from 'gs-types';
 import {Context} from 'persona';
 import {Observable, OperatorFunction, pipe} from 'rxjs';
@@ -26,7 +26,7 @@ export function turnAction(
     $: Context<BaseComponentSpecType<IsMultifaced>>,
     config$: Observable<TurnConfig>,
 ): OperatorFunction<unknown, unknown> {
-  const state$ = flattenResolver($.host.state);
+  const state$ = walkObservable($.host.state.pipe(filterNonNullable()));
   const currentFaceIndex$ = state$.$('currentFaceIndex');
   const faces$ = state$._('faces');
   return pipe(

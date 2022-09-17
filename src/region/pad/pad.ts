@@ -11,7 +11,7 @@ import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../../types/trigger-s
 
 
 import {lineActionFactory, LineActionInput, LINE_ACTION_INPUT_TYPE} from './line-action';
-import {HalfLineState, PadContentState, PadContentType, PadState, StampState} from './pad-state';
+import {HalfLineState, PadContentState, PadContentType, PadState, PAD_STATE_TYPE, StampState} from './pad-state';
 import template from './pad.html';
 import {stampActionFactory, StampActionInput, STAMP_ACTION_INPUT_TYPE} from './stamp-action';
 import {undoAction} from './undo-action';
@@ -81,7 +81,7 @@ type RenderHalfLineFn = (state: HalfLineState|null) => RenderSpec|null;
 
 const $pad = {
   host: {
-    ...create$baseComponent<PadState>().host,
+    ...create$baseComponent<PadState>(PAD_STATE_TYPE).host,
     lineConfigs: ivalue('lineConfigs', arrayOfType(LINE_CONFIG_TYPE)),
     line: icall<[LineGenericActionInput], 'line'>('line', [LINE_GENERIC_ACTION_INPUT_TYPE]),
     stampConfigs: ivalue('stampConfigs', arrayOfType(STAMP_CONFIG_TYPE)),

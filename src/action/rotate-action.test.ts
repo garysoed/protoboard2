@@ -1,8 +1,8 @@
-import {$stateService, source} from 'grapevine';
+import {source} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
+import {intersectType} from 'gs-types';
 import {Context, DIV, icall, itarget, ostyle, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -12,8 +12,8 @@ import {componentId} from '../id/component-id';
 import {renderRotatable} from '../render/render-rotatable';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
-import {ComponentState} from '../types/component-state';
-import {IsRotatable} from '../types/is-rotatable';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
+import {IsRotatable, IS_ROTATABLE_TYPE} from '../types/is-rotatable';
 
 import goldens from './goldens/goldens.json';
 import {rotateAction, RotateConfig} from './rotate-action';
@@ -21,11 +21,16 @@ import {rotateAction, RotateConfig} from './rotate-action';
 
 interface TestState extends ComponentState, IsRotatable { }
 
+const TEST_STATE_TYPE = intersectType([
+  COMPONENT_STATE_TYPE,
+  IS_ROTATABLE_TYPE,
+]);
+
 const $config$ = source(() => new BehaviorSubject<RotateConfig>({stops: []}));
 
 const $test = {
   host: {
-    ...create$baseComponent<TestState>().host,
+    ...create$baseComponent<TestState>(TEST_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -76,10 +81,10 @@ test('@protoboard2/src/action/rotate-action', () => {
   test('handleTrigger$', () => {
     should('change the rotation to the next index', () => {
       $config$.get(_.tester.vine).next({stops: [11, 22, 33]});
-      const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+      const state = {
         id: componentId({}),
-        rotationDeg: mutableState(0),
-      })._();
+        rotationDeg: new BehaviorSubject(0),
+      };
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
       element.trigger(undefined);
@@ -89,10 +94,10 @@ test('@protoboard2/src/action/rotate-action', () => {
 
     should('handle rotations that are more than 360', () => {
       $config$.get(_.tester.vine).next({stops: [123, 456, 678]});
-      const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+      const state = {
         id: componentId({}),
-        rotationDeg: mutableState(910),
-      })._();
+        rotationDeg: new BehaviorSubject(910),
+      };
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
       element.trigger(undefined);

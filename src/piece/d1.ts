@@ -1,13 +1,13 @@
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
+import {hasPropertiesType, intersectType} from 'gs-types';
 import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} from 'persona';
-import {Observable, OperatorFunction} from 'rxjs';
+import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
 import {ComponentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
-import {FaceSpec} from '../types/is-multifaced';
-import {PieceState} from '../types/piece-state';
+import {FaceSpec, FACE_SPEC_TYPE} from '../types/is-multifaced';
+import {PieceState, PIECE_STATE_TYPE} from '../types/piece-state';
 
 import template from './d1.html';
 
@@ -16,11 +16,18 @@ export interface D1State extends PieceState {
   readonly face: FaceSpec;
 }
 
+const D1_STATE_TYPE = intersectType([
+  PIECE_STATE_TYPE,
+  hasPropertiesType({
+    face: FACE_SPEC_TYPE,
+  }),
+]);
+
 export function d1State(id: ComponentId<unknown>, face: FaceSpec, partial: Partial<D1State> = {}): D1State {
   return {
     id,
     face,
-    rotationDeg: mutableState(0),
+    rotationDeg: new BehaviorSubject(0),
     ...partial,
   };
 }
@@ -32,7 +39,7 @@ export function d1State(id: ComponentId<unknown>, face: FaceSpec, partial: Parti
  */
 const $d1 = {
   host: {
-    ...create$basePiece<D1State>().host,
+    ...create$basePiece<D1State>(D1_STATE_TYPE).host,
   },
   shadow: {
     container: query('#container', SLOT, {

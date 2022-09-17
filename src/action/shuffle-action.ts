@@ -1,6 +1,5 @@
 import {shuffle} from 'gs-tools/export/random2';
-import {filterNonNullable} from 'gs-tools/export/rxjs';
-import {flattenResolver} from 'gs-tools/export/state';
+import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {Context} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';
 import {map, withLatestFrom} from 'rxjs/operators';
@@ -13,7 +12,7 @@ import {$random, $randomSeed} from '../util/random';
 export function shuffleAction(
     $: Context<BaseComponentSpecType<IsContainer>>,
 ): OperatorFunction<unknown, unknown> {
-  const state$ = flattenResolver($.host.state);
+  const state$ = walkObservable($.host.state.pipe(filterNonNullable()));
   const contentIds$ = state$.$('contentIds');
   return pipe(
       withLatestFrom(contentIds$),
@@ -24,5 +23,3 @@ export function shuffleAction(
       contentIds$.set(),
   );
 }
-
-

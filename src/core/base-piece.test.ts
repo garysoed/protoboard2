@@ -1,16 +1,15 @@
-import {$stateService} from 'grapevine';
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {mutableState} from 'gs-tools/export/state';
+import {Type} from 'gs-types';
 import {Context, DIV, itarget, ocase, ostyle, query, registerCustomElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
-import {Observable, OperatorFunction} from 'rxjs';
+import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 
 import {ComponentId, componentId} from '../id/component-id';
 import {TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerElementHarness} from '../testing/trigger-element-harness';
-import {PieceState} from '../types/piece-state';
+import {PieceState, PIECE_STATE_TYPE} from '../types/piece-state';
 import {TriggerType} from '../types/trigger-spec';
 
 import {$activeState} from './active-spec';
@@ -20,9 +19,11 @@ import goldens from './goldens/goldens.json';
 
 interface TestState extends PieceState { }
 
+const TEST_STATE_TYPE: Type<TestState> = PIECE_STATE_TYPE;
+
 const $test = {
   host: {
-    ...create$basePiece<TestState>().host,
+    ...create$basePiece<TestState>(TEST_STATE_TYPE).host,
   },
   shadow: {
     container: query('#container', DIV, {
@@ -84,25 +85,23 @@ test('@protoboard2/src/core/base-piece', () => {
 
     should('trigger on click', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
+      const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
 
       const harness = getHarness(_.element, '#container', TriggerElementHarness);
       harness.simulateTrigger(TriggerType.CLICK);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
+      assert($activeState.get(_.tester.vine).contentIds).to
           .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
+      const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
       _.element.pick(undefined);
 
-      assert($activeState.get(_.tester.vine).$('contentIds')).to
+      assert($activeState.get(_.tester.vine).contentIds).to
           .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
     });
   });
@@ -117,8 +116,7 @@ test('@protoboard2/src/core/base-piece', () => {
 
     should('trigger on R', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
+      const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
 
       const harness = getHarness(_.element, '#container', TriggerElementHarness);
@@ -129,8 +127,7 @@ test('@protoboard2/src/core/base-piece', () => {
 
     should('trigger on function call', () => {
       const id = componentId({});
-      const stateService = $stateService.get(_.tester.vine);
-      const state = stateService.addRoot<TestState>({id, rotationDeg: mutableState(0)})._();
+      const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
       _.element.rotate(undefined);
 

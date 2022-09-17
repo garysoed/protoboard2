@@ -1,14 +1,15 @@
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
+import {forwardTo} from 'gs-tools/export/rxjs';
+import {Type} from 'gs-types';
 import {Context, DIV, icall, itarget, ivalue, ocase, query, registerCustomElement} from 'persona';
-import {concat, EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
-import {map, switchMap, switchMapTo, withLatestFrom} from 'rxjs/operators';
+import {BehaviorSubject, concat, EMPTY, Observable, of, OperatorFunction, pipe} from 'rxjs';
+import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 
 import {shuffleAction} from '../action/shuffle-action';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
 import {ComponentId} from '../id/component-id';
-import {RegionState} from '../types/region-state';
+import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
 import template from './deck.html';
@@ -16,17 +17,19 @@ import template from './deck.html';
 
 export interface DeckState extends RegionState { }
 
+export const DECK_STATE_TYPE: Type<DeckState> = REGION_STATE_TYPE;
+
 export function deckState(id: ComponentId<unknown>, input: Partial<DeckState> = {}): DeckState {
   return {
     id,
-    contentIds: mutableState([]),
+    contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
     ...input,
   };
 }
 
 const $deck = {
   host: {
-    ...create$baseRegion<DeckState>().host,
+    ...create$baseRegion<DeckState>(DECK_STATE_TYPE).host,
     dropAll: icall('dropAll', []),
     dropAllConfig: ivalue('dropAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: true}),
     pickAll: icall('pickAll', []),
@@ -49,7 +52,7 @@ class Deck extends BaseRegion<DeckState> {
 
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
-    const activeContents$ = $activeState.get(this.$.vine).$('contentIds');
+    const activeContents$ = $activeState.get(this.$.vine).contentIds;
     const contents$ = this.state.$('contentIds');
     return [
       ...super.runs,
@@ -58,8 +61,8 @@ class Deck extends BaseRegion<DeckState> {
               withLatestFrom(activeContents$, contents$),
               switchMap(([payload, activeContents, contents]) => {
                 return concat(
-                    of([]).pipe(activeContents$.set(), switchMapTo(EMPTY)),
-                    of([...contents, ...activeContents]).pipe(contents$.set(), switchMapTo(EMPTY)),
+                    of([]).pipe(forwardTo(activeContents$), switchMap(() => EMPTY)),
+                    of([...contents, ...activeContents]).pipe(contents$.set(), switchMap(() => EMPTY)),
                     of(payload),
                 );
               }),
@@ -74,8 +77,11 @@ class Deck extends BaseRegion<DeckState> {
               withLatestFrom(activeContents$, contents$),
               switchMap(([payload, activeContents, contents]) => {
                 return concat(
-                    of([...activeContents, ...[...contents].reverse()]).pipe(activeContents$.set(), switchMapTo(EMPTY)),
-                    of([]).pipe(contents$.set(), switchMapTo(EMPTY)),
+                    of([...activeContents, ...[...contents].reverse()]).pipe(
+                        forwardTo(activeContents$),
+                        switchMap(() => EMPTY),
+                    ),
+                    of([]).pipe(contents$.set(), switchMap(() => EMPTY)),
                     of(payload),
                 );
               }),

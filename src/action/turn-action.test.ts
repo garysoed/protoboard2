@@ -1,8 +1,8 @@
-import {$stateService, source} from 'grapevine';
+import {source} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
+import {intersectType, Type} from 'gs-types';
 import {Context, icall, ocase, registerCustomElement, root} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -12,14 +12,19 @@ import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {componentId} from '../id/component-id';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
-import {ComponentState} from '../types/component-state';
-import {FaceSpec, IsMultifaced} from '../types/is-multifaced';
+import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
+import {FaceSpec, IsMultifaced, IS_MULTIFACED_TYPE} from '../types/is-multifaced';
 
 import goldens from './goldens/goldens.json';
 import {turnAction, TurnConfig} from './turn-action';
 
 
 interface TestState extends ComponentState, IsMultifaced { }
+
+const TEST_STATE_TYPE: Type<TestState> = intersectType([
+  COMPONENT_STATE_TYPE,
+  IS_MULTIFACED_TYPE,
+]);
 
 const $config$ = source(() => new BehaviorSubject<TurnConfig>({step: 1}));
 
@@ -31,7 +36,7 @@ const FACES = [
 
 const $test = {
   host: {
-    ...create$baseComponent<TestState>().host,
+    ...create$baseComponent<TestState>(TEST_STATE_TYPE).host,
     trigger: icall('trigger', []),
   },
   shadow: {
@@ -78,11 +83,11 @@ test('@protoboard2/action/turn-action', () => {
 
   should('increase the face by the given step', () => {
     $config$.get(_.tester.vine).next({step: 2});
-    const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+    const state = {
       id: componentId({}),
       faces: FACES,
-      currentFaceIndex: mutableState(0),
-    })._();
+      currentFaceIndex: new BehaviorSubject(0),
+    };
     const element = _.tester.bootstrapElement(TEST);
     element.state = state;
     element.trigger(undefined);
@@ -92,11 +97,11 @@ test('@protoboard2/action/turn-action', () => {
 
   should('wrap the face index by the count', () => {
     $config$.get(_.tester.vine).next({step: 2});
-    const state = $stateService.get(_.tester.vine).addRoot<TestState>({
+    const state = {
       id: componentId({}),
       faces: FACES,
-      currentFaceIndex: mutableState(0),
-    })._();
+      currentFaceIndex: new BehaviorSubject(0),
+    };
     const element = _.tester.bootstrapElement(TEST);
     element.state = state;
     element.trigger(undefined);

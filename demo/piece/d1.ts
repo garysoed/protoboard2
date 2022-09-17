@@ -19,15 +19,15 @@ const $d1Demo = {
 
 
 class D1Demo implements Ctrl {
-  private readonly state$ = $state$.get(this.$.vine)._('d1');
+  private readonly state = $state$.get(this.$.vine).d1;
 
   constructor(private readonly $: Context<typeof $d1Demo>) { }
 
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
       renderTheme(this.$),
-      of(this.state$._('gemSlot')).pipe(this.$.shadow.gemSlot.state()),
-      of(this.state$._('meepleSlot')).pipe(this.$.shadow.meepleSlot.state()),
+      of(this.state.gemSlot).pipe(this.$.shadow.gemSlot.state()),
+      of(this.state.meepleSlot).pipe(this.$.shadow.meepleSlot.state()),
     ];
   }
 }
