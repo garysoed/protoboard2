@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/garysoed/protoboard2#readme",
   "dependencies": {
+    "rxjs": "^7.5.6",
     "typescript": "^4.7.3"
   },
   "devDependencies": {

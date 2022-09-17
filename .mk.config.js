@@ -3,6 +3,7 @@ set_vars({
     goldens: [
       'src/action/goldens',
       'src/core/goldens',
+      'src/export/goldens',
       'src/face/goldens',
       'src/piece/goldens',
       'src/region/goldens',
