@@ -30,7 +30,7 @@ const $test = {
   },
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach<ComponentId<unknown>>('#ref'),
+      content: oforeach<ComponentId>('#ref'),
       target: itarget(),
     }),
   },
@@ -45,7 +45,7 @@ class Test extends BaseRegion<TestState> {
     return this.$.shadow.container.target;
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown> {
     return this.$.shadow.container.content(map(id => renderContentFn(id)));
   }
 }
@@ -61,7 +61,7 @@ test('@protoboard2/src/core/base-region', () => {
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/core/goldens', goldens));
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
-    const states = new Map<ComponentId<unknown>, D1State>();
+    const states = new Map<ComponentId, D1State>();
 
     registerComponentRenderSpec(tester.vine, (id) => {
       const payload = getPayload(id);
@@ -87,7 +87,7 @@ test('@protoboard2/src/core/base-region', () => {
 
       const state = {
         id: componentId('test'),
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
@@ -113,7 +113,7 @@ test('@protoboard2/src/core/base-region', () => {
       _.states.set(id, d1State(id, createRenderSpec(color)));
       const regionState = {
         id: componentId('region'),
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
@@ -122,7 +122,7 @@ test('@protoboard2/src/core/base-region', () => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(element).to.matchSnapshot('base-region__drop.html');
-      assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
+      assert(activeIds$).to.emitSequence([arrayThat<ComponentId>().beEmpty()]);
     });
 
     should('move the item from active state on function calls', () => {
@@ -134,7 +134,7 @@ test('@protoboard2/src/core/base-region', () => {
       _.states.set(id, d1State(id, createRenderSpec(color)));
       const regionState = {
         id: componentId('region'),
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
@@ -142,7 +142,7 @@ test('@protoboard2/src/core/base-region', () => {
       element.drop(undefined);
 
       assert(element).to.matchSnapshot('base-region__drop-fn.html');
-      assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
+      assert(activeIds$).to.emitSequence([arrayThat<ComponentId>().beEmpty()]);
     });
   });
 
@@ -154,7 +154,7 @@ test('@protoboard2/src/core/base-region', () => {
 
       const regionState = {
         id: componentId('region'),
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([id]),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>([id]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
@@ -163,7 +163,7 @@ test('@protoboard2/src/core/base-region', () => {
       d1.simulatePick();
 
       assert(element).to.matchSnapshot('base-region__pick.html');
-      assert(regionState.contentIds).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
+      assert(regionState.contentIds).to.emitSequence([arrayThat<ComponentId>().beEmpty()]);
     });
 
     should('not removed element if action is not pick', () => {
@@ -173,7 +173,7 @@ test('@protoboard2/src/core/base-region', () => {
 
       const regionState = {
         id: componentId('region'),
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([id]),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>([id]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = regionState;
@@ -183,7 +183,7 @@ test('@protoboard2/src/core/base-region', () => {
 
       assert(element).to.matchSnapshot('base-region__pick-noop.html');
       assert(regionState.contentIds).to.emitSequence([
-        arrayThat<ComponentId<unknown>>().haveExactElements([id]),
+        arrayThat<ComponentId>().haveExactElements([id]),
       ]);
     });
   });

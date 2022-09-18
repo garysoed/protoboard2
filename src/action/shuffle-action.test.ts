@@ -28,7 +28,7 @@ const $test = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach<ComponentId<unknown>>('#content'),
+      content: oforeach<ComponentId>('#content'),
       target: itarget(),
     }),
   },
@@ -47,7 +47,7 @@ class Test extends BaseRegion<TestState> {
     ];
   }
 
-  renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
+  renderContents(renderValuesFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown> {
     return this.$.shadow.root.content(map(id => renderValuesFn(id)));
   }
 
@@ -88,7 +88,7 @@ test('@protoboard2/action/shuffle-action', () => {
 
     const state: TestState = {
       id: componentId({}),
-      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(
+      contentIds: new BehaviorSubject<readonly ComponentId[]>(
           ['orange', 'steelblue', 'purple', 'red'].map(componentId),
       ),
     };

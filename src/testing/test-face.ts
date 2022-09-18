@@ -60,7 +60,7 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: ComponentId<unknown>|string): RenderSpec {
+export function renderTestFace(id: ComponentId|string): RenderSpec {
   if (stringType.check(id)) {
     return renderElement({
       registration: TEST_FACE,

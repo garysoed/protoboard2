@@ -13,7 +13,7 @@ import template from './surface.html';
 
 export interface SurfaceState extends RegionState {}
 
-const SURFACE_STATE_TYPE: Type<SurfaceState> = REGION_STATE_TYPE;
+export const SURFACE_STATE_TYPE: Type<SurfaceState> = REGION_STATE_TYPE;
 
 const $surface = {
   host: {
@@ -21,17 +21,17 @@ const $surface = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: oforeach<ComponentId<unknown>>('#content'),
+      content: oforeach<ComponentId>('#content'),
       target: itarget(),
     }),
   },
 };
 
 
-export function surfaceState(id: ComponentId<unknown>, input: Partial<SurfaceState> = {}): SurfaceState {
+export function surfaceState(id: ComponentId, input: Partial<SurfaceState> = {}): SurfaceState {
   return {
     id,
-    contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+    contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };
 }
@@ -42,7 +42,7 @@ export class Surface extends BaseRegion<SurfaceState> {
     super($, 'Surface');
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown> {
     return this.$.shadow.root.content(map(id => renderContentFn(id)));
   }
 

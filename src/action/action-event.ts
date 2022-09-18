@@ -7,7 +7,7 @@ export const ACTION_EVENT = 'pb-action';
 export class ActionEvent extends Event {
   constructor(
       readonly action: Action<any, any, any>,
-      readonly id: ComponentId<unknown>,
+      readonly id: ComponentId,
   ) {
     super(ACTION_EVENT, {bubbles: true, composed: true});
   }

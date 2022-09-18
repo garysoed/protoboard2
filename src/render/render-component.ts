@@ -6,12 +6,12 @@ import {switchMap} from 'rxjs/operators';
 import {ComponentId} from '../id/component-id';
 import {$getComponentRenderSpec$} from '../renderspec/render-component-spec';
 
-type RenderComponentFn = (componentId: ComponentId<unknown>) => RenderSpec|null;
+type RenderComponentFn = (componentId: ComponentId) => RenderSpec|null;
 
 export function renderComponent(
     vine: Vine,
-    id$: Observable<ReadonlyArray<ComponentId<unknown>>>,
-    renderContents: (fn: RenderComponentFn) => OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown>,
+    id$: Observable<readonly ComponentId[]>,
+    renderContents: (fn: RenderComponentFn) => OperatorFunction<readonly ComponentId[], unknown>,
 ): Observable<unknown> {
   return combineLatest([
     id$,

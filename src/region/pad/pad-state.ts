@@ -46,7 +46,7 @@ export const PAD_STATE_TYPE: Type<PadState> = intersectType([
   COMPONENT_STATE_TYPE,
 ]);
 
-export function padState(id: ComponentId<unknown>, partial: Partial<PadState> = {}): PadState {
+export function padState(id: ComponentId, partial: Partial<PadState> = {}): PadState {
   return {
     id,
     contents: new BehaviorSubject<readonly PadContentState[]>([]),

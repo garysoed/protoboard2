@@ -57,7 +57,7 @@ test('@protoboard2/src/region/deck', () => {
 
   should('render the contents correctly', () => {
     const state$ = surfaceState(componentId({}), {
-      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
     });
     const element = _.tester.bootstrapElement(DECK);
     element.state = state$;
@@ -71,7 +71,7 @@ test('@protoboard2/src/region/deck', () => {
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -84,14 +84,14 @@ test('@protoboard2/src/region/deck', () => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(_.element).to.matchSnapshot('deck__drop-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
 
     should('trigger on function call', () => {
       _.element.drop(undefined);
 
       assert(_.element).to.matchSnapshot('deck__drop-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
   });
 
@@ -101,7 +101,7 @@ test('@protoboard2/src/region/deck', () => {
       of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(forwardTo(activeContents$)).subscribe();
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -114,14 +114,14 @@ test('@protoboard2/src/region/deck', () => {
       harness.simulateTrigger(TriggerType.D, {shiftKey: true});
 
       assert(_.element).to.matchSnapshot('deck__dropall-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
 
     should('trigger on function call', () => {
       _.element.dropAll();
 
       assert(_.element).to.matchSnapshot('deck__dropall-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
   });
 
@@ -131,7 +131,7 @@ test('@protoboard2/src/region/deck', () => {
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -168,7 +168,7 @@ test('@protoboard2/src/region/deck', () => {
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -202,7 +202,7 @@ test('@protoboard2/src/region/deck', () => {
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       _.seed$.next(0.8);
       const element = _.tester.bootstrapElement(DECK);

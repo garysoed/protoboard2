@@ -23,7 +23,7 @@ const D1_STATE_TYPE = intersectType([
   }),
 ]);
 
-export function d1State(id: ComponentId<unknown>, face: FaceSpec, partial: Partial<D1State> = {}): D1State {
+export function d1State(id: ComponentId, face: FaceSpec, partial: Partial<D1State> = {}): D1State {
   return {
     id,
     face,

@@ -1,21 +1,19 @@
-import {hasPropertiesType, Type} from 'gs-types';
+import {hasPropertiesType, unknownType} from 'gs-types';
 
 const __payload = Symbol('componentId');
 
-export interface ComponentId<T> {
-  readonly [__payload]: T;
+export interface ComponentId {
+  readonly [__payload]: unknown;
 }
 
-export function componentId<T>(payload: T): ComponentId<T> {
+export function componentId(payload: unknown): ComponentId {
   return {[__payload]: payload};
 }
 
-export function getPayload<T>(id: ComponentId<T>): T {
+export function getPayload(id: ComponentId): unknown {
   return id[__payload];
 }
 
-export function componentIdType<T>(payloadType: Type<T>): Type<ComponentId<T>> {
-  return hasPropertiesType({
-    [__payload]: payloadType,
-  });
-}
+export const COMPONENT_ID_TYPE = hasPropertiesType({
+  [__payload]: unknownType,
+});

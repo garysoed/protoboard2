@@ -31,7 +31,7 @@ const D2_STATE_TYPE: Type<D2State> = intersectType([
 
 
 export function d2State(
-    id: ComponentId<unknown>,
+    id: ComponentId,
     faces: readonly [FaceSpec, FaceSpec],
     partial: Partial<D2State> = {},
 ): D2State {

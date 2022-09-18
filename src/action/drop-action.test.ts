@@ -28,7 +28,7 @@ const $test = {
   },
   shadow: {
     div: query('#div', DIV, {
-      contents: oforeach<ComponentId<unknown>>('#ref'),
+      contents: oforeach<ComponentId>('#ref'),
       target: itarget(),
     }),
   },
@@ -39,7 +39,7 @@ class Test extends BaseRegion<RegionState> {
     super($, 'Test region');
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown> {
     return this.$.shadow.div.contents(map(id => renderContentFn(id)));
   }
 
@@ -99,7 +99,7 @@ test('@protoboard2/src/action/drop-action', () => {
 
     const regionState = {
       id: componentId('region'),
-      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     };
     const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
@@ -108,7 +108,7 @@ test('@protoboard2/src/action/drop-action', () => {
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__trigger.html');
-    assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
+    assert(activeIds$).to.emitSequence([arrayThat<ComponentId>().beEmpty()]);
   });
 
   should('do nothing if there are no components in active state', () => {
@@ -116,7 +116,7 @@ test('@protoboard2/src/action/drop-action', () => {
 
     const regionState = {
       id: componentId('region'),
-      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     };
     const element = _.tester.bootstrapElement(TEST);
     element.state = regionState;
@@ -125,6 +125,6 @@ test('@protoboard2/src/action/drop-action', () => {
     harness.simulateClick();
 
     assert(element).to.matchSnapshot('drop-action__empty.html');
-    assert(activeIds$).to.emitSequence([arrayThat<ComponentId<unknown>>().beEmpty()]);
+    assert(activeIds$).to.emitSequence([arrayThat<ComponentId>().beEmpty()]);
   });
 });

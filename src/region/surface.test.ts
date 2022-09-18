@@ -45,7 +45,7 @@ test('@protoboard2/src/region/surface', () => {
 
   should('render the contents correctly', () => {
     const state$ = surfaceState(componentId({}), {
-      contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
     });
     const element = _.tester.bootstrapElement(SURFACE);
     element.state = state$;
@@ -59,7 +59,7 @@ test('@protoboard2/src/region/surface', () => {
       activeContents$.next([componentId('steelblue')]);
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
@@ -72,7 +72,7 @@ test('@protoboard2/src/region/surface', () => {
       harness.simulateTrigger(TriggerType.D);
 
       assert(_.element).to.matchSnapshot('surface__drop-keydown.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
 
     should('trigger on function call', () => {
@@ -80,7 +80,7 @@ test('@protoboard2/src/region/surface', () => {
       harness.simulateDrop();
 
       assert(_.element).to.matchSnapshot('surface__drop-call.html');
-      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId<unknown>>().beEmpty());
+      assert(_.activeContents$).to.emitWith(arrayThat<ComponentId>().beEmpty());
     });
   });
 
@@ -90,7 +90,7 @@ test('@protoboard2/src/region/surface', () => {
       activeContents$.next([componentId('steelblue')]);
 
       const state$ = surfaceState(componentId({}), {
-        contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;

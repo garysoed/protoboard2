@@ -11,7 +11,7 @@ import {$getComponentRenderSpec$} from '../renderspec/render-component-spec';
 
 export function renderContents(
     vine: Vine,
-): OperatorFunction<ReadonlyArray<ComponentId<unknown>>|undefined, readonly RenderSpec[]> {
+): OperatorFunction<readonly ComponentId[]|undefined, readonly RenderSpec[]> {
   return contentIds$ => {
     return combineLatest([
       contentIds$,

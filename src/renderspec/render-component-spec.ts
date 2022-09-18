@@ -5,7 +5,7 @@ import {ComponentId} from '../id/component-id';
 
 import {combineProviders, RenderSpecProvider} from './render-spec-provider';
 
-type RenderComponentSpecProvider = RenderSpecProvider<ComponentId<unknown>>;
+type RenderComponentSpecProvider = RenderSpecProvider<ComponentId>;
 
 const $componentRenderSpecMap$ = source(() => new ArraySubject<RenderComponentSpecProvider>());
 

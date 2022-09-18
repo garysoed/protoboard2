@@ -24,7 +24,7 @@ interface BaseRegionSpecType<S extends RegionState> extends BaseComponentSpecTyp
 }
 
 // TODO: Convert to operator function
-export type RenderContentFn = (id: ComponentId<unknown>) => RenderSpec|null;
+export type RenderContentFn = (id: ComponentId) => RenderSpec|null;
 
 export function create$baseRegion<S extends RegionState>(stateType: Type<S>): BaseRegionSpecType<S> {
   return {
@@ -63,7 +63,7 @@ export abstract class BaseRegion<S extends RegionState> extends BaseComponent<S>
     ];
   }
 
-  abstract renderContents(renderValuesFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown>;
+  abstract renderContents(renderValuesFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown>;
 
   protected abstract get target$(): Observable<HTMLElement>;
 

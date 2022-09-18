@@ -38,7 +38,7 @@ type Faces = readonly [
   FaceSpec,
 ];
 
-export function d6State(id: ComponentId<unknown>, faces: Faces, partial: Partial<D6State> = {}): D6State {
+export function d6State(id: ComponentId, faces: Faces, partial: Partial<D6State> = {}): D6State {
   return {
     id,
     currentFaceIndex: new BehaviorSubject(0),

@@ -19,10 +19,10 @@ export interface DeckState extends RegionState { }
 
 export const DECK_STATE_TYPE: Type<DeckState> = REGION_STATE_TYPE;
 
-export function deckState(id: ComponentId<unknown>, input: Partial<DeckState> = {}): DeckState {
+export function deckState(id: ComponentId, input: Partial<DeckState> = {}): DeckState {
   return {
     id,
-    contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([]),
+    contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };
 }
@@ -39,7 +39,7 @@ const $deck = {
   },
   shadow: {
     root: query('#root', DIV, {
-      content: ocase<ComponentId<unknown>|null>('#content'),
+      content: ocase<ComponentId|null>('#content'),
       target: itarget(),
     }),
   },
@@ -101,7 +101,7 @@ class Deck extends BaseRegion<DeckState> {
     ];
   }
 
-  renderContents(renderContentFn: RenderContentFn): OperatorFunction<ReadonlyArray<ComponentId<unknown>>, unknown> {
+  renderContents(renderContentFn: RenderContentFn): OperatorFunction<readonly ComponentId[], unknown> {
     return pipe(
         map(specs => specs[specs.length - 1] ?? null),
         this.$.shadow.root.content(map(id => id === null ? null : renderContentFn(id))),

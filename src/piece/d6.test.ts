@@ -98,7 +98,7 @@ test('@protoboard2/src/piece/d6', () => {
       harness.simulateTrigger(TriggerType.CLICK);
 
       assert($activeState.get(_.tester.vine).contentIds).to
-          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([id])]);
     });
 
     should('trigger on function call', () => {
@@ -108,7 +108,7 @@ test('@protoboard2/src/piece/d6', () => {
       _.element.pick(undefined);
 
       assert($activeState.get(_.tester.vine).contentIds).to
-          .emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([id])]);
     });
   });
 

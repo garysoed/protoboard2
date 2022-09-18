@@ -17,13 +17,13 @@ import {renderComponent} from './render-component';
 
 const $state = source(vine => $stateService.get(vine).addRoot({
   id: componentId({}),
-  contentIds: mutableState<ReadonlyArray<ComponentId<string>>>([]),
+  contentIds: mutableState<readonly ComponentId[]>([]),
 })._());
 
 const $test = {
   shadow: {
     container: query('#container', DIV, {
-      content: oforeach<ComponentId<unknown>>('#ref'),
+      content: oforeach<ComponentId>('#ref'),
     }),
   },
 };

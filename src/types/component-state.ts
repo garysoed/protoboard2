@@ -1,11 +1,11 @@
-import {hasPropertiesType, Type, unknownType} from 'gs-types';
+import {hasPropertiesType, Type} from 'gs-types';
 
-import {ComponentId, componentIdType} from '../id/component-id';
+import {ComponentId, COMPONENT_ID_TYPE} from '../id/component-id';
 
 export interface ComponentState {
-  readonly id: ComponentId<unknown>;
+  readonly id: ComponentId;
 }
 
 export const COMPONENT_STATE_TYPE: Type<ComponentState> = hasPropertiesType({
-  id: componentIdType(unknownType),
+  id: COMPONENT_ID_TYPE,
 });

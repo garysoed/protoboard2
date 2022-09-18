@@ -4,9 +4,9 @@ import {Subject} from 'rxjs';
 import {ComponentId} from '../id/component-id';
 
 export interface IsContainer {
-  readonly contentIds: Subject<ReadonlyArray<ComponentId<unknown>>>;
+  readonly contentIds: Subject<readonly ComponentId[]>;
 }
 
 export const IS_CONTAINER_TYPE = hasPropertiesType({
-  contentIds: instanceofType<Subject<ReadonlyArray<ComponentId<unknown>>>>(Subject),
+  contentIds: instanceofType<Subject<readonly ComponentId[]>>(Subject),
 });

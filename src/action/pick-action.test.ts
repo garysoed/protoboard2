@@ -64,6 +64,6 @@ test('@protoboard2/src/action/pick-action', () => {
     harness.simulateClick();
 
     assert($activeState.get(_.tester.vine).contentIds)
-        .to.emitSequence([arrayThat<ComponentId<unknown>>().haveExactElements([id])]);
+        .to.emitSequence([arrayThat<ComponentId>().haveExactElements([id])]);
   });
 });

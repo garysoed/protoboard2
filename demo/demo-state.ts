@@ -61,15 +61,15 @@ const MEEPLE_ID = componentId(ComponentType.MEEPLE);
 
 export const $state$ = source(vine => ({
   d1: {
-    gemSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([GEM_ID])}),
-    meepleSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([MEEPLE_ID])}),
+    gemSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([GEM_ID])}),
+    meepleSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([MEEPLE_ID])}),
   },
   d2: {
-    cardSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([CARD_ID])}),
-    coinSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([COIN_ID])}),
+    cardSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([CARD_ID])}),
+    coinSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([COIN_ID])}),
   },
   d6: {
-    diceSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<ReadonlyArray<ComponentId<unknown>>>([DICE_ID])}),
+    diceSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([DICE_ID])}),
   },
   deck: {
     deck: deckState(componentId({})),
@@ -105,7 +105,7 @@ export const $state$ = source(vine => ({
   },
 }));
 
-export function renderComponent(id: ComponentId<unknown>, vine: Vine): RenderSpec {
+export function renderComponent(id: ComponentId, vine: Vine): RenderSpec {
   const payload = getComponentIdPayload(id);
   if (!enumType<ComponentType>(ComponentType).check(payload)) {
     throw new Error('ID is not ComponentType');

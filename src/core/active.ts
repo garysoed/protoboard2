@@ -21,7 +21,7 @@ export const $active = {
       textContent: otext(),
     }),
     root: query('#root', DIV, {
-      content: oforeach<ComponentId<unknown>>('#content'),
+      content: oforeach<ComponentId>('#content'),
       element: itarget(),
       left: ostyle('left'),
       top: ostyle('top'),
