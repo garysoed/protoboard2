@@ -21,9 +21,7 @@ test('@protoboard2/src/face/lens-display', () => {
 
   test('contentSpec$', () => {
     should('render the elements correctly', () => {
-      $lensService.get(_.tester.vine).show({
-        renderLensFn: () => renderTextNode({textContent: of('Rendered details')}),
-      });
+      $lensService.get(_.tester.vine).show(renderTextNode({textContent: of('Rendered details')}));
 
       const element = _.tester.bootstrapElement(LENS_DISPLAY);
       assert(element).to.matchSnapshot('lens-display__show.html');
@@ -31,9 +29,7 @@ test('@protoboard2/src/face/lens-display', () => {
 
     should('remove the content if the lens service emits null', () => {
       const lensService = $lensService.get(_.tester.vine);
-      lensService.show({
-        renderLensFn: () => renderTextNode({textContent: of('Rendered details')}),
-      });
+      lensService.show(renderTextNode({textContent: of('Rendered details')}));
 
       const element = _.tester.bootstrapElement(LENS_DISPLAY);
       lensService.hide();

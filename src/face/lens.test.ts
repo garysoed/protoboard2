@@ -7,7 +7,7 @@ import {LENS} from './lens';
 import {$lensService} from './lens-service';
 
 
-const ID = createRenderSpec('steelblue');
+const RENDER_SPEC = createRenderSpec('steelblue');
 
 test('@protoboard2/src/face/lens', () => {
   const _ = setup(() => {
@@ -19,7 +19,8 @@ test('@protoboard2/src/face/lens', () => {
   should('call LensService with show and hide on mouse enter and mouse leave', () => {
     const content = document.createElement('div');
     const element = _.tester.bootstrapElement(LENS);
-    element.faceSpec = ID;
+    const renderSpec = RENDER_SPEC.renderLensFn()!;
+    element.renderSpec = renderSpec;
     element.appendChild(content);
 
     const faceId$ = createSpySubject($lensService.get(_.tester.vine).faceSpec$);
@@ -28,6 +29,6 @@ test('@protoboard2/src/face/lens', () => {
     harness.simulateMouseOver();
     harness.simulateMouseOut();
 
-    assert(faceId$).to.emitSequence([null, ID, null]);
+    assert(faceId$).to.emitSequence([null, renderSpec, null]);
   });
 });

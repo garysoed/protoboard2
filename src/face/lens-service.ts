@@ -1,14 +1,12 @@
 import {source} from 'grapevine';
+import {RenderSpec} from 'persona';
 import {BehaviorSubject, Observable} from 'rxjs';
 
-import {FaceSpec} from '../types/is-multifaced';
-
-export type LensFaceSpec = Pick<FaceSpec, 'renderLensFn'>;
 
 export class LensService {
-  private readonly faceSpec$_ = new BehaviorSubject<LensFaceSpec|null>(null);
+  private readonly faceSpec$_ = new BehaviorSubject<RenderSpec|null>(null);
 
-  get faceSpec$(): Observable<LensFaceSpec|null> {
+  get faceSpec$(): Observable<RenderSpec|null> {
     return this.faceSpec$_;
   }
 
@@ -16,7 +14,7 @@ export class LensService {
     this.faceSpec$_.next(null);
   }
 
-  show(key: LensFaceSpec): void {
+  show(key: RenderSpec): void {
     this.faceSpec$_.next(key);
   }
 }

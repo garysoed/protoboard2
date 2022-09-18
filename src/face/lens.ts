@@ -1,9 +1,9 @@
 import {cache} from 'gs-tools/export/data';
-import {Context, Ctrl, ievent, ivalue, registerCustomElement} from 'persona';
+import {instanceofType} from 'gs-types';
+import {Context, Ctrl, ievent, ivalue, registerCustomElement, RenderSpec} from 'persona';
 import {Observable} from 'rxjs';
 import {tap, withLatestFrom} from 'rxjs/operators';
 
-import {FACE_SPEC_TYPE} from '../types/is-multifaced';
 
 import {$lensService} from './lens-service';
 import template from './lens.html';
@@ -11,7 +11,7 @@ import template from './lens.html';
 
 const $lens = {
   host: {
-    faceSpec: ivalue('faceSpec', FACE_SPEC_TYPE),
+    renderSpec: ivalue('renderSpec', instanceofType<RenderSpec>(Object)),
     onMouseEnter: ievent('mouseenter', Event),
     onMouseLeave: ievent('mouseleave', Event),
   },
@@ -43,7 +43,7 @@ class Lens implements Ctrl {
   @cache()
   private get handleMouseEnter$(): Observable<unknown> {
     return this.$.host.onMouseEnter.pipe(
-        withLatestFrom(this.$.host.faceSpec),
+        withLatestFrom(this.$.host.renderSpec),
         tap(([, faceSpec]) => {
           if (faceSpec === undefined) {
             return;

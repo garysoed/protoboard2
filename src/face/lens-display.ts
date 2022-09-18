@@ -1,16 +1,16 @@
 import {cache} from 'gs-tools/export/data';
 import {renderTheme, ThemeLoader} from 'mask';
-import {Context, Ctrl, ocase, registerCustomElement, root} from 'persona';
+import {Context, Ctrl, ocase, registerCustomElement, RenderSpec, root} from 'persona';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 
-import {$lensService, LensFaceSpec} from './lens-service';
+import {$lensService} from './lens-service';
 
 export const $lensDisplay = {
   shadow: {
     root: root({
-      content: ocase<LensFaceSpec|null>('#content'),
+      content: ocase<RenderSpec|null>('#content'),
       theme: ocase<ThemeLoader>('#theme'),
     }),
   },
@@ -24,12 +24,7 @@ export class LensDisplay implements Ctrl {
     return [
       renderTheme(this.$, this.$.shadow.root.theme),
       $lensService.get(this.$.vine).faceSpec$.pipe(
-          this.$.shadow.root.content(map(faceSpec => {
-            if (!faceSpec) {
-              return null;
-            }
-            return faceSpec.renderLensFn();
-          })),
+          this.$.shadow.root.content(map(renderSpec => renderSpec)),
       ),
     ];
   }
