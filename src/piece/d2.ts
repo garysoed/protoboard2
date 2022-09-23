@@ -23,7 +23,7 @@ import template from './d1.html';
 
 export interface D2State extends ComponentState, IsRotatable, IsMultifaced { }
 
-const D2_STATE_TYPE: Type<D2State> = intersectType([
+export const D2_STATE_TYPE: Type<D2State> = intersectType([
   COMPONENT_STATE_TYPE,
   IS_ROTATABLE_TYPE,
   IS_MULTIFACED_TYPE,
