@@ -1,11 +1,10 @@
-import {$stateService, source} from 'grapevine';
+import {source} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
-import {Context, Ctrl, DIV, query, ostyle, registerCustomElement} from 'persona';
+import {Context, Ctrl, DIV, ostyle, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TEST_FACE} from '../testing/test-face';
 
@@ -13,10 +12,10 @@ import goldens from './goldens/goldens.json';
 import {renderRotatable} from './render-rotatable';
 
 
-const $state = source(vine => $stateService.get(vine).addRoot({
+const $state = source(() => ({
   id: {},
-  rotationDeg: mutableState<number>(0),
-})._());
+  rotationDeg: new BehaviorSubject<number>(0),
+}));
 
 const $test = {
   shadow: {
@@ -32,7 +31,7 @@ class Test implements Ctrl {
   @cache()
   get runs(): ReadonlyArray<Observable<unknown>> {
     return [
-      $state.get(this.$.vine).$('rotationDeg').pipe(
+      $state.get(this.$.vine).rotationDeg.pipe(
           renderRotatable(),
           this.$.shadow.container.transform(),
       ),
@@ -57,7 +56,7 @@ test('@protoboard2/src/render/render-rotatable', () => {
 
   should('output the correct transform style', () => {
     const rotationDeg = 123;
-    of(rotationDeg).pipe($state.get(_.tester.vine).$('rotationDeg').set()).subscribe();
+    $state.get(_.tester.vine).rotationDeg.next(rotationDeg);
 
     const element = _.tester.bootstrapElement(TEST);
 

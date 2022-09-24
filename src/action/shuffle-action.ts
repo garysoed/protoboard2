@@ -1,4 +1,4 @@
-import {shuffle} from 'gs-tools/export/random2';
+import {shuffle} from 'gs-tools/export/random';
 import {filterNonNullable, walkObservable} from 'gs-tools/export/rxjs';
 import {Context} from 'persona';
 import {OperatorFunction, pipe} from 'rxjs';

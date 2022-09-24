@@ -1,6 +1,6 @@
 import {arrayThat, assert, createSmartMatcher, createSpySubject, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {incrementingRandom} from 'gs-tools/export/random2';
+import {incrementingRandom} from 'gs-tools/export/random';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, fromEvent} from 'rxjs';
 import {map} from 'rxjs/operators';

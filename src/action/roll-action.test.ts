@@ -1,7 +1,7 @@
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {incrementingRandom} from 'gs-tools/export/random2';
+import {incrementingRandom} from 'gs-tools/export/random';
 import {intersectType, Type} from 'gs-types';
 import {Context, icall, ocase, registerCustomElement, root} from 'persona';
 import {setupTest} from 'persona/export/testing';

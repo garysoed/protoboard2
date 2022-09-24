@@ -2,7 +2,7 @@ import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {$asMap, $map} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
-import {incrementingRandom} from 'gs-tools/export/random2';
+import {incrementingRandom} from 'gs-tools/export/random';
 import {$pipe} from 'gs-tools/export/typescript';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';

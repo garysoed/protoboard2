@@ -1,5 +1,5 @@
 import {source} from 'grapevine';
-import {aleaRandom, Random} from 'gs-tools/export/random2';
+import {aleaRandom, Random} from 'gs-tools/export/random';
 
 export const $random = source<Random<number>>(() => aleaRandom());
 
