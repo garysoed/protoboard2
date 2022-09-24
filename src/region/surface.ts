@@ -30,7 +30,7 @@ const $surface = {
 
 export function surfaceState(input: Partial<SurfaceState> = {}): SurfaceState {
   return {
-    id: componentId({}),
+    id: componentId(),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

@@ -1,13 +1,13 @@
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {stringType} from 'gs-types';
+import {$asMap, $map} from 'gs-tools/export/collect';
+import {$pipe} from 'gs-tools/export/typescript';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
-import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
-import {ComponentId, componentId, getPayload} from '../id/component-id';
+import {ComponentId, componentId} from '../id/component-id';
 import {D1, d1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -26,26 +26,31 @@ test('@protoboard2/src/region/surface', () => {
 
     const tester = setupTest({roots: [SURFACE, D1, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
 
-    registerComponentRenderSpec(tester.vine, (id) => {
-      const payload = getPayload(id);
-      if (!stringType.check(payload)) {
-        return null;
-      }
+    const idsMap: Map<ComponentId, string> = new Map();
+    registerComponentRenderSpec(tester.vine, id => {
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
+          of(d1State(createRenderSpec(idsMap.get(id) ?? ''), {id})).pipe($.state()),
         ],
       });
     });
 
-    return {tester};
+    return {tester, idsMap};
   });
 
   should('render the contents correctly', () => {
+    const surfaceIds = $pipe(
+        ['red', 'green', 'blue'],
+        $map(color => [componentId(), color] as const),
+        $asMap(),
+    );
+    for (const [id, color] of surfaceIds) {
+      _.idsMap.set(id, color);
+    }
     const state$ = surfaceState({
-      contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>([...surfaceIds.keys()]),
     });
     const element = _.tester.bootstrapElement(SURFACE);
     element.state = state$;
@@ -55,11 +60,19 @@ test('@protoboard2/src/region/surface', () => {
 
   test('drop action', () => {
     setup(_, () => {
+      const activeId = componentId();
+      _.idsMap.set(activeId, 'steelblue');
+
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      activeContents$.next([componentId('steelblue')]);
+      activeContents$.next([activeId]);
+
+      const surfaceIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(surfaceIds[0], 'red');
+      _.idsMap.set(surfaceIds[1], 'green');
+      _.idsMap.set(surfaceIds[2], 'blue');
 
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(surfaceIds),
       });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
@@ -86,16 +99,24 @@ test('@protoboard2/src/region/surface', () => {
 
   test('pick child action', () => {
     setup(_, () => {
+      const activeId = componentId();
+      _.idsMap.set(activeId, 'steelblue');
+
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      activeContents$.next([componentId('steelblue')]);
+      activeContents$.next([activeId]);
+
+      const surfaceIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(surfaceIds[0], 'red');
+      _.idsMap.set(surfaceIds[1], 'green');
+      _.idsMap.set(surfaceIds[2], 'blue');
 
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(surfaceIds),
       });
       const element = _.tester.bootstrapElement(SURFACE);
       element.state = state$;
 
-      return {..._, activeContents$, element};
+      return {..._, activeContents$, activeId, element, surfaceIds};
     });
 
     should('trigger on keydown', () => {
@@ -104,8 +125,8 @@ test('@protoboard2/src/region/surface', () => {
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
       assert(_.element).to.matchSnapshot('surface__pick-keydown.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
-          arrayThat<{}>().haveExactElements(['steelblue', 'green']),
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<ComponentId>().haveExactElements([_.activeId, _.surfaceIds[1]]),
       );
     });
 
@@ -115,8 +136,8 @@ test('@protoboard2/src/region/surface', () => {
       d1Harness.simulatePick();
 
       assert(_.element).to.matchSnapshot('surface__pick-call.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to
-          .emitWith(arrayThat<{}>().haveExactElements(['steelblue', 'green']));
+      assert(_.activeContents$).to
+          .emitWith(arrayThat<ComponentId>().haveExactElements([_.activeId, _.surfaceIds[1]]));
     });
   });
 });

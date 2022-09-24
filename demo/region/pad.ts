@@ -7,7 +7,7 @@ import {StampState} from '../../src/region/pad/pad-state';
 import {SURFACE} from '../../src/region/surface';
 import {TriggerType} from '../../src/types/trigger-spec';
 import {FaceType, FACE_SIZE_PX, renderDemoFace} from '../core/render-face';
-import {$state$} from '../demo-state';
+import {$state} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
 import template from './pad.html';
@@ -29,7 +29,7 @@ const STAMP_MEEPLE_ID = FaceType.MEEPLE;
 
 
 class PadDemo implements Ctrl {
-  private readonly state = $state$.get(this.$.vine).pad;
+  private readonly state = $state.get(this.$.vine).pad;
 
   constructor(private readonly $: Context<typeof $padDemo>) { }
 

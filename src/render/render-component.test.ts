@@ -1,24 +1,23 @@
-import {$stateService, source} from 'grapevine';
+import {source} from 'grapevine';
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {mutableState} from 'gs-tools/export/state';
 import {Context, Ctrl, DIV, oforeach, query, registerCustomElement, renderTextNode} from 'persona';
 import {setupTest} from 'persona/export/testing';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {ComponentId, componentId, getPayload} from '../id/component-id';
+import {ComponentId, componentId} from '../id/component-id';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 
 import goldens from './goldens/goldens.json';
 import {renderComponent} from './render-component';
 
 
-const $state = source(vine => $stateService.get(vine).addRoot({
-  id: componentId({}),
-  contentIds: mutableState<readonly ComponentId[]>([]),
-})._());
+const $state = source(() => ({
+  id: componentId(),
+  contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
+}));
 
 const $test = {
   shadow: {
@@ -36,7 +35,7 @@ class Test implements Ctrl {
     return [
       renderComponent(
           this.$.vine,
-          $state.get(this.$.vine).$('contentIds'),
+          $state.get(this.$.vine).contentIds,
           fn => this.$.shadow.container.content(map(id => fn(id))),
       ),
     ];
@@ -59,18 +58,21 @@ test('@protoboard2/src/render/render-component', () => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
+      const contentIds = [{}, {}, {}].map(componentId);
+      const idsMap = new Map([
+        [contentIds[0], 'one'],
+        [contentIds[1], 'two'],
+        [contentIds[2], 'three'],
+      ]);
       registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
-          textContent: of(getPayload(id) as string),
+          textContent: of(idsMap.get(id) ?? ''),
         });
       });
 
       const element = _.tester.bootstrapElement(TEST);
 
-      of(['one', 'two', 'three']).pipe(
-          map(ids => ids.map(componentId)),
-          $state.get(_.tester.vine).$('contentIds').set(),
-      ).subscribe();
+      $state.get(_.tester.vine).contentIds.next(contentIds);
 
       assert(element).to.matchSnapshot('render-contents.html');
     });

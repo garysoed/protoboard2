@@ -9,7 +9,7 @@ export type ActiveState = RegionState;
 
 export const $activeState = source<ActiveState>(() => {
   return {
-    id: componentId({}),
+    id: componentId(),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
   };
 });

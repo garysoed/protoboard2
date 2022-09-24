@@ -5,7 +5,7 @@ import {Observable, of} from 'rxjs';
 
 import {D6} from '../../src/piece/d6';
 import {SURFACE} from '../../src/region/surface';
-import {$state$} from '../demo-state';
+import {$state} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
 import template from './d6.html';
@@ -18,7 +18,7 @@ export const $d6Demo = {
 };
 
 class D6Demo implements Ctrl {
-  private readonly state = $state$.get(this.$.vine).d6;
+  private readonly state = $state.get(this.$.vine).d6;
 
   constructor(private readonly $: Context<typeof $d6Demo>) { }
 

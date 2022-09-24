@@ -84,7 +84,7 @@ test('@protoboard2/src/core/base-piece', () => {
     });
 
     should('trigger on click', () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
 
@@ -96,7 +96,7 @@ test('@protoboard2/src/core/base-piece', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
       _.element.pick(undefined);
@@ -115,7 +115,7 @@ test('@protoboard2/src/core/base-piece', () => {
     });
 
     should('trigger on R', () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
 
@@ -126,7 +126,7 @@ test('@protoboard2/src/core/base-piece', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {id, rotationDeg: new BehaviorSubject(0)};
       _.element.state = state;
       _.element.rotate(undefined);

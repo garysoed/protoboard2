@@ -40,7 +40,7 @@ type Faces = readonly [
 
 export function d6State(faces: Faces, partial: Partial<D6State> = {}): D6State {
   return {
-    id: componentId({}),
+    id: componentId(),
     currentFaceIndex: new BehaviorSubject(0),
     faces,
     rotationDeg: new BehaviorSubject(0),

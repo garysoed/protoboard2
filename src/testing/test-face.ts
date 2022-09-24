@@ -1,12 +1,10 @@
 import {cache} from 'gs-tools/export/data';
-import {stringType} from 'gs-types';
 import {$svgService, registerSvg} from 'mask';
 import {Context, Ctrl, DIV, iattr, ocase, oproperty, ParseType, query, registerCustomElement, renderElement, RenderSpec, renderString} from 'persona';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import testSvg from '../asset/icon.svg';
-import {ComponentId, getPayload as getComponentPayload} from '../id/component-id';
 import {FaceSpec} from '../types/is-multifaced';
 
 import template from './test-face.html';
@@ -60,25 +58,12 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: ComponentId|string): RenderSpec {
-  if (stringType.check(id)) {
-    return renderElement({
-      registration: TEST_FACE,
-      spec: {},
-      runs: $ => [
-        of(id).pipe($.shade()),
-      ],
-    });
-  }
-  const payload = getComponentPayload(id);
-  if (!stringType.check(payload)) {
-    throw new Error(`Invalid ID ${id}`);
-  }
+export function renderTestFace(id: string): RenderSpec {
   return renderElement({
     registration: TEST_FACE,
     spec: {},
     runs: $ => [
-      of(payload).pipe($.shade()),
+      of(id).pipe($.shade()),
     ],
   });
 }

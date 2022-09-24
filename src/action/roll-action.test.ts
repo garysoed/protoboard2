@@ -90,7 +90,7 @@ test('@protoboard2/action/roll-action', () => {
   test('handleTrigger', () => {
     should('change the current face correctly', () => {
       const state = {
-        id: componentId({}),
+        id: componentId(),
         faces: FACES,
         currentFaceIndex: new BehaviorSubject(0),
       };

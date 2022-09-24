@@ -1,7 +1,6 @@
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {cache} from 'gs-tools/export/data';
-import {stringType} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement} from 'persona';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable, of, OperatorFunction} from 'rxjs';
@@ -9,7 +8,7 @@ import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
-import {componentId, ComponentId, getPayload} from '../id/component-id';
+import {componentId, ComponentId} from '../id/component-id';
 import {D1, d1State} from '../piece/d1';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
@@ -77,15 +76,11 @@ test('@protoboard2/src/action/drop-action', () => {
     });
 
     registerComponentRenderSpec(tester.vine, id => {
-      const payload = getPayload(id);
-      if (!stringType.check(payload)) {
-        throw new Error(`Invalid ID ${payload}`);
-      }
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
+          of(d1State(createRenderSpec('steelblue'), {id})).pipe($.state()),
         ],
       });
     });
@@ -93,12 +88,12 @@ test('@protoboard2/src/action/drop-action', () => {
   });
 
   should('move the component from active state correctly', () => {
-    const id = componentId('steelblue');
+    const id = componentId();
     const activeIds$ = $activeState.get(_.tester.vine).contentIds;
     activeIds$.next([id]);
 
     const regionState = {
-      id: componentId('region'),
+      id: componentId(),
       contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     };
     const element = _.tester.bootstrapElement(TEST);
@@ -115,7 +110,7 @@ test('@protoboard2/src/action/drop-action', () => {
     const activeIds$ = $activeState.get(_.tester.vine).contentIds;
 
     const regionState = {
-      id: componentId('region'),
+      id: componentId(),
       contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     };
     const element = _.tester.bootstrapElement(TEST);

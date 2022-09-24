@@ -21,7 +21,7 @@ export const DECK_STATE_TYPE: Type<DeckState> = REGION_STATE_TYPE;
 
 export function deckState(input: Partial<DeckState> = {}): DeckState {
   return {
-    id: componentId({}),
+    id: componentId(),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

@@ -4,7 +4,7 @@ import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {SURFACE} from '../../src/region/surface';
-import {$state$} from '../demo-state';
+import {$state} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
 import template from './surface.html';
@@ -17,7 +17,7 @@ export const surfaceDemo = {
 };
 
 class SurfaceDemo implements Ctrl {
-  private readonly state = $state$.get(this.$.vine).surface;
+  private readonly state = $state.get(this.$.vine).surface;
 
   constructor(private readonly $: Context<typeof surfaceDemo>) { }
 

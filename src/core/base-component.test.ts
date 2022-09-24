@@ -141,7 +141,7 @@ test('@protoboard2/src/core/base-component', () => {
 
   test('installAction', () => {
     should('trigger the action and dispatch the event', () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {
         id,
         value: new BehaviorSubject(123),
@@ -160,7 +160,7 @@ test('@protoboard2/src/core/base-component', () => {
 
   test('setupHelpAction', () => {
     setup(_, () => {
-      const id = componentId({});
+      const id = componentId();
       const state = {
         id,
         value: new BehaviorSubject(123),
@@ -218,7 +218,7 @@ test('@protoboard2/src/core/base-component', () => {
   test('updateState', () => {
     should('update the given mutable state, if there is one', () => {
       const state = {
-        id: componentId('test'),
+        id: componentId(),
         value: new BehaviorSubject(123),
       };
 

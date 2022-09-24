@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 export type RenderSpecProvider<I> = (id: I) => RenderSpec|null;
 
 export function combineProviders<I>():
-    OperatorFunction<ReadonlyArray<RenderSpecProvider<I>>, RenderSpecProvider<I>> {
+    OperatorFunction<ReadonlyArray<RenderSpecProvider<I>>, (id: I) => RenderSpec> {
   return map(providersArray => (id: I) => {
     for (const provider of [...providersArray].reverse()) {
       const spec = provider(id);
@@ -14,6 +14,6 @@ export function combineProviders<I>():
       }
     }
 
-    return null;
+    throw new Error(`No render specs found for ${id}`);
   });
 }

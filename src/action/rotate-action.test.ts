@@ -82,7 +82,7 @@ test('@protoboard2/src/action/rotate-action', () => {
     should('change the rotation to the next index', () => {
       $config$.get(_.tester.vine).next({stops: [11, 22, 33]});
       const state = {
-        id: componentId({}),
+        id: componentId(),
         rotationDeg: new BehaviorSubject(0),
       };
       const element = _.tester.bootstrapElement(TEST);
@@ -95,7 +95,7 @@ test('@protoboard2/src/action/rotate-action', () => {
     should('handle rotations that are more than 360', () => {
       $config$.get(_.tester.vine).next({stops: [123, 456, 678]});
       const state = {
-        id: componentId({}),
+        id: componentId(),
         rotationDeg: new BehaviorSubject(910),
       };
       const element = _.tester.bootstrapElement(TEST);

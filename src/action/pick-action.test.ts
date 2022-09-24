@@ -55,7 +55,7 @@ test('@protoboard2/src/action/pick-action', () => {
   });
 
   should('add the ID to activeState\'s content IDs', () => {
-    const id = componentId({});
+    const id = componentId();
     const state = {id};
     const element = _.tester.bootstrapElement(TEST);
     element.state = state;

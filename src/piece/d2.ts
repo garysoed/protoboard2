@@ -35,7 +35,7 @@ export function d2State(
     partial: Partial<D2State> = {},
 ): D2State {
   return {
-    id: componentId({}),
+    id: componentId(),
     currentFaceIndex: new BehaviorSubject(0),
     faces,
     rotationDeg: new BehaviorSubject(0),

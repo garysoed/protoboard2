@@ -2,14 +2,12 @@ import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
 import {incrementingRandom} from 'gs-tools/export/random2';
 import {forwardTo} from 'gs-tools/export/rxjs';
-import {stringType} from 'gs-types';
 import {renderElement} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, of} from 'rxjs';
-import {map} from 'rxjs/operators';
 
 import {$activeState} from '../core/active-spec';
-import {ComponentId, componentId, getPayload} from '../id/component-id';
+import {ComponentId, componentId} from '../id/component-id';
 import {D1, d1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -38,26 +36,28 @@ test('@protoboard2/src/region/deck', () => {
       ],
     });
 
+    const idsMap: Map<ComponentId, string> = new Map();
     registerComponentRenderSpec(tester.vine, (id) => {
-      const payload = getPayload(id);
-      if (!stringType.check(payload)) {
-        return null;
-      }
       return renderElement({
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
+          of(d1State(createRenderSpec(idsMap.get(id) ?? ''), {id})).pipe($.state()),
         ],
       });
     });
 
-    return {seed$, tester};
+    return {idsMap, seed$, tester};
   });
 
   should('render the contents correctly', () => {
+    const contentIds = [{}, {}, {}].map(componentId);
+    _.idsMap.set(contentIds[0], 'red');
+    _.idsMap.set(contentIds[1], 'green');
+    _.idsMap.set(contentIds[2], 'blue');
+
     const state$ = surfaceState({
-      contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>(contentIds),
     });
     const element = _.tester.bootstrapElement(DECK);
     element.state = state$;
@@ -68,10 +68,16 @@ test('@protoboard2/src/region/deck', () => {
   test('drop action', () => {
     setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
+      const activeId = componentId();
+      _.idsMap.set(activeId, 'steelblue');
+      activeContents$.next([activeId]);
 
+      const contentIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(contentIds[0], 'red');
+      _.idsMap.set(contentIds[1], 'green');
+      _.idsMap.set(contentIds[2], 'blue');
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(contentIds),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -97,11 +103,20 @@ test('@protoboard2/src/region/deck', () => {
 
   test('drop all action', () => {
     setup(_, () => {
-      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(forwardTo(activeContents$)).subscribe();
+      const activeContentIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(activeContentIds[0], 'steelblue');
+      _.idsMap.set(activeContentIds[1], 'orange');
+      _.idsMap.set(activeContentIds[2], 'chartreuse');
 
+      const activeContents$ = $activeState.get(_.tester.vine).contentIds;
+      activeContents$.next(activeContentIds);
+
+      const contentIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(contentIds[0], 'red');
+      _.idsMap.set(contentIds[1], 'green');
+      _.idsMap.set(contentIds[2], 'blue');
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(contentIds),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
@@ -127,16 +142,23 @@ test('@protoboard2/src/region/deck', () => {
 
   test('pick child action', () => {
     setup(_, () => {
+      const existingId = componentId();
+
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
+      of([existingId]).pipe(forwardTo(activeContents$)).subscribe();
+
+      const contentIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(contentIds[0], 'red');
+      _.idsMap.set(contentIds[1], 'green');
+      _.idsMap.set(contentIds[2], 'blue');
 
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(contentIds),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
-      return {..._, activeContents$, element};
+      return {..._, activeContents$, contentIds, element, existingId};
     });
 
     should('trigger on keydown', () => {
@@ -145,8 +167,8 @@ test('@protoboard2/src/region/deck', () => {
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
       assert(_.element).to.matchSnapshot('deck__pick-keydown.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
-          arrayThat().haveExactElements(['steelblue', 'blue']),
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<ComponentId>().haveExactElements([_.existingId, _.contentIds[2]]),
       );
     });
 
@@ -156,8 +178,8 @@ test('@protoboard2/src/region/deck', () => {
       d1Harness.target.pick();
 
       assert(_.element).to.matchSnapshot('deck__pick-call.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
-          arrayThat().haveExactElements(['steelblue', 'blue']),
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<ComponentId>().haveExactElements([_.existingId, _.contentIds[2]]),
       );
     });
   });
@@ -165,15 +187,17 @@ test('@protoboard2/src/region/deck', () => {
   test('pick all action', () => {
     setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
+      const existingId = componentId();
+      of([existingId]).pipe(forwardTo(activeContents$)).subscribe();
 
+      const surfaceIds = [{}, {}, {}].map(componentId);
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(surfaceIds),
       });
       const element = _.tester.bootstrapElement(DECK);
       element.state = state$;
 
-      return {..._, activeContents$, element};
+      return {..._, activeContents$, element, existingId, surfaceIds};
     });
 
     should('trigger on keydown', () => {
@@ -181,8 +205,13 @@ test('@protoboard2/src/region/deck', () => {
       harness.simulateTrigger(TriggerType.CLICK, {shiftKey: true});
 
       assert(_.element).to.matchSnapshot('deck__pickall-keydown.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
-          arrayThat().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<ComponentId>().haveExactElements([
+            _.existingId,
+            _.surfaceIds[2],
+            _.surfaceIds[1],
+            _.surfaceIds[0],
+          ]),
       );
     });
 
@@ -190,8 +219,13 @@ test('@protoboard2/src/region/deck', () => {
       _.element.pickAll(undefined);
 
       assert(_.element).to.matchSnapshot('deck__pickall-call.html');
-      assert(_.activeContents$.pipe(map(ids => ids.map(getPayload)))).to.emitWith(
-          arrayThat().haveExactElements(['steelblue', 'blue', 'green', 'red']),
+      assert(_.activeContents$).to.emitWith(
+          arrayThat<ComponentId>().haveExactElements([
+            _.existingId,
+            _.surfaceIds[2],
+            _.surfaceIds[1],
+            _.surfaceIds[0],
+          ]),
       );
     });
   });
@@ -199,10 +233,15 @@ test('@protoboard2/src/region/deck', () => {
   test('shuffle', () => {
     setup(_, () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
-      of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
+      of([componentId()]).pipe(forwardTo(activeContents$)).subscribe();
+
+      const contentIds = [{}, {}, {}].map(componentId);
+      _.idsMap.set(contentIds[0], 'red');
+      _.idsMap.set(contentIds[1], 'green');
+      _.idsMap.set(contentIds[2], 'blue');
 
       const state$ = surfaceState({
-        contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
+        contentIds: new BehaviorSubject<readonly ComponentId[]>(contentIds),
       });
       _.seed$.next(0.8);
       const element = _.tester.bootstrapElement(DECK);

@@ -25,7 +25,7 @@ const D1_STATE_TYPE = intersectType([
 
 export function d1State(face: FaceSpec, partial: Partial<D1State> = {}): D1State {
   return {
-    id: componentId({}),
+    id: componentId(),
     face,
     rotationDeg: new BehaviorSubject(0),
     ...partial,

@@ -84,7 +84,7 @@ test('@protoboard2/action/turn-action', () => {
   should('increase the face by the given step', () => {
     $config$.get(_.tester.vine).next({step: 2});
     const state = {
-      id: componentId({}),
+      id: componentId(),
       faces: FACES,
       currentFaceIndex: new BehaviorSubject(0),
     };
@@ -98,7 +98,7 @@ test('@protoboard2/action/turn-action', () => {
   should('wrap the face index by the count', () => {
     $config$.get(_.tester.vine).next({step: 2});
     const state = {
-      id: componentId({}),
+      id: componentId(),
       faces: FACES,
       currentFaceIndex: new BehaviorSubject(0),
     };

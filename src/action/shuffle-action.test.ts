@@ -1,7 +1,9 @@
 import {assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
+import {$asMap, $map} from 'gs-tools/export/collect';
 import {cache} from 'gs-tools/export/data';
 import {incrementingRandom} from 'gs-tools/export/random2';
+import {$pipe} from 'gs-tools/export/typescript';
 import {Context, DIV, icall, itarget, oforeach, query, registerCustomElement} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
@@ -65,6 +67,12 @@ const TEST = registerCustomElement({
 });
 
 test('@protoboard2/action/shuffle-action', () => {
+  const IDS_MAP = $pipe(
+      ['orange', 'steelblue', 'purple', 'red'],
+      $map(color => [componentId(), color] as const),
+      $asMap(),
+  );
+
   const _ = setup(() => {
     runEnvironment(new BrowserSnapshotsEnv('src/action/goldens', goldens));
 
@@ -78,7 +86,7 @@ test('@protoboard2/action/shuffle-action', () => {
         {override: $randomSeed, withValue: () => seed$.getValue()},
       ],
     });
-    registerComponentRenderSpec(tester.vine, renderTestFace);
+    registerComponentRenderSpec(tester.vine, id => renderTestFace(IDS_MAP.get(id) ?? ''));
 
     return {seed$, tester};
   });
@@ -87,10 +95,8 @@ test('@protoboard2/action/shuffle-action', () => {
     _.seed$.next(0.9);
 
     const state: TestState = {
-      id: componentId({}),
-      contentIds: new BehaviorSubject<readonly ComponentId[]>(
-          ['orange', 'steelblue', 'purple', 'red'].map(componentId),
-      ),
+      id: componentId(),
+      contentIds: new BehaviorSubject<readonly ComponentId[]>([...IDS_MAP.keys()]),
     };
 
     const element = _.tester.bootstrapElement(TEST);

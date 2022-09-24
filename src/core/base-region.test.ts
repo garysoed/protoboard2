@@ -1,13 +1,11 @@
 import {arrayThat, assert, runEnvironment, setup, should, test} from 'gs-testing';
 import {BrowserSnapshotsEnv} from 'gs-testing/export/browser';
-import {forwardTo} from 'gs-tools/export/rxjs';
-import {stringType} from 'gs-types';
 import {Context, DIV, itarget, oforeach, query, registerCustomElement, renderElement, renderTextNode} from 'persona';
 import {getHarness, setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable, of, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {componentId, ComponentId, getPayload} from '../id/component-id';
+import {componentId, ComponentId} from '../id/component-id';
 import {D1, d1State, D1State} from '../piece/d1';
 import {D1Harness} from '../piece/testing/d1-harness';
 import {registerComponentRenderSpec} from '../renderspec/render-component-spec';
@@ -63,11 +61,7 @@ test('@protoboard2/src/core/base-region', () => {
     const tester = setupTest({roots: [D1, TEST, TEST_FACE], overrides: [THEME_LOADER_TEST_OVERRIDE]});
     const states = new Map<ComponentId, D1State>();
 
-    registerComponentRenderSpec(tester.vine, (id) => {
-      const payload = getPayload(id);
-      if (!stringType.check(payload)) {
-        return null;
-      }
+    registerComponentRenderSpec(tester.vine, id => {
       return renderElement({
         registration: D1,
         spec: {},
@@ -79,25 +73,29 @@ test('@protoboard2/src/core/base-region', () => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
+      const testId = componentId();
+      const contentIds = [{}, {}, {}].map(componentId);
+
+      const idsMap = new Map([
+        [testId, 'test'],
+        [contentIds[0], 'one'],
+        [contentIds[1], 'two'],
+        [contentIds[2], 'three'],
+      ]);
       registerComponentRenderSpec(_.tester.vine, id => {
         return renderTextNode({
-          textContent: of(getPayload(id) as string),
+          textContent: of(idsMap.get(id) ?? ''),
         });
       });
 
       const state = {
-        id: componentId('test'),
+        id: testId,
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
       element.state = state;
 
-      of(['one', 'two', 'three'])
-          .pipe(
-              map(ids => ids.map(componentId)),
-              forwardTo(state.contentIds),
-          )
-          .subscribe();
+      state.contentIds.next(contentIds);
 
       assert(element).to.matchSnapshot('base-region.html');
     });
@@ -105,14 +103,13 @@ test('@protoboard2/src/core/base-region', () => {
 
   test('drop', () => {
     should('move the item from active state when triggered', () => {
-      const color = 'steelblue';
-      const id = componentId(color);
+      const id = componentId();
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(createRenderSpec(color), {id}));
+      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
       const regionState = {
-        id: componentId('region'),
+        id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
@@ -126,14 +123,13 @@ test('@protoboard2/src/core/base-region', () => {
     });
 
     should('move the item from active state on function calls', () => {
-      const color = 'steelblue';
-      const id = componentId(color);
+      const id = componentId();
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(createRenderSpec(color), {id}));
+      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
       const regionState = {
-        id: componentId('region'),
+        id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
       };
       const element = _.tester.bootstrapElement(TEST);
@@ -148,12 +144,11 @@ test('@protoboard2/src/core/base-region', () => {
 
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
-      const color = 'steelblue';
-      const id = componentId(color);
-      _.states.set(id, d1State(createRenderSpec(color), {id}));
+      const id = componentId();
+      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
 
       const regionState = {
-        id: componentId('region'),
+        id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([id]),
       };
       const element = _.tester.bootstrapElement(TEST);
@@ -167,12 +162,11 @@ test('@protoboard2/src/core/base-region', () => {
     });
 
     should('not removed element if action is not pick', () => {
-      const color = 'steelblue';
-      const id = componentId(color);
-      _.states.set(id, d1State(createRenderSpec(color), {id}));
+      const id = componentId();
+      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
 
       const regionState = {
-        id: componentId('region'),
+        id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([id]),
       };
       const element = _.tester.bootstrapElement(TEST);

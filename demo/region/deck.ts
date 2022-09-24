@@ -4,7 +4,7 @@ import {Context, Ctrl, query, registerCustomElement} from 'persona';
 import {Observable, of} from 'rxjs';
 
 import {DECK} from '../../src/region/deck';
-import {$state$} from '../demo-state';
+import {$state} from '../demo-state';
 import {DOCUMENTATION_TEMPLATE} from '../template/documentation-template';
 
 import template from './deck.html';
@@ -17,7 +17,7 @@ export const deckDemo = {
 };
 
 class DeckDemo implements Ctrl {
-  private readonly state = $state$.get(this.$.vine).deck;
+  private readonly state = $state.get(this.$.vine).deck;
 
   constructor(private readonly $: Context<typeof deckDemo>) { }
 
