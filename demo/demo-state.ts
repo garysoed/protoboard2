@@ -61,36 +61,35 @@ const MEEPLE_ID = componentId(ComponentType.MEEPLE);
 
 export const $state$ = source(vine => ({
   d1: {
-    gemSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([GEM_ID])}),
-    meepleSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([MEEPLE_ID])}),
+    gemSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([GEM_ID])}),
+    meepleSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([MEEPLE_ID])}),
   },
   d2: {
-    cardSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([CARD_ID])}),
-    coinSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([COIN_ID])}),
+    cardSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([CARD_ID])}),
+    coinSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([COIN_ID])}),
   },
   d6: {
-    diceSlot: surfaceState(componentId({}), {contentIds: new BehaviorSubject<readonly ComponentId[]>([DICE_ID])}),
+    diceSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([DICE_ID])}),
   },
   deck: {
-    deck: deckState(componentId({})),
+    deck: deckState(),
   },
   pad: {
-    pad: padState(componentId({})),
+    pad: padState(),
   },
   surface: {
-    surface: surfaceState(componentId({})),
+    surface: surfaceState(),
   },
   pieces: {
     card: d2State(
-        CARD_ID,
         [faceSpec(vine, FaceType.CARD_BACK), faceSpec(vine, FaceType.CARD_FRONT)],
+        {id: CARD_ID},
     ),
     coin: d2State(
-        COIN_ID,
         [faceSpec(vine, FaceType.COIN_BACK), faceSpec(vine, FaceType.COIN_FRONT)],
+        {id: COIN_ID},
     ),
     dice: d6State(
-        DICE_ID,
         [
           faceSpec(vine, FaceType.DICE_PIP_1),
           faceSpec(vine, FaceType.DICE_PIP_2),
@@ -99,9 +98,10 @@ export const $state$ = source(vine => ({
           faceSpec(vine, FaceType.DICE_PIP_5),
           faceSpec(vine, FaceType.DICE_PIP_4),
         ],
+        {id: DICE_ID},
     ),
-    gem: d1State(GEM_ID, faceSpec(vine, FaceType.GEM)),
-    meeple: d1State(MEEPLE_ID, faceSpec(vine, FaceType.MEEPLE)),
+    gem: d1State(faceSpec(vine, FaceType.GEM), {id: GEM_ID}),
+    meeple: d1State(faceSpec(vine, FaceType.MEEPLE), {id: MEEPLE_ID}),
   },
 }));
 

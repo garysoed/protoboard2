@@ -5,7 +5,6 @@ import {getHarness, setupTest} from 'persona/export/testing';
 import {of} from 'rxjs';
 
 import testSvg from '../../asset/icon.svg';
-import {componentId} from '../../id/component-id';
 import {THEME_LOADER_TEST_OVERRIDE} from '../../testing/theme-loader-test-override';
 import {TriggerType} from '../../types/trigger-spec';
 
@@ -58,7 +57,7 @@ test('@protoboard2/src/region/pad/pad', () => {
     const STAMP_B_ID = 'b';
 
     setup(_, () => {
-      const state = padState(componentId('id'));
+      const state = padState();
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
       return {..._, element, state};
@@ -120,7 +119,7 @@ test('@protoboard2/src/region/pad/pad', () => {
     const LINE_ID = 'line';
 
     setup(_, () => {
-      const state = padState(componentId('id'));
+      const state = padState();
       const element = _.tester.bootstrapElement(PAD);
       element.state = state;
 

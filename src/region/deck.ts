@@ -8,7 +8,7 @@ import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {shuffleAction} from '../action/shuffle-action';
 import {$activeState} from '../core/active-spec';
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
-import {ComponentId} from '../id/component-id';
+import {componentId, ComponentId} from '../id/component-id';
 import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 import {TriggerSpec, TriggerType, TRIGGER_SPEC_TYPE} from '../types/trigger-spec';
 
@@ -19,9 +19,9 @@ export interface DeckState extends RegionState { }
 
 export const DECK_STATE_TYPE: Type<DeckState> = REGION_STATE_TYPE;
 
-export function deckState(id: ComponentId, input: Partial<DeckState> = {}): DeckState {
+export function deckState(input: Partial<DeckState> = {}): DeckState {
   return {
-    id,
+    id: componentId({}),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

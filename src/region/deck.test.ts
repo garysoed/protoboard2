@@ -47,7 +47,7 @@ test('@protoboard2/src/region/deck', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
+          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
         ],
       });
     });
@@ -56,7 +56,7 @@ test('@protoboard2/src/region/deck', () => {
   });
 
   should('render the contents correctly', () => {
-    const state$ = surfaceState(componentId({}), {
+    const state$ = surfaceState({
       contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
     });
     const element = _.tester.bootstrapElement(DECK);
@@ -70,7 +70,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
@@ -100,7 +100,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of(['steelblue', 'orange', 'chartreuse'].map(componentId)).pipe(forwardTo(activeContents$)).subscribe();
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
@@ -130,7 +130,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
@@ -167,7 +167,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(DECK);
@@ -201,7 +201,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([componentId('steelblue')]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       _.seed$.next(0.8);

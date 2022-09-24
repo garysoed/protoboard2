@@ -7,7 +7,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
-import {ComponentId, componentId} from '../id/component-id';
+import {ComponentId} from '../id/component-id';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
@@ -46,7 +46,7 @@ test('@protoboard2/src/piece/d6', () => {
   });
 
   should('render the face correctly', () => {
-    const state = d6State(componentId({}), FACES);
+    const state = d6State(FACES);
 
     const element = _.tester.bootstrapElement(D6);
     element.state = state;
@@ -61,8 +61,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const id = componentId('');
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -72,8 +71,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId('');
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -90,25 +88,23 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on click', () => {
-      const id = componentId({});
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
       harness.simulateTrigger(TriggerType.CLICK);
 
       assert($activeState.get(_.tester.vine).contentIds).to
-          .emitSequence([arrayThat<ComponentId>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([state.id])]);
     });
 
     should('trigger on function call', () => {
-      const id = componentId({});
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
       _.element.pick(undefined);
 
       assert($activeState.get(_.tester.vine).contentIds).to
-          .emitSequence([arrayThat<ComponentId>().haveExactElements([id])]);
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([state.id])]);
     });
   });
 
@@ -120,8 +116,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const id = componentId({});
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -131,8 +126,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId({});
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
       _.element.roll(undefined);
 
@@ -149,8 +143,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const id = componentId('');
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -160,8 +153,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId({});
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
       _.element.rotate(undefined);
 
@@ -176,8 +168,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const id = componentId('');
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -187,8 +178,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const id = componentId('');
-      const state = d6State(id, FACES);
+      const state = d6State(FACES);
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);

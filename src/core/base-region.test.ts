@@ -110,7 +110,7 @@ test('@protoboard2/src/core/base-region', () => {
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(id, createRenderSpec(color)));
+      _.states.set(id, d1State(createRenderSpec(color), {id}));
       const regionState = {
         id: componentId('region'),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
@@ -131,7 +131,7 @@ test('@protoboard2/src/core/base-region', () => {
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(id, createRenderSpec(color)));
+      _.states.set(id, d1State(createRenderSpec(color), {id}));
       const regionState = {
         id: componentId('region'),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
@@ -150,7 +150,7 @@ test('@protoboard2/src/core/base-region', () => {
     should('remove picked elements', () => {
       const color = 'steelblue';
       const id = componentId(color);
-      _.states.set(id, d1State(id, createRenderSpec(color)));
+      _.states.set(id, d1State(createRenderSpec(color), {id}));
 
       const regionState = {
         id: componentId('region'),
@@ -169,7 +169,7 @@ test('@protoboard2/src/core/base-region', () => {
     should('not removed element if action is not pick', () => {
       const color = 'steelblue';
       const id = componentId(color);
-      _.states.set(id, d1State(id, createRenderSpec(color)));
+      _.states.set(id, d1State(createRenderSpec(color), {id}));
 
       const regionState = {
         id: componentId('region'),

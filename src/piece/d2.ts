@@ -10,7 +10,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
-import {ComponentId} from '../id/component-id';
+import {componentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
 import {ComponentState, COMPONENT_STATE_TYPE} from '../types/component-state';
@@ -31,12 +31,11 @@ export const D2_STATE_TYPE: Type<D2State> = intersectType([
 
 
 export function d2State(
-    id: ComponentId,
     faces: readonly [FaceSpec, FaceSpec],
     partial: Partial<D2State> = {},
 ): D2State {
   return {
-    id,
+    id: componentId({}),
     currentFaceIndex: new BehaviorSubject(0),
     faces,
     rotationDeg: new BehaviorSubject(0),

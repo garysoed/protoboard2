@@ -85,7 +85,7 @@ test('@protoboard2/src/action/drop-action', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
+          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
         ],
       });
     });

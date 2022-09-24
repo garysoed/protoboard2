@@ -5,7 +5,7 @@ import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {BaseRegion, create$baseRegion, RenderContentFn} from '../core/base-region';
-import {ComponentId} from '../id/component-id';
+import {componentId, ComponentId} from '../id/component-id';
 import {RegionState, REGION_STATE_TYPE} from '../types/region-state';
 
 import template from './surface.html';
@@ -28,9 +28,9 @@ const $surface = {
 };
 
 
-export function surfaceState(id: ComponentId, input: Partial<SurfaceState> = {}): SurfaceState {
+export function surfaceState(input: Partial<SurfaceState> = {}): SurfaceState {
   return {
-    id,
+    id: componentId({}),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

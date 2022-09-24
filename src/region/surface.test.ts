@@ -35,7 +35,7 @@ test('@protoboard2/src/region/surface', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(id, createRenderSpec(payload))).pipe($.state()),
+          of(d1State(createRenderSpec(payload), {id})).pipe($.state()),
         ],
       });
     });
@@ -44,7 +44,7 @@ test('@protoboard2/src/region/surface', () => {
   });
 
   should('render the contents correctly', () => {
-    const state$ = surfaceState(componentId({}), {
+    const state$ = surfaceState({
       contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
     });
     const element = _.tester.bootstrapElement(SURFACE);
@@ -58,7 +58,7 @@ test('@protoboard2/src/region/surface', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       activeContents$.next([componentId('steelblue')]);
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(SURFACE);
@@ -89,7 +89,7 @@ test('@protoboard2/src/region/surface', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       activeContents$.next([componentId('steelblue')]);
 
-      const state$ = surfaceState(componentId({}), {
+      const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(['red', 'green', 'blue'].map(componentId)),
       });
       const element = _.tester.bootstrapElement(SURFACE);

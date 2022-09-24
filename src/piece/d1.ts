@@ -4,7 +4,7 @@ import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} fro
 import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
-import {ComponentId} from '../id/component-id';
+import {componentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {FaceSpec, FACE_SPEC_TYPE} from '../types/is-multifaced';
 import {PieceState, PIECE_STATE_TYPE} from '../types/piece-state';
@@ -23,9 +23,9 @@ const D1_STATE_TYPE = intersectType([
   }),
 ]);
 
-export function d1State(id: ComponentId, face: FaceSpec, partial: Partial<D1State> = {}): D1State {
+export function d1State(face: FaceSpec, partial: Partial<D1State> = {}): D1State {
   return {
-    id,
+    id: componentId({}),
     face,
     rotationDeg: new BehaviorSubject(0),
     ...partial,

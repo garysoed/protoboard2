@@ -1,7 +1,7 @@
 import {hasPropertiesType, instanceofType, intersectType, Type} from 'gs-types';
 import {BehaviorSubject, Subject} from 'rxjs';
 
-import {ComponentId} from '../../id/component-id';
+import {componentId} from '../../id/component-id';
 import {ComponentState, COMPONENT_STATE_TYPE} from '../../types/component-state';
 
 export enum PadContentType {
@@ -46,9 +46,9 @@ export const PAD_STATE_TYPE: Type<PadState> = intersectType([
   COMPONENT_STATE_TYPE,
 ]);
 
-export function padState(id: ComponentId, partial: Partial<PadState> = {}): PadState {
+export function padState(partial: Partial<PadState> = {}): PadState {
   return {
-    id,
+    id: componentId({}),
     contents: new BehaviorSubject<readonly PadContentState[]>([]),
     halfLine: new BehaviorSubject<HalfLineState|null>(null),
     ...partial,

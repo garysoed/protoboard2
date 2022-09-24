@@ -6,7 +6,7 @@ import {map} from 'rxjs/operators';
 
 import {ShowHelpEvent, SHOW_HELP_EVENT} from '../action/show-help-event';
 import {$activeState} from '../core/active-spec';
-import {componentId, getPayload} from '../id/component-id';
+import {ComponentId} from '../id/component-id';
 import {createRenderSpec, TEST_FACE} from '../testing/test-face';
 import {THEME_LOADER_TEST_OVERRIDE} from '../testing/theme-loader-test-override';
 import {TriggerType} from '../types/trigger-spec';
@@ -24,7 +24,7 @@ test('@protoboard2/src/piece/d1', () => {
   });
 
   should('render the face correctly', () => {
-    const state = d1State(componentId({}), createRenderSpec('steelblue'));
+    const state = d1State(createRenderSpec('steelblue'));
 
     const element = _.tester.bootstrapElement(D1);
     element.state = state;
@@ -39,25 +39,23 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on click', () => {
-      const id = {};
-      const state = d1State(componentId(id), createRenderSpec('steelblue'));
+      const state = d1State(createRenderSpec('steelblue'));
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
       harness.simulateTrigger(TriggerType.CLICK);
 
-      assert($activeState.get(_.tester.vine).contentIds.pipe(map(ids => ids.map(getPayload)))).to
-          .emitSequence([arrayThat().haveExactElements([id])]);
+      assert($activeState.get(_.tester.vine).contentIds).to
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([state.id])]);
     });
 
     should('trigger on function call', () => {
-      const id = {};
-      const state = d1State(componentId(id), createRenderSpec('steelblue'));
+      const state = d1State(createRenderSpec('steelblue'));
       _.element.state = state;
       _.element.pick(undefined);
 
-      assert($activeState.get(_.tester.vine).contentIds.pipe(map(ids => ids.map(getPayload)))).to
-          .emitSequence([arrayThat<{}>().haveExactElements([id])]);
+      assert($activeState.get(_.tester.vine).contentIds).to
+          .emitSequence([arrayThat<ComponentId>().haveExactElements([state.id])]);
     });
   });
 
@@ -70,8 +68,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on R', () => {
-      const id = '';
-      const state = d1State(componentId(id), createRenderSpec('steelblue'));
+      const state = d1State(createRenderSpec('steelblue'));
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -81,8 +78,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on function call', () => {
-      const id = {};
-      const state = d1State(componentId(id), createRenderSpec('steelblue'));
+      const state = d1State(createRenderSpec('steelblue'));
       _.element.state = state;
       _.element.rotate(undefined);
 

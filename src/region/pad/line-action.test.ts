@@ -5,7 +5,6 @@ import {BehaviorSubject, EMPTY, merge, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../../core/base-component';
-import {componentId} from '../../id/component-id';
 import {onTrigger} from '../../trigger/trigger';
 import {TriggerType} from '../../types/trigger-spec';
 
@@ -70,7 +69,7 @@ test('@protoboard2/src/region/pad/line-action', () => {
   const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = padState(componentId('id'), {
+    const state = padState({
       contents: new BehaviorSubject<readonly PadContentState[]>([]),
     });
 
