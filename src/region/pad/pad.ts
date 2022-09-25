@@ -86,7 +86,7 @@ const $pad = {
     line: icall<[LineGenericActionInput], 'line'>('line', [LINE_GENERIC_ACTION_INPUT_TYPE]),
     stampConfigs: ivalue('stampConfigs', arrayOfType(STAMP_CONFIG_TYPE)),
     stamp: icall<[StampGenericActionInput], 'stamp'>('stamp', [STAMP_GENERIC_ACTION_INPUT_TYPE]),
-    undoConfig: ivalue('undoConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.BACKSPACE}),
+    undoConfig: ivalue('undoConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.BACKSPACE})),
     undo: icall<[], 'undo'>('undo', []),
   },
   shadow: {

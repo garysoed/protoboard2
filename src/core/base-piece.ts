@@ -31,12 +31,12 @@ export function create$basePiece<S extends PieceState>(pieceStateType: Type<S>):
       height: iattr('height'),
       width: iattr('width'),
       pick: icall('pick', []),
-      pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK, shift: false}),
+      pickConfig: ivalue('pickConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.CLICK, shift: false})),
       rotate: icall('rotate', []),
       rotateConfig: ivalue(
           'rotateConfig',
           intersectType([TRIGGER_SPEC_TYPE, ROTATE_CONFIG_TYPE]),
-          {...DEFAULT_ROTATE_CONFIG, type: TriggerType.R},
+          () => ({...DEFAULT_ROTATE_CONFIG, type: TriggerType.R}),
       ),
     },
   };

@@ -31,11 +31,11 @@ const $deck = {
   host: {
     ...create$baseRegion<DeckState>(DECK_STATE_TYPE).host,
     dropAll: icall('dropAll', []),
-    dropAllConfig: ivalue('dropAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: true}),
+    dropAllConfig: ivalue('dropAllConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.D, shift: true})),
     pickAll: icall('pickAll', []),
-    pickAllConfig: ivalue('pickAllConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.CLICK, shift: true}),
+    pickAllConfig: ivalue('pickAllConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.CLICK, shift: true})),
     shuffle: icall('shuffle', []),
-    shuffleConfig: ivalue('shuffleConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.S}),
+    shuffleConfig: ivalue('shuffleConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.S})),
   },
   shadow: {
     root: query('#root', DIV, {

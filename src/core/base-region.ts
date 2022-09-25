@@ -31,7 +31,7 @@ export function create$baseRegion<S extends RegionState>(stateType: Type<S>): Ba
     host: {
       ...create$baseComponent<S>(stateType).host,
       drop: icall('drop', []),
-      dropConfig: ivalue('dropConfig', TRIGGER_SPEC_TYPE, {type: TriggerType.D, shift: false}),
+      dropConfig: ivalue('dropConfig', TRIGGER_SPEC_TYPE, () => ({type: TriggerType.D, shift: false})),
     },
   };
 }
