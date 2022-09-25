@@ -16,7 +16,7 @@ export interface D1State extends PieceState {
   readonly face: FaceSpec;
 }
 
-const D1_STATE_TYPE = intersectType([
+export const D1_STATE_TYPE = intersectType([
   PIECE_STATE_TYPE,
   hasPropertiesType({
     face: FACE_SPEC_TYPE,
