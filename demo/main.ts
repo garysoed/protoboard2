@@ -4,7 +4,6 @@ import {ON_LOG_$, WebConsoleDestination} from 'santa';
 import {registerComponentRenderSpec} from '../src/renderspec/render-component-spec';
 
 import protoboardSvg from './asset/icon.svg';
-import {$locationService} from './core/location-service';
 import {registerFaceSvgs} from './core/render-face';
 import {renderComponent} from './demo-state';
 import {ROOT} from './root';
@@ -33,6 +32,5 @@ window.addEventListener('load', () => {
   registerFaceSvgs(vine);
 
   registerComponentRenderSpec(vine, id => renderComponent(id, vine));
-  $locationService.get(vine).run().subscribe();
 });
 

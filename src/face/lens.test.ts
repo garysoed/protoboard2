@@ -1,5 +1,6 @@
 import {assert, createSpySubject, setup, should, test} from 'gs-testing';
 import {ElementHarness, getHarness, setupTest} from 'persona/export/testing';
+import {firstValueFrom} from 'rxjs';
 
 import {createRenderSpec} from '../testing/test-face';
 
@@ -16,10 +17,10 @@ test('@protoboard2/src/face/lens', () => {
     return {tester};
   });
 
-  should('call LensService with show and hide on mouse enter and mouse leave', () => {
+  should('call LensService with show and hide on mouse enter and mouse leave', async () => {
     const content = document.createElement('div');
     const element = _.tester.bootstrapElement(LENS);
-    const renderSpec = RENDER_SPEC.renderLensFn()!;
+    const renderSpec = (await firstValueFrom(RENDER_SPEC.renderLensSpec$))!;
     element.renderSpec = renderSpec;
     element.appendChild(content);
 

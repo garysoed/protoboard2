@@ -69,5 +69,8 @@ export function renderTestFace(id: string): RenderSpec {
 }
 
 export function createRenderSpec(color: string): FaceSpec {
-  return {renderFn: () => renderTestFace(color), renderLensFn: () => renderTestFace(color)};
+  return {
+    renderSpec$: of(renderTestFace(color)),
+    renderLensSpec$: of(renderTestFace(color)),
+  };
 }

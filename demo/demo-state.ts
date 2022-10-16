@@ -134,8 +134,8 @@ export function renderComponent(id: ComponentId, vine: Vine): RenderSpec {
 
 function faceSpec(vine: Vine, faceType: FaceType): FaceSpec {
   return {
-    renderFn: () => renderDemoFace(vine, faceType),
-    renderLensFn: () => renderLens(faceType),
+    renderSpec$: of(renderDemoFace(vine, faceType)),
+    renderLensSpec$: of(renderLens(faceType)),
   };
 }
 

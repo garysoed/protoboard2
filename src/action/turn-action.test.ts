@@ -6,7 +6,7 @@ import {intersectType, Type} from 'gs-types';
 import {Context, icall, ocase, registerCustomElement, root} from 'persona';
 import {setupTest} from 'persona/export/testing';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 import {BaseComponent, create$baseComponent} from '../core/base-component';
 import {componentId} from '../id/component-id';
@@ -58,7 +58,7 @@ class Test extends BaseComponent<TestState> {
       this.$.host.trigger.pipe(turnAction(this.$, $config$.get(this.$.vine))),
       this.state.$('currentFaceIndex').pipe(
           map(index => FACES[index]),
-          this.$.shadow.root.content(map(spec => spec.renderFn())),
+          this.$.shadow.root.content(switchMap(spec => spec.renderSpec$)),
       ),
     ];
   }

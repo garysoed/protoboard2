@@ -1,15 +1,15 @@
 import {arrayOfType, hasPropertiesType, instanceofType, Type} from 'gs-types';
 import {RenderSpec} from 'persona';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 export interface FaceSpec {
-  readonly renderFn: () => RenderSpec|null;
-  readonly renderLensFn: () => RenderSpec|null;
+  readonly renderSpec$: Observable<RenderSpec|null>;
+  readonly renderLensSpec$: Observable<RenderSpec|null>;
 }
 
 export const FACE_SPEC_TYPE: Type<FaceSpec> = hasPropertiesType({
-  renderFn: instanceofType<() => RenderSpec|null>(Function),
-  renderLensFn: instanceofType<() => RenderSpec|null>(Function),
+  renderSpec$: instanceofType<Observable<RenderSpec|null>>(Observable),
+  renderLensSpec$: instanceofType<Observable<RenderSpec|null>>(Observable),
 });
 
 export interface IsMultifaced {
