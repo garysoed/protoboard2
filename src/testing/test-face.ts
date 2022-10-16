@@ -58,12 +58,12 @@ export const TEST_FACE = registerCustomElement({
   template,
 });
 
-export function renderTestFace(id: string): RenderSpec {
+export function renderTestFace(shade: string): RenderSpec {
   return renderElement({
     registration: TEST_FACE,
     spec: {},
     runs: $ => [
-      of(id).pipe($.shade()),
+      of(shade).pipe($.shade()),
     ],
   });
 }

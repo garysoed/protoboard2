@@ -10,6 +10,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {LENS} from '../face/lens';
 import {componentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
@@ -132,6 +133,7 @@ class D2Ctrl extends BaseComponent<D2State> {
 
 export const D2 = registerCustomElement({
   ctrl: D2Ctrl,
+  deps: [LENS],
   spec: $d2,
   tag: 'pb-d2',
   template,

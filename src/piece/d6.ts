@@ -10,6 +10,7 @@ import {rollAction} from '../action/roll-action';
 import {DEFAULT_ROTATE_CONFIG, rotateAction, ROTATE_CONFIG_TYPE} from '../action/rotate-action';
 import {turnAction} from '../action/turn-action';
 import {BaseComponent, create$baseComponent} from '../core/base-component';
+import {LENS} from '../face/lens';
 import {componentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {renderRotatable} from '../render/render-rotatable';
@@ -143,6 +144,7 @@ class D6Ctrl extends BaseComponent<D6State> {
 
 export const D6 = registerCustomElement({
   ctrl: D6Ctrl,
+  deps: [LENS],
   spec: $d6,
   tag: 'pb-d6',
   template,

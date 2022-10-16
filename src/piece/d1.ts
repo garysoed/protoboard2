@@ -4,6 +4,7 @@ import {Context, itarget, ocase, ostyle, query, registerCustomElement, SLOT} fro
 import {BehaviorSubject, Observable, OperatorFunction} from 'rxjs';
 
 import {BasePiece, create$basePiece} from '../core/base-piece';
+import {LENS} from '../face/lens';
 import {componentId} from '../id/component-id';
 import {renderFace} from '../render/render-face';
 import {FaceSpec, FACE_SPEC_TYPE} from '../types/is-multifaced';
@@ -90,6 +91,7 @@ class D1Ctrl extends BasePiece<D1State> {
 
 export const D1 = registerCustomElement({
   ctrl: D1Ctrl,
+  deps: [LENS],
   spec: $d1,
   tag: 'pb-d1',
   template,
