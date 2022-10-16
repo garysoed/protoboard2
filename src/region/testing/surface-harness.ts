@@ -6,16 +6,16 @@ import {TriggerType} from '../../types/trigger-spec';
 import {SURFACE} from '../surface';
 
 
-export class SlotHarness extends CustomElementHarness<typeof SURFACE> {
+export class SurfaceHarness extends CustomElementHarness<typeof SURFACE> {
   static readonly validType = customElementType(SURFACE);
 
   private readonly harness = getHarness(this.target, '#root', TriggerElementHarness);
 
-  getContent< E extends Element, H extends Harness<E>>(
-      childSelector: string,
+  getContent<E extends Element, H extends Harness<E>>(
+      index: number,
       harness: HarnessCtor<E, H>,
   ): H {
-    return getHarness(this.target, `#root ${childSelector}`, harness);
+    return getHarness(this.target, `#root :nth-child(${index + 1})`, harness);
   }
 
   simulateDrop(): void {

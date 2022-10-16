@@ -17,7 +17,7 @@ import {TriggerType} from '../types/trigger-spec';
 
 import goldens from './goldens/goldens.json';
 import {SURFACE, surfaceState} from './surface';
-import {SlotHarness} from './testing/slot-harness';
+import {SurfaceHarness} from './testing/surface-harness';
 
 
 test('@protoboard2/src/region/surface', () => {
@@ -81,7 +81,7 @@ test('@protoboard2/src/region/surface', () => {
     });
 
     should('trigger on keydown', () => {
-      const harness = getHarness(_.element, SlotHarness);
+      const harness = getHarness(_.element, SurfaceHarness);
       harness.simulateTrigger(TriggerType.D);
 
       assert(_.element).to.matchSnapshot('surface__drop-keydown.html');
@@ -89,7 +89,7 @@ test('@protoboard2/src/region/surface', () => {
     });
 
     should('trigger on function call', () => {
-      const harness = getHarness(_.element, SlotHarness);
+      const harness = getHarness(_.element, SurfaceHarness);
       harness.simulateDrop();
 
       assert(_.element).to.matchSnapshot('surface__drop-call.html');
@@ -120,8 +120,8 @@ test('@protoboard2/src/region/surface', () => {
     });
 
     should('trigger on keydown', () => {
-      const harness = getHarness(_.element, SlotHarness);
-      const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
+      const harness = getHarness(_.element, SurfaceHarness);
+      const d1Harness = harness.getContent(1, D1Harness);
       d1Harness.simulateTrigger(TriggerType.CLICK);
 
       assert(_.element).to.matchSnapshot('surface__pick-keydown.html');
@@ -131,8 +131,8 @@ test('@protoboard2/src/region/surface', () => {
     });
 
     should('trigger on function call', () => {
-      const harness = getHarness(_.element, SlotHarness);
-      const d1Harness = harness.getContent(':nth-child(2)', D1Harness);
+      const harness = getHarness(_.element, SurfaceHarness);
+      const d1Harness = harness.getContent(1, D1Harness);
       d1Harness.simulatePick();
 
       assert(_.element).to.matchSnapshot('surface__pick-call.html');

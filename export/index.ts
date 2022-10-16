@@ -9,4 +9,4 @@ export {componentId} from '../src/id/component-id';
 
 export {renderForeignObject} from '../src/svg/render-foreign-object';
 
-export {registerComponentRenderSpec} from '../src/renderspec/render-component-spec';
+export {RenderComponentSpecProvider, registerComponentRenderSpec} from '../src/renderspec/render-component-spec';
