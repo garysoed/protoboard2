@@ -1,6 +1,8 @@
 import {customElementType} from 'persona';
 import {CustomElementHarness, getHarness} from 'persona/export/testing';
 
+import {LENS} from '../../face/lens';
+import {LensHarness} from '../../face/testing/lens-harness';
 import {TriggerElementHarness} from '../../testing/trigger-element-harness';
 import {TriggerType} from '../../types/trigger-spec';
 import {D2} from '../d2';
@@ -17,6 +19,10 @@ export class D2Harness extends CustomElementHarness<typeof D2> {
 
   simulateHelp(): void {
     this.simulateTrigger(TriggerType.QUESTION);
+  }
+
+  simulateHover(): void {
+    getHarness(this.target, LENS.tag, LensHarness).simulateHover();
   }
 
   simulatePick(): void {
