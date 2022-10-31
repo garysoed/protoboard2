@@ -18,11 +18,33 @@ export interface LineState {
   readonly lineId: string;
 }
 
+export function lineState(partial: Partial<LineState> = {}): LineState {
+  return {
+    type: PadContentType.LINE,
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0,
+    lineId: '',
+    ...partial,
+  };
+}
+
 export interface StampState {
   readonly type: PadContentType.STAMP;
   readonly x: number;
   readonly y: number;
   readonly stampId: string;
+}
+
+export function stampState(partial: Partial<StampState> = {}): StampState {
+  return {
+    type: PadContentType.STAMP,
+    x: 0,
+    y: 0,
+    stampId: '',
+    ...partial,
+  };
 }
 
 export type PadContentState = LineState|StampState;
