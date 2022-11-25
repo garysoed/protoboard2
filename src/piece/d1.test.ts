@@ -24,7 +24,7 @@ test('@protoboard2/src/piece/d1', () => {
   });
 
   should('render the face correctly', () => {
-    const state = d1State(createRenderSpec('steelblue'));
+    const state = d1State({face: createRenderSpec('steelblue')});
 
     const element = _.tester.bootstrapElement(D1);
     element.state = state;
@@ -39,7 +39,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on click', () => {
-      const state = d1State(createRenderSpec('steelblue'));
+      const state = d1State({face: createRenderSpec('steelblue')});
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -50,7 +50,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d1State(createRenderSpec('steelblue'));
+      const state = d1State({face: createRenderSpec('steelblue')});
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -68,7 +68,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on R', () => {
-      const state = d1State(createRenderSpec('steelblue'));
+      const state = d1State({face: createRenderSpec('steelblue')});
       _.element.state = state;
 
       const harness = getHarness(_.element, D1Harness);
@@ -78,7 +78,7 @@ test('@protoboard2/src/piece/d1', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d1State(createRenderSpec('steelblue'));
+      const state = d1State({face: createRenderSpec('steelblue')});
       _.element.state = state;
       _.element.rotate(undefined);
 

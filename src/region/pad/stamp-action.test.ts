@@ -71,7 +71,7 @@ test('@protoboard2/src/region/pad/stamp-action', () => {
   const _ = setup(() => {
     const tester = setupTest({roots: [TEST]});
 
-    const state = padState();
+    const state = padState({});
 
     return {state, tester};
   });

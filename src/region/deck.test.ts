@@ -42,7 +42,7 @@ test('@protoboard2/src/region/deck', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec(idsMap.get(id) ?? ''), {id})).pipe($.state()),
+          of(d1State({id, face: createRenderSpec(idsMap.get(id) ?? '')})).pipe($.state()),
         ],
       });
     });
@@ -51,7 +51,7 @@ test('@protoboard2/src/region/deck', () => {
   });
 
   should('render the contents correctly', () => {
-    const contentIds = [{}, {}, {}].map(componentId);
+    const contentIds = ['test', 'test', 'test'].map(componentId);
     _.idsMap.set(contentIds[0], 'red');
     _.idsMap.set(contentIds[1], 'green');
     _.idsMap.set(contentIds[2], 'blue');
@@ -72,7 +72,7 @@ test('@protoboard2/src/region/deck', () => {
       _.idsMap.set(activeId, 'steelblue');
       activeContents$.next([activeId]);
 
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(contentIds[0], 'red');
       _.idsMap.set(contentIds[1], 'green');
       _.idsMap.set(contentIds[2], 'blue');
@@ -103,7 +103,7 @@ test('@protoboard2/src/region/deck', () => {
 
   test('drop all action', () => {
     setup(_, () => {
-      const activeContentIds = [{}, {}, {}].map(componentId);
+      const activeContentIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(activeContentIds[0], 'steelblue');
       _.idsMap.set(activeContentIds[1], 'orange');
       _.idsMap.set(activeContentIds[2], 'chartreuse');
@@ -111,7 +111,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       activeContents$.next(activeContentIds);
 
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(contentIds[0], 'red');
       _.idsMap.set(contentIds[1], 'green');
       _.idsMap.set(contentIds[2], 'blue');
@@ -147,7 +147,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([existingId]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(contentIds[0], 'red');
       _.idsMap.set(contentIds[1], 'green');
       _.idsMap.set(contentIds[2], 'blue');
@@ -190,7 +190,7 @@ test('@protoboard2/src/region/deck', () => {
       const existingId = componentId();
       of([existingId]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const surfaceIds = [{}, {}, {}].map(componentId);
+      const surfaceIds = ['test', 'test', 'test'].map(componentId);
       const state$ = surfaceState({
         contentIds: new BehaviorSubject<readonly ComponentId[]>(surfaceIds),
       });
@@ -235,7 +235,7 @@ test('@protoboard2/src/region/deck', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       of([componentId()]).pipe(forwardTo(activeContents$)).subscribe();
 
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(contentIds[0], 'red');
       _.idsMap.set(contentIds[1], 'green');
       _.idsMap.set(contentIds[2], 'blue');

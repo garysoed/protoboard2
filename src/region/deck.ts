@@ -17,11 +17,15 @@ import template from './deck.html';
 
 export interface DeckState extends RegionState { }
 
+interface DeckStateInput extends Partial<DeckState> {
+  readonly label?: string;
+}
+
 export const DECK_STATE_TYPE: Type<DeckState> = REGION_STATE_TYPE;
 
-export function deckState(input: Partial<DeckState> = {}): DeckState {
+export function deckState(input: DeckStateInput): DeckState {
   return {
-    id: componentId(),
+    id: componentId(input.label),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

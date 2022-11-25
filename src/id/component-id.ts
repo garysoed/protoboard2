@@ -6,8 +6,8 @@ export interface ComponentId {
   readonly [__id]: unknown;
 }
 
-export function componentId(): ComponentId {
-  return {[__id]: {}};
+export function componentId(label?: string): ComponentId {
+  return {[__id]: label ?? 'componentId'};
 }
 
 export const COMPONENT_ID_TYPE = hasPropertiesType({

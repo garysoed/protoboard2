@@ -10,6 +10,7 @@
     ],
     "module": "commonjs",
     "moduleResolution": "node",
+    "noEmitOnError": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

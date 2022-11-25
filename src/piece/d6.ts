@@ -39,11 +39,15 @@ type Faces = readonly [
   FaceSpec,
 ];
 
-export function d6State(faces: Faces, partial: Partial<D6State> = {}): D6State {
+interface D6StateInput extends Partial<D6State> {
+  readonly label?: string;
+  readonly faces: Faces;
+}
+
+export function d6State(partial: D6StateInput): D6State {
   return {
-    id: componentId(),
+    id: componentId(partial.label),
     currentFaceIndex: new BehaviorSubject(0),
-    faces,
     rotationDeg: new BehaviorSubject(0),
     ...partial,
   };

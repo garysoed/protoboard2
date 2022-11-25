@@ -52,17 +52,20 @@ export const $state = source(vine => {
       [faceSpec(vine, FaceType.COIN_BACK), faceSpec(vine, FaceType.COIN_FRONT)],
   );
   const dice = d6State(
-      [
-        faceSpec(vine, FaceType.DICE_PIP_1),
-        faceSpec(vine, FaceType.DICE_PIP_2),
-        faceSpec(vine, FaceType.DICE_PIP_3),
-        faceSpec(vine, FaceType.DICE_PIP_6),
-        faceSpec(vine, FaceType.DICE_PIP_5),
-        faceSpec(vine, FaceType.DICE_PIP_4),
-      ],
+      {
+        label: 'dice',
+        faces: [
+          faceSpec(vine, FaceType.DICE_PIP_1),
+          faceSpec(vine, FaceType.DICE_PIP_2),
+          faceSpec(vine, FaceType.DICE_PIP_3),
+          faceSpec(vine, FaceType.DICE_PIP_6),
+          faceSpec(vine, FaceType.DICE_PIP_5),
+          faceSpec(vine, FaceType.DICE_PIP_4),
+        ],
+      },
   );
-  const gem = d1State(faceSpec(vine, FaceType.GEM));
-  const meeple = d1State(faceSpec(vine, FaceType.MEEPLE));
+  const gem = d1State({label: 'gem', face: faceSpec(vine, FaceType.GEM)});
+  const meeple = d1State({label: 'meeple', face: faceSpec(vine, FaceType.MEEPLE)});
   return {
     d1: {
       gemSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([gem.id])}),
@@ -76,13 +79,13 @@ export const $state = source(vine => {
       diceSlot: surfaceState({contentIds: new BehaviorSubject<readonly ComponentId[]>([dice.id])}),
     },
     deck: {
-      deck: deckState(),
+      deck: deckState({}),
     },
     pad: {
-      pad: padState(),
+      pad: padState({}),
     },
     surface: {
-      surface: surfaceState(),
+      surface: surfaceState({}),
     },
     pieces: {
       card,

@@ -49,7 +49,7 @@ test('@protoboard2/src/core/active', () => {
       const element = _.tester.bootstrapElement(ACTIVE);
       document.body.appendChild(element);
 
-      $activeState.get(_.tester.vine).contentIds.next([{}].map(componentId));
+      $activeState.get(_.tester.vine).contentIds.next(['test'].map(componentId));
 
       assert(element).to.matchSnapshot('active__one.html');
     });

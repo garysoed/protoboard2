@@ -46,7 +46,7 @@ test('@protoboard2/src/piece/d6', () => {
   });
 
   should('render the face correctly', () => {
-    const state = d6State(FACES);
+    const state = d6State({faces: FACES});
 
     const element = _.tester.bootstrapElement(D6);
     element.state = state;
@@ -61,7 +61,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -71,7 +71,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -88,7 +88,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on click', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -99,7 +99,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -116,7 +116,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -126,7 +126,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
       _.element.roll(undefined);
 
@@ -143,7 +143,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -153,7 +153,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
       _.element.rotate(undefined);
 
@@ -168,7 +168,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);
@@ -178,7 +178,7 @@ test('@protoboard2/src/piece/d6', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d6State(FACES);
+      const state = d6State({faces: FACES});
       _.element.state = state;
 
       const harness = getHarness(_.element, D6Harness);

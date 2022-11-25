@@ -74,7 +74,7 @@ test('@protoboard2/src/core/base-region', () => {
   test('contents$', () => {
     should('render the contents correctly', () => {
       const testId = componentId();
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
 
       const idsMap = new Map([
         [testId, 'test'],
@@ -107,7 +107,7 @@ test('@protoboard2/src/core/base-region', () => {
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
+      _.states.set(id, d1State({face: createRenderSpec('steelblue'), id}));
       const regionState = {
         id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
@@ -127,7 +127,7 @@ test('@protoboard2/src/core/base-region', () => {
       const activeIds$ = $activeState.get(_.tester.vine).contentIds;
       activeIds$.next([id]);
 
-      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
+      _.states.set(id, d1State({face: createRenderSpec('steelblue'), id}));
       const regionState = {
         id: componentId(),
         contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
@@ -145,7 +145,7 @@ test('@protoboard2/src/core/base-region', () => {
   test('setupHandlePick', () => {
     should('remove picked elements', () => {
       const id = componentId();
-      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
+      _.states.set(id, d1State({face: createRenderSpec('steelblue'), id}));
 
       const regionState = {
         id: componentId(),
@@ -163,7 +163,7 @@ test('@protoboard2/src/core/base-region', () => {
 
     should('not removed element if action is not pick', () => {
       const id = componentId();
-      _.states.set(id, d1State(createRenderSpec('steelblue'), {id}));
+      _.states.set(id, d1State({face: createRenderSpec('steelblue'), id}));
 
       const regionState = {
         id: componentId(),

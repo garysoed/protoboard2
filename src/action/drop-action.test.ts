@@ -80,7 +80,7 @@ test('@protoboard2/src/action/drop-action', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec('steelblue'), {id})).pipe($.state()),
+          of(d1State({id, face: createRenderSpec('steelblue')})).pipe($.state()),
         ],
       });
     });

@@ -32,7 +32,7 @@ test('@protoboard2/src/region/surface', () => {
         registration: D1,
         spec: {},
         runs: $ => [
-          of(d1State(createRenderSpec(idsMap.get(id) ?? ''), {id})).pipe($.state()),
+          of(d1State({id, face: createRenderSpec(idsMap.get(id) ?? '')})).pipe($.state()),
         ],
       });
     });
@@ -66,7 +66,7 @@ test('@protoboard2/src/region/surface', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       activeContents$.next([activeId]);
 
-      const surfaceIds = [{}, {}, {}].map(componentId);
+      const surfaceIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(surfaceIds[0], 'red');
       _.idsMap.set(surfaceIds[1], 'green');
       _.idsMap.set(surfaceIds[2], 'blue');
@@ -105,7 +105,7 @@ test('@protoboard2/src/region/surface', () => {
       const activeContents$ = $activeState.get(_.tester.vine).contentIds;
       activeContents$.next([activeId]);
 
-      const surfaceIds = [{}, {}, {}].map(componentId);
+      const surfaceIds = ['test', 'test', 'test'].map(componentId);
       _.idsMap.set(surfaceIds[0], 'red');
       _.idsMap.set(surfaceIds[1], 'green');
       _.idsMap.set(surfaceIds[2], 'blue');

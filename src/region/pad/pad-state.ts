@@ -68,9 +68,13 @@ export const PAD_STATE_TYPE: Type<PadState> = intersectType([
   COMPONENT_STATE_TYPE,
 ]);
 
-export function padState(partial: Partial<PadState> = {}): PadState {
+interface PadStateInput extends Partial<PadState> {
+  readonly label?: string;
+}
+
+export function padState(partial: PadStateInput): PadState {
   return {
-    id: componentId(),
+    id: componentId(partial.label),
     contents: new BehaviorSubject<readonly PadContentState[]>([]),
     halfLine: new BehaviorSubject<HalfLineState|null>(null),
     ...partial,

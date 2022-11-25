@@ -15,7 +15,7 @@ import {renderComponent} from './render-component';
 
 
 const $state = source(() => ({
-  id: componentId(),
+  id: componentId('test'),
   contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
 }));
 
@@ -58,7 +58,7 @@ test('@protoboard2/src/render/render-component', () => {
 
   test('contents$', () => {
     should('render the contents correctly', () => {
-      const contentIds = [{}, {}, {}].map(componentId);
+      const contentIds = ['test', 'test', 'test'].map(componentId);
       const idsMap = new Map([
         [contentIds[0], 'one'],
         [contentIds[1], 'two'],

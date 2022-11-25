@@ -13,6 +13,10 @@ import template from './surface.html';
 
 export interface SurfaceState extends RegionState {}
 
+interface SurfaceStateInput extends Partial<SurfaceState> {
+  readonly label?: string;
+}
+
 export const SURFACE_STATE_TYPE: Type<SurfaceState> = REGION_STATE_TYPE;
 
 const $surface = {
@@ -28,9 +32,9 @@ const $surface = {
 };
 
 
-export function surfaceState(input: Partial<SurfaceState> = {}): SurfaceState {
+export function surfaceState(input: SurfaceStateInput): SurfaceState {
   return {
-    id: componentId(),
+    id: componentId(input.label),
     contentIds: new BehaviorSubject<readonly ComponentId[]>([]),
     ...input,
   };

@@ -17,6 +17,11 @@ export interface D1State extends PieceState {
   readonly face: FaceSpec;
 }
 
+interface D1StateInput extends Partial<PieceState> {
+  readonly label?: string;
+  readonly face: FaceSpec;
+}
+
 export const D1_STATE_TYPE = intersectType([
   PIECE_STATE_TYPE,
   hasPropertiesType({
@@ -24,10 +29,9 @@ export const D1_STATE_TYPE = intersectType([
   }),
 ]);
 
-export function d1State(face: FaceSpec, partial: Partial<D1State> = {}): D1State {
+export function d1State(partial: D1StateInput): D1State {
   return {
-    id: componentId(),
-    face,
+    id: componentId(partial.label),
     rotationDeg: new BehaviorSubject(0),
     ...partial,
   };
