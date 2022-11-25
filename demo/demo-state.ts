@@ -45,12 +45,12 @@ export interface DemoState {
 }
 
 export const $state = source(vine => {
-  const card = d2State(
-      [faceSpec(vine, FaceType.CARD_BACK), faceSpec(vine, FaceType.CARD_FRONT)],
-  );
-  const coin = d2State(
-      [faceSpec(vine, FaceType.COIN_BACK), faceSpec(vine, FaceType.COIN_FRONT)],
-  );
+  const card = d2State({
+    faces: [faceSpec(vine, FaceType.CARD_BACK), faceSpec(vine, FaceType.CARD_FRONT)],
+  });
+  const coin = d2State({
+    faces: [faceSpec(vine, FaceType.COIN_BACK), faceSpec(vine, FaceType.COIN_FRONT)],
+  });
   const dice = d6State(
       {
         label: 'dice',

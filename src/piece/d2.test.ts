@@ -40,7 +40,7 @@ test('@protoboard2/src/piece/d2', () => {
   });
 
   should('render the face correctly', () => {
-    const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+    const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
 
     const element = _.tester.bootstrapElement(D2);
     element.state = state;
@@ -55,7 +55,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -65,7 +65,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -82,7 +82,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on click', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -93,7 +93,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
       _.element.pick(undefined);
 
@@ -110,7 +110,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -120,7 +120,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
       _.element.roll(undefined);
 
@@ -137,7 +137,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on keydown', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
 
       const harness = getHarness(_.element, D2Harness);
@@ -147,7 +147,7 @@ test('@protoboard2/src/piece/d2', () => {
     });
 
     should('trigger on function call', () => {
-      const state = d2State([FACE_1_SPEC, FACE_2_SPEC]);
+      const state = d2State({faces: [FACE_1_SPEC, FACE_2_SPEC]});
       _.element.state = state;
       _.element.rotate(undefined);
 

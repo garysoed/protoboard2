@@ -31,14 +31,15 @@ export const D2_STATE_TYPE: Type<D2State> = intersectType([
 ]);
 
 
-export function d2State(
-    faces: readonly [FaceSpec, FaceSpec],
-    partial: Partial<D2State> = {},
-): D2State {
+interface D2StateInput extends Partial<D2State> {
+  readonly label?: string;
+  readonly faces: readonly [FaceSpec, FaceSpec];
+}
+
+export function d2State(partial: D2StateInput): D2State {
   return {
-    id: componentId(),
+    id: componentId(partial.label),
     currentFaceIndex: new BehaviorSubject(0),
-    faces,
     rotationDeg: new BehaviorSubject(0),
     ...partial,
   };

@@ -4,10 +4,15 @@ const __id = Symbol('componentId');
 
 export interface ComponentId {
   readonly [__id]: unknown;
+  toString(): string;
 }
 
 export function componentId(label?: string): ComponentId {
-  return {[__id]: label ?? 'componentId'};
+  const id = label ?? 'componentId';
+  return {
+    [__id]: id,
+    toString: () => id,
+  };
 }
 
 export const COMPONENT_ID_TYPE = hasPropertiesType({
