@@ -2,7 +2,7 @@ import {assertByType} from 'gs-tools/export/rxjs';
 import {instanceofType} from 'gs-types';
 import {RenderSpec} from 'persona';
 import {render, RenderContext} from 'persona/export/internal';
-import {fromEvent, OperatorFunction, pipe} from 'rxjs';
+import {from, OperatorFunction, pipe} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 
 
@@ -29,14 +29,11 @@ export function exportFace(dimension: Dimension, context: RenderContext): Operat
         const image = new Image(dimension.width, dimension.height);
         image.src = svgData;
 
-        return fromEvent(image, 'load').pipe(
-            map(() => image),
-        );
+        return from(image.decode()).pipe(map(() => image));
       }),
       map(image => {
         context2d.drawImage(image, 0, 0);
         return canvas.toDataURL('image/png');
       }),
   );
-
 }
